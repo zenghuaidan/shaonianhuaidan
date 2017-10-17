@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import com.yoson.callback.StatusCallBack;
 import com.yoson.date.BrokenDate;
 import com.yoson.date.DateUtils;
@@ -206,7 +205,7 @@ public class IndexController  implements StatusCallBack {
 		  mainUIParam.setParamPath(getParamFilePath(dataFolder, id));
 		  mainUIParam.setStepPath(getStepFilePath(dataFolder, id));
 		  mainUIParam.setLogPath(getLogFilePath(dataFolder, id));
-		  mainUIParam.setVersion("V21");
+		  mainUIParam.setVersion("V9");
 		  IndexController.mainUIParam = mainUIParam;
 		  BackTestTask.running = true;	
 			try {
@@ -228,7 +227,7 @@ public class IndexController  implements StatusCallBack {
 	private String createDataFoderAndReturnPath(HttpServletRequest request) {
 		String root = request.getSession().getServletContext().getRealPath("/");
 		root = root.substring(0, root.substring(0, root.length() - 1).lastIndexOf("\\"));
-		String dataFolder = FilenameUtils.concat(root, "v21_data");
+		String dataFolder = FilenameUtils.concat(root, "v9_data");
 		File dataFolderFile = new File(dataFolder);
 		if (!dataFolderFile.exists()) {
 			try {
@@ -274,10 +273,6 @@ public class IndexController  implements StatusCallBack {
 		mainUIParam.settLongTo(600);
 		mainUIParam.settLongLiteral(600);
 		
-		mainUIParam.settLong2(1200);
-		mainUIParam.settLong2To(1200);
-		mainUIParam.settLong2Literal(1200);
-		
 		mainUIParam.setHld(0.001);
 		mainUIParam.setHldTo(0.001);
 		mainUIParam.setHldLiteral(0.001);
@@ -298,14 +293,6 @@ public class IndexController  implements StatusCallBack {
 		mainUIParam.setItsCounter(50);
 		mainUIParam.setItsCounterTo(50);
 		mainUIParam.setItsCounterLiteral(50);
-		
-		mainUIParam.setStopGainPercent(0.8);
-		mainUIParam.setStopGainPercentTo(0.8);
-		mainUIParam.setStopGainPercentLiteral(0.8);
-		
-		mainUIParam.setStopGainTrigger(30000);
-		mainUIParam.setStopGainTriggerTo(30000);
-		mainUIParam.setStopGainTriggerLiteral(30000);
 		
 		mainUIParam.setUnit(1);
 		

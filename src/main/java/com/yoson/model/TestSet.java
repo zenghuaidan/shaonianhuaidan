@@ -3,21 +3,18 @@ package com.yoson.model;
 public class TestSet {
 	private int tShort;
 	private int tLong;
-	private int tLong2;
 	private double hld;
 	private double stopLoss;
 	private double tradeStopLoss;
 	private double instantTradeStoploss;
-	private double itsCounter;
-	private double stopGainPercent;
-	private double stopGainTrigger;
+	private double itsCounter;	
 	private double unit;
 	
 	private String marketStartTime;
 	private String lunchStartTimeFrom;
 	private String lunchStartTimeTo;
 	private String marketCloseTime;
-
+	
 	private double cashPerIndexPoint;
 	private double tradingFee;
 	private double otherCostPerTrade;
@@ -27,21 +24,18 @@ public class TestSet {
 
 	public TestSet() {}
 
-	public TestSet(int tShort, int tLong, int tLong2, double hld, double stopLoss, double tradeStopLoss,
-			double instantTradeStoploss, double itsCounter, double stopGainPercent, double stopGainTrigger, double unit,
+	public TestSet(int tShort, int tLong, double hld, double stopLoss, double tradeStopLoss,
+			double instantTradeStoploss, double itsCounter, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
 			int lunchLastNumberOfMinutesClearPosition) {
 		this.tShort = tShort;
 		this.tLong = tLong;
-		this.tLong2 = tLong2;
 		this.hld = hld;
 		this.stopLoss = stopLoss;
 		this.tradeStopLoss = tradeStopLoss;
 		this.instantTradeStoploss = instantTradeStoploss;
-		this.itsCounter = itsCounter;
-		this.stopGainPercent = stopGainPercent;
-		this.stopGainTrigger = stopGainTrigger;
+		this.itsCounter = itsCounter;		
 		this.unit = unit;
 		this.marketStartTime = marketStartTime;
 		this.lunchStartTimeFrom = lunchStartTimeFrom;
@@ -68,14 +62,6 @@ public class TestSet {
 
 	public void settLong(int tLong) {
 		this.tLong = tLong;
-	}
-
-	public int gettLong2() {
-		return tLong2;
-	}
-
-	public void settLong2(int tLong2) {
-		this.tLong2 = tLong2;
 	}
 
 	public double getHld() {
@@ -116,22 +102,6 @@ public class TestSet {
 
 	public void setItsCounter(double itsCounter) {
 		this.itsCounter = itsCounter;
-	}
-
-	public double getStopGainPercent() {
-		return stopGainPercent;
-	}
-
-	public void setStopGainPercent(double stopGainPercent) {
-		this.stopGainPercent = stopGainPercent;
-	}
-
-	public double getStopGainTrigger() {
-		return stopGainTrigger * unit;
-	}
-
-	public void setStopGainTrigger(double stopGainTrigger) {
-		this.stopGainTrigger = stopGainTrigger;
 	}
 
 	public String getMarketStartTime() {

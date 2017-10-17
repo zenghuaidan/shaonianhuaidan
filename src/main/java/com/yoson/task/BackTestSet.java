@@ -34,10 +34,12 @@ public class BackTestSet {
 		double totalPnl = 0;
 		double mean = BackTestTask.sumOfLastTrade.get(dailyScheduleData.get(0).getDateStr()) / dailyScheduleData.size();
 		double dailyIndexVolTemp = 0;
+		double numberOfTerms = 0;
+		double sumOfHLDifference = 0;
 		StringBuilder sb = new StringBuilder();
 		for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {
 			//long start1 = System.currentTimeMillis();
-			PerSecondRecord perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList.size() == 0 ? new PerSecondRecord() : dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - 1), scheduleDataPerSecond);
+			PerSecondRecord perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond);
 			//System.out.println("initPerSecondRecord:" + (System.currentTimeMillis() - start1));
 			dailyPerSecondRecordList.add(perSecondRecord);
 			
@@ -59,6 +61,10 @@ public class BackTestSet {
 	
 			dailyIndexVolTemp += ((perSecondRecord.getLastTrade() - mean) * (perSecondRecord.getLastTrade() - mean));
 			
+			sumOfHLDifference += perSecondRecord.getHighLowDiffernece();
+			
+			numberOfTerms += perSecondRecord.getHighLowDiffernece() != 0 ? 1 : 0;
+			
 			if (mainUIParam.getPnlThreshold() > 0) {
 				if(perSecondRecord.getPc() == 1) {
 					sb = new StringBuilder();
@@ -69,9 +75,9 @@ public class BackTestSet {
 				
 				if (perSecondRecord.getPnl() >= mainUIParam.getPnlThreshold()) {
 					String key = StringUtils.join(scheduleDataPerSecond.getDateStr() , "-" , scheduleDataPerSecond.getTimeStr().replaceAll(":", "-") , "#"
-							, testSet.gettShort() , "_" , testSet.gettLong() , "_" , testSet.gettLong2() , "_" , testSet.getHld() , "_"
+							, testSet.gettShort() , "_" , testSet.gettLong() , "_" , testSet.getHld() , "_"
 							, testSet.getStopLoss() , "_" , testSet.getTradeStopLoss() , "_" , testSet.getInstantTradeStoploss() 
-							, "_" , testSet.getItsCounter() , "_" , testSet.getStopGainPercent() , "_" , testSet.getStopGainTrigger());
+							, "_" , testSet.getItsCounter());
 					BackTestTask.allPositivePnlResult.put(key, sb.toString());
 				}				
 			}
@@ -87,6 +93,7 @@ public class BackTestSet {
 		perDayRecord.performanceInVol = totalPnl / perDayRecord.dailyIndexVol;
 		perDayRecord.totalPnL = totalPnl;
 		perDayRecord.dailyPerSecondRecordList = dailyPerSecondRecordList;
+		perDayRecord.averageHLDiff = sumOfHLDifference / numberOfTerms;
 //		System.out.println("initPerDayRecord:" + (System.currentTimeMillis() - start));
 		return perDayRecord;		
 	}
@@ -96,7 +103,7 @@ public class BackTestSet {
 		for (String key : BackTestTask.sortedDateList) {				
 			dayRecords.add(initPerDayRecord(BackTestTask.rowData.get(key), mainUIParam, testSet));																		
 		}
-		return dayRecords;	
+		return dayRecords;
 //		System.gc();
 	}	
 }

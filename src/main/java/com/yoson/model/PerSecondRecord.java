@@ -1,8 +1,10 @@
 package com.yoson.model;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
+import com.yoson.date.DateUtils;
 import com.yoson.task.BackTestTask;
 
 public class PerSecondRecord {
@@ -17,10 +19,8 @@ public class PerSecondRecord {
 	private int tCounter;
 	private double highShort;
 	private double highLong;
-	private double highLong2;
 	private double lowShort;
 	private double lowLong;
-	private double lowLong2;
 	private int action;
 	private int smoothAction;
 	private double position;
@@ -28,19 +28,19 @@ public class PerSecondRecord {
 	private double noTrade;
 	private double tradeCount;
 	private double totalPnl;
-	private double highDiffernece;
-	private double lowDiffernece;
+	private double highLowDiffernece;
 	private double gMax;
 	private double gMin;
 	private double gHLD;
 	private double averageHLD;
 	private double pc;
 	private double mtm;
-	private double mmtm;
 	private boolean isEnoughCounter;
 	
 	private static int reachPoint;
 	private static boolean isReachPoint;
+	
+	private static double sumHighLowDiffernece;
 	
 	public PerSecondRecord() {
 //		lastTradeDataList.set(new ArrayList<Double>());
@@ -48,7 +48,8 @@ public class PerSecondRecord {
 //		PerSecondRecord.reachPoint.set(0);
 	}
 	
-	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, PerSecondRecord lastSecondRecord, ScheduleData scheduleDataPerSecond) throws ParseException {
+	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList, ScheduleData scheduleDataPerSecond) throws ParseException {
+		PerSecondRecord lastSecondRecord = dailyPerSecondRecordList.size() == 0 ? new PerSecondRecord() : dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - 1);
 		this.time = scheduleDataPerSecond.getId();
 		this.timeStr = scheduleDataPerSecond.getDateStr() + " " + scheduleDataPerSecond.getTimeStr();
 		this.askPrice = scheduleDataPerSecond.getAskPrice();
@@ -58,7 +59,7 @@ public class PerSecondRecord {
 		
 		this.checkMarketTime = BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr());
 		this.tCounter = this.checkMarketTime == 1 ? lastSecondRecord.tCounter + 1 : 0;
-		this.isEnoughCounter = this.tCounter > getMax(testSet.gettShort(), testSet.gettLong(), testSet.gettLong2());
+		this.isEnoughCounter = this.tCounter > Math.max(testSet.gettShort(), testSet.gettLong());
 //		if ("2016-07-08 09:29:26".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 //			System.out.println("debug point");
 //		}
@@ -66,16 +67,15 @@ public class PerSecondRecord {
 		if (lastSecondRecord.getTotalPnl() > -testSet.getStopLoss() ) {
 			initShort(dailyScheduleData, lastSecondRecord, testSet);
 			initLong(dailyScheduleData, lastSecondRecord, testSet);
-			initLong2(dailyScheduleData, lastSecondRecord, testSet);
-			initHighDiffernece();
-			initLowDifference();
+			initHighLowDiffernece();
+			initSumHighLowDiffernece(testSet, dailyPerSecondRecordList);
 			initAction(lastSecondRecord, testSet);
 			initSmoothAction(lastSecondRecord, testSet);
 		}
+		initAverageHLD(testSet);
 		initPosition(lastSecondRecord);
 		initPc(lastSecondRecord);
 		initMtm();
-		initMmtm(lastSecondRecord);
 		initPnl(lastSecondRecord);
 		initTradeCount(lastSecondRecord);
 		initTotalPnl(lastSecondRecord);
@@ -152,18 +152,6 @@ public class PerSecondRecord {
 		}			
 	}
 
-	private void initMmtm(PerSecondRecord lastSecondRecord) {
-		if(this.pc == 0){
-			this.mmtm = 0;
-		}else{
-			if(this.mtm>lastSecondRecord.getMmtm()){
-				this.mmtm = this.mtm;
-			} else {
-				this.mmtm = lastSecondRecord.getMmtm();
-			}
-		}	
-	}
-
 	private void initPc(PerSecondRecord lastSecondRecord) {
 		if( (this.position != 0 && lastSecondRecord.getPosition() != 0 && this.position != lastSecondRecord.getPosition()) || (lastSecondRecord.getPosition() == 0 && this.position != 0) ){
 			this.pc = 1;
@@ -206,9 +194,8 @@ public class PerSecondRecord {
 
 	private void initSmoothAction(PerSecondRecord lastSecondRecord, TestSet testSet) throws ParseException {
 		if (this.checkMarketTime == 0
-				|| !this.isEnoughCounter
-				|| (lastSecondRecord.getPc() <= testSet.getItsCounter() && lastSecondRecord.getMtm() <= -testSet.getTradeStopLoss()*testSet.getInstantTradeStoploss()) 
-				|| (lastSecondRecord.getMmtm()>=testSet.getStopGainTrigger() && lastSecondRecord.getMtm() < lastSecondRecord.getMmtm()*testSet.getStopGainPercent()) )
+			|| !this.isEnoughCounter
+			|| (lastSecondRecord.getPc() <= testSet.getItsCounter() && lastSecondRecord.getMtm() <= -testSet.getTradeStopLoss()*testSet.getInstantTradeStoploss()))
 		{
 			this.smoothAction = 0;
 		}
@@ -242,21 +229,27 @@ public class PerSecondRecord {
 		}
 	}
 	
+	private void initAverageHLD(TestSet testSet) {
+		if (this.lowLong != 0) {
+			this.averageHLD = sumHighLowDiffernece / testSet.gettLong();
+		}
+	}
+	
 	private void initAction(PerSecondRecord lastSecondRecord, TestSet testSet) {
 		
-		if (checkMarketTime == 0 || !this.isEnoughCounter)
+		if (checkMarketTime == 0 || !this.isEnoughCounter || this.highLowDiffernece < testSet.getHld() * this.averageHLD)
 		{
 			this.action = 0; 			
 		}
 		else 
 		{
-			if ((lastTrade >= this.highShort) &&(this.highShort >= this.highLong)&&(this.highLong >= this.highLong2) && this.highDiffernece >= testSet.getHld()*lastTrade)
+			if (lastTrade >= this.highShort && this.highShort == this.highLong)
 			{
 				this.action = 1;
 			}
 			else 
 			{
-				if ((lastTrade <= this.lowShort) && (this.lowShort <= this.lowLong) && (this.lowLong < this.lowLong2) && this.lowDiffernece >= testSet.getHld()*lastTrade)
+				if (lastTrade <= this.lowShort && this.lowShort == this.lowLong)
 				{
 					this.action = -1;
 				}
@@ -297,7 +290,8 @@ public class PerSecondRecord {
 		if (this.tCounter> testSet.gettLong())
 		{
 			int start = this.tCounter - (testSet.gettLong() + 1);
-			int end = this.tCounter - testSet.gettShort() - 1;
+			int end = this.tCounter - 1;
+			
 			if (start > 0 
 				&& start <= end
 				&& lastSecondRecord.highLong != dailyScheduleData.get(PerSecondRecord.reachPoint + start-1).getLastTrade()
@@ -318,53 +312,21 @@ public class PerSecondRecord {
 		}
 	}
 	
-	
-	private void initLong2(List<ScheduleData> dailyScheduleData, PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if (this.tCounter> testSet.gettLong2())
-		{
-			int start = this.tCounter - (testSet.gettLong2() + 1);
-			int end = this.tCounter -testSet.gettLong() - 1;
-			if (start > 0 
-				&& start <= end
-				&& lastSecondRecord.highLong2 != dailyScheduleData.get(PerSecondRecord.reachPoint + start - 1).getLastTrade()
-				&& lastSecondRecord.lowLong2 != dailyScheduleData.get(PerSecondRecord.reachPoint + start - 1).getLastTrade()) {
-				double lastTrade2 = dailyScheduleData.get(PerSecondRecord.reachPoint + end).getLastTrade();
-				this.highLong2 = Math.max(lastSecondRecord.highLong2, lastTrade2);
-				this.lowLong2 = Math.min(lastSecondRecord.lowLong2, lastTrade2);
-			} else {
-				this.highLong2 = Double.MIN_VALUE;
-				this.lowLong2 = Double.MAX_VALUE;
-				for (int i = start; i<= end;  i++)
-				{
-					double _lastTrade = dailyScheduleData.get(PerSecondRecord.reachPoint + i).getLastTrade();
-					this.highLong2 = Math.max(this.highLong2, _lastTrade);
-					this.lowLong2 = Math.min(this.lowLong2, _lastTrade);
-				}				
-			}
-		}
-	}
-	
-	private void initHighDiffernece() {
+	private void initHighLowDiffernece() {
 		if (this.isEnoughCounter)
 		{	
-			this.highDiffernece = getMax(this.highShort, this.highLong, this.highLong2) - getMin(this.highShort, this.highLong, this.highLong2);			
+			this.highLowDiffernece = Math.max(Math.max(Math.max(lowLong, highLong), lowShort), lowLong) - Math.min(Math.min(Math.min(lowLong, highLong), lowShort), lowLong);			
 		}
 	}
 	
-	private void initLowDifference() {
-		if (this.isEnoughCounter)
-		{
-			this.lowDiffernece = getMax(this.lowShort, this.lowLong, this.lowLong2) - getMin(this.lowShort, this.lowLong, this.lowLong2);
+	private void initSumHighLowDiffernece(TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList) {
+		sumHighLowDiffernece += this.highLowDiffernece;
+		if (this.reference > testSet.gettLong())
+		{	
+			this.sumHighLowDiffernece -= dailyPerSecondRecordList.get(this.reference - testSet.gettLong() - 1).highLowDiffernece;			
 		}
 	}
 	
-	private double getMax(double a, double b, double c) {
-		return Math.max(Math.max(a, b), c);
-	}
-	
-	private double getMin(double a, double b, double c) {
-		return Math.min(Math.min(a, b), c);
-	}
 
 	public long getTime() {
 		return time;
@@ -442,14 +404,6 @@ public class PerSecondRecord {
 		this.highLong = highLong;
 	}
 
-	public double getHighLong2() {
-		return highLong2;
-	}
-
-	public void setHighLong2(double highLong2) {
-		this.highLong2 = highLong2;
-	}
-
 	public double getLowShort() {
 		return lowShort;
 	}
@@ -464,14 +418,6 @@ public class PerSecondRecord {
 
 	public void setLowLong(double lowLong) {
 		this.lowLong = lowLong;
-	}
-
-	public double getLowLong2() {
-		return lowLong2;
-	}
-
-	public void setLowLong2(double lowLong2) {
-		this.lowLong2 = lowLong2;
 	}
 
 	public int getAction() {
@@ -530,22 +476,6 @@ public class PerSecondRecord {
 		this.totalPnl = totalPnl;
 	}
 
-	public double getHighDiffernece() {
-		return highDiffernece;
-	}
-
-	public void setHighDiffernece(double highDiffernece) {
-		this.highDiffernece = highDiffernece;
-	}
-
-	public double getLowDiffernece() {
-		return lowDiffernece;
-	}
-
-	public void setLowDiffernece(double lowDiffernece) {
-		this.lowDiffernece = lowDiffernece;
-	}
-
 	public double getgMax() {
 		return gMax;
 	}
@@ -594,12 +524,12 @@ public class PerSecondRecord {
 		this.mtm = mtm;
 	}
 
-	public double getMmtm() {
-		return mmtm;
+	public double getHighLowDiffernece() {
+		return highLowDiffernece;
 	}
 
-	public void setMmtm(double mmtm) {
-		this.mmtm = mmtm;
+	public void setHighLowDiffernece(double highLowDiffernece) {
+		this.highLowDiffernece = highLowDiffernece;
 	}
 
 }

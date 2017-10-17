@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +45,7 @@ public class BackTestTask implements Runnable {
 	public static List<String> sortedDateList;
 	public static Map<String, String> allPositivePnlResult;
 	private StatusCallBack callBack;
-	
+ 	
 	@Override
 	public void run() {
 		try {
@@ -66,7 +65,7 @@ public class BackTestTask implements Runnable {
 		BackTestTask.allSummaryResults = new ArrayList<String>();
 		BackTestTask.aTradingDayForCheckResult = "";
 //		BackTestTask.allProfitAndLossResults = new TreeMap<String, Map<Integer, String>>(new DateComparator());
-		BackTestTask.allProfitAndLossResults = new StringBuilder();
+		allProfitAndLossResults = new StringBuilder();
 		
 		BackTestTask.rowData = new HashMap<String, List<ScheduleData>>();		
 		BackTestTask.marketTimeMap = new HashMap<String, Integer>();
@@ -100,16 +99,13 @@ public class BackTestTask implements Runnable {
 		List<TestSet> testSets = new ArrayList<TestSet>();
 		for (int tShort = mainUIParam.gettShort(); tShort<= mainUIParam.gettShortTo() ; tShort = tShort + mainUIParam.gettShortLiteral())
 		for (int tLong = mainUIParam.gettLong(); tLong<= mainUIParam.gettLongTo() ; tLong = tLong + mainUIParam.gettLongLiteral())
-		for (int tLong2 = mainUIParam.gettLong2(); tLong2<= mainUIParam.gettLong2To() ; tLong2 = tLong2 + mainUIParam.gettLong2Literal())
 		for (double stopLoss = mainUIParam.getStopLoss(); stopLoss<= mainUIParam.getStopLossTo(); stopLoss = stopLoss + mainUIParam.getStopLossLiteral())
 		for (double tradeStopLoss = mainUIParam.getTradeStopLoss(); tradeStopLoss<= mainUIParam.getTradeStopLossTo() ; tradeStopLoss = tradeStopLoss + mainUIParam.getTradeStopLossLiteral())
 		for (double hld = mainUIParam.getHld(); hld<= mainUIParam.getHldTo() ; hld = hld + mainUIParam.getHldLiteral())
 		for (double instanTradeStopLoss = mainUIParam.getInstantTradeStoploss(); instanTradeStopLoss<= mainUIParam.getInstantTradeStoplossTo() ; instanTradeStopLoss = instanTradeStopLoss + mainUIParam.getInstantTradeStoplossLiteral())
-		for (double itsCounter = mainUIParam.getItsCounter(); itsCounter<= mainUIParam.getItsCounterTo() ; itsCounter = itsCounter + mainUIParam.getItsCounterLiteral())
-		for (double stopGainPercent = mainUIParam.getStopGainPercent(); stopGainPercent<= mainUIParam.getStopGainPercentTo() ; stopGainPercent = stopGainPercent + mainUIParam.getStopGainPercentLiteral())
-		for (double stopGainTrigger = mainUIParam.getStopGainTrigger(); stopGainTrigger<= mainUIParam.getStopGainTriggerTo() ; stopGainTrigger = stopGainTrigger + mainUIParam.getStopGainTriggerLiteral()) {
-			testSets.add(new TestSet(tShort, tLong, tLong2, hld, stopLoss, tradeStopLoss,
-					instanTradeStopLoss, itsCounter, stopGainPercent, stopGainTrigger, mainUIParam.getUnit(),
+		for (double itsCounter = mainUIParam.getItsCounter(); itsCounter<= mainUIParam.getItsCounterTo() ; itsCounter = itsCounter + mainUIParam.getItsCounterLiteral()) {
+			testSets.add(new TestSet(tShort, tLong, hld, stopLoss, tradeStopLoss,
+					instanTradeStopLoss, itsCounter, mainUIParam.getUnit(),
 					mainUIParam.getMarketStartTime(), mainUIParam.getLunchStartTimeFrom(), mainUIParam.getLunchStartTimeTo(), 
 					mainUIParam.getMarketCloseTime(), mainUIParam.getCashPerIndexPoint(), mainUIParam.getTradingFee(), 
 					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition()));
@@ -145,6 +141,7 @@ public class BackTestTask implements Runnable {
 			
 			StringBuilder pnlContent = new StringBuilder();
 			StringBuilder tradContent = new StringBuilder();
+			
 			BackTestCSVWriter.initBTPnLAndTradeAndProfitAndLossContent(index, mainUIParam, backTestResult, pnlContent, tradContent);
 			BackTestTask.allBTPnlResults.add(pnlContent.toString());
 			BackTestTask.allBTTradeResults.add(tradContent.toString());
@@ -180,13 +177,12 @@ public class BackTestTask implements Runnable {
 		}
 		
 		milliseconds = System.currentTimeMillis() - start;
-		callBack.updateStatus(getStatus("All task done, total time cost: " + DateUtils.dateDiff(milliseconds)));
-		
 //		BackTestCSVWriter.writeCSVResult(mainUIParam);
 		SQLUtils.saveTestSetResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.summaryFileName), mainUIParam.getVersion());
+		
 		gc();
 	}
-
+	
 	private void gc() {
 		BackTestTask.allBTSummaryResults = null;
 		BackTestTask.allBTPnlResults = null;

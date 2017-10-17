@@ -17,8 +17,6 @@ public class MainUIParam extends TestSet {
 	private int tShortLiteral;
 	private int tLongTo;
 	private int tLongLiteral;
-	private int tLong2To;
-	private int tLong2Literal;
 	private double hldTo;
 	private double hldLiteral;
 	private double stopLossTo;
@@ -29,10 +27,6 @@ public class MainUIParam extends TestSet {
 	private double instantTradeStoplossLiteral;
 	private double itsCounterTo;
 	private double itsCounterLiteral;
-	private double stopGainPercentTo;
-	private double stopGainPercentLiteral;
-	private double stopGainTriggerTo;
-	private double stopGainTriggerLiteral;
 	private double pnlThreshold;
 
 	private boolean outputChart;
@@ -45,18 +39,6 @@ public class MainUIParam extends TestSet {
 	private String startStr;
 	private String endStr;
 	public MainUIParam() {}
-
-//	public void initStartEndDateStr() {
-//		Date start = null, end = null;
-//		for (BrokenDate brokenDate : this.brokenDateList) {
-//			if (start == null || start.after(brokenDate.from))
-//				start = brokenDate.from;
-//			if (end == null || end.after(brokenDate.to))
-//				end = brokenDate.to;
-//		}
-//		this.startStr = start != null ? DateUtils.yyyyMMdd.format(start) : "";
-//		this.endStr = end != null ? DateUtils.yyyyMMdd.format(end) : "";
-//	}
 	
 	public String getSourcePath() {
 		return sourcePath;
@@ -112,22 +94,6 @@ public class MainUIParam extends TestSet {
 
 	public void settLongLiteral(int tLongLiteral) {
 		this.tLongLiteral = tLongLiteral;
-	}
-
-	public int gettLong2To() {
-		return tLong2To;
-	}
-
-	public void settLong2To(int tLong2To) {
-		this.tLong2To = tLong2To;
-	}
-
-	public int gettLong2Literal() {
-		return tLong2Literal;
-	}
-
-	public void settLong2Literal(int tLong2Literal) {
-		this.tLong2Literal = tLong2Literal;
 	}
 
 	public double getHldTo() {
@@ -208,38 +174,6 @@ public class MainUIParam extends TestSet {
 
 	public void setItsCounterLiteral(double itsCounterLiteral) {
 		this.itsCounterLiteral = itsCounterLiteral;
-	}
-
-	public double getStopGainPercentTo() {
-		return stopGainPercentTo;
-	}
-
-	public void setStopGainPercentTo(double stopGainPercentTo) {
-		this.stopGainPercentTo = stopGainPercentTo;
-	}
-
-	public double getStopGainPercentLiteral() {
-		return stopGainPercentLiteral;
-	}
-
-	public void setStopGainPercentLiteral(double stopGainPercentLiteral) {
-		this.stopGainPercentLiteral = stopGainPercentLiteral;
-	}
-
-	public double getStopGainTriggerTo() {
-		return stopGainTriggerTo;
-	}
-
-	public void setStopGainTriggerTo(double stopGainTriggerTo) {
-		this.stopGainTriggerTo = stopGainTriggerTo;
-	}
-
-	public double getStopGainTriggerLiteral() {
-		return stopGainTriggerLiteral;
-	}
-
-	public void setStopGainTriggerLiteral(double stopGainTriggerLiteral) {
-		this.stopGainTriggerLiteral = stopGainTriggerLiteral;
 	}
 
 	public boolean isOutputChart() {

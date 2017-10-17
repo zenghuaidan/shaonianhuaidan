@@ -77,15 +77,12 @@
 		}
 		var paramData = {
     	   "tLong":$.trim($("[name='tLong']").val()),
-    	   "tLong2":$.trim($("[name='tLong2']").val()),
     	   "tShort":$.trim($("[name='tShort']").val()),
     	   "hld":$.trim($("[name='hld']").val()),
     	   "stopLoss":$.trim($("[name='stopLoss']").val()),
     	   "tradeStopLoss":$.trim($("[name='tradeStopLoss']").val()),
     	   "instantTradeStoploss":$.trim($("[name='instantTradeStoploss']").val()),
-    	   "itsCounter":$.trim($("[name='itsCounter']").val()),
-    	   "stopGainPercent":$.trim($("[name='stopGainPercent']").val()),
-    	   "stopGainTrigger":$.trim($("[name='stopGainTrigger']").val()),
+    	   "itsCounter":$.trim($("[name='itsCounter']").val()),    	       	  
     	   "unit":$.trim($("[name='unit']").val()),
     	   "marketStartTime":$.trim($("[name='marketStartTime']").val()),
     	   "lunchStartTimeFrom":$.trim($("[name='lunchStartTimeFrom']").val()),
@@ -100,9 +97,7 @@
     	   "tShortTo":$.trim($("[name='tShortTo']").val()),
     	   "tShortLiteral":$.trim($("[name='tShortLiteral']").val()),
     	   "tLongTo":$.trim($("[name='tLongTo']").val()),
-    	   "tLongLiteral":$.trim($("[name='tLongLiteral']").val()),
-    	   "tLong2To":$.trim($("[name='tLong2To']").val()),
-    	   "tLong2Literal":$.trim($("[name='tLong2Literal']").val()),
+    	   "tLongLiteral":$.trim($("[name='tLongLiteral']").val()),    	   
     	   "hldTo":$.trim($("[name='hldTo']").val()),
     	   "hldLiteral":$.trim($("[name='hldLiteral']").val()),
     	   "stopLossTo":$.trim($("[name='stopLossTo']").val()),
@@ -112,11 +107,7 @@
     	   "instantTradeStoplossTo":$.trim($("[name='instantTradeStoplossTo']").val()),
     	   "instantTradeStoplossLiteral":$.trim($("[name='instantTradeStoplossLiteral']").val()),
     	   "itsCounterTo":$.trim($("[name='itsCounterTo']").val()),
-    	   "itsCounterLiteral":$.trim($("[name='itsCounterLiteral']").val()),
-    	   "stopGainPercentTo":$.trim($("[name='stopGainPercentTo']").val()),
-    	   "stopGainPercentLiteral":$.trim($("[name='stopGainPercentLiteral']").val()),
-    	   "stopGainTriggerTo":$.trim($("[name='stopGainTriggerTo']").val()),
-    	   "stopGainTriggerLiteral":$.trim($("[name='stopGainTriggerLiteral']").val()),
+    	   "itsCounterLiteral":$.trim($("[name='itsCounterLiteral']").val()),    	   
     	   "outputChart":$("[name='outputChart']").is(":checked"),
     	   "tradeDataField":$.trim($("[name='tradeDataField']:checked").val()),
     	   "askDataField":$.trim($("[name='askDataField']:checked").val()),
@@ -159,28 +150,6 @@
 		}
 	}
 	
-	function renderDownFileList() {
-		$.ajax({
-		    type: "GET",
-		    url: "list",
-		    contentType:"application/json;charset=utf-8",
-		    success: function(data) {
-		    	var lis = "";
-		    	for(var i = 0; i < data.length; i++) {
-		    		var datas = data[i].split(",");
-		    		lis += "<li style='margin-bottom:5px'><a id='" + datas[0] + "' href='download?id=" + datas[0] + "'>" + datas[0] + datas[1] + "</a>" +
-		    				"<br/><input onclick='start(\"" + datas[0] + "\")' type='button' value='Start'/>" +
-		    				"<input onclick='stop(\"" + datas[0] + "\")' type='button' value='Stop'/>" +
-		    				"<input onclick='deleteItem(\"" + datas[0] + "\")' type='button' value='Delete'/>"
-		    				+ "</li>"
-		    	}
-		    	$("#files").html(lis);
-		    },
-		    error: function() {
-		    }
-		});
-	}
-	
 	function start(id) {
 		$.ajax({
 		    type: "GET",
@@ -218,6 +187,28 @@
 		    url: "delete?id=" + id,
 		    success: function(data) {
 		    	renderDownFileList();
+		    },
+		    error: function() {
+		    }
+		});
+	}
+	
+	function renderDownFileList() {
+		$.ajax({
+		    type: "GET",
+		    url: "list",
+		    contentType:"application/json;charset=utf-8",
+		    success: function(data) {
+		    	var lis = "";
+		    	for(var i = 0; i < data.length; i++) {
+		    		var datas = data[i].split(",");
+		    		lis += "<li style='margin-bottom:5px'><a id='" + datas[0] + "' href='download?id=" + datas[0] + "'>" + datas[0] + datas[1] + "</a>" +
+		    				"<br/><input onclick='start(\"" + datas[0] + "\")' type='button' value='Start'/>" +
+		    				"<input onclick='stop(\"" + datas[0] + "\")' type='button' value='Stop'/>" +
+		    				"<input onclick='deleteItem(\"" + datas[0] + "\")' type='button' value='Delete'/>"
+		    				+ "</li>"
+		    	}
+		    	$("#files").html(lis);
 		    },
 		    error: function() {
 		    }
@@ -356,12 +347,6 @@
 			      <td><input name="tLongLiteral" value="${mainUIParam.tLongLiteral}" type="text"/></td>
 			   </tr>
 			   <tr>
-			      <td>T-Long2</td>
-			      <td><input name="tLong2" value="${mainUIParam.tLong2}" type="text"/></td>
-			      <td><input name="tLong2To" value="${mainUIParam.tLong2To}" type="text"/></td>
-			      <td><input name="tLong2Literal" value="${mainUIParam.tLong2Literal}" type="text"/></td>
-			   </tr>
-			   <tr>
 			      <td>HLD</td>
 			      <td><input name="hld" value="${mainUIParam.hld}" type="text"/></td>
 			      <td><input name="hldTo" value="${mainUIParam.hldTo}" type="text"/></td>
@@ -390,18 +375,6 @@
 			      <td><input name="itsCounter" value="${mainUIParam.itsCounter}" type="text"/></td>
 			      <td><input name="itsCounterTo" value="${mainUIParam.itsCounterTo}" type="text"/></td>
 			      <td><input name="itsCounterLiteral" value="${mainUIParam.itsCounterLiteral}" type="text"/></td>
-			   </tr>
-			   <tr>
-			      <td>Stop gain percent</td>
-			      <td><input name="stopGainPercent" value="${mainUIParam.stopGainPercent}" type="text"/></td>
-			      <td><input name="stopGainPercentTo" value="${mainUIParam.stopGainPercentTo}" type="text"/></td>
-			      <td><input name="stopGainPercentLiteral" value="${mainUIParam.stopGainPercentLiteral}" type="text"/></td>
-			   </tr>
-			   <tr>
-			      <td>Stop gain trigger</td>
-			      <td><input name="stopGainTrigger" value="${mainUIParam.stopGainTrigger}" type="text"/></td>
-			      <td><input name="stopGainTriggerTo" value="${mainUIParam.stopGainTriggerTo}" type="text"/></td>
-			      <td><input name="stopGainTriggerLiteral" value="${mainUIParam.stopGainTriggerLiteral}" type="text"/></td>
 			   </tr>
 		   		<c:forEach items="${mainUIParam.brokenDateList}" var="brokenDate" varStatus="i">
 		            <c:if test="${ i.index == 0 }" >
