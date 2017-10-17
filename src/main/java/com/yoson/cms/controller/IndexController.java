@@ -65,7 +65,7 @@ public class IndexController  implements StatusCallBack {
 
 	@RequestMapping("/")
 	public String index(Model model) {
-		model.addAttribute("mainUIParam", BackTestTask.running || IndexController.mainUIParam != null ? IndexController.mainUIParam : getMainUIParam());
+		model.addAttribute("mainUIParam", BackTestTask.running || IndexController.mainUIParam != null ? IndexController.mainUIParam : MainUIParam.getMainUIParam());
 		model.addAttribute("sources", Global.sources);
 		model.addAttribute("connectionInfo", EClientSocketUtils.connectionInfo == null ? getDefaultConnectionInfo() : EClientSocketUtils.connectionInfo);
 		model.addAttribute("contract", EClientSocketUtils.contract == null ? getDefaultContract() : EClientSocketUtils.contract);
@@ -97,7 +97,7 @@ public class IndexController  implements StatusCallBack {
 	@ResponseBody
 	@RequestMapping("test")
 	public MainUIParam test() {
-	  return getMainUIParam();
+	  return MainUIParam.getMainUIParam();
 	}
 	
 	@ResponseBody
@@ -795,80 +795,6 @@ public class IndexController  implements StatusCallBack {
 	public void done() {
 		statusStr.append("Task Completed!" + "<br/>");
 		BackTestTask.running = false;		
-	}
-	
-	public MainUIParam getMainUIParam() {
-		MainUIParam mainUIParam = new MainUIParam();
-		mainUIParam.settShort(120);
-		mainUIParam.settShortTo(120);
-		mainUIParam.settShortLiteral(1);
-		
-		mainUIParam.settLong(600);
-		mainUIParam.settLongTo(600);
-		mainUIParam.settLongLiteral(600);
-		
-		mainUIParam.settLong2(1200);
-		mainUIParam.settLong2To(1200);
-		mainUIParam.settLong2Literal(1200);
-		
-		mainUIParam.setHld(0.001);
-		mainUIParam.setHldTo(0.001);
-		mainUIParam.setHldLiteral(0.001);
-		
-		
-		mainUIParam.setStopLoss(200);
-		mainUIParam.setStopLossTo(200);
-		mainUIParam.setStopLossLiteral(200);
-		
-		mainUIParam.setTradeStopLoss(50);
-		mainUIParam.setTradeStopLossTo(50);
-		mainUIParam.setTradeStopLossLiteral(50);
-
-		mainUIParam.setInstantTradeStoploss(0.6);
-		mainUIParam.setInstantTradeStoplossTo(0.6);
-		mainUIParam.setInstantTradeStoplossLiteral(0.6);
-		
-		mainUIParam.setItsCounter(50);
-		mainUIParam.setItsCounterTo(50);
-		mainUIParam.setItsCounterLiteral(50);
-		
-		mainUIParam.setStopGainPercent(0.8);
-		mainUIParam.setStopGainPercentTo(0.8);
-		mainUIParam.setStopGainPercentLiteral(0.8);
-		
-		mainUIParam.setStopGainTrigger(30000);
-		mainUIParam.setStopGainTriggerTo(30000);
-		mainUIParam.setStopGainTriggerLiteral(30000);
-		
-		mainUIParam.setUnit(1);
-		mainUIParam.setOrderTicker(10);
-		
-		mainUIParam.setMarketStartTime("09:15:00");
-		mainUIParam.setLunchStartTimeFrom("12:00:00");
-		mainUIParam.setLunchStartTimeTo("13:00:00");
-		mainUIParam.setMarketCloseTime("16:15:00");
-		
-		mainUIParam.setCashPerIndexPoint(50);
-		mainUIParam.setTradingFee(18);
-		mainUIParam.setOtherCostPerTrade(0);
-		
-		mainUIParam.setLastNumberOfMinutesClearPosition(2);
-		mainUIParam.setLunchLastNumberOfMinutesClearPosition(2);
-														
-		mainUIParam.setSource("BBG_HSI");
-		mainUIParam.setVersion("6");
-		
-		mainUIParam.setOutputChart(false);
-		
-		mainUIParam.setTradeDataField("tradelast");	   
-		mainUIParam.setAskDataField("asklast");			   
-		mainUIParam.setBidDataField("bidlast");	
-		
-		List<BrokenDate> brokenDateList = new ArrayList<BrokenDate>();
-		brokenDateList.add(new BrokenDate("2014-01-01", DateUtils.yyyyMMdd().format(new Date())));
-		mainUIParam.setBrokenDateList(brokenDateList);
-		
-		return mainUIParam;
 	}
 
 }
