@@ -15,7 +15,7 @@ public class ScheduleData {
 
 	public ScheduleData(String dateStr, String timeStr, String askPrice, String bidPrice, String lastTrade) {
 		try {
-			this.id = DateUtils.yyyyMMddHHmmss.parse(dateStr + " " + timeStr).getTime();
+			this.id = DateUtils.yyyyMMddHHmmss().parse(dateStr + " " + timeStr).getTime();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -24,6 +24,19 @@ public class ScheduleData {
 		this.askPrice = Double.parseDouble(askPrice);
 		this.bidPrice = Double.parseDouble(bidPrice);
 		this.lastTrade = Double.parseDouble(lastTrade);
+	}
+	
+	public ScheduleData(String dateStr, String timeStr, Double askPrice, Double bidPrice, Double lastTrade) {
+		try {
+			this.id = DateUtils.yyyyMMddHHmmss().parse(dateStr + " " + timeStr).getTime();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		this.dateStr = dateStr;
+		this.timeStr = timeStr;
+		this.askPrice = askPrice;
+		this.bidPrice = bidPrice;
+		this.lastTrade = lastTrade;
 	}
 
 	public long getId() {

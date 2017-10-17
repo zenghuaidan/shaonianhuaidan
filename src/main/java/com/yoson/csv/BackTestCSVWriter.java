@@ -1,11 +1,10 @@
 package com.yoson.csv;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -18,8 +17,6 @@ import com.yoson.model.PerDayRecord;
 import com.yoson.model.PerSecondRecord;
 import com.yoson.task.BackTestTask;
 
-import javassist.expr.NewArray;
-
 public class BackTestCSVWriter {	
 	public static final String summaryFileName = "Back Test  Summary.csv";
 	public static final String profitAndLossFileName = "Back Test  ProfitAndLoss.csv";
@@ -28,16 +25,26 @@ public class BackTestCSVWriter {
 	public static final String btTradeFileName = "BT_Trade.csv";
 	public static final String aTradingDayForCheckFileName = "A Trading Day FOR CHECK.csv";
 	
-	public static void writeCSVResult(String filePath, String result) throws IOException {
-		FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
-		IOUtils.write(result, fileOutputStream, Charset.forName("utf-8"));
-		fileOutputStream.close();
+	public static void writeText(String filePath, String result, boolean append) {
+		try {
+			FileOutputStream fileOutputStream = new FileOutputStream(filePath, append);
+			IOUtils.write(result, fileOutputStream, Charset.forName("utf-8"));
+			fileOutputStream.close();			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	} 
 	
-	public static void writeText(String filePath, String result) throws IOException {
-		FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-		IOUtils.write(result, fileOutputStream, Charset.forName("utf-8"));
-		fileOutputStream.close();
+	public static String readText(String filePath) {
+		String result = "";
+		try {
+			FileInputStream fileInputStream = new FileInputStream(filePath);
+			result = IOUtils.toString(fileInputStream);
+			fileInputStream.close();			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	} 
 	
 	public static void writeCSVResult(MainUIParam mainUIParam) throws IOException {
@@ -57,7 +64,7 @@ public class BackTestCSVWriter {
 			if (!new File(folder).exists()) {
 				FileUtils.forceMkdir(new File(folder));
 			}
-			writeCSVResult(FilenameUtils.concat(folder, values[0] + ".csv"), getATradingDayHeader() + BackTestTask.allPositivePnlResult.get(key));
+			writeText(FilenameUtils.concat(folder, values[0] + ".csv"), getATradingDayHeader() + BackTestTask.allPositivePnlResult.get(key), true);
 		}
 	}
 	

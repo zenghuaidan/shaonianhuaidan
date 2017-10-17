@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.Gson;
 import com.yoson.callback.StatusCallBack;
+import com.yoson.cms.controller.Global;
 import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.DateComparator;
 import com.yoson.date.DateUtils;
@@ -45,7 +46,7 @@ public class BackTestTask implements Runnable {
 	public static List<String> sortedDateList;
 	public static Map<String, String> allPositivePnlResult;
 	private StatusCallBack callBack;
- 	
+	
 	@Override
 	public void run() {
 		try {
@@ -65,7 +66,7 @@ public class BackTestTask implements Runnable {
 		BackTestTask.allSummaryResults = new ArrayList<String>();
 		BackTestTask.aTradingDayForCheckResult = "";
 //		BackTestTask.allProfitAndLossResults = new TreeMap<String, Map<Integer, String>>(new DateComparator());
-		allProfitAndLossResults = new StringBuilder();
+		BackTestTask.allProfitAndLossResults = new StringBuilder();
 		
 		BackTestTask.rowData = new HashMap<String, List<ScheduleData>>();		
 		BackTestTask.marketTimeMap = new HashMap<String, Integer>();
@@ -98,19 +99,19 @@ public class BackTestTask implements Runnable {
 		
 		List<TestSet> testSets = new ArrayList<TestSet>();
 		for (int tShort = mainUIParam.gettShort(); tShort<= mainUIParam.gettShortTo() ; tShort = tShort + mainUIParam.gettShortLiteral())
-		for (int tLong = mainUIParam.gettLong(); tLong<= mainUIParam.gettLongTo() ; tLong = tLong + mainUIParam.gettLongLiteral())
+		for (int tLong = mainUIParam.gettLong(); tLong<= mainUIParam.gettLongTo() ; tLong = tLong + mainUIParam.gettLongLiteral())		
 		for (double stopLoss = mainUIParam.getStopLoss(); stopLoss<= mainUIParam.getStopLossTo(); stopLoss = stopLoss + mainUIParam.getStopLossLiteral())
 		for (double tradeStopLoss = mainUIParam.getTradeStopLoss(); tradeStopLoss<= mainUIParam.getTradeStopLossTo() ; tradeStopLoss = tradeStopLoss + mainUIParam.getTradeStopLossLiteral())
 		for (double hld = mainUIParam.getHld(); hld<= mainUIParam.getHldTo() ; hld = hld + mainUIParam.getHldLiteral())
 		for (double instanTradeStopLoss = mainUIParam.getInstantTradeStoploss(); instanTradeStopLoss<= mainUIParam.getInstantTradeStoplossTo() ; instanTradeStopLoss = instanTradeStopLoss + mainUIParam.getInstantTradeStoplossLiteral())
-		for (double itsCounter = mainUIParam.getItsCounter(); itsCounter<= mainUIParam.getItsCounterTo() ; itsCounter = itsCounter + mainUIParam.getItsCounterLiteral()) {
+		for (double itsCounter = mainUIParam.getItsCounter(); itsCounter<= mainUIParam.getItsCounterTo() ; itsCounter = itsCounter + mainUIParam.getItsCounterLiteral()){		
 			testSets.add(new TestSet(tShort, tLong, hld, stopLoss, tradeStopLoss,
 					instanTradeStopLoss, itsCounter, mainUIParam.getUnit(),
 					mainUIParam.getMarketStartTime(), mainUIParam.getLunchStartTimeFrom(), mainUIParam.getLunchStartTimeTo(), 
 					mainUIParam.getMarketCloseTime(), mainUIParam.getCashPerIndexPoint(), mainUIParam.getTradingFee(), 
 					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition()));
 		}
-		BackTestCSVWriter.writeText(mainUIParam.getParamPath(), new Gson().toJson(mainUIParam));
+		BackTestCSVWriter.writeText(mainUIParam.getParamPath(), new Gson().toJson(mainUIParam), false);
 		int startStep = 0;
 		try {
 			File stepFile = new File(mainUIParam.getStepPath());
@@ -141,7 +142,6 @@ public class BackTestTask implements Runnable {
 			
 			StringBuilder pnlContent = new StringBuilder();
 			StringBuilder tradContent = new StringBuilder();
-			
 			BackTestCSVWriter.initBTPnLAndTradeAndProfitAndLossContent(index, mainUIParam, backTestResult, pnlContent, tradContent);
 			BackTestTask.allBTPnlResults.add(pnlContent.toString());
 			BackTestTask.allBTTradeResults.add(tradContent.toString());
@@ -149,15 +149,15 @@ public class BackTestTask implements Runnable {
 			
 			if(index == 1 && backTestResult.dayRecords.size() > 0) {
 				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(2));
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.aTradingDayForCheckFileName), BackTestCSVWriter.getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.aTradingDayForCheckFileName), BackTestCSVWriter.getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult, true);
 			}	
 			
-			if (index % 5 == 0 || index == testSets.size()) {
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.summaryFileName), (first ? BackTestCSVWriter.getSummaryHeader() : "") + String.join("", BackTestTask.allSummaryResults));
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btPnlFileName), (first ? BackTestCSVWriter.getBTPnlHeader() : "") + String.join("", BackTestTask.allBTPnlResults));
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btTradeFileName), (first ? BackTestCSVWriter.getBTTradeHeader() : "") + String.join("", BackTestTask.allBTTradeResults));
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader() : "") + String.join("", BackTestTask.allBTSummaryResults));
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName), BackTestTask.allProfitAndLossResults.toString());
+			if (index % Global.savePoint == 0 || index == testSets.size()) {
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.summaryFileName), (first ? BackTestCSVWriter.getSummaryHeader() : "") + String.join("", BackTestTask.allSummaryResults), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btPnlFileName), (first ? BackTestCSVWriter.getBTPnlHeader() : "") + String.join("", BackTestTask.allBTPnlResults), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btTradeFileName), (first ? BackTestCSVWriter.getBTTradeHeader() : "") + String.join("", BackTestTask.allBTTradeResults), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader() : "") + String.join("", BackTestTask.allBTSummaryResults), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName), BackTestTask.allProfitAndLossResults.toString(), true);
 				BackTestCSVWriter.writePositivePnlResult(mainUIParam);
 				
 				BackTestTask.allSummaryResults.clear();
@@ -165,7 +165,7 @@ public class BackTestTask implements Runnable {
 				BackTestTask.allBTTradeResults.clear();
 				BackTestTask.allBTSummaryResults.clear();
 				BackTestTask.allPositivePnlResult.clear();
-				BackTestCSVWriter.writeText(mainUIParam.getStepPath(), index + "," + testSets.size());
+				BackTestCSVWriter.writeText(mainUIParam.getStepPath(), index + "," + testSets.size(), false);
 				first = false;
 			}
 			
@@ -177,12 +177,13 @@ public class BackTestTask implements Runnable {
 		}
 		
 		milliseconds = System.currentTimeMillis() - start;
+		callBack.updateStatus(getStatus("All task done, total time cost: " + DateUtils.dateDiff(milliseconds)));
+		
 //		BackTestCSVWriter.writeCSVResult(mainUIParam);
 		SQLUtils.saveTestSetResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.summaryFileName), mainUIParam.getVersion());
-		
 		gc();
 	}
-	
+
 	private void gc() {
 		BackTestTask.allBTSummaryResults = null;
 		BackTestTask.allBTPnlResults = null;
@@ -200,6 +201,6 @@ public class BackTestTask implements Runnable {
 	}
 
 	private String getStatus(String status) {
-		return DateUtils.yyyyMMddHHmmss.format(new Date()) + " -> " + status;
+		return DateUtils.yyyyMMddHHmmss().format(new Date()) + " -> " + status;
 	}
 }
