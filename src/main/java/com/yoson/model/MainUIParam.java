@@ -55,18 +55,6 @@ public class MainUIParam extends TestSet {
 	private String startStr;
 	private String endStr;
 	public MainUIParam() {}
-
-//	public void initStartEndDateStr() {
-//		Date start = null, end = null;
-//		for (BrokenDate brokenDate : this.brokenDateList) {
-//			if (start == null || start.after(brokenDate.from))
-//				start = brokenDate.from;
-//			if (end == null || end.after(brokenDate.to))
-//				end = brokenDate.to;
-//		}
-//		this.startStr = start != null ? DateUtils.yyyyMMdd.format(start) : "";
-//		this.endStr = end != null ? DateUtils.yyyyMMdd.format(end) : "";
-//	}
 	
 	public String getSourcePath() {
 		return sourcePath;
