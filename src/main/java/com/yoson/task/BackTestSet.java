@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.yoson.csv.BackTestCSVWriter;
-import com.yoson.model.BackTestResult;
 import com.yoson.model.MainUIParam;
 import com.yoson.model.PerDayRecord;
 import com.yoson.model.PerSecondRecord;
@@ -37,7 +36,7 @@ public class BackTestSet {
 		StringBuilder sb = new StringBuilder();
 		for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {
 			//long start1 = System.currentTimeMillis();
-			PerSecondRecord perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList.size() == 0 ? new PerSecondRecord() : dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - 1), scheduleDataPerSecond);
+			PerSecondRecord perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList.size() == 0 ? new PerSecondRecord() : dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - 1), scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()));
 			//System.out.println("initPerSecondRecord:" + (System.currentTimeMillis() - start1));
 			dailyPerSecondRecordList.add(perSecondRecord);
 			

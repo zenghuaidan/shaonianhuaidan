@@ -62,7 +62,7 @@
 			<!-- <value> hibernate.dialect=org.hibernate.dialect.HSQLDialect </value> -->
 			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
-				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 				<prop key="hibernate.format_sql">false</prop>
 				
@@ -80,5 +80,32 @@
     </bean>
 
 	<tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
+	
+	<bean id="executor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		 <property name="corePoolSize" value="10" />
+		 <property name="maxPoolSize" value="100" />
+		 <property name="queueCapacity" value="500" />
+	</bean>
+	
+	<bean id="taskScheduler" class="com.yoson.scheduler.TaskScheduler" />
+	
+	<bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	 	<property name="targetObject" ref="taskScheduler" />
+	 	<property name="targetMethod" value="doTrade" />
+	</bean>
+	
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	 	<property name="jobDetail" ref="jobDetail" />
+	 	<property name="cronExpression" value="*/1 * * * * ?" />
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	 <property name="triggers">
+	  <list>
+	   <ref bean="cronTrigger" />
+	  </list>
+	 </property>
+	 <property name="taskExecutor" ref="executor" />
+	</bean>
 	
 </beans>

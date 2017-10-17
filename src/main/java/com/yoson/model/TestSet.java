@@ -1,28 +1,47 @@
 package com.yoson.model;
 
-public class TestSet {
-	private int tShort;
-	private int tLong;
-	private int tLong2;
-	private double hld;
-	private double stopLoss;
-	private double tradeStopLoss;
-	private double instantTradeStoploss;
-	private double itsCounter;
-	private double stopGainPercent;
-	private double stopGainTrigger;
-	private double unit;
-	
-	private String marketStartTime;
-	private String lunchStartTimeFrom;
-	private String lunchStartTimeTo;
-	private String marketCloseTime;
+import com.google.gson.annotations.Expose;
 
+public class TestSet {
+	@Expose
+	private int tShort;
+	@Expose
+	private int tLong;
+	@Expose
+	private int tLong2;
+	@Expose
+	private double hld;
+	@Expose
+	private double stopLoss;
+	@Expose
+	private double tradeStopLoss;
+	@Expose
+	private double instantTradeStoploss;
+	@Expose
+	private double itsCounter;
+	@Expose
+	private double stopGainPercent;
+	@Expose
+	private double stopGainTrigger;
+	@Expose
+	private double unit;
+	@Expose
+	private String marketStartTime;
+	@Expose
+	private String lunchStartTimeFrom;
+	@Expose
+	private String lunchStartTimeTo;
+	@Expose
+	private String marketCloseTime;
+	@Expose
 	private double cashPerIndexPoint;
+	@Expose
 	private double tradingFee;
+	@Expose
 	private double otherCostPerTrade;
-	
+	@Expose
 	private int lastNumberOfMinutesClearPosition;
+	@Expose
 	private int lunchLastNumberOfMinutesClearPosition;
 
 	public TestSet() {}

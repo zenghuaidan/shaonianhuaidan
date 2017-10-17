@@ -2,6 +2,7 @@ package com.yoson.model;
 
 import java.util.List;
 
+import com.google.gson.annotations.Expose;
 import com.yoson.date.BrokenDate;
 
 public class MainUIParam extends TestSet {
@@ -10,6 +11,7 @@ public class MainUIParam extends TestSet {
 	private String paramPath;
 	private String stepPath;
 	private String logPath;
+	@Expose
 	private String source;
 	private String version;
 
@@ -33,12 +35,17 @@ public class MainUIParam extends TestSet {
 	private double stopGainPercentLiteral;
 	private double stopGainTriggerTo;
 	private double stopGainTriggerLiteral;
+	@Expose
 	private double pnlThreshold;
+	@Expose
+	private double orderTicker;
 
 	private boolean outputChart;
-	
+	@Expose
 	private String tradeDataField;
+	@Expose
 	private String askDataField;
+	@Expose
 	private String bidDataField;
 	private List<BrokenDate> brokenDateList;
 	
@@ -336,6 +343,14 @@ public class MainUIParam extends TestSet {
 
 	public void setLogPath(String logPath) {
 		this.logPath = logPath;
+	}
+
+	public double getOrderTicker() {
+		return orderTicker;
+	}
+
+	public void setOrderTicker(double orderTicker) {
+		this.orderTicker = orderTicker;
 	}
 
 }

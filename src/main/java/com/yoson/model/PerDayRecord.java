@@ -33,7 +33,7 @@ public class PerDayRecord {
 	}
 	
 	public String getDateStr(){
-		return DateUtils.yyyyMMdd.format(date);
+		return DateUtils.yyyyMMdd().format(date);
 	}
 }
 

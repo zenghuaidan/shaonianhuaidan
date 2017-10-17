@@ -12,13 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.Gson;
 import com.yoson.callback.StatusCallBack;
+import com.yoson.cms.controller.Global;
 import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.DateComparator;
 import com.yoson.date.DateUtils;
@@ -114,7 +114,7 @@ public class BackTestTask implements Runnable {
 					mainUIParam.getMarketCloseTime(), mainUIParam.getCashPerIndexPoint(), mainUIParam.getTradingFee(), 
 					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition()));
 		}
-		BackTestCSVWriter.writeText(mainUIParam.getParamPath(), new Gson().toJson(mainUIParam));
+		BackTestCSVWriter.writeText(mainUIParam.getParamPath(), new Gson().toJson(mainUIParam), false);
 		int startStep = 0;
 		try {
 			File stepFile = new File(mainUIParam.getStepPath());
@@ -152,15 +152,15 @@ public class BackTestTask implements Runnable {
 			
 			if(index == 1 && backTestResult.dayRecords.size() > 0) {
 				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(2));
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.aTradingDayForCheckFileName), BackTestCSVWriter.getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.aTradingDayForCheckFileName), BackTestCSVWriter.getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult, true);
 			}	
 			
-			if (index % 5 == 0 || index == testSets.size()) {
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.summaryFileName), (first ? BackTestCSVWriter.getSummaryHeader() : "") + String.join("", BackTestTask.allSummaryResults));
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btPnlFileName), (first ? BackTestCSVWriter.getBTPnlHeader() : "") + String.join("", BackTestTask.allBTPnlResults));
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btTradeFileName), (first ? BackTestCSVWriter.getBTTradeHeader() : "") + String.join("", BackTestTask.allBTTradeResults));
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader() : "") + String.join("", BackTestTask.allBTSummaryResults));
-				BackTestCSVWriter.writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName), BackTestTask.allProfitAndLossResults.toString());
+			if (index % Global.savePoint == 0 || index == testSets.size()) {
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.summaryFileName), (first ? BackTestCSVWriter.getSummaryHeader() : "") + String.join("", BackTestTask.allSummaryResults), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btPnlFileName), (first ? BackTestCSVWriter.getBTPnlHeader() : "") + String.join("", BackTestTask.allBTPnlResults), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btTradeFileName), (first ? BackTestCSVWriter.getBTTradeHeader() : "") + String.join("", BackTestTask.allBTTradeResults), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader() : "") + String.join("", BackTestTask.allBTSummaryResults), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName), BackTestTask.allProfitAndLossResults.toString(), true);
 				BackTestCSVWriter.writePositivePnlResult(mainUIParam);
 				
 				BackTestTask.allSummaryResults.clear();
@@ -168,7 +168,7 @@ public class BackTestTask implements Runnable {
 				BackTestTask.allBTTradeResults.clear();
 				BackTestTask.allBTSummaryResults.clear();
 				BackTestTask.allPositivePnlResult.clear();
-				BackTestCSVWriter.writeText(mainUIParam.getStepPath(), index + "," + testSets.size());
+				BackTestCSVWriter.writeText(mainUIParam.getStepPath(), index + "," + testSets.size(), false);
 				first = false;
 			}
 			
@@ -204,6 +204,6 @@ public class BackTestTask implements Runnable {
 	}
 
 	private String getStatus(String status) {
-		return DateUtils.yyyyMMddHHmmss.format(new Date()) + " -> " + status;
+		return DateUtils.yyyyMMddHHmmss().format(new Date()) + " -> " + status;
 	}
 }

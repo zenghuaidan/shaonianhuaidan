@@ -3,8 +3,6 @@ package com.yoson.model;
 import java.text.ParseException;
 import java.util.List;
 
-import com.yoson.task.BackTestTask;
-
 public class PerSecondRecord {
 
 	private long time;
@@ -39,8 +37,10 @@ public class PerSecondRecord {
 	private double mmtm;
 	private boolean isEnoughCounter;
 	
-	private static int reachPoint;
-	private static boolean isReachPoint;
+//	private static int reachPoint;
+//	private static boolean isReachPoint;
+	
+	private int reachPoint;
 	
 	public PerSecondRecord() {
 //		lastTradeDataList.set(new ArrayList<Double>());
@@ -48,7 +48,7 @@ public class PerSecondRecord {
 //		PerSecondRecord.reachPoint.set(0);
 	}
 	
-	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, PerSecondRecord lastSecondRecord, ScheduleData scheduleDataPerSecond) throws ParseException {
+	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, PerSecondRecord lastSecondRecord, ScheduleData scheduleDataPerSecond, int checkMarketTime) throws ParseException {
 		this.time = scheduleDataPerSecond.getId();
 		this.timeStr = scheduleDataPerSecond.getDateStr() + " " + scheduleDataPerSecond.getTimeStr();
 		this.askPrice = scheduleDataPerSecond.getAskPrice();
@@ -56,13 +56,13 @@ public class PerSecondRecord {
 		this.lastTrade = scheduleDataPerSecond.getLastTrade();
 		this.reference = lastSecondRecord.getReference() + 1;
 		
-		this.checkMarketTime = BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr());
+		this.checkMarketTime = checkMarketTime;
 		this.tCounter = this.checkMarketTime == 1 ? lastSecondRecord.tCounter + 1 : 0;
 		this.isEnoughCounter = this.tCounter > getMax(testSet.gettShort(), testSet.gettLong(), testSet.gettLong2());
 //		if ("2016-07-08 09:29:26".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 //			System.out.println("debug point");
 //		}
-		initLastTradeDataList();
+		initLastTradeDataList(lastSecondRecord);
 		if (lastSecondRecord.getTotalPnl() > -testSet.getStopLoss() ) {
 			initShort(dailyScheduleData, lastSecondRecord, testSet);
 			initLong(dailyScheduleData, lastSecondRecord, testSet);
@@ -81,14 +81,22 @@ public class PerSecondRecord {
 		initTotalPnl(lastSecondRecord);
 	}
 	
-	private void initLastTradeDataList() {
-		if (this.checkMarketTime == 1 && !PerSecondRecord.isReachPoint) {
-			PerSecondRecord.isReachPoint = true;
-			PerSecondRecord.reachPoint = this.reference - 1;
-		} else if(this.checkMarketTime == 0) {
-			PerSecondRecord.isReachPoint = false;
-			PerSecondRecord.reachPoint = 0;
-		}		
+	private void initLastTradeDataList(PerSecondRecord lastSecondRecord) {
+//		if (this.checkMarketTime == 1 && !PerSecondRecord.isReachPoint) {
+//			PerSecondRecord.isReachPoint = true;
+//			PerSecondRecord.reachPoint = this.reference - 1;
+//		} else if(this.checkMarketTime == 0) {
+//			PerSecondRecord.isReachPoint = false;
+//			PerSecondRecord.reachPoint = 0;
+//		}	
+		
+		if(this.checkMarketTime == 0) {
+			this.reachPoint = 0;
+		} else if (this.checkMarketTime == 1 && lastSecondRecord.checkMarketTime == 1) {
+			this.reachPoint = lastSecondRecord.reachPoint;
+		} else if (this.checkMarketTime == 1 && lastSecondRecord.checkMarketTime == 0) {
+			this.reachPoint = this.reference - 1;
+		}
 	}
 
 	private void initTotalPnl(PerSecondRecord lastSecondRecord) {
@@ -275,9 +283,9 @@ public class PerSecondRecord {
 			int end = this.tCounter - 1;
 			if (start > 0 
 				&& start <= end
-				&& lastSecondRecord.highShort != dailyScheduleData.get(PerSecondRecord.reachPoint + start - 1).getLastTrade()
-				&& lastSecondRecord.lowShort != dailyScheduleData.get(PerSecondRecord.reachPoint + start - 1).getLastTrade()) {
-				double lastTrade2 = dailyScheduleData.get(PerSecondRecord.reachPoint + end).getLastTrade();
+				&& lastSecondRecord.highShort != dailyScheduleData.get(this.reachPoint + start - 1).getLastTrade()
+				&& lastSecondRecord.lowShort != dailyScheduleData.get(this.reachPoint + start - 1).getLastTrade()) {
+				double lastTrade2 = dailyScheduleData.get(this.reachPoint + end).getLastTrade();
 				this.highShort = Math.max(lastSecondRecord.highShort, lastTrade2);
 				this.lowShort = Math.min(lastSecondRecord.lowShort, lastTrade2);
 			} else {
@@ -285,7 +293,7 @@ public class PerSecondRecord {
 				this.lowShort = Double.MAX_VALUE;
 				for (int i = start; i<= end; i++)
 				{
-					double _lastTrade = dailyScheduleData.get(PerSecondRecord.reachPoint + i).getLastTrade();
+					double _lastTrade = dailyScheduleData.get(this.reachPoint + i).getLastTrade();
 					this.highShort = Math.max(this.highShort, _lastTrade);
 					this.lowShort = Math.min(this.lowShort, _lastTrade);
 				}				
@@ -300,9 +308,9 @@ public class PerSecondRecord {
 			int end = this.tCounter - testSet.gettShort() - 1;
 			if (start > 0 
 				&& start <= end
-				&& lastSecondRecord.highLong != dailyScheduleData.get(PerSecondRecord.reachPoint + start-1).getLastTrade()
-				&& lastSecondRecord.lowLong != dailyScheduleData.get(PerSecondRecord.reachPoint + start-1).getLastTrade()) {
-				double lastTrade2 = dailyScheduleData.get(PerSecondRecord.reachPoint + end).getLastTrade();
+				&& lastSecondRecord.highLong != dailyScheduleData.get(this.reachPoint + start-1).getLastTrade()
+				&& lastSecondRecord.lowLong != dailyScheduleData.get(this.reachPoint + start-1).getLastTrade()) {
+				double lastTrade2 = dailyScheduleData.get(this.reachPoint + end).getLastTrade();
 				this.highLong = Math.max(lastSecondRecord.highLong, lastTrade2);
 				this.lowLong = Math.min(lastSecondRecord.lowLong, lastTrade2);
 			} else {
@@ -310,7 +318,7 @@ public class PerSecondRecord {
 				this.lowLong = Double.MAX_VALUE;
 				for (int i = start; i<= end;  i++)
 				{
-					double _lastTrade = dailyScheduleData.get(PerSecondRecord.reachPoint + i).getLastTrade();
+					double _lastTrade = dailyScheduleData.get(this.reachPoint + i).getLastTrade();
 					this.highLong = Math.max(this.highLong, _lastTrade);
 					this.lowLong = Math.min(this.lowLong, _lastTrade);
 				}				
@@ -326,9 +334,9 @@ public class PerSecondRecord {
 			int end = this.tCounter -testSet.gettLong() - 1;
 			if (start > 0 
 				&& start <= end
-				&& lastSecondRecord.highLong2 != dailyScheduleData.get(PerSecondRecord.reachPoint + start - 1).getLastTrade()
-				&& lastSecondRecord.lowLong2 != dailyScheduleData.get(PerSecondRecord.reachPoint + start - 1).getLastTrade()) {
-				double lastTrade2 = dailyScheduleData.get(PerSecondRecord.reachPoint + end).getLastTrade();
+				&& lastSecondRecord.highLong2 != dailyScheduleData.get(this.reachPoint + start - 1).getLastTrade()
+				&& lastSecondRecord.lowLong2 != dailyScheduleData.get(this.reachPoint + start - 1).getLastTrade()) {
+				double lastTrade2 = dailyScheduleData.get(this.reachPoint + end).getLastTrade();
 				this.highLong2 = Math.max(lastSecondRecord.highLong2, lastTrade2);
 				this.lowLong2 = Math.min(lastSecondRecord.lowLong2, lastTrade2);
 			} else {
@@ -336,7 +344,7 @@ public class PerSecondRecord {
 				this.lowLong2 = Double.MAX_VALUE;
 				for (int i = start; i<= end;  i++)
 				{
-					double _lastTrade = dailyScheduleData.get(PerSecondRecord.reachPoint + i).getLastTrade();
+					double _lastTrade = dailyScheduleData.get(this.reachPoint + i).getLastTrade();
 					this.highLong2 = Math.max(this.highLong2, _lastTrade);
 					this.lowLong2 = Math.min(this.lowLong2, _lastTrade);
 				}				

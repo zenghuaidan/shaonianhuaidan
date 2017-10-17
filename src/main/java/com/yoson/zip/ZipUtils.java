@@ -4,12 +4,53 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.io.FilenameUtils;
+
 
 public class ZipUtils {
 
 	private ZipUtils() {
+	}
+	
+	public static void decompress(String srcPath, String dest) throws Exception {
+		File file = new File(srcPath);
+		if (!file.exists()) {
+			throw new RuntimeException(srcPath + "File not exists");
+		}
+
+		ZipFile zf = new ZipFile(file);
+		Enumeration entries = zf.entries();
+		ZipEntry entry = null;
+		while (entries.hasMoreElements()) {
+			entry = (ZipEntry) entries.nextElement();
+			if (entry.isDirectory()) {
+				File dir = new File(FilenameUtils.concat(dest, entry.getName()));
+				dir.mkdirs();
+			} else {
+				File f = new File(FilenameUtils.concat(dest, entry.getName()));
+				if (!f.exists()) {
+					File parentDir = new File(FilenameUtils.getFullPath(f.getAbsolutePath()));
+					parentDir.mkdirs();
+				}
+				f.createNewFile();
+				InputStream is = zf.getInputStream(entry);
+				FileOutputStream fos = new FileOutputStream(f);
+				int count;
+				byte[] buf = new byte[8192];
+				while ((count = is.read(buf)) != -1) {
+					fos.write(buf, 0, count);
+				}
+				is.close();
+				fos.close();
+			}
+		}
+		zf.close();
 	}
 
 	public static void doCompress(String srcFile, String zipFile) throws IOException {
