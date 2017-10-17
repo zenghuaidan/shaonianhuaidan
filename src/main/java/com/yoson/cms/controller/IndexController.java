@@ -89,7 +89,7 @@ public class IndexController  implements StatusCallBack {
 		contract.m_currency = "HKD";
 	    contract.m_exchange = "HKFE";
 	    contract.m_localSymbol = "";
-	    contract.m_expiry = "201709";
+	    contract.m_expiry = DateUtils.yyyyMM().format(new Date());;
 	    contract.tif = "IOC";
 	    return contract;
 	}
