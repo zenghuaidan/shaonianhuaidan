@@ -144,7 +144,7 @@ public class IndexController  implements StatusCallBack {
 	public boolean addStrategy(@RequestBody Strategy strategy) {
 		String strategyName = strategy.getStrategyName();
 		if(StringUtils.isEmpty(strategy.getStrategyName())) {
-			strategyName = "New";
+			strategyName = "Strategy";
 		}
 		int max = 0;
 		for (Strategy strategy2 : EClientSocketUtils.strategies) {
