@@ -573,7 +573,7 @@
 								      <td></td>
 								   </tr>
 								   <tr>
-								      <td>HLD(Without)</td>
+								      <td>HLD(Without %)</td>
 								      <td><input value="${strategy.mainUIParam.hld}" type="text"/></td>
 								      <td></td>
 								      <td></td>

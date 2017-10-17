@@ -64,9 +64,8 @@ public class TaskScheduler {
 							}
 							List<PerSecondRecord> perSecondRecords = new ArrayList<PerSecondRecord>();
 							for (ScheduleData scheduleDataPerSecond : scheduleDatas) {
-								PerSecondRecord lastSecondRecord = perSecondRecords.size() == 0 ? new PerSecondRecord() : perSecondRecords.get(perSecondRecords.size() - 1);
 								int checkMarketTime = SQLUtils.initCheckMarketTime(strategy.getMainUIParam(), scheduleDataPerSecond.getTimeStr());
-								perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), lastSecondRecord, scheduleDataPerSecond, checkMarketTime));
+								perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), perSecondRecords, scheduleDataPerSecond, checkMarketTime));
 							}						
 							strategy.setFirstRun(false);
 							strategy.setPerSecondRecords(perSecondRecords);
@@ -80,8 +79,7 @@ public class TaskScheduler {
 							scheduleDatas.add(scheduleData);
 							int checkMarketTime = SQLUtils.initCheckMarketTime(strategy.getMainUIParam(), scheduleData.getTimeStr());
 							
-							PerSecondRecord lastSecondRecord = perSecondRecords.size() == 0 ? new PerSecondRecord() : perSecondRecords.get(perSecondRecords.size() - 1);
-							perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), lastSecondRecord, scheduleData, checkMarketTime));
+							perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), perSecondRecords, scheduleData, checkMarketTime));
 //							System.out.println("Calculation for " + strategy.getStrategyName() + " at " + time + ", perSecondRecords:" + perSecondRecords.size() + ", scheduleDatas:" + scheduleDatas.size());
 						}
 						strategy.setPnl(strategy.getPerSecondRecords().size() > 0 ? strategy.getPerSecondRecords().get(strategy.getPerSecondRecords().size() - 1).getTotalPnl() : 0);

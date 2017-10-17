@@ -195,11 +195,10 @@ public class YosonEWrapper extends BasicEWrapper {
 		for (String dateStr : scheduleDataMap.keySet()) {
 			List<ScheduleData> dailyScheduleData = scheduleDataMap.get(dateStr);
 			List<PerSecondRecord> dailyPerSecondRecord = new ArrayList<PerSecondRecord>();
-			for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {
-				PerSecondRecord lastSecondRecord = dailyPerSecondRecord.size() == 0 ? new PerSecondRecord() : dailyPerSecondRecord.get(dailyPerSecondRecord.size() - 1);
+			for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {				
 				int checkMarketTime = SQLUtils.initCheckMarketTime(strategy.getMainUIParam(), scheduleDataPerSecond.getTimeStr());
 				dailyPerSecondRecord.add(new PerSecondRecord(dailyScheduleData, strategy.getMainUIParam(), 
-					lastSecondRecord, scheduleDataPerSecond, checkMarketTime));
+						dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime));
 			}
 			TradePerSecondDetailsCSVWriter.WriteCSV(folderPath, strategy, symbol, dailyPerSecondRecord);
 		}
