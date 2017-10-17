@@ -1,9 +1,12 @@
 package com.yoson.model;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
 import com.yoson.date.BrokenDate;
+import com.yoson.date.DateUtils;
 
 public class MainUIParam extends TestSet {
 	private String sourcePath;
@@ -286,5 +289,67 @@ public class MainUIParam extends TestSet {
 
 	public void setOrderTicker(double orderTicker) {
 		this.orderTicker = orderTicker;
+	}
+	
+	public static final MainUIParam getMainUIParam() {
+		MainUIParam mainUIParam = new MainUIParam();
+		mainUIParam.settShort(120);
+		mainUIParam.settShortTo(120);
+		mainUIParam.settShortLiteral(1);
+		
+		mainUIParam.settLong(600);
+		mainUIParam.settLongTo(600);
+		mainUIParam.settLongLiteral(600);
+		
+		mainUIParam.setHld(0.001);
+		mainUIParam.setHldTo(0.001);
+		mainUIParam.setHldLiteral(0.001);
+		
+		
+		mainUIParam.setStopLoss(200);
+		mainUIParam.setStopLossTo(200);
+		mainUIParam.setStopLossLiteral(200);
+		
+		mainUIParam.setTradeStopLoss(50);
+		mainUIParam.setTradeStopLossTo(50);
+		mainUIParam.setTradeStopLossLiteral(50);
+
+		mainUIParam.setInstantTradeStoploss(0.6);
+		mainUIParam.setInstantTradeStoplossTo(0.6);
+		mainUIParam.setInstantTradeStoplossLiteral(0.6);
+		
+		mainUIParam.setItsCounter(50);
+		mainUIParam.setItsCounterTo(50);
+		mainUIParam.setItsCounterLiteral(50);
+		
+		mainUIParam.setUnit(1);
+		mainUIParam.setOrderTicker(10);
+		
+		mainUIParam.setMarketStartTime("09:15:00");
+		mainUIParam.setLunchStartTimeFrom("12:00:00");
+		mainUIParam.setLunchStartTimeTo("13:00:00");
+		mainUIParam.setMarketCloseTime("16:15:00");
+		
+		mainUIParam.setCashPerIndexPoint(50);
+		mainUIParam.setTradingFee(18);
+		mainUIParam.setOtherCostPerTrade(0);
+		
+		mainUIParam.setLastNumberOfMinutesClearPosition(2);
+		mainUIParam.setLunchLastNumberOfMinutesClearPosition(2);
+														
+		mainUIParam.setSource("BBG_HSI");
+		mainUIParam.setVersion("6");
+		
+		mainUIParam.setOutputChart(false);
+		
+		mainUIParam.setTradeDataField("tradelast");	   
+		mainUIParam.setAskDataField("asklast");			   
+		mainUIParam.setBidDataField("bidlast");	
+		
+		List<BrokenDate> brokenDateList = new ArrayList<BrokenDate>();
+		brokenDateList.add(new BrokenDate("2014-01-01", DateUtils.yyyyMMdd().format(new Date())));
+		mainUIParam.setBrokenDateList(brokenDateList);
+		
+		return mainUIParam;
 	}
 }
