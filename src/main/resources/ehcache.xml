@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache>
+
+ <!-- 数据缓存存放目录 -->
+  <diskStore path="/jcms_cache_data/ehcache"/>
+  <!-- 
+   页面缓存
+   三种缓存算法：LRU-最近最少使用、LFU-较少频率使用和FIFO-先进先出。
+
+  参数详解：
+
+   simplePageCachingFilter 缓存的名称
+   maxElementsInMemory 缓存中元素的最大数量
+   maxElementsOnDisk 持久化到硬盘的缓存元素的最大数量
+   eternal="false"  如果为true，表示对象永远不会过期，此时会忽略timeToIdleSeconds和timeToLiveSeconds属性，默认为false;
+   overflowToDisk="true" 当缓存中元素数量超过限制时，将这些元素持久化到硬盘，为false时，设置没意义。
+   timeToIdleSeconds 多长时间不访问缓存，那么就清除该缓存
+   timeToLiveSeconds 缓存的存活时间
+   -->
+  <cache name="SimplePageCachingFilter"  
+         maxElementsInMemory="10000"  
+         maxElementsOnDisk="1000"  
+         eternal="false"  
+         overflowToDisk="true"  
+         timeToIdleSeconds="5"  
+         timeToLiveSeconds="30"  
+         memoryStoreEvictionPolicy="LFU"/> 
+  
+  <!-- Ehcache 对象、数据缓存用以下配置 -->
+  <defaultCache  maxElementsInMemory="10000" 
+        eternal="false" 
+        timeToIdleSeconds="120"
+        timeToLiveSeconds="120"
+        overflowToDisk="true"
+        diskSpoolBufferSizeMB="30" 
+        maxElementsOnDisk="10000000" 
+        diskPersistent="false" 
+        diskExpiryThreadIntervalSeconds="120"/>
+</ehcache>

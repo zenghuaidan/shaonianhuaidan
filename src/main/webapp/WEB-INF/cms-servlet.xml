@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd">
+    
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+		 	<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+       		<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<mvc:resources location="/resources/" mapping="/resources/**"/>
+	<!-- mvc:interceptors-->
+		<!-- this will intercept all the request -->
+		<!-- bean class="com.edeas.admango.web.AuthInterceptor"/-->
+		
+		<!-- only intercept the request map to the url -->
+		<!-- mvc:interceptor>
+			<mvc:mapping path="/admin/**"/>
+			<bean class="com.edeas.admango.web.AuthInterceptor"/>
+		</mvc:interceptor-->
+	<!-- /mvc:interceptors-->
+	<context:component-scan base-package="com.yoson.cms.controller"/>
+	
+	<dwr:controller id="dwrController" debug="true">
+		<dwr:config-param name="fileUploadMaxBytes" value="25000" />			
+	</dwr:controller>
+	
+	<!-- base on annotation -->
+	<dwr:annotation-config id="dwrAnnotationConfig" />
+  	<dwr:annotation-scan base-package="com.yoson.cms" scanDataTransferObject="true"/>
+  	 
+  	 <!-- base on xml -->
+  	<dwr:configuration>  	
+  		<!-- dwr:convert type="bean" class="com.edeas.admango.model.User"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.UserRole"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.Company"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.Category"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.Brand"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.Product"></dwr:convert>
+  		
+  		<dwr:convert type="bean" class="com.edeas.admango.model.Store"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.Chain"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.Price"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.Admango"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.District"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.Area"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.SuggestedPriceLog"></dwr:convert>
+  		<dwr:convert type="enum" class="com.edeas.admango.enumeration.UserRoleType"></dwr:convert-->  		  	  		  
+  		  		
+		<!--dwr:convert type="bean" class="com.edeas.admango.model.User"></dwr:convert>
+  		<dwr:convert type="bean" class="com.edeas.admango.model.UserRole"></dwr:convert>
+  		<dwr:convert type="enum" class="com.edeas.admango.enumeration.PackageType"></dwr:convert-->
+  		<!-- this is a bad idea for live, but can be useful in testing -->
+  		
+  		<dwr:convert type="bean" class="com.yoson.model.MainUIParam"></dwr:convert>  		
+  		<dwr:convert type="bean" class="com.yoson.date.BrokenDate"></dwr:convert>
+	    <dwr:convert type="exception" class="java.lang.Exception"/>
+	    <dwr:convert type="bean" class="java.lang.StackTraceElement"/>
+  	</dwr:configuration>
+  	
+  	<!-- base on xml -->
+  	<!-- resources not in this war file: java.util.Date -->
+  	<!-- bean id="dateService" class="java.util.Date">
+	  <dwr:remote javascript="dateService">	  	
+	  </dwr:remote>
+  	</bean-->
+  	  	 
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	  <property value="true" name="alwaysUseFullPath"></property> 
+	  <property name="mappings">
+	    <props>  
+	      <prop key="/dwr/**/*">dwrController</prop>
+	    </props>
+	 </property> 
+	</bean>	
+	
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+	
+	<!-- Spring MVC Exception 的三种处理方式, 方式1 -->
+	<!-- 
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">  
+       	定义默认的异常处理页面，当该异常类型的注册时使用   
+        <property name="defaultErrorView" value="error"></property>  
+       	定义异常处理页面用来获取异常信息的变量名，默认名为exception  
+        <property name="exceptionAttribute" value="ex"></property>  
+        
+       	定义需要特殊处理的异常，用类名或完全路径名作为key，异常页名作为值  
+        <property name="exceptionMappings">  
+            <props>  
+                <prop key="com.edeas.admango.Exception1">view-exception1</prop>  
+                <prop key="com.edeas.admango.Exception2">view-exception2</prop>      
+                                                        这里还可以继续扩展对不同异常类型的处理   
+            </props>  
+        </property>  
+    </bean>
+    -->  
+	
+	<!-- Spring MVC Exception 的三种处理方式, 方式2 -->
+	<!--bean id="exceptionHandler" class="com.edeas.admango.exceptionHandler.MyExceptionHandler"/-->
+	
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="500000000"></property>
+	</bean>
+</beans>
