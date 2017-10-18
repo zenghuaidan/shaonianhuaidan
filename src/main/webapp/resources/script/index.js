@@ -188,9 +188,32 @@ function updateControlTab() {
 	    type: "GET",
 	    url: "getAllStrategy",
 	    success: function(data) {
-	    	var trs = "<tr><td>Pannel Number</td><td>Execute</td><td>dyH</td><td>buffer</td><td>tradestoploss</td><td>stoploss</td><td>Trade Count</td><td>pnl</td></tr>";
+	    	var trs = "<tr>" +
+	    			"<td>Pannel Number</td>" +
+	    			"<td>Execute</td>" +
+	    			"<td>T-Short</td>" +
+	    			"<td>T-Long</td>" +
+	    			"<td>HLD(Without %)</td>" +
+	    			"<td>stoploss</td>" +
+	    			"<td>tradestoploss</td>" +
+	    			"<td>Instant trade stoploss</td>" +
+	    			"<td>ITS counter</td>" +
+	    			"<td>Trade Count</td>" +
+	    			"<td>pnl</td>" +
+	    			"</tr>";
 	    	for(var i = 0; i < data.length; i++) {	    			    		
-	    		trs += "<tr><td>" + data[i].strategyName + "</td><td>" + data[i].active + "</td><td>" + data[i].mainUIParam.tShort + "</td><td>" + data[i].mainUIParam.hld + "</td><td>" + data[i].mainUIParam.tradeStopLoss + "</td><td>" + data[i].mainUIParam.stopLoss + "</td><td>" + data[i].tradeCount + "</td><td>" + data[i].pnl + "</td></tr>";
+	    		trs += "<tr>" +
+	    				"<td>" + data[i].strategyName + "</td>" +
+						"<td>" + data[i].active + "</td>" +
+						"<td>" + data[i].mainUIParam.tShort + "</td>" +						
+						"<td>" + data[i].mainUIParam.tLong + "</td>" +
+						"<td>" + data[i].mainUIParam.hld + "</td>" +
+						"<td>" + data[i].mainUIParam.stopLoss + "</td>" +
+						"<td>" + data[i].mainUIParam.tradeStopLoss + "</td>" +
+						"<td>" + data[i].mainUIParam.instantTradeStoploss + "</td>" +						
+						"<td>" + data[i].mainUIParam.itsCounter + "</td>" +						
+						"<td>" + data[i].tradeCount + "</td>" +
+						"<td>" + data[i].pnl + "</td></tr>";
 	    	}
 	    	$("#controlDataTable").html(trs);
 	    },
