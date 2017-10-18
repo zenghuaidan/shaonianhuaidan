@@ -95,6 +95,20 @@ public class SQLUtils {
 		}
 	}
 	
+	public static List<String> getSources() {
+		Session session = getSession();		
+		try {
+			String sql = "select distinct source from schedule_data order by source asc";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return sqlQuery.list();			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<String>();
+		} finally {
+			session.close();
+		}
+	}
+	
 	public static void saveScheduledDataRecord(List<ScheduledDataRecord> scheduledDataRecords, String dataStartTime, String dataEndTime, String source, boolean isReplace) {
 		Session session = getSession();
 		try {

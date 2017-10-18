@@ -28,6 +28,11 @@ public class InitServlet extends HttpServlet {
 		return wc;
 	}
 	
+	public static String getVersionIndex() {
+		String version = getVersion();
+		return version.indexOf("-") >= 0 ? version.split("-")[1] : "0";
+	}
+	
 	public static String getVersion() {
 		String temp = wc.getServletContext().getContextPath();
 		return temp.substring(1, temp.length()).toUpperCase();
