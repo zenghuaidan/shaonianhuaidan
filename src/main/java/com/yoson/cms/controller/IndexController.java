@@ -65,7 +65,7 @@ public class IndexController  implements StatusCallBack {
 	@RequestMapping("/")
 	public String index(Model model) {
 		model.addAttribute("mainUIParam", BackTestTask.running || IndexController.mainUIParam != null ? IndexController.mainUIParam : MainUIParam.getMainUIParam());
-		model.addAttribute("sources", Global.sources);
+		model.addAttribute("sources", SQLUtils.getSources());
 		model.addAttribute("connectionInfo", EClientSocketUtils.connectionInfo == null ? getDefaultConnectionInfo() : EClientSocketUtils.connectionInfo);
 		model.addAttribute("contract", EClientSocketUtils.contract == null ? getDefaultContract() : EClientSocketUtils.contract);
 		model.addAttribute("strategies", EClientSocketUtils.strategies);
@@ -76,7 +76,7 @@ public class IndexController  implements StatusCallBack {
 		ConnectionInfo connectionInfo = new ConnectionInfo();
 		connectionInfo.setHost("127.0.0.1");
 		connectionInfo.setPort(7496);
-		connectionInfo.setClientId(1);
+		connectionInfo.setClientId(Integer.parseInt(InitServlet.getVersionIndex()));
 		connectionInfo.setAccount("U8979091");
 		return connectionInfo;
 	}
