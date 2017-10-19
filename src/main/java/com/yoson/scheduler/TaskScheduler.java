@@ -45,7 +45,7 @@ public class TaskScheduler {
 			long lastSecond = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
 			if(EClientSocketUtils.isConnected()) {
 				for (Strategy strategy : EClientSocketUtils.strategies) {
-					if (strategy.isActive()) {
+					if (strategy.isActive() && SQLUtils.isMarketTime(strategy.getMainUIParam(), now)) {
 						if(strategy.isFirstRun()) {
 							List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord();
 //							System.out.println("scheduledDataRecords:" + scheduledDataRecords.size());
