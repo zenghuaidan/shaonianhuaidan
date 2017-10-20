@@ -23,7 +23,7 @@ public class TaskScheduler {
 			Calendar calendar = Calendar.getInstance();  
 			Date now = new Date();
 			boolean validateTime = YosonEWrapper.isValidateTime(now);
-			String time = DateUtils.yyyyMMddHHmmss2().format(now);
+			String dateTimeStr = DateUtils.yyyyMMddHHmmss2().format(now);
 //			System.out.println();
 //			System.out.println("*************************Do Trade:<" + time + ">*************************");
 			if(!validateTime) {
@@ -31,7 +31,7 @@ public class TaskScheduler {
 					Date endTime = DateUtils.yyyyMMddHHmm().parse(EClientSocketUtils.contract.getEndTime());
 					calendar.setTime(endTime);  
 					calendar.add(Calendar.SECOND, 1);
-					if((Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime())) + "").equals(time)) {
+					if((Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime())) + "").equals(dateTimeStr)) {
 						//trigger auto backtest
 						EClientSocketUtils.disconnect();
 					}
@@ -45,11 +45,11 @@ public class TaskScheduler {
 			long lastSecond = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
 			if(EClientSocketUtils.isConnected()) {
 				for (Strategy strategy : EClientSocketUtils.strategies) {
-					if (strategy.isActive() && SQLUtils.isMarketTime(strategy.getMainUIParam(), now)) {
+					if (strategy.isActive() && SQLUtils.isMarketTime(strategy.getMainUIParam(), DateUtils.getTimeStr(dateTimeStr))) {
 						if(strategy.isFirstRun()) {
 							List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord();
 //							System.out.println("scheduledDataRecords:" + scheduledDataRecords.size());
-							if(scheduledDataRecords.size() > 0 && scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime().equals(time)) {
+							if(scheduledDataRecords.size() > 0 && scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime().equals(dateTimeStr)) {
 								scheduledDataRecords.remove(scheduledDataRecords.size() - 1);
 							}
 //							System.out.println("Calculation for " + strategy.getStrategyName() + " at " + time);
@@ -83,7 +83,7 @@ public class TaskScheduler {
 //							System.out.println("Calculation for " + strategy.getStrategyName() + " at " + time + ", perSecondRecords:" + perSecondRecords.size() + ", scheduleDatas:" + scheduleDatas.size());
 						}
 						strategy.setPnl(strategy.getPerSecondRecords().size() > 0 ? strategy.getPerSecondRecords().get(strategy.getPerSecondRecords().size() - 1).getTotalPnl() : 0);
-						placeAnOrder(strategy, time);
+						placeAnOrder(strategy, dateTimeStr);
 					}
 				}			
 			}
