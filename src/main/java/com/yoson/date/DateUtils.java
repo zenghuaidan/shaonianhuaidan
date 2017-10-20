@@ -117,4 +117,12 @@ public class DateUtils {
         }
         return yyyyMMddHHmmss2.get();
 	}	
+	
+	public static String getDateStr(String dateTimeStr) {
+		return dateTimeStr.substring(0, 4) + "-" + dateTimeStr.substring(4, 6) + "-" + dateTimeStr.substring(6, 8);
+	}
+	
+	public static String getTimeStr(String dateTimeStr) {
+		return  dateTimeStr.substring(8, 10) + ":" + dateTimeStr.substring(10, 12) + ":" + dateTimeStr.substring(12, 14);		
+	}
 }

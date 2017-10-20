@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.poi.xslf.usermodel.DrawingTextBody;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -117,9 +118,9 @@ public class SQLUtils {
 			List<String> values = new ArrayList<String>();
 			for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
 				if(DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(scheduledDataRecord.getTime()), dataStartTime, dataEndTime)) {
-					String dateTime = scheduledDataRecord.getTime();
-					String dateStr = dateTime.substring(0, 4) + "-" + dateTime.substring(4, 6) + "-" + dateTime.substring(6, 8);
-					String timeStr = dateTime.substring(8, 10) + ":" + dateTime.substring(10, 12) + ":" + dateTime.substring(12, 14);
+					String dateTimeStr = scheduledDataRecord.getTime();
+					String dateStr = DateUtils.getDateStr(dateTimeStr);
+					String timeStr = DateUtils.getTimeStr(dateTimeStr);
 					values.add("('"+ source +"','" + dateStr + "','" + timeStr + "'," 
 							+ scheduledDataRecord.getBidavg() + "," + scheduledDataRecord.getBidlast() + "," + scheduledDataRecord.getBidmax() + "," + scheduledDataRecord.getBidmin() + ","
 							+ scheduledDataRecord.getAskavg() + "," + scheduledDataRecord.getAsklast() + "," + scheduledDataRecord.getAskmax() + "," + scheduledDataRecord.getAskmin() + ","
@@ -192,8 +193,8 @@ public class SQLUtils {
 		return "";
 	}
 	
-	public static boolean isMarketTime(MainUIParam mainUIParam, Date now) throws ParseException {
-		long current = now.getTime();
+	public static boolean isMarketTime(MainUIParam mainUIParam, String timeStr) throws ParseException {
+		long current = DateUtils.HHmmss().parse(timeStr).getTime();
 		
 		long morningStartTime = DateUtils.HHmmss().parse(mainUIParam.getMarketStartTime()).getTime();
 		long lunch_start_time = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeFrom()).getTime();
