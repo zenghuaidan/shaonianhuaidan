@@ -429,7 +429,7 @@ public class MainUIParam extends TestSet {
 		return current >= morningStartTime && current <= lunch_start_time || current >= lunch_end_time && current <= market_close_time;
 	}
 	
-	public int initCheckMarketTime(String timeStr) throws ParseException {
+	public int isCheckMarketTime(String timeStr) throws ParseException {
 		long lastMinutes = this.getLastNumberOfMinutesClearPosition() * 60 * 1000;
 		long lunchLastMinutes = this.getLunchLastNumberOfMinutesClearPosition() * 60 * 1000;
 		long current = DateUtils.HHmmss().parse(timeStr).getTime();
