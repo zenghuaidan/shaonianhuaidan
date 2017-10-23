@@ -10,7 +10,6 @@ import com.ib.client.Order;
 import com.yoson.date.DateUtils;
 import com.yoson.model.PerSecondRecord;
 import com.yoson.model.ScheduleData;
-import com.yoson.sql.SQLUtils;
 import com.yoson.tws.EClientSocketUtils;
 import com.yoson.tws.ScheduledDataRecord;
 import com.yoson.tws.Strategy;
@@ -45,7 +44,7 @@ public class TaskScheduler {
 			long lastSecond = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
 			if(EClientSocketUtils.isConnected()) {
 				for (Strategy strategy : EClientSocketUtils.strategies) {
-					if (strategy.isActive() && SQLUtils.isMarketTime(strategy.getMainUIParam(), DateUtils.getTimeStr(dateTimeStr))) {
+					if (strategy.isActive() && strategy.getMainUIParam().isMarketTime(DateUtils.getTimeStr(dateTimeStr))) {
 						if(strategy.isFirstRun()) {
 							List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord();
 //							System.out.println("scheduledDataRecords:" + scheduledDataRecords.size());
@@ -64,7 +63,7 @@ public class TaskScheduler {
 							}
 							List<PerSecondRecord> perSecondRecords = new ArrayList<PerSecondRecord>();
 							for (ScheduleData scheduleDataPerSecond : scheduleDatas) {
-								int checkMarketTime = SQLUtils.initCheckMarketTime(strategy.getMainUIParam(), scheduleDataPerSecond.getTimeStr());
+								int checkMarketTime = strategy.getMainUIParam().initCheckMarketTime(scheduleDataPerSecond.getTimeStr());
 								perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), perSecondRecords, scheduleDataPerSecond, checkMarketTime));
 							}						
 							strategy.setFirstRun(false);
@@ -77,7 +76,7 @@ public class TaskScheduler {
 							ScheduleData scheduleData = YosonEWrapper.toScheduleData(lastSecondScheduledDataRecord, strategy.getMainUIParam());
 //							System.out.println("scheduleData for " + strategy.getStrategyName() + " at " + time + ", ask:" + scheduleData.getAskPrice() + ", bid:" + scheduleData.getBidPrice() + ", trade:" + scheduleData.getLastTrade());
 							scheduleDatas.add(scheduleData);
-							int checkMarketTime = SQLUtils.initCheckMarketTime(strategy.getMainUIParam(), scheduleData.getTimeStr());
+							int checkMarketTime = strategy.getMainUIParam().initCheckMarketTime(scheduleData.getTimeStr());
 							
 							perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), perSecondRecords, scheduleData, checkMarketTime));
 //							System.out.println("Calculation for " + strategy.getStrategyName() + " at " + time + ", perSecondRecords:" + perSecondRecords.size() + ", scheduleDatas:" + scheduleDatas.size());

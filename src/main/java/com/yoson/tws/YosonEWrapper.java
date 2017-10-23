@@ -196,7 +196,7 @@ public class YosonEWrapper extends BasicEWrapper {
 			List<ScheduleData> dailyScheduleData = scheduleDataMap.get(dateStr);
 			List<PerSecondRecord> dailyPerSecondRecord = new ArrayList<PerSecondRecord>();
 			for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {				
-				int checkMarketTime = SQLUtils.initCheckMarketTime(strategy.getMainUIParam(), scheduleDataPerSecond.getTimeStr());
+				int checkMarketTime = strategy.getMainUIParam().initCheckMarketTime(scheduleDataPerSecond.getTimeStr());
 				dailyPerSecondRecord.add(new PerSecondRecord(dailyScheduleData, strategy.getMainUIParam(), 
 						dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime));
 			}
