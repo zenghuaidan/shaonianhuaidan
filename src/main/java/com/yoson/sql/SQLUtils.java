@@ -70,7 +70,7 @@ public class SQLUtils {
 		if (BackTestTask.marketTimeMap.containsKey(sData.getTimeStr())) {
 			return;
 		}
-		BackTestTask.marketTimeMap.put(sData.getTimeStr(), initCheckMarketTime(mainUIParam, sData.getTimeStr()));
+		BackTestTask.marketTimeMap.put(sData.getTimeStr(), mainUIParam.initCheckMarketTime(sData.getTimeStr()));
 	}
 
 	private static Session getSession() {
@@ -189,40 +189,6 @@ public class SQLUtils {
 			session.close();
 		}
 		return "";
-	}
-	
-	public static boolean isMarketTime(MainUIParam mainUIParam, String timeStr) throws ParseException {
-		long current = DateUtils.HHmmss().parse(timeStr).getTime();
-		
-		long morningStartTime = DateUtils.HHmmss().parse(mainUIParam.getMarketStartTime()).getTime();
-		long lunch_start_time = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeFrom()).getTime();
-		long lunch_end_time = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
-		long market_close_time = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
-		return current >= morningStartTime && current <= lunch_start_time || current >= lunch_end_time && current <= market_close_time;
-	}
-	
-	public static int initCheckMarketTime(MainUIParam mainUIParam, String timeStr) throws ParseException {
-		long lastMinutes = mainUIParam.getLastNumberOfMinutesClearPosition() * 60 * 1000;
-		long lunchLastMinutes = mainUIParam.getLunchLastNumberOfMinutesClearPosition() * 60 * 1000;
-		long current = DateUtils.HHmmss().parse(timeStr).getTime();
-		
-		long morningStartTime = DateUtils.HHmmss().parse(mainUIParam.getMarketStartTime()).getTime();
-		long lunch_start_time = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeFrom()).getTime();
-		long lunch_end_time = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
-		long market_close_time = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
-		
-		if (current < (morningStartTime) || current >= market_close_time - lastMinutes)
-		{
-			return 0;
-		} else // Within the trading hours
-		{
-			if ((current < (lunch_start_time - lunchLastMinutes)) || (current >= lunch_end_time)) {
-				return 1;
-			} else // In exactly lunch time (not in the trading hour)
-			{
-				return 0;
-			}
-		}
 	}
 	
 }

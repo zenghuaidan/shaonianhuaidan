@@ -29,7 +29,6 @@ import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
 import com.yoson.model.PerSecondRecord;
 import com.yoson.model.ScheduleData;
-import com.yoson.sql.SQLUtils;
 
 public class YosonEWrapper extends BasicEWrapper {
 	
@@ -196,7 +195,7 @@ public class YosonEWrapper extends BasicEWrapper {
 			List<ScheduleData> dailyScheduleData = scheduleDataMap.get(dateStr);
 			List<PerSecondRecord> dailyPerSecondRecord = new ArrayList<PerSecondRecord>();
 			for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {
-				int checkMarketTime = SQLUtils.initCheckMarketTime(strategy.getMainUIParam(), scheduleDataPerSecond.getTimeStr());
+				int checkMarketTime = strategy.getMainUIParam().initCheckMarketTime(scheduleDataPerSecond.getTimeStr());
 				dailyPerSecondRecord.add(new PerSecondRecord(dailyScheduleData, strategy.getMainUIParam(), 
 						dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime));
 			}

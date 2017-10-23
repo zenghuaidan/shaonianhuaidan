@@ -1,5 +1,6 @@
 package com.yoson.model;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -351,5 +352,39 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setBrokenDateList(brokenDateList);
 		
 		return mainUIParam;
+	}
+	
+	public boolean isMarketTime(String timeStr) throws ParseException {
+		long current = DateUtils.HHmmss().parse(timeStr).getTime();
+		
+		long morningStartTime = DateUtils.HHmmss().parse(this.getMarketStartTime()).getTime();
+		long lunch_start_time = DateUtils.HHmmss().parse(this.getLunchStartTimeFrom()).getTime();
+		long lunch_end_time = DateUtils.HHmmss().parse(this.getLunchStartTimeTo()).getTime();
+		long market_close_time = DateUtils.HHmmss().parse(this.getMarketCloseTime()).getTime();
+		return current >= morningStartTime && current <= lunch_start_time || current >= lunch_end_time && current <= market_close_time;
+	}
+	
+	public int initCheckMarketTime(String timeStr) throws ParseException {
+		long lastMinutes = this.getLastNumberOfMinutesClearPosition() * 60 * 1000;
+		long lunchLastMinutes = this.getLunchLastNumberOfMinutesClearPosition() * 60 * 1000;
+		long current = DateUtils.HHmmss().parse(timeStr).getTime();
+		
+		long morningStartTime = DateUtils.HHmmss().parse(this.getMarketStartTime()).getTime();
+		long lunch_start_time = DateUtils.HHmmss().parse(this.getLunchStartTimeFrom()).getTime();
+		long lunch_end_time = DateUtils.HHmmss().parse(this.getLunchStartTimeTo()).getTime();
+		long market_close_time = DateUtils.HHmmss().parse(this.getMarketCloseTime()).getTime();
+		
+		if (current < (morningStartTime) || current >= market_close_time - lastMinutes)
+		{
+			return 0;
+		} else // Within the trading hours
+		{
+			if ((current < (lunch_start_time - lunchLastMinutes)) || (current >= lunch_end_time)) {
+				return 1;
+			} else // In exactly lunch time (not in the trading hour)
+			{
+				return 0;
+			}
+		}
 	}
 }
