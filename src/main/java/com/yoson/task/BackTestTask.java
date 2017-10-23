@@ -75,6 +75,25 @@ public class BackTestTask implements Runnable {
 		
 		this.callBack = callBack;
 	}
+	
+	public static void initRawData(List<String> sdatas, MainUIParam mainUIParam) throws ParseException {
+		for (String sdata : sdatas) {
+			ScheduleData sData = new ScheduleData(sdata.split(",")[0], sdata.split(",")[1], sdata.split(",")[2], sdata.split(",")[3], sdata.split(",")[4]);
+			String dateStr = sData.getDateStr();
+			BackTestTask.sumOfLastTrade.put(dateStr, BackTestTask.sumOfLastTrade.get(dateStr) == null ? sData.getLastTrade() : BackTestTask.sumOfLastTrade.get(dateStr) + sData.getLastTrade());
+			if (BackTestTask.rowData.containsKey(dateStr)) {
+				BackTestTask.rowData.get(dateStr).add(sData);
+			} else {
+				List<ScheduleData> dataList = new ArrayList<ScheduleData>();
+				dataList.add(sData);
+				BackTestTask.rowData.put(dateStr, dataList);
+			}
+			if (BackTestTask.marketTimeMap.containsKey(sData.getTimeStr())) {
+				return;
+			}
+			BackTestTask.marketTimeMap.put(sData.getTimeStr(), mainUIParam.initCheckMarketTime(sData.getTimeStr()));
+		}
+	}
 
 	public void runTestSet() throws IOException, ParseException {	
 		long start = System.currentTimeMillis();
@@ -83,7 +102,7 @@ public class BackTestTask implements Runnable {
 		
 		callBack.updateStatus(getStatus("Getting data from database started, this may cost several minutes, pls wait..."));
 		
-		SQLUtils.initScheduleData(mainUIParam);
+		initRawData(SQLUtils.initScheduleData(mainUIParam), mainUIParam);	
 		
 		long milliseconds = System.currentTimeMillis() - start;
 		callBack.updateStatus(getStatus("Getting data from database ended, total cost: " + DateUtils.dateDiff(milliseconds)));
