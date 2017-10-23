@@ -63,7 +63,7 @@ public class TaskScheduler {
 							}
 							List<PerSecondRecord> perSecondRecords = new ArrayList<PerSecondRecord>();
 							for (ScheduleData scheduleDataPerSecond : scheduleDatas) {
-								int checkMarketTime = strategy.getMainUIParam().initCheckMarketTime(scheduleDataPerSecond.getTimeStr());
+								int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
 								perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), perSecondRecords, scheduleDataPerSecond, checkMarketTime));
 							}						
 							strategy.setFirstRun(false);
@@ -76,7 +76,7 @@ public class TaskScheduler {
 							ScheduleData scheduleData = YosonEWrapper.toScheduleData(lastSecondScheduledDataRecord, strategy.getMainUIParam());
 //							System.out.println("scheduleData for " + strategy.getStrategyName() + " at " + time + ", ask:" + scheduleData.getAskPrice() + ", bid:" + scheduleData.getBidPrice() + ", trade:" + scheduleData.getLastTrade());
 							scheduleDatas.add(scheduleData);
-							int checkMarketTime = strategy.getMainUIParam().initCheckMarketTime(scheduleData.getTimeStr());
+							int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleData.getTimeStr());
 							
 							perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), perSecondRecords, scheduleData, checkMarketTime));
 //							System.out.println("Calculation for " + strategy.getStrategyName() + " at " + time + ", perSecondRecords:" + perSecondRecords.size() + ", scheduleDatas:" + scheduleDatas.size());
