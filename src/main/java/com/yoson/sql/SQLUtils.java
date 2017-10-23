@@ -2,7 +2,6 @@ package com.yoson.sql;
 
 import java.io.File;
 import java.io.FileReader;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,14 +17,12 @@ import com.opencsv.CSVReader;
 import com.yoson.date.BrokenDate;
 import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
-import com.yoson.model.ScheduleData;
-import com.yoson.task.BackTestTask;
 import com.yoson.tws.ScheduledDataRecord;
 import com.yoson.web.InitServlet;
 
 public class SQLUtils {
     
-	public static void initScheduleData(MainUIParam mainUIParam) {
+	public static List<String> initScheduleData(MainUIParam mainUIParam) {
 		Session session = getSession();
 		List<BrokenDate> datePeriods = mainUIParam.getBrokenDateList();
 		String source = mainUIParam.getSource(); 
@@ -44,33 +41,14 @@ public class SQLUtils {
 			}
 			sql += " order by date asc, time asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
-			List<String> sdatas = sqlQuery.list();
-			for (String sdata : sdatas) {
-				ScheduleData sData = new ScheduleData(sdata.split(",")[0], sdata.split(",")[1], sdata.split(",")[2], sdata.split(",")[3], sdata.split(",")[4]);
-				initRawData(mainUIParam, sData);
-			}
+			return sqlQuery.list();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			session.close();
 		}
-	}
-	
-	private static void initRawData(MainUIParam mainUIParam, ScheduleData sData) throws ParseException {
-		String dateStr = sData.getDateStr();
-		BackTestTask.sumOfLastTrade.put(dateStr, BackTestTask.sumOfLastTrade.get(dateStr) == null ? sData.getLastTrade() : BackTestTask.sumOfLastTrade.get(dateStr) + sData.getLastTrade());
-		if (BackTestTask.rowData.containsKey(dateStr)) {
-			BackTestTask.rowData.get(dateStr).add(sData);
-		} else {
-			List<ScheduleData> dataList = new ArrayList<ScheduleData>();
-			dataList.add(sData);
-			BackTestTask.rowData.put(dateStr, dataList);
-		}
-		if (BackTestTask.marketTimeMap.containsKey(sData.getTimeStr())) {
-			return;
-		}
-		BackTestTask.marketTimeMap.put(sData.getTimeStr(), mainUIParam.initCheckMarketTime(sData.getTimeStr()));
+		return new ArrayList<String>();
 	}
 
 	private static Session getSession() {
