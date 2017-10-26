@@ -29,7 +29,6 @@ import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
 import com.yoson.model.PerSecondRecord;
 import com.yoson.model.ScheduleData;
-import com.yoson.sql.SQLUtils;
 
 public class YosonEWrapper extends BasicEWrapper {
 	
@@ -94,6 +93,10 @@ public class YosonEWrapper extends BasicEWrapper {
 		
 		lastTime = null;
 		currentOrderId = null;
+	}
+	
+	public static String getLogPath() {
+		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "log.txt");
 	}
 	
 	private static String getPath(String type) {
@@ -554,17 +557,25 @@ public class YosonEWrapper extends BasicEWrapper {
 	@Override
 	public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId,
 			int parentId, double lastFillPrice, int clientId, String whyHeld) {	
-		System.out.println("orderStatus : orderId:" + orderId + ", status:" + status);
+		BackTestCSVWriter.writeText(bidPath(), 
+				   "orderId:" + orderId 
+				 + ", status:" + status
+				 + ", filled:" + filled
+				 + ", remaining:" + remaining
+				 + ", avgFillPrice:" + avgFillPrice
+				 + ", permId:" + permId
+				 + ", parentId:" + parentId
+				 + ", lastFillPrice:" + lastFillPrice
+				 + ", clientId:" + clientId
+				 + ", whyHeld:" + whyHeld + Global.lineSeparator, true);
 		for (Strategy strategy : EClientSocketUtils.strategies) {
 			if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
 				if(status.equals("Filled")) {
-					strategy.setTradeCount(strategy.getTradeCount() + strategy.getOrderMap().get(orderId).m_totalQuantity);
+//					strategy.setTradeCount(strategy.getTradeCount() + strategy.getOrderMap().get(orderId).m_totalQuantity);
 					strategy.setFailTradeCount(0);
-					System.out.println("orderStatus : " + strategy.getStrategyName() + ", orderId:" + orderId + ", status:" + status);
 				}
 				if(status.equals("Cancelled") || status.equals("Inactive")) {
 					strategy.setFailTradeCount(strategy.getFailTradeCount() + 1);
-					System.out.println("orderStatus : " + strategy.getStrategyName() + ", orderId:" + orderId + ", status:" + status);
 				}
 			}
 		}
