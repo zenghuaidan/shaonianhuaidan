@@ -561,8 +561,9 @@ public class YosonEWrapper extends BasicEWrapper {
 	@Override
 	public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId,
 			int parentId, double lastFillPrice, int clientId, String whyHeld) {	
-		BackTestCSVWriter.writeText(getOrderStatusLogPath(), 
-				   "orderId:" + orderId 
+		BackTestCSVWriter.writeText(getOrderStatusLogPath(),
+				DateUtils.yyyyMMddHHmmss2().format(new Date())
+				 +  "=>orderId:" + orderId 
 				 + ", status:" + status
 				 + ", filled:" + filled
 				 + ", remaining:" + remaining
