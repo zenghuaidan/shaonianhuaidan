@@ -99,6 +99,10 @@ public class YosonEWrapper extends BasicEWrapper {
 		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "log.txt");
 	}
 	
+	public static String getOrderStatusLogPath() {
+		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "orderStatus.txt");
+	}
+	
 	private static String getPath(String type) {
 		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "live" + type + ".csv");
 	}
@@ -557,7 +561,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	@Override
 	public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId,
 			int parentId, double lastFillPrice, int clientId, String whyHeld) {	
-		BackTestCSVWriter.writeText(bidPath(), 
+		BackTestCSVWriter.writeText(getOrderStatusLogPath(), 
 				   "orderId:" + orderId 
 				 + ", status:" + status
 				 + ", filled:" + filled
