@@ -94,10 +94,10 @@ public class TaskScheduler {
 		if(strategy.getFailTradeCount() > 3 && lastSecondRecord.getSmoothAction() != 0) {
 			Order newOrder = new Order();
 			newOrder.m_account = EClientSocketUtils.connectionInfo.getAccount();
-			newOrder.m_orderType = "MKT"; 
+			newOrder.m_orderType = Global.MKT; 
 			newOrder.m_tif = EClientSocketUtils.contract.getTif();
 			newOrder.m_totalQuantity = 1;
-			newOrder.m_action = lastSecondRecord.getSmoothAction() == -1 ? "BUY" : "SELL";
+			newOrder.m_action = lastSecondRecord.getSmoothAction() == -1 ? Global.BUY : Global.SELL;
 			strategy.getOrderMap().put(YosonEWrapper.currentOrderId, newOrder);
 			strategy.setOrderTime(new Date());
 			EClientSocketUtils.placeOrder(YosonEWrapper.currentOrderId, newOrder);
@@ -106,10 +106,10 @@ public class TaskScheduler {
 			int quantity = currentSecondRecord.getSmoothAction() - lastSecondRecord.getSmoothAction();
 			int totalQuantity = Math.abs(quantity);
 			boolean isBuy = quantity > 0;
-			String action = isBuy ? "BUY" : "SELL";
+			String action = isBuy ? Global.BUY : Global.SELL;
 			Order newOrder = new Order();
 			newOrder.m_account = EClientSocketUtils.connectionInfo.getAccount();
-			newOrder.m_orderType = "LMT";
+			newOrder.m_orderType = Global.LMT;
 			newOrder.m_auxPrice = 0;
 			newOrder.m_tif = EClientSocketUtils.contract.getTif();
 			newOrder.m_action = action;

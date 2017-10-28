@@ -35,6 +35,10 @@ public class EClientSocketUtils {
 		return isConnected();
 	}
 	
+	public static void cancelOrder(int id) {
+		socket.cancelOrder(id);
+	}
+	
 	public static void placeOrder(int id, Order order) {
 		socket.placeOrder(id, contract, order);
 		socket.reqIds(1);
