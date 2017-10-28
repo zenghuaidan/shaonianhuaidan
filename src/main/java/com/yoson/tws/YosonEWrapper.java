@@ -560,18 +560,27 @@ public class YosonEWrapper extends BasicEWrapper {
 	public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId,
 			int parentId, double lastFillPrice, int clientId, String whyHeld) {	
 		String time = DateUtils.yyyyMMddHHmmss2().format(new Date());
+		boolean found = false;
+		for (Strategy strategy : EClientSocketUtils.strategies) {
+			if(strategy.getOrderMap().containsKey(orderId)) {
+				found = true;
+				break;
+			}
+		}
 		BackTestCSVWriter.writeText(getOrderStatusLogPath(),
 				time
-				 +  "=>orderId:" + orderId 
-				 + ", status:" + status
-				 + ", filled:" + filled
-				 + ", remaining:" + remaining
-				 + ", avgFillPrice:" + avgFillPrice
-				 + ", permId:" + permId
-				 + ", parentId:" + parentId
-				 + ", lastFillPrice:" + lastFillPrice
-				 + ", clientId:" + clientId
-				 + ", whyHeld:" + whyHeld + Global.lineSeparator, true);
+				+ (found ? "Hit Strategy," : "Miss Strategy")
+				+  "=>orderId:" + orderId 
+				+ ", status:" + status
+				+ ", filled:" + filled
+				+ ", remaining:" + remaining
+				+ ", avgFillPrice:" + avgFillPrice
+				+ ", permId:" + permId
+				+ ", parentId:" + parentId
+				+ ", lastFillPrice:" + lastFillPrice
+				+ ", clientId:" + clientId
+				+ ", whyHeld:" + whyHeld + Global.lineSeparator, true);
+
 		for (Strategy strategy : EClientSocketUtils.strategies) {
 			if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
 				if(status.equals("Filled")) {
