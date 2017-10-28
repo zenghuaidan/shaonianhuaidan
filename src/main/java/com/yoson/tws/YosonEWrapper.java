@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.Gson;
 import com.ib.client.Contract;
+import com.ib.client.Order;
 import com.opencsv.CSVReader;
 import com.yoson.cms.controller.Global;
 import com.yoson.csv.BackTestCSVWriter;
@@ -561,8 +562,9 @@ public class YosonEWrapper extends BasicEWrapper {
 	@Override
 	public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId,
 			int parentId, double lastFillPrice, int clientId, String whyHeld) {	
+		String time = DateUtils.yyyyMMddHHmmss2().format(new Date());
 		BackTestCSVWriter.writeText(getOrderStatusLogPath(),
-				DateUtils.yyyyMMddHHmmss2().format(new Date())
+				time
 				 +  "=>orderId:" + orderId 
 				 + ", status:" + status
 				 + ", filled:" + filled
@@ -579,7 +581,27 @@ public class YosonEWrapper extends BasicEWrapper {
 //					strategy.setTradeCount(strategy.getTradeCount() + strategy.getOrderMap().get(orderId).m_totalQuantity);
 					strategy.setFailTradeCount(0);
 				}
-				if(status.equals("Cancelled") || status.equals("Inactive")) {
+				if(status.equals("Cancelled") && remaining > 0) {
+					YosonEWrapper.currentOrderId++;
+					Order order = strategy.getOrderMap().get(orderId);
+					
+					Order newOrder = new Order();
+					newOrder.m_account = EClientSocketUtils.connectionInfo.getAccount();
+					newOrder.m_orderType = Global.LMT;
+					newOrder.m_auxPrice = 0;
+					newOrder.m_tif = EClientSocketUtils.contract.getTif();
+					newOrder.m_action = order.m_action;
+					newOrder.m_totalQuantity = remaining;
+					
+					double lmtPrice = YosonEWrapper.trade + ((order.m_action.equals(Global.BUY) ? 1 : -1 ) * strategy.getMainUIParam().getUnit() * strategy.getMainUIParam().getOrderTicker());
+					newOrder.m_lmtPrice = Math.round(lmtPrice * 100) / 100D;
+					
+					strategy.getOrderMap().put(YosonEWrapper.currentOrderId, newOrder);
+					strategy.setOrderTime(new Date());
+					EClientSocketUtils.placeOrder(YosonEWrapper.currentOrderId, newOrder);
+					BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Retry For(" + orderId + "), Limit Order(" + time + ") : " + strategy.getStrategyName() + ", orderId:" + YosonEWrapper.currentOrderId + ", action:" + newOrder.m_action + ", quantity:" + remaining + Global.lineSeparator, true);
+					EClientSocketUtils.cancelOrder(orderId);
+				} else if(status.equals("Cancelled") || status.equals("Inactive")) {
 					strategy.setFailTradeCount(strategy.getFailTradeCount() + 1);
 				}
 			}
