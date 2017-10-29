@@ -561,15 +561,20 @@ public class YosonEWrapper extends BasicEWrapper {
 			int parentId, double lastFillPrice, int clientId, String whyHeld) {	
 		String time = DateUtils.yyyyMMddHHmmss2().format(new Date());
 		boolean found = false;
+		boolean cancel = false;
 		for (Strategy strategy : EClientSocketUtils.strategies) {
 			if(strategy.getOrderMap().containsKey(orderId)) {
 				found = true;
 				break;
 			}
+			if(strategy.getCancelOrder().contains(orderId)) {
+				cancel = true;
+			}
 		}
 		BackTestCSVWriter.writeText(getOrderStatusLogPath(),
 				time
-				+ (found ? "Hit Strategy," : "Miss Strategy")
+				+ (found ? "Hit Strategy," : "Miss Strategy,")
+				+ (cancel ? "A Cancel Order Result," : "")
 				+  "=>orderId:" + orderId 
 				+ ", status:" + status
 				+ ", filled:" + filled
@@ -581,6 +586,7 @@ public class YosonEWrapper extends BasicEWrapper {
 				+ ", clientId:" + clientId
 				+ ", whyHeld:" + whyHeld + Global.lineSeparator, true);
 
+		if(cancel) return;
 		for (Strategy strategy : EClientSocketUtils.strategies) {
 			if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
 				if(status.equals("Filled")) {
@@ -607,6 +613,7 @@ public class YosonEWrapper extends BasicEWrapper {
 					EClientSocketUtils.placeOrder(YosonEWrapper.currentOrderId, newOrder);
 					BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Retry For(" + orderId + "), Limit Order(" + time + ") : " + strategy.getStrategyName() + ", orderId:" + YosonEWrapper.currentOrderId + ", action:" + newOrder.m_action + ", quantity:" + remaining + Global.lineSeparator, true);
 					EClientSocketUtils.cancelOrder(orderId);
+					strategy.getCancelOrder().add(orderId);
 				} else if(status.equals("Cancelled") || status.equals("Inactive")) {
 					strategy.setFailTradeCount(strategy.getFailTradeCount() + 1);
 				}
