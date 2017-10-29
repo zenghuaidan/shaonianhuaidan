@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,6 +30,7 @@ public class Strategy implements Serializable {
 	private List<PerSecondRecord> perSecondRecords;
 	private List<ScheduleData> scheduleDatas;
 	private Map<Integer, Order> orderMap;
+	private Set<Integer> cancelOrder;
 	private int failTradeCount;
 	private Date orderTime;
 
@@ -92,6 +95,7 @@ public class Strategy implements Serializable {
 	                return o2.compareTo(o1);  
 	            }     
 	        });
+			this.cancelOrder = new HashSet<Integer>();
 		}
 	}
 
@@ -101,6 +105,7 @@ public class Strategy implements Serializable {
 		this.perSecondRecords = null;
 		this.scheduleDatas = null;
 		this.orderMap = null;
+		this.cancelOrder = null;
 		this.orderTime = null;
 	}
 
@@ -170,7 +175,13 @@ public class Strategy implements Serializable {
 	public void setFailTradeCount(int failTradeCount) {
 		this.failTradeCount = failTradeCount;
 	}
-	
-	
+
+	public Set<Integer> getCancelOrder() {
+		return cancelOrder;
+	}
+
+	public void setCancelOrder(Set<Integer> cancelOrder) {
+		this.cancelOrder = cancelOrder;
+	}
 	
 }
