@@ -22,13 +22,10 @@ public class Strategy implements Serializable {
 	@Expose
 	private String strategyName;
 	private boolean active = false;
-	private boolean firstRun = true;
 	private int tradeCount;
 	private double pnl;
 	@Expose
 	private MainUIParam mainUIParam;
-	private List<PerSecondRecord> perSecondRecords;
-	private List<ScheduleData> scheduleDatas;
 	private Map<Integer, Order> orderMap;
 	private Set<Integer> cancelOrder;
 	private int failTradeCount;
@@ -58,38 +55,9 @@ public class Strategy implements Serializable {
 		this.active = active;
 	}
 
-	public boolean isFirstRun() {
-		return firstRun;
-	}
-	
-	public void setFirstRun(boolean firstRun) {
-		this.firstRun = firstRun;
-	}
-	
-	@JsonIgnore
-	public List<PerSecondRecord> getPerSecondRecords() {
-		return perSecondRecords;
-	}
-
-	public void setPerSecondRecords(List<PerSecondRecord> perSecondRecords) {
-		this.perSecondRecords = perSecondRecords;
-	}
-
-	@JsonIgnore
-	public List<ScheduleData> getScheduleDatas() {
-		return scheduleDatas;
-	}
-
-	public void setScheduleDatas(List<ScheduleData> scheduleDatas) {
-		this.scheduleDatas = scheduleDatas;
-	}
-
 	public void active() {
 		if(!active) {
 			this.active = true;		
-			this.firstRun = true;
-			this.perSecondRecords = new ArrayList<PerSecondRecord>();
-			this.scheduleDatas = new ArrayList<ScheduleData>();
 			this.orderMap = new TreeMap<Integer, Order>(new Comparator<Integer>(){  
 	            public int compare(Integer o1, Integer o2) {  
 	                return o2.compareTo(o1);  
@@ -101,9 +69,6 @@ public class Strategy implements Serializable {
 
 	public void inactive() {
 		this.active = false;
-		this.firstRun = true;
-		this.perSecondRecords = null;
-		this.scheduleDatas = null;
 		this.orderMap = null;
 		this.cancelOrder = null;
 		this.orderTime = null;
