@@ -61,11 +61,12 @@ public class EClientSocketUtils {
 		} catch (Exception e) {
 			return false;
 		} finally {
-//			if(EClientSocketUtils.strategies != null) {
-//				for (Strategy strategy : EClientSocketUtils.strategies) {
+			if(EClientSocketUtils.strategies != null) {
+				for (Strategy strategy : EClientSocketUtils.strategies) {
 //					strategy.inactive();
-//				}			
-//			}
+					strategy.setActive(false);
+				}			
+			}
 //			YosonEWrapper.clear();
 		}
 		return true;

@@ -81,10 +81,10 @@ public class TaskScheduler {
 			}
 			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Calculation finish with " + (System.currentTimeMillis() - startTime)  + Global.lineSeparator, true);
 		} catch (Exception e) {
-//			System.out.println(e.getMessage() + ">" + e.getCause().getMessage());
-//			for(StackTraceElement s : e.getStackTrace()) {
-//				System.out.println(s.toString());
-//			}
+			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Sytem Exception:" + e.toString() + ">" + e.getMessage()  + Global.lineSeparator, true);
+			for(StackTraceElement s : e.getStackTrace()) {
+				System.out.println("%%%%%%%%%%%%" + s.toString() + "%%%%%%%%%%%%%%%");
+			}
 		}
 	}
 

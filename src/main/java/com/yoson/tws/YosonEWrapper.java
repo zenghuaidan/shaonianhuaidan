@@ -96,6 +96,10 @@ public class YosonEWrapper extends BasicEWrapper {
 		currentOrderId = null;
 	}
 	
+	public static String getConnectionPath() {
+		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "connection.txt");
+	}
+	
 	public static String getLogPath() {
 		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "log.txt");
 	}
@@ -592,13 +596,13 @@ public class YosonEWrapper extends BasicEWrapper {
 		if(cancel) return;
 		for (Strategy strategy : EClientSocketUtils.strategies) {
 			if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
+				Order order = strategy.getOrderMap().get(orderId);
 				if(status.equals("Filled")) {
 //					strategy.setTradeCount(strategy.getTradeCount() + strategy.getOrderMap().get(orderId).m_totalQuantity);
 					strategy.setFailTradeCount(0);
 				}
-				if(status.equals("Cancelled") && remaining > 0) {
+				if(status.equals("Cancelled") && remaining > 0 && order.m_orderType.equals(Global.LMT)) {
 					YosonEWrapper.currentOrderId++;
-					Order order = strategy.getOrderMap().get(orderId);
 					
 					Order newOrder = new Order();
 					newOrder.m_account = EClientSocketUtils.connectionInfo.getAccount();
@@ -636,6 +640,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	@Override
 	public void connectionClosed() {
+		BackTestCSVWriter.writeText(YosonEWrapper.getConnectionPath(), "Connection close at " + DateUtils.yyyyMMddHHmmss2().format(new Date())  + Global.lineSeparator, true);
 		if(retryTimes < 10) {
 			retryTimes++;
 			EClientSocketUtils.reconnectUsingPreConnectSetting();			
