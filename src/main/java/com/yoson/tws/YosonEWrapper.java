@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -38,13 +39,11 @@ public class YosonEWrapper extends BasicEWrapper {
 	public static double trade;
 	public static double close;
 	
-	public static Map<Long, List<Double>> tradeMap;
-	public static Map<Long, List<Double>> askMap;
-	public static Map<Long, List<Double>> bidMap;
+	public static CopyOnWriteArrayList<ScheduledDataRecord> scheduledDataRecords;
 	
-	public static Map<Long, List<Integer>> tradeSizeMap;
-	public static Map<Long, List<Integer>> askSizeMap;
-	public static Map<Long, List<Integer>> bidSizeMap;
+	public static Map<Long, List<Double>> tradeSizeMap;
+	public static Map<Long, List<Double>> askSizeMap;
+	public static Map<Long, List<Double>> bidSizeMap;
 	public static Map<Long, List<Double>> closeMap;
 	public static Integer currentOrderId;
 	public static Date lastTime = new Date();
@@ -72,20 +71,16 @@ public class YosonEWrapper extends BasicEWrapper {
 	}
 	
 	public static void initData() {
-		tradeMap = new TreeMap<Long, List<Double>>();
-		askMap = new TreeMap<Long, List<Double>>();
-		bidMap = new TreeMap<Long, List<Double>>();
+		scheduledDataRecords = new CopyOnWriteArrayList<ScheduledDataRecord>();
 		closeMap = new TreeMap<Long, List<Double>>();
 		
-		tradeSizeMap = new TreeMap<Long, List<Integer>>();
-		askSizeMap = new TreeMap<Long, List<Integer>>();
-		bidSizeMap = new TreeMap<Long, List<Integer>>();
+		tradeSizeMap = new TreeMap<Long, List<Double>>();
+		askSizeMap = new TreeMap<Long, List<Double>>();
+		bidSizeMap = new TreeMap<Long, List<Double>>();
 	}
 	
 	public static void clear() {
-		tradeMap = null;
-		askMap = null;
-		bidMap = null;
+		scheduledDataRecords = null;
 		closeMap = null;
 		
 		tradeSizeMap = null;
@@ -263,19 +258,20 @@ public class YosonEWrapper extends BasicEWrapper {
 		return extractScheduledDataRecord(tradeMap, askMap, bidMap);
 	}
 	
-	public static List<ScheduledDataRecord> extractScheduledDataRecord() throws ParseException {
-		return extractScheduledDataRecord(tradeMap, askMap, bidMap);
-	}
+//	public static List<ScheduledDataRecord> extractScheduledDataRecord() throws ParseException {
+//		return extractScheduledDataRecord(tradeList, askList, bidList);
+//	}
 	
-	public static ScheduledDataRecord getLastSecondScheduledDataRecord(long lastSecond) throws ParseException {	
-		List<Double> trades = getLastRecord(tradeMap, lastSecond);
-		List<Double> asks = getLastRecord(askMap, lastSecond);
-		List<Double> bids = getLastRecord(bidMap, lastSecond);
-		
-		ScheduledDataRecord scheduledDataRecord = genScheduledData(lastSecond, trades, asks, bids);
-		
-		return scheduledDataRecord;
-	}
+//	public static ScheduledDataRecord getLastSecondScheduledDataRecord(long lastSecond) throws ParseException {	
+//		List<Double> trades = getLastRecord(tradeList, lastSecond);
+//		List<Double> asks = getLastRecord(askList, lastSecond);
+//		List<Double> bids = getLastRecord(bidList, lastSecond);
+//		
+//		ScheduledDataRecord scheduledDataRecord = genScheduledData(lastSecond, trades, asks, bids);
+//		
+//		return scheduledDataRecord;
+//	}
+	
 	private static ScheduledDataRecord genScheduledData(long time, List<Double> trades, List<Double> asks, List<Double> bids) {
 		ScheduledDataRecord scheduledDataRecord = new ScheduledDataRecord();
 		scheduledDataRecord.setTime(time+"");
@@ -300,20 +296,21 @@ public class YosonEWrapper extends BasicEWrapper {
 		}
 		return scheduledDataRecord;
 	}
-	private static List<Double> getLastRecord(Map<Long, List<Double>> map, long lastSecond) throws ParseException {
-		if(map == null || map.size() == 0)
-			return null;
-		Calendar calendar = Calendar.getInstance();  
-		for(long start = lastSecond; start >= Collections.min(map.keySet());) {
-			if (map.containsKey(start)) {
-				return map.get(start);
-			}
-		    calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));  
-		    calendar.add(Calendar.SECOND, -1);
-		    start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
-		}
-		return null;
-	}
+	
+//	private static List<Double> getLastRecord(CopyOnWriteArrayList<String> list, long lastSecond) throws ParseException {
+//		if(list == null || list.size() == 0)
+//			return null;
+//		Calendar calendar = Calendar.getInstance();
+//		long end = Long.valueOf(list.get(0).split(",")[1]);
+//		for(long start = lastSecond; start >= end;) {
+//			if (map.containsKey(start)) {
+//				return map.get(start);
+//			}
+//		    calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));  
+//		    calendar.add(Calendar.SECOND, -1);
+//		    start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+//		}
+//	}
 	
 	public static List<ScheduledDataRecord> extractScheduledDataRecord(Map<Long, List<Double>> tradeMap, Map<Long, List<Double>> askMap, Map<Long, List<Double>> bidMap) throws ParseException {
 		List<ScheduledDataRecord> scheduledDataRecords = new ArrayList<ScheduledDataRecord>();
@@ -506,22 +503,68 @@ public class YosonEWrapper extends BasicEWrapper {
 		switch (field) {
 		case 0:
 			addLiveData(bidSizeMap, now, size);
-			addLiveData(bidMap, now, bid);
+			addLiveData(scheduledDataRecords, now, bid, "bid");
 			BackTestCSVWriter.writeText(bidPath(), tag + "," + bid + "," + size + Global.lineSeparator, true);
 			break;
 		case 3:
 			addLiveData(askSizeMap, now, size);
-			addLiveData(askMap, now, ask);
+			addLiveData(scheduledDataRecords, now, ask, "ask");
 			BackTestCSVWriter.writeText(askPath(), tag + "," + ask + "," + size + Global.lineSeparator, true);
 			break;
 		case 5:
 			addLiveData(tradeSizeMap, now, size);
-			addLiveData(tradeMap, now, trade);
+			addLiveData(scheduledDataRecords, now, trade, "trade");
 			BackTestCSVWriter.writeText(tradePath(), tag + "," + trade + "," + size + Global.lineSeparator, true);
 			break;
 		case 8:
 			BackTestCSVWriter.writeText(volumePath(), tag + "," + size + Global.lineSeparator, true);
 			break;
+		}
+	}
+	
+	public synchronized static void addLiveData(CopyOnWriteArrayList<ScheduledDataRecord> list, Date date, double value, String type) {
+		String dateTimeStr = DateUtils.yyyyMMddHHmmss2().format(date);
+		long time = Long.valueOf(dateTimeStr);
+		ScheduledDataRecord scheduleData = null;
+		for(int i = list.size() - 1; i >= 0; i--) {
+			long _time = Long.parseLong(list.get(i).getTime());
+			if(time > _time) {
+				break;
+			} else if(time == _time) {
+				scheduleData = list.get(i);
+				break;
+			}
+		}
+		if (scheduleData == null) {
+			scheduleData = new ScheduledDataRecord();
+			scheduleData.setTime(dateTimeStr);
+			list.add(scheduleData);
+		}
+		switch (type) {
+			case "trade":
+				scheduleData.setTradeCount(scheduleData.getTradeCount() + 1);
+				scheduleData.setTradeTotal(scheduleData.getTradeTotal() + value);
+				scheduleData.setTradeavg(scheduleData.getTradeTotal() / scheduleData.getTradeCount());
+				scheduleData.setTradelast(value);
+				scheduleData.setTrademin(scheduleData.getTrademin() == 0 ? value : Math.min(scheduleData.getTrademin(), value));
+				scheduleData.setTrademax(scheduleData.getTrademax() == 0 ? value : Math.max(scheduleData.getTrademax(), value));
+				break;
+			case "ask":
+				scheduleData.setAskCount(scheduleData.getAskCount() + 1);
+				scheduleData.setAskTotal(scheduleData.getAskTotal() + value);
+				scheduleData.setAskavg(scheduleData.getAskTotal() / scheduleData.getAskCount());
+				scheduleData.setAsklast(value);
+				scheduleData.setAskmin(scheduleData.getAskmin() == 0 ? value : Math.min(scheduleData.getAskmin(), value));
+				scheduleData.setAskmax(scheduleData.getAskmax() == 0 ? value : Math.max(scheduleData.getAskmax(), value));
+				break;
+			case "bid":
+				scheduleData.setBidCount(scheduleData.getBidCount() + 1);
+				scheduleData.setBidTotal(scheduleData.getBidTotal() + value);
+				scheduleData.setBidavg(scheduleData.getBidTotal() / scheduleData.getBidCount());
+				scheduleData.setBidlast(value);
+				scheduleData.setBidmin(scheduleData.getBidmin() == 0 ? value : Math.min(scheduleData.getBidmin(), value));
+				scheduleData.setBidmax(scheduleData.getBidmax() == 0 ? value : Math.max(scheduleData.getBidmax(), value));
+				break;
 		}
 	}
 	

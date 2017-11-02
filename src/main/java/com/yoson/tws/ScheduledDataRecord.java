@@ -6,16 +6,22 @@ public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 	private double bidlast;
 	private double bidmax;
 	private double bidmin;
+	private double bidTotal;
+	private int bidCount;
 	
 	private double askavg;
 	private double asklast;
 	private double askmax;
 	private double askmin;
+	private double askTotal;
+	private int askCount;
 	
 	private double tradeavg;
 	private double tradelast;
 	private double trademax;
 	private double trademin;
+	private double tradeTotal;
+	private int tradeCount;
 	
 	public ScheduledDataRecord()
 	{
@@ -134,6 +140,54 @@ public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 	@Override
 	public int compareTo(ScheduledDataRecord arg0) {
 		return Long.compare(Long.parseLong(this.time), Long.parseLong(arg0.time));
+	}
+
+	public double getBidTotal() {
+		return bidTotal;
+	}
+
+	public void setBidTotal(double bidTotal) {
+		this.bidTotal = bidTotal;
+	}
+
+	public int getBidCount() {
+		return bidCount;
+	}
+
+	public void setBidCount(int bidCount) {
+		this.bidCount = bidCount;
+	}
+
+	public double getAskTotal() {
+		return askTotal;
+	}
+
+	public void setAskTotal(double askTotal) {
+		this.askTotal = askTotal;
+	}
+
+	public int getAskCount() {
+		return askCount;
+	}
+
+	public void setAskCount(int askCount) {
+		this.askCount = askCount;
+	}
+
+	public double getTradeTotal() {
+		return tradeTotal;
+	}
+
+	public void setTradeTotal(double tradeTotal) {
+		this.tradeTotal = tradeTotal;
+	}
+
+	public int getTradeCount() {
+		return tradeCount;
+	}
+
+	public void setTradeCount(int tradeCount) {
+		this.tradeCount = tradeCount;
 	}
 
 	  

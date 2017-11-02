@@ -11,8 +11,7 @@ public class ScheduleData {
 	private double askPrice;
 	private double bidPrice;
 	private double lastTrade;
-
-
+	
 	public ScheduleData(String dateStr, String timeStr, String askPrice, String bidPrice, String lastTrade) {
 		try {
 			this.id = DateUtils.yyyyMMddHHmmss().parse(dateStr + " " + timeStr).getTime();
@@ -85,5 +84,9 @@ public class ScheduleData {
 	
 	public String getDateStr() {
 		return this.dateStr;
+	}
+	
+	public Long getTimeLong() {
+		return Long.parseLong(this.dateStr.replaceAll("-", "") + this.timeStr.replaceAll(":", ""));
 	}
 }
