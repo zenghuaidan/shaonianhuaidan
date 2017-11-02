@@ -1,7 +1,10 @@
 package com.yoson.model;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
+
+import com.yoson.date.DateUtils;
 
 public class PerSecondRecord {
 
@@ -60,9 +63,9 @@ public class PerSecondRecord {
 		this.checkMarketTime = checkMarketTime;
 		this.tCounter = this.checkMarketTime == 1 ? lastSecondRecord.tCounter + 1 : 0;
 		this.isEnoughCounter = this.tCounter > getMax(testSet.gettShort(), testSet.gettLong(), testSet.gettLong2());
-//		if ("2016-07-08 09:29:26".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
-//			System.out.println("debug point");
-//		}
+		if ("2017-10-31 09:16:51".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
+			System.out.println("debug point");
+		}
 		initLastTradeDataList(lastSecondRecord);
 		if (lastSecondRecord.getTotalPnl() > -testSet.getStopLoss() ) {
 			initShort(dailyScheduleData, lastSecondRecord, testSet);

@@ -239,14 +239,15 @@ public class IndexController  implements StatusCallBack {
 	@ResponseBody
 	@RequestMapping(path = "getMarketData", method = {RequestMethod.GET})
 	public String getMarketData() {
-		double ask = getLastDoubleValue(YosonEWrapper.askMap);
-		double bid = getLastDoubleValue(YosonEWrapper.bidMap);
-		double trade = getLastDoubleValue(YosonEWrapper.tradeMap);
+		final ScheduledDataRecord scheduledDataRecord = YosonEWrapper.scheduledDataRecords.get(YosonEWrapper.scheduledDataRecords.size() - 1);
+		double ask = scheduledDataRecord.getAsklast();
+		double bid = scheduledDataRecord.getBidlast();
+		double trade = scheduledDataRecord.getTradelast();
 		double close = getLastDoubleValue(YosonEWrapper.closeMap);
 		
-		int askSize = getLastIntValue(YosonEWrapper.askSizeMap);
-		int bidSize = getLastIntValue(YosonEWrapper.bidSizeMap);
-		int tradeSize = getLastIntValue(YosonEWrapper.tradeSizeMap);
+		Double askSize = getLastDoubleValue(YosonEWrapper.askSizeMap);
+		Double bidSize = getLastDoubleValue(YosonEWrapper.bidSizeMap);
+		Double tradeSize = getLastDoubleValue(YosonEWrapper.tradeSizeMap);
 		
 		Format FMT2 = new DecimalFormat( "#,##0.00");
 		Format PCT = new DecimalFormat( "0.0%");
@@ -519,12 +520,12 @@ public class IndexController  implements StatusCallBack {
 		return list.get(list.size() - 1);
 	}
 	
-	private int getLastIntValue(Map<Long, List<Integer>> map) {
-		if(map == null || map.size() == 0)
-			return 0;
-		List<Integer> list = map.get((Long)map.keySet().toArray()[map.keySet().size() - 1]);
-		return list.get(list.size() - 1);
-	}
+//	private int getLastIntValue(Map<Long, List<Integer>> map) {
+//		if(map == null || map.size() == 0)
+//			return 0;
+//		List<Integer> list = map.get((Long)map.keySet().toArray()[map.keySet().size() - 1]);
+//		return list.get(list.size() - 1);
+//	}
 	
 	@ResponseBody
 	@RequestMapping("list")

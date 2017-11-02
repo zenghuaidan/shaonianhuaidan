@@ -44,15 +44,15 @@ public class TaskScheduler {
 			calendar.add(Calendar.SECOND, -1);
 			long lastSecond = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
 			if(EClientSocketUtils.isConnected()) {
-				List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord();
-				if(scheduledDataRecords.size() > 0 && scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime().equals(dateTimeStr)) {
-					scheduledDataRecords.remove(scheduledDataRecords.size() - 1);
-				}
+//				List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord();
+//				if(scheduledDataRecords.size() > 0 && scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime().equals(dateTimeStr)) {
+//					scheduledDataRecords.remove(scheduledDataRecords.size() - 1);
+//				}
 				for (Strategy strategy : EClientSocketUtils.strategies) {
 					if (strategy.isActive() && strategy.getMainUIParam().isMarketTime(DateUtils.getTimeStr(dateTimeStr))) {
-						List<ScheduleData> scheduleDatas = YosonEWrapper.toScheduleDataList(scheduledDataRecords, strategy.getMainUIParam());
+						List<ScheduleData> scheduleDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam());
 						if (scheduleDatas.size() > 0) {
-							long start = Long.parseLong(scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime());
+							long start = scheduleDatas.get(scheduleDatas.size() - 1).getTimeLong();
 							calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));  
 							calendar.add(Calendar.SECOND, 1);
 							start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
@@ -66,6 +66,7 @@ public class TaskScheduler {
 						}
 						List<PerSecondRecord> perSecondRecords = new ArrayList<PerSecondRecord>();
 						for (ScheduleData scheduleDataPerSecond : scheduleDatas) {
+							if(scheduleDataPerSecond.getId() >= now.getTime()) break;
 							int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
 							perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), perSecondRecords, scheduleDataPerSecond, checkMarketTime));
 						}						
