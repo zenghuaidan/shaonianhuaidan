@@ -117,7 +117,7 @@ public class YosonEWrapper extends BasicEWrapper {
 			String dateTimeStr = scheduledDataRecord.getTime() + "";
 			Date dateTime = DateUtils.yyyyMMddHHmmss2().parse(dateTimeStr);
 			String dateStr = DateUtils.yyyyMMdd().format(dateTime);
-			ScheduleData scheduleData =  toScheduleData(scheduledDataRecord, mainUIParam);
+			ScheduleData scheduleData =  toScheduleData(scheduledDataRecord, mainUIParam, null);
 			if (scheduleDataMap.containsKey(dateStr)) {
 				scheduleDataMap.get(dateStr).add(scheduleData);
 			} else {
@@ -129,31 +129,90 @@ public class YosonEWrapper extends BasicEWrapper {
 		return scheduleDataMap;
 	}
 	
+	
+	public static void main(String[] args) throws ParseException {
+		Calendar calendar = Calendar.getInstance();
+		Date now = new Date();
+		calendar.setTime(now);
+		CopyOnWriteArrayList<ScheduledDataRecord> scheduledDataRecords2 = new CopyOnWriteArrayList<ScheduledDataRecord>();
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 1, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 2, "ask");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 3, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 4, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 5, "trade");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 6, "ask");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 8, "trade");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 7, "ask");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 9, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 10, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 11, "ask");		
+		
+		calendar.setTime(now);
+		calendar.add(Calendar.SECOND, 3);
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 11, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 10, "ask");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 9, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 8, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 7, "trade");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 6, "ask");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 5, "trade");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 4, "ask");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 3, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 2, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), -1, "ask");	
+		
+		calendar.setTime(now);
+		calendar.add(Calendar.SECOND, 8);
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 2, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 4, "ask");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 6, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 8, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 10, "trade");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 12, "ask");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 14, "trade");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), -1, "ask");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 16, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 18, "bid");
+		addLiveData(scheduledDataRecords2, calendar.getTime(), 22, "ask");	
+		
+		calendar.setTime(now);
+		calendar.add(Calendar.SECOND, 15);
+		long lastSecond = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+		
+//		toScheduleDataList(scheduledDataRecords2, MainUIParam.getMainUIParam(), lastSecond);
+		
+		calendar.setTime(now);
+		calendar.add(Calendar.SECOND, 5);
+		lastSecond = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+		
+		toScheduleDataList(scheduledDataRecords2, MainUIParam.getMainUIParam(), lastSecond);
+	}
+	
+	
 	public static List<ScheduleData> toScheduleDataList(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam, long lastSecond) throws ParseException {
 		List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
 		long start = Long.parseLong(scheduledDataRecords.get(0).getTime());
 		Calendar calendar = Calendar.getInstance();
-		for(int i = 0; i < scheduledDataRecords.size(); i++) {
+		int i = 0;
+		for(; i < scheduledDataRecords.size(); i++) {
 			ScheduledDataRecord scheduledDataRecord = scheduledDataRecords.get(i);
 			long current = Long.parseLong(scheduledDataRecords.get(i).getTime());
 			if(current > lastSecond) break;
 			if (!scheduledDataRecord.getTime().equals(start + "")) {
-				ScheduleData scheduleData = toScheduleData(scheduledDataRecords.get(i-1), mainUIParam);
 				while(start < current) {
-					scheduleDatas.add(scheduleData);
+					scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), mainUIParam, start + ""));
 					calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
 					calendar.add(Calendar.SECOND, 1);
 					start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
 				}
 			}
-			scheduleDatas.add(toScheduleData(scheduledDataRecord, mainUIParam));				
+			scheduleDatas.add(toScheduleData(scheduledDataRecord, mainUIParam, start + ""));				
 			calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
 			calendar.add(Calendar.SECOND, 1);
 			start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
 		}
-		ScheduleData scheduleData = scheduleDatas.get(scheduleDatas.size() - 1);
 		while(start <= lastSecond) {
-			scheduleDatas.add(scheduleData);
+			scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), mainUIParam, start + ""));
 			calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
 			calendar.add(Calendar.SECOND, 1);
 			start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
@@ -161,8 +220,8 @@ public class YosonEWrapper extends BasicEWrapper {
 		return scheduleDatas;
 	}
 	
-	public static ScheduleData toScheduleData(ScheduledDataRecord scheduledDataRecord, MainUIParam mainUIParam) throws ParseException {
-		String dateTimeStr = scheduledDataRecord.getTime() + "";
+	public static ScheduleData toScheduleData(ScheduledDataRecord scheduledDataRecord, MainUIParam mainUIParam, String dateTimeStr) throws ParseException {
+		dateTimeStr = dateTimeStr == null ? scheduledDataRecord.getTime() + "" : dateTimeStr;
 		Date dateTime = DateUtils.yyyyMMddHHmmss2().parse(dateTimeStr);
 		String dateStr = DateUtils.yyyyMMdd().format(dateTime);
 		String timeStr = DateUtils.HHmmss().format(dateTime);
@@ -550,6 +609,8 @@ public class YosonEWrapper extends BasicEWrapper {
 	}
 	
 	public synchronized static void addLiveData(CopyOnWriteArrayList<ScheduledDataRecord> list, Date date, double value, String type) {
+		if(list == null || value == -1)
+			return;
 		String dateTimeStr = DateUtils.yyyyMMddHHmmss2().format(date);
 		long time = Long.valueOf(dateTimeStr);
 		ScheduledDataRecord scheduleData = null;
