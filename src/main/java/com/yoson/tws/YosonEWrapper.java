@@ -129,27 +129,35 @@ public class YosonEWrapper extends BasicEWrapper {
 		return scheduleDataMap;
 	}
 	
-	public static List<ScheduleData> toScheduleDataList(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam) throws ParseException {
+	public static List<ScheduleData> toScheduleDataList(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam, long lastSecond) throws ParseException {
 		List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
 		long start = Long.parseLong(scheduledDataRecords.get(0).getTime());
 		Calendar calendar = Calendar.getInstance();
 		for(int i = 0; i < scheduledDataRecords.size(); i++) {
 			ScheduledDataRecord scheduledDataRecord = scheduledDataRecords.get(i);
+			long current = Long.parseLong(scheduledDataRecords.get(i).getTime());
+			if(current > lastSecond) break;
 			if (!scheduledDataRecord.getTime().equals(start + "")) {
-				long end = Long.parseLong(scheduledDataRecords.get(i).getTime());
 				ScheduleData scheduleData = toScheduleData(scheduledDataRecords.get(i-1), mainUIParam);
-				while(start < end) {
+				while(start < current) {
 					scheduleDatas.add(scheduleData);
 					calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
 					calendar.add(Calendar.SECOND, 1);
 					start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
 				}
 			}
+			scheduleDatas.add(toScheduleData(scheduledDataRecord, mainUIParam));				
 			calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
 			calendar.add(Calendar.SECOND, 1);
 			start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
-			scheduleDatas.add(toScheduleData(scheduledDataRecord, mainUIParam));				
-		}							
+		}
+		ScheduleData scheduleData = scheduleDatas.get(scheduleDatas.size() - 1);
+		while(start <= lastSecond) {
+			scheduleDatas.add(scheduleData);
+			calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
+			calendar.add(Calendar.SECOND, 1);
+			start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+		}
 		return scheduleDatas;
 	}
 	

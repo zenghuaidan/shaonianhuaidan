@@ -50,23 +50,9 @@ public class TaskScheduler {
 //				}
 				for (Strategy strategy : EClientSocketUtils.strategies) {
 					if (strategy.isActive() && strategy.getMainUIParam().isMarketTime(DateUtils.getTimeStr(dateTimeStr))) {
-						List<ScheduleData> scheduleDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam());
-						if (scheduleDatas.size() > 0) {
-							long start = scheduleDatas.get(scheduleDatas.size() - 1).getTimeLong();
-							calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));  
-							calendar.add(Calendar.SECOND, 1);
-							start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
-							ScheduleData lastScheduleData = scheduleDatas.get(scheduleDatas.size() - 1);
-							for(; start <= lastSecond; ) {
-								scheduleDatas.add(new ScheduleData(DateUtils.getDateStr(start + ""), DateUtils.getTimeStr(start + ""), lastScheduleData.getAskPrice(), lastScheduleData.getBidPrice(), lastScheduleData.getLastTrade())); 
-								calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));  
-								calendar.add(Calendar.SECOND, 1);
-								start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
-							}							
-						}
+						List<ScheduleData> scheduleDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);						
 						List<PerSecondRecord> perSecondRecords = new ArrayList<PerSecondRecord>();
 						for (ScheduleData scheduleDataPerSecond : scheduleDatas) {
-							if(scheduleDataPerSecond.getId() >= now.getTime()) break;
 							int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
 							perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), perSecondRecords, scheduleDataPerSecond, checkMarketTime));
 						}						
