@@ -131,9 +131,24 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	public static List<ScheduleData> toScheduleDataList(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam) throws ParseException {
 		List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
-		for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
-			scheduleDatas.add(toScheduleData(scheduledDataRecord, mainUIParam));
-		}
+		long start = Long.parseLong(scheduledDataRecords.get(0).getTime());
+		Calendar calendar = Calendar.getInstance();
+		for(int i = 0; i < scheduledDataRecords.size(); i++) {
+			ScheduledDataRecord scheduledDataRecord = scheduledDataRecords.get(i);
+			if (!scheduledDataRecord.getTime().equals(start + "")) {
+				long end = Long.parseLong(scheduledDataRecords.get(i).getTime());
+				while(start < end) {
+					scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), mainUIParam));
+					calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
+					calendar.add(Calendar.SECOND, 1);
+					start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+				}
+			}
+			calendar.add(Calendar.SECOND, 1);
+			calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
+			start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+			scheduleDatas.add(toScheduleData(scheduledDataRecord, mainUIParam));				
+		}							
 		return scheduleDatas;
 	}
 	
