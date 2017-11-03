@@ -137,15 +137,16 @@ public class YosonEWrapper extends BasicEWrapper {
 			ScheduledDataRecord scheduledDataRecord = scheduledDataRecords.get(i);
 			if (!scheduledDataRecord.getTime().equals(start + "")) {
 				long end = Long.parseLong(scheduledDataRecords.get(i).getTime());
+				ScheduleData scheduleData = toScheduleData(scheduledDataRecords.get(i-1), mainUIParam);
 				while(start < end) {
-					scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), mainUIParam));
+					scheduleDatas.add(scheduleData);
 					calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
 					calendar.add(Calendar.SECOND, 1);
 					start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
 				}
 			}
-			calendar.add(Calendar.SECOND, 1);
 			calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
+			calendar.add(Calendar.SECOND, 1);
 			start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
 			scheduleDatas.add(toScheduleData(scheduledDataRecord, mainUIParam));				
 		}							
