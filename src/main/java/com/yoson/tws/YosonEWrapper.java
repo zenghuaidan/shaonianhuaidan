@@ -48,11 +48,15 @@ public class YosonEWrapper extends BasicEWrapper {
 	public static Integer currentOrderId;
 	public static Date lastTime = new Date();
 	
-	public static String BID = "Bid";
-	public static String ASK = "Ask";
-	public static String TRADE = "Trade";
-	public static String VOLUME = "Volume";
-	public static String CLOSE = "Close";
+	public final static String BID = "Bid";
+	public final static String ASK = "Ask";
+	public final static String TRADE = "Trade";
+	public final static String VOLUME = "Volume";
+	public final static String CLOSE = "Close";
+	
+	private static String livePath() {
+		return getPath("");
+	} 
 	
 	private static String bidPath() {
 		return getPath(BID);
@@ -589,18 +593,21 @@ public class YosonEWrapper extends BasicEWrapper {
 		switch (field) {
 		case 0:
 			addLiveData(bidSizeMap, now, size);
-			addLiveData(scheduledDataRecords, now, bid, "bid");
+			addLiveData(scheduledDataRecords, now, bid, BID);
 			BackTestCSVWriter.writeText(bidPath(), tag + "," + bid + "," + size + Global.lineSeparator, true);
+//			BackTestCSVWriter.writeText(livePath(), BID + "," + tag + "," + bid + "," + size + Global.lineSeparator, true);
 			break;
 		case 3:
 			addLiveData(askSizeMap, now, size);
-			addLiveData(scheduledDataRecords, now, ask, "ask");
+			addLiveData(scheduledDataRecords, now, ask, ASK);
 			BackTestCSVWriter.writeText(askPath(), tag + "," + ask + "," + size + Global.lineSeparator, true);
+//			BackTestCSVWriter.writeText(livePath(), ASK + "," + tag + "," + ask + "," + size + Global.lineSeparator, true);
 			break;
 		case 5:
 			addLiveData(tradeSizeMap, now, size);
-			addLiveData(scheduledDataRecords, now, trade, "trade");
+			addLiveData(scheduledDataRecords, now, trade, TRADE);
 			BackTestCSVWriter.writeText(tradePath(), tag + "," + trade + "," + size + Global.lineSeparator, true);
+//			BackTestCSVWriter.writeText(livePath(), TRADE + "," + tag + "," + trade + "," + size + Global.lineSeparator, true);
 			break;
 		case 8:
 			BackTestCSVWriter.writeText(volumePath(), tag + "," + size + Global.lineSeparator, true);
@@ -629,7 +636,7 @@ public class YosonEWrapper extends BasicEWrapper {
 			list.add(scheduleData);
 		}
 		switch (type) {
-			case "trade":
+			case TRADE:
 				scheduleData.setTradeCount(scheduleData.getTradeCount() + 1);
 				scheduleData.setTradeTotal(scheduleData.getTradeTotal() + value);
 				scheduleData.setTradeavg(scheduleData.getTradeTotal() / scheduleData.getTradeCount());
@@ -637,7 +644,7 @@ public class YosonEWrapper extends BasicEWrapper {
 				scheduleData.setTrademin(scheduleData.getTrademin() == 0 ? value : Math.min(scheduleData.getTrademin(), value));
 				scheduleData.setTrademax(scheduleData.getTrademax() == 0 ? value : Math.max(scheduleData.getTrademax(), value));
 				break;
-			case "ask":
+			case ASK:
 				scheduleData.setAskCount(scheduleData.getAskCount() + 1);
 				scheduleData.setAskTotal(scheduleData.getAskTotal() + value);
 				scheduleData.setAskavg(scheduleData.getAskTotal() / scheduleData.getAskCount());
@@ -645,7 +652,7 @@ public class YosonEWrapper extends BasicEWrapper {
 				scheduleData.setAskmin(scheduleData.getAskmin() == 0 ? value : Math.min(scheduleData.getAskmin(), value));
 				scheduleData.setAskmax(scheduleData.getAskmax() == 0 ? value : Math.max(scheduleData.getAskmax(), value));
 				break;
-			case "bid":
+			case BID:
 				scheduleData.setBidCount(scheduleData.getBidCount() + 1);
 				scheduleData.setBidTotal(scheduleData.getBidTotal() + value);
 				scheduleData.setBidavg(scheduleData.getBidTotal() / scheduleData.getBidCount());
