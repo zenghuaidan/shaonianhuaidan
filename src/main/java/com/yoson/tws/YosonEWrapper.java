@@ -116,24 +116,6 @@ public class YosonEWrapper extends BasicEWrapper {
 		currentOrderId = null;
 	}
 	
-	public static Map<String, List<ScheduleData>> toScheduleData(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam) throws ParseException {
-		Map<String, List<ScheduleData>> scheduleDataMap = new HashMap<String, List<ScheduleData>>();
-		for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
-			String dateTimeStr = scheduledDataRecord.getTime() + "";
-			Date dateTime = DateUtils.yyyyMMddHHmmss2().parse(dateTimeStr);
-			String dateStr = DateUtils.yyyyMMdd().format(dateTime);
-			ScheduleData scheduleData =  toScheduleData(scheduledDataRecord, mainUIParam, null);
-			if (scheduleDataMap.containsKey(dateStr)) {
-				scheduleDataMap.get(dateStr).add(scheduleData);
-			} else {
-				List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
-				scheduleDatas.add(scheduleData);
-				scheduleDataMap.put(dateStr, scheduleDatas);
-			}
-		}
-		return scheduleDataMap;
-	}
-	
 	public static List<ScheduleData> toScheduleDataList(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam, long lastSecond) throws ParseException {
 		List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
 		if(scheduledDataRecords == null || scheduledDataRecords.size() == 0) return scheduleDatas;
@@ -142,15 +124,13 @@ public class YosonEWrapper extends BasicEWrapper {
 		int i = 0;
 		for(; i < scheduledDataRecords.size(); i++) {
 			ScheduledDataRecord scheduledDataRecord = scheduledDataRecords.get(i);
-			long current = Long.parseLong(scheduledDataRecords.get(i).getTime());
+			long current = Long.parseLong(scheduledDataRecord.getTime());
 			if(current > lastSecond) break;
-			if (!scheduledDataRecord.getTime().equals(start + "")) {
-				while(start < current) {
-					scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), mainUIParam, start + ""));
-					calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
-					calendar.add(Calendar.SECOND, 1);
-					start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
-				}
+			while(start < current) {
+				scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), mainUIParam, start + ""));
+				calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
+				calendar.add(Calendar.SECOND, 1);
+				start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
 			}
 			scheduleDatas.add(toScheduleData(scheduledDataRecord, mainUIParam, start + ""));				
 			calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
@@ -227,17 +207,15 @@ public class YosonEWrapper extends BasicEWrapper {
 	}
 	private static void genTradingDayPerSecondDetails(String folderPath, List<ScheduledDataRecord> scheduledDataRecords, String symbol,
 			Strategy strategy) throws ParseException {
-		Map<String, List<ScheduleData>> scheduleDataMap = toScheduleData(scheduledDataRecords, strategy.getMainUIParam());
-		for (String dateStr : scheduleDataMap.keySet()) {
-			List<ScheduleData> dailyScheduleData = scheduleDataMap.get(dateStr);
-			List<PerSecondRecord> dailyPerSecondRecord = new ArrayList<PerSecondRecord>();
-			for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {
-				int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
-				dailyPerSecondRecord.add(new PerSecondRecord(dailyScheduleData, strategy.getMainUIParam(), 
-						dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime));
-			}
-			TradePerSecondDetailsCSVWriter.WriteCSV(folderPath, strategy, symbol, dailyPerSecondRecord);
+		if(scheduledDataRecords.size() == 0) return;
+		List<ScheduleData> dailyScheduleData = toScheduleDataList(scheduledDataRecords, strategy.getMainUIParam(), Long.parseLong(scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime()));
+		List<PerSecondRecord> dailyPerSecondRecord = new ArrayList<PerSecondRecord>();
+		for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {				
+			int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
+			dailyPerSecondRecord.add(new PerSecondRecord(dailyScheduleData, strategy.getMainUIParam(), 
+					dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime));
 		}
+		TradePerSecondDetailsCSVWriter.WriteCSV(folderPath, strategy, symbol, dailyPerSecondRecord);
 	}
 	
 	private static MainUIParam loadMainUIParamFromCSV(File strategyFile) {
@@ -302,7 +280,25 @@ public class YosonEWrapper extends BasicEWrapper {
 					e.printStackTrace();
 				}
 		}
-		return records;
+		if(records.size() == 0) return records;
+		List<ScheduledDataRecord> _records = new ArrayList<ScheduledDataRecord>();
+		Calendar calendar = Calendar.getInstance();
+		long start = Long.parseLong(records.get(0).getTime());
+		for(int i = 0; i < records.size(); i++) {
+			ScheduledDataRecord record = records.get(i);
+			long current = Long.parseLong(record.getTime());
+			while(start < current) {
+				_records.add(new ScheduledDataRecord(start + "", records.get(i - 1)));
+				calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
+				calendar.add(Calendar.SECOND, 1);
+				start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+			}
+			_records.add(new ScheduledDataRecord(start + "", record));				
+			calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
+			calendar.add(Calendar.SECOND, 1);
+			start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+		}
+		return _records;
 	}
 	
 	private static ScheduledDataRecord genScheduledData(long time, List<Double> trades, List<Double> asks, List<Double> bids) {
@@ -424,13 +420,14 @@ public class YosonEWrapper extends BasicEWrapper {
 			String [] lines;
 			while ((lines = csvReader.readNext()) != null)  {
 				Record record = new Record(DateUtils.yyyyMMddHHmmss2().parse(lines[1]), Double.parseDouble(lines[2]), Integer.parseInt(lines[3]));
-				if(lines[0].equals(BID)) {
+				String status = lines[0];
+				if(status.equals(BID)) {
 					bidList.add(record);
 				}
-				if(lines[0].equals(ASK)) {
+				if(status.equals(ASK)) {
 					askList.add(record);
 				}
-				if(lines[0].equals(TRADE)) {
+				if(status.equals(TRADE)) {
 					tradeList.add(record);
 				}
 			}
@@ -481,28 +478,31 @@ public class YosonEWrapper extends BasicEWrapper {
 		lastTime = now;
 		if(!isValidateTime(now))
 			return;
-		String tag = DateUtils.yyyyMMddHHmmss2().format(now);
+		String time = DateUtils.yyyyMMddHHmmss2().format(now);
 		switch (field) {
 		case 0:
 			addLiveData(bidSizeMap, now, size);
 			addLiveData(scheduledDataRecords, now, bid, BID);
-			BackTestCSVWriter.writeText(livePath(), BID + "," + tag + "," + bid + "," + size + Global.lineSeparator, true);
-			BackTestCSVWriter.writeText(bidPath(), tag + "," + bid + "," + size + Global.lineSeparator, true);
+			String liveResult = time + "," + bid + "," + size + Global.lineSeparator;
+			BackTestCSVWriter.writeText(livePath(), BID + "," + liveResult, true);
+			BackTestCSVWriter.writeText(bidPath(), liveResult, true);
 			break;
 		case 3:
 			addLiveData(askSizeMap, now, size);
 			addLiveData(scheduledDataRecords, now, ask, ASK);
-			BackTestCSVWriter.writeText(livePath(), ASK + "," + tag + "," + ask + "," + size + Global.lineSeparator, true);
-			BackTestCSVWriter.writeText(askPath(), tag + "," + ask + "," + size + Global.lineSeparator, true);
+			String askResult = time + "," + ask + "," + size + Global.lineSeparator;
+			BackTestCSVWriter.writeText(livePath(), ASK + "," + askResult, true);
+			BackTestCSVWriter.writeText(askPath(), askResult, true);
 			break;
 		case 5:
 			addLiveData(tradeSizeMap, now, size);
 			addLiveData(scheduledDataRecords, now, trade, TRADE);
-			BackTestCSVWriter.writeText(livePath(), TRADE + "," + tag + "," + trade + "," + size + Global.lineSeparator, true);
-			BackTestCSVWriter.writeText(tradePath(), tag + "," + trade + "," + size + Global.lineSeparator, true);
+			String tradeResult = time + "," + trade + "," + size + Global.lineSeparator;
+			BackTestCSVWriter.writeText(livePath(), TRADE + "," + tradeResult, true);
+			BackTestCSVWriter.writeText(tradePath(), tradeResult, true);
 			break;
 		case 8:
-			BackTestCSVWriter.writeText(volumePath(), tag + "," + size + Global.lineSeparator, true);
+			BackTestCSVWriter.writeText(volumePath(), time + "," + size + Global.lineSeparator, true);
 			break;
 		}
 	}
@@ -600,8 +600,11 @@ public class YosonEWrapper extends BasicEWrapper {
 		
 		// the flag of the order status which cancel by api call
 		boolean cancel = false;
+		
+		boolean activeStrategyOrder = false;
 		for (Strategy strategy : EClientSocketUtils.strategies) {
 			if(strategy.getOrderMap().containsKey(orderId)) {
+				activeStrategyOrder = strategy.isActive();
 				found = true;
 				break;
 			}
@@ -611,8 +614,8 @@ public class YosonEWrapper extends BasicEWrapper {
 		}
 		BackTestCSVWriter.writeText(getOrderStatusLogPath(),
 				time
-				+ (found ? "Hit Strategy," : "Miss Strategy,")
-				+ (cancel ? "A Cancel Order Result," : "")
+				+ (found ? "Hit Strategy(" + (activeStrategyOrder ? "Active" : "Inactive") + ")," : "Miss Strategy,")
+				+ (cancel ? "A Cancel Order Result(Cancelled by API)," : "")
 				+  "=>orderId:" + orderId 
 				+ ", status:" + status
 				+ ", filled:" + filled

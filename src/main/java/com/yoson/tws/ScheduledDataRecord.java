@@ -32,6 +32,24 @@ public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 		this.time = time;
 	}
 	
+	public ScheduledDataRecord(String time, ScheduledDataRecord record) {
+		this.time = time;
+		this.bidavg = record.bidavg;
+		this.bidlast = record.bidlast;
+		this.bidmin = record.bidmin;
+		this.bidmax = record.bidmax;
+		
+		this.askavg = record.askavg;
+		this.asklast = record.asklast;
+		this.askmin = record.askmin;
+		this.askmax = record.askmax;
+		
+		this.tradeavg = record.tradeavg;
+		this.tradelast = record.tradelast;
+		this.trademin = record.trademin;
+		this.trademax = record.trademax;
+	}
+
 	public String getTime() {
 		return time;
 	}
