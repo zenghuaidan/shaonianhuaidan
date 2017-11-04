@@ -1,5 +1,6 @@
 package com.yoson.tws;
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +22,7 @@ public class YosonEWrapperTest {
 			try {
 				List<ScheduleData> scheduleDataList = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, MainUIParam.getMainUIParam(), Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(new Date())));
 				for(ScheduleData s : scheduleDataList) {
-					System.out.println(s.getDateStr() + s.getTimeStr() + s.getAskPrice() + "," + s.getBidPrice() + "," + s.getLastTrade());
+					System.out.println(s.getDateStr() + " " + s.getTimeStr() + "  " + s.getAskPrice() + "," + s.getBidPrice() + "," + s.getLastTrade());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -34,8 +35,12 @@ public class YosonEWrapperTest {
 //				}
 		}
 	}
+	public static String filePath = "C:\\Users\\Qu88n\\Desktop\\debug.txt";
 	public static void main(String[] args) throws ParseException {
 		YosonEWrapper.scheduledDataRecords = new CopyOnWriteArrayList<ScheduledDataRecord>();
+		File file = new File(filePath);
+		if(file.exists())
+			file.delete();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -43,7 +48,7 @@ public class YosonEWrapperTest {
 					Date date = new Date();
 					double value = Math.round(2580 * new Random().nextDouble());
 					YosonEWrapper.addLiveData(YosonEWrapper.scheduledDataRecords, date, value, YosonEWrapper.BID);
-					BackTestCSVWriter.writeText("C:\\Users\\Qu88n\\Downloads\\HSI_20171103130310\\log1.txt", DateUtils.yyyyMMddHHmmss2().format(date) + "," + YosonEWrapper.BID + "," + value + Global.lineSeparator, true);
+					BackTestCSVWriter.writeText(filePath, DateUtils.yyyyMMddHHmmss2().format(date) + "," + YosonEWrapper.BID + "," + value + Global.lineSeparator, true);
 					bidCount--;
 					try {
 						Thread.sleep(new Random().nextInt(2000));
@@ -62,7 +67,7 @@ public class YosonEWrapperTest {
 					Date date = new Date();
 					double value = Math.round(2580 * new Random().nextDouble());
 					YosonEWrapper.addLiveData(YosonEWrapper.scheduledDataRecords, date, value, YosonEWrapper.TRADE);
-					BackTestCSVWriter.writeText("C:\\Users\\Qu88n\\Downloads\\HSI_20171103130310\\log1.txt", DateUtils.yyyyMMddHHmmss2().format(date) + "," + YosonEWrapper.TRADE + "," + value + Global.lineSeparator, true);
+					BackTestCSVWriter.writeText(filePath, DateUtils.yyyyMMddHHmmss2().format(date) + "," + YosonEWrapper.TRADE + "," + value + Global.lineSeparator, true);
 					tradeCount--;
 					try {
 						Thread.sleep(new Random().nextInt(2000));
@@ -81,7 +86,7 @@ public class YosonEWrapperTest {
 					Date date = new Date();
 					double value = Math.round(2580 * new Random().nextDouble());
 					YosonEWrapper.addLiveData(YosonEWrapper.scheduledDataRecords, date, value, YosonEWrapper.ASK);
-					BackTestCSVWriter.writeText("C:\\Users\\Qu88n\\Downloads\\HSI_20171103130310\\log1.txt", DateUtils.yyyyMMddHHmmss2().format(date) + "," + YosonEWrapper.ASK + "," + value + Global.lineSeparator, true);
+					BackTestCSVWriter.writeText(filePath, DateUtils.yyyyMMddHHmmss2().format(date) + "," + YosonEWrapper.ASK + "," + value + Global.lineSeparator, true);
 					askCount--;
 					try {
 						Thread.sleep(new Random().nextInt(2000));
