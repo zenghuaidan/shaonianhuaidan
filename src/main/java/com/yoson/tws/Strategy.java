@@ -1,11 +1,10 @@
 package com.yoson.tws;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -15,8 +14,6 @@ import com.google.gson.annotations.Expose;
 import com.ib.client.Order;
 import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
-import com.yoson.model.PerSecondRecord;
-import com.yoson.model.ScheduleData;
 
 public class Strategy implements Serializable {
 	@Expose
@@ -27,8 +24,8 @@ public class Strategy implements Serializable {
 	@Expose
 	private MainUIParam mainUIParam;
 	private Map<Integer, Order> orderMap;
+	private Map<Integer, Integer> orderCountMap;
 	private Set<Integer> cancelOrder;
-	private int failTradeCount;
 	private Date orderTime;
 
 	public String getStrategyName() {
@@ -64,6 +61,7 @@ public class Strategy implements Serializable {
 	            }     
 	        });
 			this.cancelOrder = new HashSet<Integer>();
+			this.orderCountMap = new HashMap<Integer, Integer>();
 		}
 	}
 
@@ -71,6 +69,7 @@ public class Strategy implements Serializable {
 		this.active = false;
 		this.orderMap = null;
 		this.cancelOrder = null;
+		this.orderCountMap = null;
 		this.orderTime = null;
 	}
 
@@ -133,20 +132,20 @@ public class Strategy implements Serializable {
 		this.orderTime = orderTime;
 	}
 
-	public int getFailTradeCount() {
-		return failTradeCount;
-	}
-
-	public void setFailTradeCount(int failTradeCount) {
-		this.failTradeCount = failTradeCount;
-	}
-
 	public Set<Integer> getCancelOrder() {
 		return cancelOrder;
 	}
 
 	public void setCancelOrder(Set<Integer> cancelOrder) {
 		this.cancelOrder = cancelOrder;
+	}
+
+	public Map<Integer, Integer> getOrderCountMap() {
+		return orderCountMap;
+	}
+
+	public void setOrderCountMap(Map<Integer, Integer> orderCountMap) {
+		this.orderCountMap = orderCountMap;
 	}
 	
 }
