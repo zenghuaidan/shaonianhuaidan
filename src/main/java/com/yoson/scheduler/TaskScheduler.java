@@ -13,7 +13,6 @@ import com.yoson.date.DateUtils;
 import com.yoson.model.PerSecondRecord;
 import com.yoson.model.ScheduleData;
 import com.yoson.tws.EClientSocketUtils;
-import com.yoson.tws.ScheduledDataRecord;
 import com.yoson.tws.Strategy;
 import com.yoson.tws.YosonEWrapper;
 
@@ -44,13 +43,20 @@ public class TaskScheduler {
 			calendar.add(Calendar.SECOND, -1);
 			long lastSecond = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
 			if(EClientSocketUtils.isConnected()) {
-//				List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord();
-//				if(scheduledDataRecords.size() > 0 && scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime().equals(dateTimeStr)) {
-//					scheduledDataRecords.remove(scheduledDataRecords.size() - 1);
-//				}
+				boolean first = true;
 				for (Strategy strategy : EClientSocketUtils.strategies) {
-					if (strategy.isActive() && strategy.getMainUIParam().isMarketTime(DateUtils.getTimeStr(dateTimeStr))) {
+//					if (strategy.isActive() && strategy.getMainUIParam().isMarketTime(DateUtils.getTimeStr(dateTimeStr))) {
+					if (strategy.isActive()) {
 						List<ScheduleData> scheduleDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);						
+						
+						if(first) {
+							for(int i = scheduleDatas.size() - 1; i >= scheduleDatas.size()-2 && i >= 0; i--) {
+								ScheduleData s = scheduleDatas.get(i);
+								BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), s.getDateStr() + " " + s.getTimeStr() + "," + s.getAskPrice() + "," + s.getBidPrice() + "," + s.getLastTrade()  + Global.lineSeparator, true);
+							}
+							first = false;
+						}
+						
 						List<PerSecondRecord> perSecondRecords = new ArrayList<PerSecondRecord>();
 						for (ScheduleData scheduleDataPerSecond : scheduleDatas) {
 							int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
@@ -58,6 +64,8 @@ public class TaskScheduler {
 						}						
 						strategy.setPnl(perSecondRecords.size() > 0 ? perSecondRecords.get(perSecondRecords.size() - 1).getTotalPnl() : 0);
 						strategy.setTradeCount(perSecondRecords.size() > 0 ? (int)perSecondRecords.get(perSecondRecords.size() - 1).getTradeCount() : 0);
+						
+						
 						if (perSecondRecords.size() >= 2 && YosonEWrapper.currentOrderId != null) {
 							PerSecondRecord lastSecondRecord = perSecondRecords.get(perSecondRecords.size() - 2); 
 							PerSecondRecord currentSecondRecord = perSecondRecords.get(perSecondRecords.size() - 1);

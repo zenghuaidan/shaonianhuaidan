@@ -239,7 +239,9 @@ public class IndexController  implements StatusCallBack {
 	@ResponseBody
 	@RequestMapping(path = "getMarketData", method = {RequestMethod.GET})
 	public String getMarketData() {
-		final ScheduledDataRecord scheduledDataRecord = YosonEWrapper.scheduledDataRecords.get(YosonEWrapper.scheduledDataRecords.size() - 1);
+		ScheduledDataRecord scheduledDataRecord = YosonEWrapper.scheduledDataRecords == null || YosonEWrapper.scheduledDataRecords.size() == 0 ?
+				new ScheduledDataRecord() :
+				YosonEWrapper.scheduledDataRecords.get(YosonEWrapper.scheduledDataRecords.size() - 1);
 		double ask = scheduledDataRecord.getAsklast();
 		double bid = scheduledDataRecord.getBidlast();
 		double trade = scheduledDataRecord.getTradelast();
@@ -620,9 +622,10 @@ public class IndexController  implements StatusCallBack {
 		String downloadFolder = FilenameUtils.concat(dataFolder, id);
 		String rawDataFilePath = FilenameUtils.concat(downloadFolder, id + "_rawData.csv");
 		String scheduledDataFilePath = FilenameUtils.concat(downloadFolder, id + "_scheduledData.csv");
-		List<Record> tradeList = YosonEWrapper.getTradeRecordList(downloadFolder);
-		List<Record> askList = YosonEWrapper.getAskRecordList(downloadFolder);
-		List<Record> bidList = YosonEWrapper.getBidRecordList(downloadFolder);
+		List<Record> tradeList = new ArrayList<Record>();
+		List<Record> askList = new ArrayList<Record>();
+		List<Record> bidList = new ArrayList<Record>();
+		YosonEWrapper.getRecordList(downloadFolder, tradeList, askList, bidList);
 		String instrumentName = id.split("_")[0];
 		RawDataCSVWriter.WriteCSV(rawDataFilePath, instrumentName, tradeList, askList, bidList);
 		

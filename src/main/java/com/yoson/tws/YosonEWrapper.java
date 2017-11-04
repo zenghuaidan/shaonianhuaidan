@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -74,6 +75,26 @@ public class YosonEWrapper extends BasicEWrapper {
 		return getPath(CLOSE);
 	}
 	
+	public static String getConnectionPath() {
+		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "connection.txt");
+	}
+	
+	public static String getLogPath() {
+		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "log.txt");
+	}
+	
+	public static String getOrderStatusLogPath() {
+		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "orderStatus.txt");
+	}
+	
+	private static String getPath(String type) {
+		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "live" + type + ".csv");
+	}
+	
+	private static String getPath(String folderPath, String type) {
+		return FilenameUtils.concat(folderPath, "live" + type + ".csv");
+	}
+	
 	public static void initData() {
 		scheduledDataRecords = new CopyOnWriteArrayList<ScheduledDataRecord>();
 		closeMap = new TreeMap<Long, List<Double>>();
@@ -95,26 +116,6 @@ public class YosonEWrapper extends BasicEWrapper {
 		currentOrderId = null;
 	}
 	
-	public static String getConnectionPath() {
-		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "connection.txt");
-	}
-	
-	public static String getLogPath() {
-		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "log.txt");
-	}
-	
-	public static String getOrderStatusLogPath() {
-		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "orderStatus.txt");
-	}
-	
-	private static String getPath(String type) {
-		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "live" + type + ".csv");
-	}
-	
-	private static String getPath(String folderPath, String type) {
-		return FilenameUtils.concat(folderPath, "live" + type + ".csv");
-	}
-	
 	public static Map<String, List<ScheduleData>> toScheduleData(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam) throws ParseException {
 		Map<String, List<ScheduleData>> scheduleDataMap = new HashMap<String, List<ScheduleData>>();
 		for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
@@ -133,68 +134,9 @@ public class YosonEWrapper extends BasicEWrapper {
 		return scheduleDataMap;
 	}
 	
-	
-	public static void main(String[] args) throws ParseException {
-		Calendar calendar = Calendar.getInstance();
-		Date now = new Date();
-		calendar.setTime(now);
-		CopyOnWriteArrayList<ScheduledDataRecord> scheduledDataRecords2 = new CopyOnWriteArrayList<ScheduledDataRecord>();
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 1, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 2, "ask");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 3, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 4, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 5, "trade");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 6, "ask");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 8, "trade");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 7, "ask");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 9, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 10, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 11, "ask");		
-		
-		calendar.setTime(now);
-		calendar.add(Calendar.SECOND, 3);
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 11, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 10, "ask");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 9, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 8, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 7, "trade");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 6, "ask");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 5, "trade");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 4, "ask");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 3, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 2, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), -1, "ask");	
-		
-		calendar.setTime(now);
-		calendar.add(Calendar.SECOND, 8);
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 2, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 4, "ask");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 6, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 8, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 10, "trade");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 12, "ask");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 14, "trade");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), -1, "ask");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 16, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 18, "bid");
-		addLiveData(scheduledDataRecords2, calendar.getTime(), 22, "ask");	
-		
-		calendar.setTime(now);
-		calendar.add(Calendar.SECOND, 15);
-		long lastSecond = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
-		
-//		toScheduleDataList(scheduledDataRecords2, MainUIParam.getMainUIParam(), lastSecond);
-		
-		calendar.setTime(now);
-		calendar.add(Calendar.SECOND, 5);
-		lastSecond = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
-		
-		toScheduleDataList(scheduledDataRecords2, MainUIParam.getMainUIParam(), lastSecond);
-	}
-	
-	
 	public static List<ScheduleData> toScheduleDataList(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam, long lastSecond) throws ParseException {
 		List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
+		if(scheduledDataRecords == null || scheduledDataRecords.size() == 0) return scheduleDatas;
 		long start = Long.parseLong(scheduledDataRecords.get(0).getTime());
 		Calendar calendar = Calendar.getInstance();
 		int i = 0;
@@ -342,25 +284,29 @@ public class YosonEWrapper extends BasicEWrapper {
 	}
 	
 	public static List<ScheduledDataRecord> extractScheduledDataRecord(String folderPath) throws ParseException {
-		Map<Long, List<Double>> tradeMap = extractRecordAsMap(getPath(folderPath, TRADE));
-		Map<Long, List<Double>> askMap = extractRecordAsMap(getPath(folderPath, ASK));
-		Map<Long, List<Double>> bidMap = extractRecordAsMap(getPath(folderPath, BID));
-		return extractScheduledDataRecord(tradeMap, askMap, bidMap);
+		File file = new File(getPath(folderPath, ""));
+		List<ScheduledDataRecord> records = new ArrayList<ScheduledDataRecord>();
+		if (!file.exists())
+			return new ArrayList<ScheduledDataRecord>();
+		CSVReader csvReader = null;
+		try {
+			csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);
+			String [] lines;
+			while ((lines = csvReader.readNext()) != null)  {
+				addLiveData(records, DateUtils.yyyyMMddHHmmss2().parse(lines[1]), Double.parseDouble(lines[2]), lines[0]);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(csvReader != null)
+				try {
+					csvReader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+		return records;
 	}
-	
-//	public static List<ScheduledDataRecord> extractScheduledDataRecord() throws ParseException {
-//		return extractScheduledDataRecord(tradeList, askList, bidList);
-//	}
-	
-//	public static ScheduledDataRecord getLastSecondScheduledDataRecord(long lastSecond) throws ParseException {	
-//		List<Double> trades = getLastRecord(tradeList, lastSecond);
-//		List<Double> asks = getLastRecord(askList, lastSecond);
-//		List<Double> bids = getLastRecord(bidList, lastSecond);
-//		
-//		ScheduledDataRecord scheduledDataRecord = genScheduledData(lastSecond, trades, asks, bids);
-//		
-//		return scheduledDataRecord;
-//	}
 	
 	private static ScheduledDataRecord genScheduledData(long time, List<Double> trades, List<Double> asks, List<Double> bids) {
 		ScheduledDataRecord scheduledDataRecord = new ScheduledDataRecord();
@@ -386,21 +332,6 @@ public class YosonEWrapper extends BasicEWrapper {
 		}
 		return scheduledDataRecord;
 	}
-	
-//	private static List<Double> getLastRecord(CopyOnWriteArrayList<String> list, long lastSecond) throws ParseException {
-//		if(list == null || list.size() == 0)
-//			return null;
-//		Calendar calendar = Calendar.getInstance();
-//		long end = Long.valueOf(list.get(0).split(",")[1]);
-//		for(long start = lastSecond; start >= end;) {
-//			if (map.containsKey(start)) {
-//				return map.get(start);
-//			}
-//		    calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));  
-//		    calendar.add(Calendar.SECOND, -1);
-//		    start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
-//		}
-//	}
 	
 	public static List<ScheduledDataRecord> extractScheduledDataRecord(Map<Long, List<Double>> tradeMap, Map<Long, List<Double>> askMap, Map<Long, List<Double>> bidMap) throws ParseException {
 		List<ScheduledDataRecord> scheduledDataRecords = new ArrayList<ScheduledDataRecord>();
@@ -482,26 +413,28 @@ public class YosonEWrapper extends BasicEWrapper {
 		return map;
 	}
 	
-	private static Map<Long, List<Double>> extractRecordAsMap(String path) {
-		Map<Long, List<Double>> map = new TreeMap<Long, List<Double>>();
+	public static void getRecordList(String folderPath, List<Record> tradeList, List<Record> askList, List<Record> bidList) {
+		extractRecordAsList(getPath(folderPath, ""), tradeList, askList, bidList);
+	}
+	
+	public static void extractRecordAsList(String path, List<Record> tradeList, List<Record> askList, List<Record> bidList) {
 		File file = new File(path);
 		if (!file.exists())
-			return map;
+			return;
 		CSVReader csvReader = null;
 		try {
 			csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);
 			String [] lines;
 			while ((lines = csvReader.readNext()) != null)  {
-				long time = Long.parseLong(lines[0]);
-				double data = Double.parseDouble(lines[1]);
-				if(data == -1)
-					continue;
-				if(map.containsKey(time)) {
-					map.get(time).add(data);
-				} else {
-					List<Double> datas = new ArrayList<Double>();
-					datas.add(data);
-					map.put(time, datas);
+				Record record = new Record(DateUtils.yyyyMMddHHmmss2().parse(lines[1]), Double.parseDouble(lines[2]), Integer.parseInt(lines[3]));
+				if(lines[0].equals(BID)) {
+					bidList.add(record);
+				}
+				if(lines[0].equals(ASK)) {
+					askList.add(record);
+				}
+				if(lines[0].equals(TRADE)) {
+					tradeList.add(record);
 				}
 			}
 		} catch (Exception e) {
@@ -514,44 +447,6 @@ public class YosonEWrapper extends BasicEWrapper {
 					e.printStackTrace();
 				}
 		}
-		return map;
-	}
-	
-	public static List<Record> getBidRecordList(String folderPath) {
-		return extractRecordAsList(getPath(folderPath, BID));
-	}
-	
-	public static List<Record> getAskRecordList(String folderPath) {
-		return extractRecordAsList(getPath(folderPath, ASK));
-	}
-	
-	public static List<Record> getTradeRecordList(String folderPath) {
-		return extractRecordAsList(getPath(folderPath, TRADE));
-	}
-	
-	public static List<Record> extractRecordAsList(String path) {
-		File file = new File(path);
-		List<Record> records = new ArrayList<Record>();
-		if (!file.exists())
-			return records;
-		CSVReader csvReader = null;
-		try {
-			csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);
-			String [] lines;
-			while ((lines = csvReader.readNext()) != null)  {
-				records.add(new Record(DateUtils.yyyyMMddHHmmss2().parse(lines[0]), Double.parseDouble(lines[1]), Integer.parseInt(lines[2])));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if(csvReader != null)
-				try {
-					csvReader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-		}
-		return records;
 	}
 	
 	public static boolean isValidateTime(Date when) {
@@ -594,20 +489,20 @@ public class YosonEWrapper extends BasicEWrapper {
 		case 0:
 			addLiveData(bidSizeMap, now, size);
 			addLiveData(scheduledDataRecords, now, bid, BID);
+			BackTestCSVWriter.writeText(livePath(), BID + "," + tag + "," + bid + "," + size + Global.lineSeparator, true);
 			BackTestCSVWriter.writeText(bidPath(), tag + "," + bid + "," + size + Global.lineSeparator, true);
-//			BackTestCSVWriter.writeText(livePath(), BID + "," + tag + "," + bid + "," + size + Global.lineSeparator, true);
 			break;
 		case 3:
 			addLiveData(askSizeMap, now, size);
 			addLiveData(scheduledDataRecords, now, ask, ASK);
+			BackTestCSVWriter.writeText(livePath(), ASK + "," + tag + "," + ask + "," + size + Global.lineSeparator, true);
 			BackTestCSVWriter.writeText(askPath(), tag + "," + ask + "," + size + Global.lineSeparator, true);
-//			BackTestCSVWriter.writeText(livePath(), ASK + "," + tag + "," + ask + "," + size + Global.lineSeparator, true);
 			break;
 		case 5:
 			addLiveData(tradeSizeMap, now, size);
 			addLiveData(scheduledDataRecords, now, trade, TRADE);
+			BackTestCSVWriter.writeText(livePath(), TRADE + "," + tag + "," + trade + "," + size + Global.lineSeparator, true);
 			BackTestCSVWriter.writeText(tradePath(), tag + "," + trade + "," + size + Global.lineSeparator, true);
-//			BackTestCSVWriter.writeText(livePath(), TRADE + "," + tag + "," + trade + "," + size + Global.lineSeparator, true);
 			break;
 		case 8:
 			BackTestCSVWriter.writeText(volumePath(), tag + "," + size + Global.lineSeparator, true);
@@ -615,7 +510,7 @@ public class YosonEWrapper extends BasicEWrapper {
 		}
 	}
 	
-	public synchronized static void addLiveData(CopyOnWriteArrayList<ScheduledDataRecord> list, Date date, double value, String type) {
+	public synchronized static void addLiveData(List<ScheduledDataRecord> list, Date date, double value, String type) {
 		if(list == null || value == -1)
 			return;
 		String dateTimeStr = DateUtils.yyyyMMddHHmmss2().format(date);
