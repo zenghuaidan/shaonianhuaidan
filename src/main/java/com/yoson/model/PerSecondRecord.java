@@ -63,7 +63,7 @@ public class PerSecondRecord {
 		this.checkMarketTime = checkMarketTime;
 		this.tCounter = this.checkMarketTime == 1 ? lastSecondRecord.tCounter + 1 : 0;
 		this.isEnoughCounter = this.tCounter > getMax(testSet.gettShort(), testSet.gettLong(), testSet.gettLong2());
-		if ("2017-10-31 09:16:51".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
+		if ("2017-10-31 09:19:16".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 			System.out.println("debug point");
 		}
 		initLastTradeDataList(lastSecondRecord);
@@ -262,7 +262,7 @@ public class PerSecondRecord {
 		}
 		else 
 		{
-			if ((lastTrade >= this.highShort) &&(this.highShort >= this.highLong)&&(this.highLong >= this.highLong2) && this.highDiffernece >= testSet.getHld()*lastTrade)
+			if ((lastTrade >= this.highShort) &&(this.highShort >= this.highLong)&&(this.highLong > this.highLong2) && this.highDiffernece >= testSet.getHld()*lastTrade)
 			{
 				this.action = 1;
 			}
