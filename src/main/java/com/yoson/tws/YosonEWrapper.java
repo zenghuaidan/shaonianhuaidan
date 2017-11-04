@@ -394,21 +394,6 @@ public class YosonEWrapper extends BasicEWrapper {
 		return sum / list.size();
 	}
 	
-	public static Map<Long, List<Record>> toMap(List<Record> records) {
-		Map<Long, List<Record>> map = new HashMap<Long, List<Record>>();
-		for (Record record : records) {
-			long time = record.getTime().getTime();
-			if(map.containsKey(time)) {
-				map.get(time).add(record);
-			} else {
-				List<Record> _records = new ArrayList<Record>();
-				_records.add(record);
-				map.put(time, _records);
-			}
-		}
-		return map;
-	}
-	
 	public static void getRecordList(String folderPath, List<Record> tradeList, List<Record> askList, List<Record> bidList) {
 		extractRecordAsList(getPath(folderPath, ""), tradeList, askList, bidList);
 	}
@@ -571,19 +556,6 @@ public class YosonEWrapper extends BasicEWrapper {
 		}
 	}
 	
-	public static void addLiveData(Map<Long, List<Integer>> map, Date date, int value) {
-		if(map == null)
-			return;
-		long key = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(date));
-		if (map.containsKey(key)) {
-			map.get(key).add(value);
-		} else {
-			List<Integer> values = new ArrayList<Integer>();
-			values.add(value);
-			map.put(key, values);
-		}
-	}
-	
 	@Override
 	public void tickString(int tickerId, int tickType, String value) {
 		switch( tickType) {
@@ -662,7 +634,7 @@ public class YosonEWrapper extends BasicEWrapper {
 					strategy.setOrderTime(new Date());
 					EClientSocketUtils.cancelOrder(orderId);
 					strategy.getCancelOrder().add(orderId);						
-				} else {
+				} else if(remaining > 0) {
 					BackTestCSVWriter.writeText(getOrderStatusLogPath(), status + " order with remaining=" + remaining + Global.lineSeparator, true);
 				}
 			}
