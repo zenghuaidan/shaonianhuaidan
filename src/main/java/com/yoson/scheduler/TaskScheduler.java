@@ -60,7 +60,8 @@ public class TaskScheduler {
 						List<PerSecondRecord> perSecondRecords = new ArrayList<PerSecondRecord>();
 						for (ScheduleData scheduleDataPerSecond : scheduleDatas) {
 							int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
-							perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), perSecondRecords, scheduleDataPerSecond, checkMarketTime));
+							perSecondRecords.add(new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), 
+									perSecondRecords, scheduleDataPerSecond, checkMarketTime));
 						}						
 						strategy.setPnl(perSecondRecords.size() > 0 ? perSecondRecords.get(perSecondRecords.size() - 1).getTotalPnl() : 0);
 						strategy.setTradeCount(perSecondRecords.size() > 0 ? (int)perSecondRecords.get(perSecondRecords.size() - 1).getTradeCount() : 0);
@@ -84,20 +85,9 @@ public class TaskScheduler {
 	}
 
 	public void placeAnOrder(Strategy strategy, String time, PerSecondRecord currentSecondRecord, PerSecondRecord lastSecondRecord) {
-//		System.out.println("last smooth:" + lastSecondRecord.getSmoothAction() + ", current smooth:" + currentSecondRecord.getSmoothAction() + ", fail trade count:" + strategy.getFailTradeCount());
 		YosonEWrapper.currentOrderId++;
-		if(strategy.getFailTradeCount() > 3 && lastSecondRecord.getSmoothAction() != 0) {
-			Order newOrder = new Order();
-			newOrder.m_account = EClientSocketUtils.connectionInfo.getAccount();
-			newOrder.m_orderType = Global.MKT; 
-			newOrder.m_tif = EClientSocketUtils.contract.getTif();
-			newOrder.m_totalQuantity = 1;
-			newOrder.m_action = lastSecondRecord.getSmoothAction() == -1 ? Global.BUY : Global.SELL;
-			strategy.getOrderMap().put(YosonEWrapper.currentOrderId, newOrder);
-			strategy.setOrderTime(new Date());
-			EClientSocketUtils.placeOrder(YosonEWrapper.currentOrderId, newOrder);
-			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Market Order(" + time + ") : " + strategy.getStrategyName() + ", orderId:" + YosonEWrapper.currentOrderId + ", action:" + newOrder.m_action + ", quantity:" + 1 + Global.lineSeparator, true);
-		} else if (currentSecondRecord.getSmoothAction() != lastSecondRecord.getSmoothAction()) {
+		int newOrderId = YosonEWrapper.currentOrderId;
+		if (currentSecondRecord.getSmoothAction() != lastSecondRecord.getSmoothAction()) {
 			int quantity = currentSecondRecord.getSmoothAction() - lastSecondRecord.getSmoothAction();
 			int totalQuantity = Math.abs(quantity);
 			boolean isBuy = quantity > 0;
@@ -113,10 +103,10 @@ public class TaskScheduler {
 			double lmtPrice = YosonEWrapper.trade + ((isBuy ? 1 : -1 ) * strategy.getMainUIParam().getUnit() * strategy.getMainUIParam().getOrderTicker());
 			newOrder.m_lmtPrice = Math.round(lmtPrice * 100) / 100D;
 			
-			strategy.getOrderMap().put(YosonEWrapper.currentOrderId, newOrder);
+			strategy.getOrderMap().put(newOrderId, newOrder);
 			strategy.setOrderTime(new Date());
-			EClientSocketUtils.placeOrder(YosonEWrapper.currentOrderId, newOrder);
-			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Limit Order(" + time + ") : " + strategy.getStrategyName() + ", orderId:" + YosonEWrapper.currentOrderId + ", action:" + newOrder.m_action + ", quantity:" + totalQuantity + Global.lineSeparator, true);
+			EClientSocketUtils.placeOrder(newOrderId, newOrder);
+			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Limit Order(" + time + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + totalQuantity + Global.lineSeparator, true);
 		}
 	}
 }
