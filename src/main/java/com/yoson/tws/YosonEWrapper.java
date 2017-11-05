@@ -617,7 +617,7 @@ public class YosonEWrapper extends BasicEWrapper {
 					EClientSocketUtils.cancelOrder(orderId);
 					strategy.getCancelOrder().add(orderId);						
 				} else if(remaining > 0) {
-					BackTestCSVWriter.writeText(getOrderStatusLogPath(), status + " order with remaining=" + remaining + Global.lineSeparator, true);
+					BackTestCSVWriter.writeText(getOrderStatusLogPath(), "Warning:" + status + " order with remaining=" + remaining + Global.lineSeparator, true);
 				}
 			}
 		}
