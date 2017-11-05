@@ -54,7 +54,7 @@ public class PerSecondRecord {
 	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList, ScheduleData scheduleDataPerSecond, int checkMarketTime) throws ParseException {
 		PerSecondRecord lastSecondRecord = dailyPerSecondRecordList.size() == 0 ? new PerSecondRecord() : dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - 1);
 		this.time = scheduleDataPerSecond.getId();
-		this.timeStr = scheduleDataPerSecond.getDateStr() + " " + scheduleDataPerSecond.getTimeStr();
+		this.timeStr = scheduleDataPerSecond.getDateTimeStr();
 		this.askPrice = scheduleDataPerSecond.getAskPrice();
 		this.bidPrice = scheduleDataPerSecond.getBidPrice();
 		this.lastTrade = scheduleDataPerSecond.getLastTrade();
