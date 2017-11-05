@@ -86,6 +86,10 @@ public class ScheduleData {
 		return this.dateStr;
 	}
 	
+	public String getDateTimeStr() {
+		return this.dateStr + " " + this.timeStr;
+	}
+	
 	public Long getTimeLong() {
 		return Long.parseLong(this.dateStr.replaceAll("-", "") + this.timeStr.replaceAll(":", ""));
 	}

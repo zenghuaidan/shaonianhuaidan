@@ -21,7 +21,7 @@ public class YosonEWrapperTest {
 			try {
 				List<ScheduleData> scheduleDataList = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, MainUIParam.getMainUIParam(), Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(new Date())));
 				for(ScheduleData s : scheduleDataList) {
-					System.out.println(s.getDateStr() + s.getTimeStr() + s.getAskPrice() + "," + s.getBidPrice() + "," + s.getLastTrade());
+					System.out.println(s.getDateTimeStr() + "  " + s.getAskPrice() + "," + s.getBidPrice() + "," + s.getLastTrade());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

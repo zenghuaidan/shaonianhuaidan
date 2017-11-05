@@ -23,9 +23,14 @@ public class Strategy implements Serializable {
 	private double pnl;
 	@Expose
 	private MainUIParam mainUIParam;
+	// all the orders for this strategy
 	private Map<Integer, Order> orderMap;
+	// the order with the cancel count, key=orderId, value=cancelCount
 	private Map<Integer, Integer> orderCountMap;
+	// cancel order map by API
 	private Set<Integer> cancelOrder;
+	// action map, key=time, value=action
+	private Map<Long, Integer> actoinMap;
 	private Date orderTime;
 
 	public String getStrategyName() {
@@ -62,6 +67,7 @@ public class Strategy implements Serializable {
 	        });
 			this.cancelOrder = new HashSet<Integer>();
 			this.orderCountMap = new HashMap<Integer, Integer>();
+			this.actoinMap = new HashMap<Long, Integer>();
 		}
 	}
 
@@ -71,6 +77,7 @@ public class Strategy implements Serializable {
 		this.cancelOrder = null;
 		this.orderCountMap = null;
 		this.orderTime = null;
+		this.actoinMap = null;
 	}
 
 	public int getTradeCount() {
@@ -146,6 +153,14 @@ public class Strategy implements Serializable {
 
 	public void setOrderCountMap(Map<Integer, Integer> orderCountMap) {
 		this.orderCountMap = orderCountMap;
+	}
+
+	public Map<Long, Integer> getActoinMap() {
+		return actoinMap;
+	}
+
+	public void setActoinMap(Map<Long, Integer> actoinMap) {
+		this.actoinMap = actoinMap;
 	}
 	
 }
