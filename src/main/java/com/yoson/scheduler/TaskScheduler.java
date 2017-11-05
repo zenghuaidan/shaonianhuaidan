@@ -86,7 +86,7 @@ public class TaskScheduler {
 		} catch (Exception e) {
 			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Sytem Exception:" + e.toString() + ">" + e.getMessage()  + Global.lineSeparator, true);
 			for(StackTraceElement s : e.getStackTrace()) {
-				System.out.println("%%%%%%%%%%%%" + s.toString() + "%%%%%%%%%%%%%%%");
+				System.out.println(s.toString());
 			}
 		}
 	}
