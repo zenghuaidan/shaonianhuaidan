@@ -14,9 +14,9 @@ import com.yoson.model.MainUIParam;
 import com.yoson.model.ScheduleData;
 
 public class YosonEWrapperTest {
-	public static int bidCount = 14;
-	public static int askCount = 20;
-	public static int tradeCount = 7;
+	public static int bidCount = 200;
+	public static int askCount = 150;
+	public static int tradeCount = 300;
 	public static void outputlog() {
 		if(bidCount == 0 && askCount == 0 && tradeCount == 0)  {
 			try {
@@ -48,7 +48,9 @@ public class YosonEWrapperTest {
 					Date date = new Date();
 					double value = Math.round(2580 * new Random().nextDouble());
 					YosonEWrapper.addLiveData(scheduledDataRecords, date, value, YosonEWrapper.BID);
-					BackTestCSVWriter.writeText(filePath, DateUtils.yyyyMMddHHmmss2().format(date) + "," + YosonEWrapper.BID + "," + value + Global.lineSeparator, true);
+					
+					String bidResult = DateUtils.yyyyMMddHHmmss2().format(date) + "," + value + "," + 1 + Global.lineSeparator;
+					BackTestCSVWriter.writeText(filePath, YosonEWrapper.BID + "," + bidResult, true);
 					bidCount--;
 					try {
 						Thread.sleep(new Random().nextInt(5000));
@@ -67,7 +69,8 @@ public class YosonEWrapperTest {
 					Date date = new Date();
 					double value = Math.round(2580 * new Random().nextDouble());
 					YosonEWrapper.addLiveData(scheduledDataRecords, date, value, YosonEWrapper.TRADE);
-					BackTestCSVWriter.writeText(filePath, DateUtils.yyyyMMddHHmmss2().format(date) + "," + YosonEWrapper.TRADE + "," + value + Global.lineSeparator, true);
+					String tradeResult = DateUtils.yyyyMMddHHmmss2().format(date) + "," + value + "," + 1 + Global.lineSeparator;
+					BackTestCSVWriter.writeText(filePath, YosonEWrapper.TRADE + "," + tradeResult, true);
 					tradeCount--;
 					try {
 						Thread.sleep(new Random().nextInt(5000));
@@ -86,7 +89,8 @@ public class YosonEWrapperTest {
 					Date date = new Date();
 					double value = Math.round(2580 * new Random().nextDouble());
 					YosonEWrapper.addLiveData(scheduledDataRecords, date, value, YosonEWrapper.ASK);
-					BackTestCSVWriter.writeText(filePath, DateUtils.yyyyMMddHHmmss2().format(date) + "," + YosonEWrapper.ASK + "," + value + Global.lineSeparator, true);
+					String askResult = DateUtils.yyyyMMddHHmmss2().format(date) + "," + value + "," + 1 + Global.lineSeparator;
+					BackTestCSVWriter.writeText(filePath, YosonEWrapper.ASK + "," + askResult, true);
 					askCount--;
 					try {
 						Thread.sleep(new Random().nextInt(5000));
