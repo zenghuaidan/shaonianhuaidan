@@ -3,7 +3,9 @@ package com.yoson.scheduler;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.ib.client.Order;
 import com.yoson.cms.controller.Global;
@@ -18,6 +20,7 @@ import com.yoson.tws.YosonEWrapper;
 public class TaskScheduler {
 	
 	public synchronized void doTrade() throws ParseException {
+		long startTime = System.currentTimeMillis();
 		try {
 			Date now = new Date();
 			boolean validateTime = YosonEWrapper.isValidateTime(now);
@@ -34,14 +37,22 @@ public class TaskScheduler {
 				return;
 			}
 			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "*************************Do Trade:<" + dateTimeStr + ">*************************" + Global.lineSeparator, true);
-			long startTime = System.currentTimeMillis();
 			long lastSecond = DateUtils.addSecond(now, -1);
 			if(EClientSocketUtils.isConnected()) {
 				boolean first = true;
+				Map<String, List<ScheduleData>> scheduleDataMap = new HashMap<String, List<ScheduleData>>();
 				for (Strategy strategy : EClientSocketUtils.strategies) {
 //					if (strategy.isActive() && strategy.getMainUIParam().isMarketTime(DateUtils.getTimeStr(dateTimeStr))) {
 					if (strategy.isActive()) {
-						List<ScheduleData> scheduleDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);						
+						String key = strategy.getMainUIParam().getAskDataField() +
+									 strategy.getMainUIParam().getBidDataField() + 
+									 strategy.getMainUIParam().getTradeDataField();
+						List<ScheduleData> scheduleDatas = null;
+						if(scheduleDataMap.containsKey(key)) {
+							scheduleDatas = scheduleDataMap.get(key);
+						} else {
+							scheduleDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);							
+						}
 						
 						if(first) {
 							for(int i = scheduleDatas.size() - 1; i >= scheduleDatas.size()-2 && i >= 0; i--) {
