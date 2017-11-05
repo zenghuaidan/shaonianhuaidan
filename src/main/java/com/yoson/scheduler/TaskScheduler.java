@@ -20,16 +20,13 @@ public class TaskScheduler {
 	
 	public synchronized void doTrade() throws ParseException {
 		try {
-			Calendar calendar = Calendar.getInstance();  
 			Date now = new Date();
 			boolean validateTime = YosonEWrapper.isValidateTime(now);
 			String dateTimeStr = DateUtils.yyyyMMddHHmmss2().format(now);
 			if(!validateTime) {
 				if(EClientSocketUtils.isConnected()) {
 					Date endTime = DateUtils.yyyyMMddHHmm().parse(EClientSocketUtils.contract.getEndTime());
-					calendar.setTime(endTime);  
-					calendar.add(Calendar.SECOND, 1);
-					if((Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime())) + "").equals(dateTimeStr)) {
+					if((DateUtils.addSecond(endTime, 1) + "").equals(dateTimeStr)) {
 						//trigger auto backtest
 						EClientSocketUtils.disconnect();
 					}
@@ -39,9 +36,7 @@ public class TaskScheduler {
 			}
 			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "*************************Do Trade:<" + dateTimeStr + ">*************************" + Global.lineSeparator, true);
 			long startTime = System.currentTimeMillis();
-			calendar.setTime(now);  
-			calendar.add(Calendar.SECOND, -1);
-			long lastSecond = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+			long lastSecond = DateUtils.addSecond(now, -1);
 			if(EClientSocketUtils.isConnected()) {
 				boolean first = true;
 				for (Strategy strategy : EClientSocketUtils.strategies) {

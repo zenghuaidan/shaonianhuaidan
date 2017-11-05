@@ -9,10 +9,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -40,7 +38,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	public static double trade;
 	public static double close;
 	
-	public static CopyOnWriteArrayList<ScheduledDataRecord> scheduledDataRecords;
+	public static List<ScheduledDataRecord> scheduledDataRecords;
 	
 	public static Map<Long, List<Double>> tradeSizeMap;
 	public static Map<Long, List<Double>> askSizeMap;
@@ -88,7 +86,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	}
 	
 	private static String getPath(String type) {
-		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "live" + type + ".csv");
+		return getPath(EClientSocketUtils.initAndReturnLiveDataFolder(), type);
 	}
 	
 	private static String getPath(String folderPath, String type) {
@@ -120,7 +118,6 @@ public class YosonEWrapper extends BasicEWrapper {
 		List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
 		if(scheduledDataRecords == null || scheduledDataRecords.size() == 0) return scheduleDatas;
 		long start = Long.parseLong(scheduledDataRecords.get(0).getTime());
-		Calendar calendar = Calendar.getInstance();
 		int i = 0;
 		for(; i < scheduledDataRecords.size(); i++) {
 			ScheduledDataRecord scheduledDataRecord = scheduledDataRecords.get(i);
@@ -128,20 +125,14 @@ public class YosonEWrapper extends BasicEWrapper {
 			if(current > lastSecond) break;
 			while(start < current) {
 				scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), mainUIParam, start + ""));
-				calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
-				calendar.add(Calendar.SECOND, 1);
-				start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+				start = DateUtils.addSecond(start, 1);
 			}
 			scheduleDatas.add(toScheduleData(scheduledDataRecord, mainUIParam, start + ""));				
-			calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
-			calendar.add(Calendar.SECOND, 1);
-			start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+			start = DateUtils.addSecond(start, 1);
 		}
 		while(start <= lastSecond) {
 			scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), mainUIParam, start + ""));
-			calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
-			calendar.add(Calendar.SECOND, 1);
-			start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+			start = DateUtils.addSecond(start, 1);
 		}
 		return scheduleDatas;
 	}
@@ -282,21 +273,16 @@ public class YosonEWrapper extends BasicEWrapper {
 		}
 		if(records.size() == 0) return records;
 		List<ScheduledDataRecord> _records = new ArrayList<ScheduledDataRecord>();
-		Calendar calendar = Calendar.getInstance();
 		long start = Long.parseLong(records.get(0).getTime());
 		for(int i = 0; i < records.size(); i++) {
 			ScheduledDataRecord record = records.get(i);
 			long current = Long.parseLong(record.getTime());
 			while(start < current) {
 				_records.add(new ScheduledDataRecord(start + "", records.get(i - 1)));
-				calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
-				calendar.add(Calendar.SECOND, 1);
-				start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+				start = DateUtils.addSecond(start, 1);
 			}
 			_records.add(new ScheduledDataRecord(start + "", record));				
-			calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));
-			calendar.add(Calendar.SECOND, 1);
-			start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+			start = DateUtils.addSecond(start, 1);
 		}
 		return _records;
 	}
@@ -375,10 +361,7 @@ public class YosonEWrapper extends BasicEWrapper {
 			
 			scheduledDataRecords.add(genScheduledData(start, preTradeList, preAskList, preBidList));
 			
-			Calendar calendar = Calendar.getInstance();  
-		    calendar.setTime(DateUtils.yyyyMMddHHmmss2().parse(start + ""));  
-		    calendar.add(Calendar.SECOND, 1);
-		    start = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));
+			start = DateUtils.addSecond(start, 1);
 		}
 		return scheduledDataRecords;
 	}

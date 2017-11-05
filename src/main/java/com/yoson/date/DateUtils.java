@@ -2,6 +2,7 @@ package com.yoson.date;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
@@ -124,5 +125,16 @@ public class DateUtils {
 	
 	public static String getTimeStr(String dateTimeStr) {
 		return  dateTimeStr.substring(8, 10) + ":" + dateTimeStr.substring(10, 12) + ":" + dateTimeStr.substring(12, 14);		
+	}
+	
+	public static Long addSecond(Long current, int second) throws ParseException {
+		return addSecond(DateUtils.yyyyMMddHHmmss2().parse(current + ""), second);	
+	}
+	
+	public static Long addSecond(Date current, int second) throws ParseException {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(current);
+		calendar.add(Calendar.SECOND, second);
+		return Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));	
 	}
 }
