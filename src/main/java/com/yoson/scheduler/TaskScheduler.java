@@ -54,7 +54,8 @@ public class TaskScheduler {
 						if(scheduleDataMap.containsKey(key)) {
 							scheduleDatas = scheduleDataMap.get(key);
 						} else {
-							scheduleDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);							
+							scheduleDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);	
+							scheduleDataMap.put(key, scheduleDatas);
 							if (scheduleDatas.size() > 0) {
 								ScheduleData scheduleData = scheduleDatas.get(scheduleDatas.size() - 1);
 								BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), scheduleData.getDateTimeStr() + "," + scheduleData.getAskPrice() + "," + scheduleData.getBidPrice() + "," + scheduleData.getLastTrade() + "," + key  + Global.lineSeparator, true);
