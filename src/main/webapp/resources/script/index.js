@@ -1,8 +1,8 @@
 function hkClick() {
-	$("[name='marketStartTime']").val("09:15:00");
+	$("[name='marketStartTime']").val("09:30:00");
 	$("[name='lunchStartTimeFrom']").val("12:00:00");
 	$("[name='lunchStartTimeTo']").val("13:00:00");
-	$("[name='marketCloseTime']").val("16:15:00");
+	$("[name='marketCloseTime']").val("16:00:00");
 	$("[name='cashPerIndexPoint']").val("50");
 	$("[name='tradingFee']").val("18");
 	$("[name='otherCostPerTrade']").val("0");
@@ -10,9 +10,9 @@ function hkClick() {
 }
 function km1Click() {
 	$("[name='marketStartTime']").val("08:00:00");
-	$("[name='lunchStartTimeFrom']").val("14:00:00");
-	$("[name='lunchStartTimeTo']").val("23:00:00");
-	$("[name='marketCloseTime']").val("23:15:00");
+	$("[name='lunchStartTimeFrom']").val("14:30:00");
+	$("[name='lunchStartTimeTo']").val("23:59:00");
+	$("[name='marketCloseTime']").val("23:59:00");
 	$("[name='cashPerIndexPoint']").val("500000");
 	$("[name='tradingFee']").val("5000");
 	$("[name='otherCostPerTrade']").val("0");
@@ -20,9 +20,9 @@ function km1Click() {
 }
 function nk1Click() {
 	$("[name='marketStartTime']").val("08:00:00");
-	$("[name='lunchStartTimeFrom']").val("14:00:00");
-	$("[name='lunchStartTimeTo']").val("23:00:00");
-	$("[name='marketCloseTime']").val("23:15:00");
+	$("[name='lunchStartTimeFrom']").val("10:30:00");
+	$("[name='lunchStartTimeTo']").val("11:30:00");
+	$("[name='marketCloseTime']").val("14:00:00");
 	$("[name='cashPerIndexPoint']").val("1000");
 	$("[name='tradingFee']").val("400");
 	$("[name='otherCostPerTrade']").val("0");
@@ -34,6 +34,14 @@ function yyyymm() {
 	var monthStr = month < 10 ? "0" + month : month;
 	return year  + "" + monthStr;
 }
+function yyyymmdd() {
+	var year = new Date().getYear() + 1900;
+	var month = new Date().getMonth() + 1;
+	var monthStr = month < 10 ? "0" + month : month;
+	var day = new Date().getDate() + 1;
+	var dayStr = day < 10 ? "0" + day : day;
+	return year  + "-" + monthStr + "-" + dayStr;
+}
 function contractHHIClick() {
 	$("[name='secType']").val("FUT");
 	$("[name='symbol']").val("HHI.HK");
@@ -42,6 +50,8 @@ function contractHHIClick() {
 	$("[name='localsymbol']").val("");
 	$("[name='expirary']").val(yyyymm());
 	$("[name='tif']").val("IOC");
+	$("[name='startTime']").val(yyyymmdd() + " 09:30");
+	$("[name='endTime']").val(yyyymmdd() + " 14:00");
 }
 function contractKM1Click() {
 	$("[name='secType']").val("FUT");
@@ -51,6 +61,8 @@ function contractKM1Click() {
 	$("[name='localsymbol']").val("");
 	$("[name='expirary']").val(yyyymm());
 	$("[name='tif']").val("MTL");
+	$("[name='startTime']").val(yyyymmdd() + " 08:00");
+	$("[name='endTime']").val(yyyymmdd() + " 14:30");
 }
 function contractNK1Click() {
 	$("[name='secType']").val("FUT");
@@ -60,6 +72,8 @@ function contractNK1Click() {
 	$("[name='localsymbol']").val("");
 	$("[name='expirary']").val(yyyymm());
 	$("[name='tif']").val("IOC");
+	$("[name='startTime']").val(yyyymmdd() + " 08:00");
+	$("[name='endTime']").val(yyyymmdd() + " 14:00");
 }
 function contractHSIClick() {
 	$("[name='secType']").val("FUT");
@@ -69,6 +83,8 @@ function contractHSIClick() {
 	$("[name='localsymbol']").val("");
 	$("[name='expirary']").val(yyyymm());
 	$("[name='tif']").val("IOC");
+	$("[name='startTime']").val(yyyymmdd() + " 09:30");
+	$("[name='endTime']").val(yyyymmdd() + " 14:00");
 }
 function defaultConnectClick() {
 	$("[name='host']").val("127.0.0.1");
@@ -698,7 +714,7 @@ $(function() {
 	});
 	jQuery('.datetimepicker').datetimepicker({
 		 timepicker:true,			 
-		 format:'Y-m-d H:i:s'
+		 format:'Y-m-d H:i'
 	});
 //	jQuery('.yearmonthpicker').datetimepicker({
 //		 timepicker:false,			 
