@@ -588,6 +588,7 @@ public class YosonEWrapper extends BasicEWrapper {
 		for (Strategy strategy : EClientSocketUtils.strategies) {
 			if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
 				Order order = strategy.getOrderMap().get(orderId);
+				strategy.setTradeCount(strategy.getTradeCount() + order.m_totalQuantity - remaining);
 				if((status.equals("Cancelled") || status.equals("Inactive")) && remaining > 0) {
 					YosonEWrapper.currentOrderId++;
 					int newOrderId = YosonEWrapper.currentOrderId;
