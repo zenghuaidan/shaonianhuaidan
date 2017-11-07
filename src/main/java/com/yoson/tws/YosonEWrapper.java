@@ -117,26 +117,26 @@ public class YosonEWrapper extends BasicEWrapper {
 		List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
 		if(scheduledDataRecords == null || scheduledDataRecords.size() == 0) return scheduleDatas;
 		long start = Long.parseLong(scheduledDataRecords.get(0).getTime());
-		int i = 0;
+		int i = 0;		
 		for(; i < scheduledDataRecords.size(); i++) {
 			ScheduledDataRecord scheduledDataRecord = scheduledDataRecords.get(i);
 			long current = Long.parseLong(scheduledDataRecord.getTime());
 			if(current > lastSecond) break;
 			while(start < current) {
-				scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), mainUIParam, start + ""));
+				scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), null, mainUIParam, start + ""));
 				start = DateUtils.addSecond(start, 1);
-			}
-			scheduleDatas.add(toScheduleData(scheduledDataRecord, mainUIParam, start + ""));				
+			}					
+			scheduleDatas.add(toScheduleData(scheduledDataRecord, i != 0 ? scheduleDatas.get(scheduleDatas.size() - 1) : null, mainUIParam, start + ""));				
 			start = DateUtils.addSecond(start, 1);
 		}
 		while(start <= lastSecond) {
-			scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), mainUIParam, start + ""));
+			scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), null, mainUIParam, start + ""));
 			start = DateUtils.addSecond(start, 1);
 		}
 		return scheduleDatas;
 	}
 	
-	public static ScheduleData toScheduleData(ScheduledDataRecord scheduledDataRecord, MainUIParam mainUIParam, String dateTimeStr) throws ParseException {
+	public static ScheduleData toScheduleData(ScheduledDataRecord scheduledDataRecord, ScheduleData lastSecondScheduleData, MainUIParam mainUIParam, String dateTimeStr) throws ParseException {
 		dateTimeStr = dateTimeStr == null ? scheduledDataRecord.getTime() + "" : dateTimeStr;
 		Date dateTime = DateUtils.yyyyMMddHHmmss2().parse(dateTimeStr);
 		String dateStr = DateUtils.yyyyMMdd().format(dateTime);
@@ -156,7 +156,10 @@ public class YosonEWrapper extends BasicEWrapper {
 						"tradeavg".equals(mainUIParam.getTradeDataField()) ? scheduledDataRecord.getTradeavg() : scheduledDataRecord.getTradelast()
 					)
 				);
-		return new ScheduleData(dateStr, timeStr, askPrice, bidPrice, lastTrade);
+		return new ScheduleData(dateStr, timeStr, 
+				lastSecondScheduleData != null && askPrice == 0 ? lastSecondScheduleData.getAskPrice() : askPrice, 
+				lastSecondScheduleData != null && bidPrice == 0 ? lastSecondScheduleData.getBidPrice() : bidPrice, 
+				lastSecondScheduleData != null && lastTrade == 0 ? lastSecondScheduleData.getLastTrade() : lastTrade);
 	}
 	
 	public static void genTradingDayPerSecondDetails(String folderPath, List<ScheduledDataRecord> scheduledDataRecords) throws ParseException {
@@ -275,15 +278,15 @@ public class YosonEWrapper extends BasicEWrapper {
 		}
 		if(records.size() == 0) return records;
 		List<ScheduledDataRecord> _records = new ArrayList<ScheduledDataRecord>();
-		long start = Long.parseLong(records.get(0).getTime());
+		long start = Long.parseLong(records.get(0).getTime()); 
 		for(int i = 0; i < records.size(); i++) {
 			ScheduledDataRecord record = records.get(i);
 			long current = Long.parseLong(record.getTime());
 			while(start < current) {
-				_records.add(new ScheduledDataRecord(start + "", records.get(i - 1)));
+				_records.add(new ScheduledDataRecord(start + "", records.get(i - 1), null));
 				start = DateUtils.addSecond(start, 1);
 			}
-			_records.add(new ScheduledDataRecord(start + "", record));				
+			_records.add(new ScheduledDataRecord(start + "", record, i != 0 ? _records.get(_records.size() - 1) : null));				
 			start = DateUtils.addSecond(start, 1);
 		}
 		return _records;
