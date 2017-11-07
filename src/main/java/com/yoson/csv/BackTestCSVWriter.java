@@ -69,7 +69,7 @@ public class BackTestCSVWriter {
 	}
 	
 	public static String getATradingDayHeader() {
-		return "Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,T Counter,HShort,HLong,HLong2,LShort,LLong,LLong2,Gmax,Gmin,GHLD,AVGHLD,Action,Smooth Action,Position,PC,MTM,MMTM,PnL,No_Trade,Total_PnL,HDiff,LDiff\n";
+		return "Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,CP counting,CP,CPS,CPS Av. L,CP Acc count,Previous Max CPAC,counting after CP,Est.,ON/ OFF,Pre.Action,Action,smooth Action,Position,Pos. counting,MTM,Max. MTM,PnL,No. Trades,Total PnL\n";
 	}
 	
 	public static String getBTTradeHeader() {
@@ -88,18 +88,22 @@ public class BackTestCSVWriter {
 	}
 
 	public static String getSummaryHeader() {
-		return "Test no.,T-Short,T-Long,T-Long2,HLD,Stoploss,Trade Stop Loss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length\n";
+		return "Test no.,CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length\n";
 	}
 	
 	public static String getSummaryContent(int id, BackTestResult backTestResult) {
 		StringBuilder content = new StringBuilder();
 		content.append(id + ",");
-		content.append(backTestResult.testSet.gettShort() + ",");
-		content.append(backTestResult.testSet.gettLong() + ",");				
-		content.append(backTestResult.testSet.gettLong2() + ",");
-		content.append(backTestResult.testSet.getHld() + ",");
-		content.append((backTestResult.testSet.getStopLoss() * backTestResult.testSet.getUnit()) + ",");				
-		content.append((backTestResult.testSet.getTradeStopLoss() * backTestResult.testSet.getUnit()) + ",");				
+		content.append(backTestResult.testSet.getCpTimer() + ",");
+		content.append(backTestResult.testSet.getCpBuffer() + ",");
+		content.append(backTestResult.testSet.getCpHitRate() + ",");
+		content.append(backTestResult.testSet.getCpSmooth() + ",");
+		content.append(backTestResult.testSet.getEstimationBuffer() + ",");
+		content.append(backTestResult.testSet.getActionTrigger() + ",");
+		content.append(backTestResult.testSet.getActionCounting() + ",");
+		content.append(backTestResult.testSet.getTradeStopLossTrigger() + ",");
+		content.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + ",");
+		content.append(backTestResult.testSet.getAbsoluteTradeStopLoss() + ",");	
 		content.append(backTestResult.testSet.getMarketStartTime() + ",");
 		if ((backTestResult.testSet.getLunchStartTimeFrom().compareTo("23:59:59"))==1)
 		{
@@ -165,28 +169,28 @@ public class BackTestCSVWriter {
 	
 	public static String getBTSummaryContent(MainUIParam mainUIParam, BackTestResult backTestResult) {
 		StringBuilder content = new StringBuilder();
-		content.append(backTestResult.testSet.gettShort()  +  "_")
-		.append(backTestResult.testSet.gettLong() + "_")
-		.append(backTestResult.testSet.gettLong2() + "_")
-		.append(backTestResult.testSet.getHld() + "_")
-		.append(backTestResult.testSet.getStopLoss() + "_")
-		.append(backTestResult.testSet.getTradeStopLoss() + "_")
-		.append(backTestResult.testSet.getInstantTradeStoploss() + "_")
-		.append(backTestResult.testSet.getItsCounter() + "_")
-		.append(backTestResult.testSet.getStopGainPercent() + "_")
-		.append(backTestResult.testSet.getStopGainTrigger()  +  ",")
+		content.append(backTestResult.testSet.getCpTimer()  +  "_")
+		.append(backTestResult.testSet.getCpBuffer() + "_")
+		.append(backTestResult.testSet.getCpHitRate() + "_")
+		.append(backTestResult.testSet.getCpSmooth() + "_")
+		.append(backTestResult.testSet.getEstimationBuffer() + "_")
+		.append(backTestResult.testSet.getActionTrigger() + "_")
+		.append(backTestResult.testSet.getActionCounting() + "_")
+		.append(backTestResult.testSet.getTradeStopLossTrigger() + "_")
+		.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + "_")
+		.append(backTestResult.testSet.getAbsoluteTradeStopLoss()  +  ",")
 		.append(mainUIParam.getVersion() + ",")
 		.append(mainUIParam.getSource() + ",")
-		.append(backTestResult.testSet.gettShort() + ",")
-		.append(backTestResult.testSet.gettLong() + ",")
-		.append(backTestResult.testSet.gettLong2() + ",")
-		.append(backTestResult.testSet.getHld() + ",")
-		.append(backTestResult.testSet.getStopLoss() + ",")
-		.append(backTestResult.testSet.getTradeStopLoss() + ",")
-		.append(backTestResult.testSet.getInstantTradeStoploss() + ",")
-		.append(backTestResult.testSet.getItsCounter() + ",")
-		.append(backTestResult.testSet.getStopGainPercent() + ",")
-		.append(backTestResult.testSet.getStopGainTrigger() + ",")
+		.append(backTestResult.testSet.getCpTimer() + ",")
+		.append(backTestResult.testSet.getCpBuffer() + ",")
+		.append(backTestResult.testSet.getCpHitRate() + ",")
+		.append(backTestResult.testSet.getCpSmooth() + ",")
+		.append(backTestResult.testSet.getEstimationBuffer() + ",")
+		.append(backTestResult.testSet.getActionTrigger() + ",")
+		.append(backTestResult.testSet.getActionCounting() + ",")
+		.append(backTestResult.testSet.getTradeStopLossTrigger() + ",")
+		.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + ",")
+		.append(backTestResult.testSet.getAbsoluteTradeStopLoss() + ",")
 		.append(mainUIParam.getMarketStartTime() + ",")
 		.append(mainUIParam.getLunchStartTimeFrom() + ",")
 		.append(mainUIParam.getCashPerIndexPoint() + ",")
@@ -246,32 +250,32 @@ public class BackTestCSVWriter {
 //			profitAndLossMap.put(id, perDayRecord.totalPnL + ",");
 			BackTestTask.allProfitAndLossResults.append(perDayRecord.totalPnL + ",");
 			
-			pnlContent.append(backTestResult.testSet.gettShort()+"_")
-			.append(backTestResult.testSet.gettLong()+"_")
-			.append(backTestResult.testSet.gettLong2()+"_")
-			.append(backTestResult.testSet.getHld()+"_")
-			.append(backTestResult.testSet.getStopLoss()+"_")
-			.append(backTestResult.testSet.getTradeStopLoss()+"_")
-			.append(backTestResult.testSet.getInstantTradeStoploss()+"_")
-			.append(backTestResult.testSet.getItsCounter()+"_")
-			.append(backTestResult.testSet.getStopGainPercent()+"_")
-			.append(backTestResult.testSet.getStopGainTrigger() + ",")
+			pnlContent.append(backTestResult.testSet.getCpTimer()  +  "_")
+			.append(backTestResult.testSet.getCpBuffer() + "_")
+			.append(backTestResult.testSet.getCpHitRate() + "_")
+			.append(backTestResult.testSet.getCpSmooth() + "_")
+			.append(backTestResult.testSet.getEstimationBuffer() + "_")
+			.append(backTestResult.testSet.getActionTrigger() + "_")
+			.append(backTestResult.testSet.getActionCounting() + "_")
+			.append(backTestResult.testSet.getTradeStopLossTrigger() + "_")
+			.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + "_")
+			.append(backTestResult.testSet.getAbsoluteTradeStopLoss()  +  ",")
 			.append(perDayRecord.getDateStr() + ",")
 			.append(mainUIParam.getVersion() + ",")
 			.append(mainUIParam.getSource() + ",")
 			.append(perDayRecord.totalPnL + ",")
 			.append("\n"); 
 			
-			tradContent.append(backTestResult.testSet.gettShort() + "_")
-			.append(backTestResult.testSet.gettLong() + "_")
-			.append(backTestResult.testSet.gettLong2() + "_")
-			.append(backTestResult.testSet.getHld() + "_")
-			.append(backTestResult.testSet.getStopLoss() + "_")
-			.append(backTestResult.testSet.getTradeStopLoss() + "_")
-			.append(backTestResult.testSet.getInstantTradeStoploss() + "_")
-			.append(backTestResult.testSet.getItsCounter() + "_")
-			.append(backTestResult.testSet.getStopGainPercent() + "_")
-			.append(backTestResult.testSet.getStopGainTrigger() + ",")
+			tradContent.append(backTestResult.testSet.getCpTimer()  +  "_")
+			.append(backTestResult.testSet.getCpBuffer() + "_")
+			.append(backTestResult.testSet.getCpHitRate() + "_")
+			.append(backTestResult.testSet.getCpSmooth() + "_")
+			.append(backTestResult.testSet.getEstimationBuffer() + "_")
+			.append(backTestResult.testSet.getActionTrigger() + "_")
+			.append(backTestResult.testSet.getActionCounting() + "_")
+			.append(backTestResult.testSet.getTradeStopLossTrigger() + "_")
+			.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + "_")
+			.append(backTestResult.testSet.getAbsoluteTradeStopLoss()  +  ",")
 			.append(mainUIParam.getVersion() + ",")
 			.append(mainUIParam.getSource() + ",")
 			.append(perDayRecord.getDateStr() + ",")
@@ -310,16 +314,16 @@ public class BackTestCSVWriter {
 		content.append("Index performance," + perDayRecord.indexPerformance + "\n");
 		content.append("Performance in pts," + perDayRecord.performanceInPts + "\n");
 		content.append("Average HL Diff.," + perDayRecord.averageHLDiff + "\n");
-		content.append("T-short," + mainUIParam.gettShort() + "\n");
-		content.append("T-Long," + mainUIParam.gettLong() + "\n");
-		content.append("T-Long2," + mainUIParam.gettLong2() + "\n");
-		content.append("HLD," + mainUIParam.getHld() + "\n");
-		content.append("Stop Loss," + mainUIParam.getStopLoss() + "\n");
-		content.append("Trade stop loss," + mainUIParam.getTradeStopLoss() + "\n");
-		content.append("Instant trade stoploss," + mainUIParam.getInstantTradeStoploss() + "\n");
-		content.append("ITS counter," + mainUIParam.getItsCounter() + "\n");
-		content.append("Stop gain trigger," + mainUIParam.getStopGainTrigger() + "\n");
-		content.append("Stop gain percent," + mainUIParam.getStopGainPercent() + "\n");	 
+		content.append("CP timer," + mainUIParam.getCpTimer() + "\n");
+		content.append("CP Buffer," + mainUIParam.getCpBuffer() + "\n");
+		content.append("CP Hit Rate," + mainUIParam.getCpHitRate() + "\n");
+		content.append("CP smooth," + mainUIParam.getCpSmooth() + "\n");
+		content.append("estimation buffer," + mainUIParam.getEstimationBuffer() + "\n");
+		content.append("action trigger," + mainUIParam.getActionTrigger() + "\n");
+		content.append("action counting," + mainUIParam.getActionCounting() + "\n");
+		content.append("% trade stoploss trigger," + mainUIParam.getTradeStopLossTrigger() + "\n");
+		content.append("% trade stoploss," + mainUIParam.getTradeStopLossTriggerPercent() + "\n");
+		content.append("Absolute trade stoploss," + mainUIParam.getAbsoluteTradeStopLoss() + "\n");	 
 		return content.toString();
 	}
 
@@ -330,28 +334,25 @@ public class BackTestCSVWriter {
 		 content.append(perSecondRecord.getLastTrade() + ",");
 		 content.append(perSecondRecord.getCheckMarketTime() + ",");
 		 content.append(perSecondRecord.getReference() + ",");
-		 content.append(perSecondRecord.gettCounter() + ",");
-		 content.append(perSecondRecord.getHighShort() + ",");
-		 content.append(perSecondRecord.getHighLong() + ",");
-		 content.append(perSecondRecord.getHighLong2() + ",");
-		 content.append(perSecondRecord.getLowShort() + ",");
-		 content.append(perSecondRecord.getLowLong() + ",");
-		 content.append(perSecondRecord.getLowLong2() + ",");
-		 content.append(perSecondRecord.getgMax() + ",");
-		 content.append(perSecondRecord.getgMin() + ",");
-		 content.append(perSecondRecord.getgHLD() + ",");
-		 content.append(perSecondRecord.getAverageHLD() + ",");
+		 content.append(perSecondRecord.getCpCounting() + ",");
+		 content.append(perSecondRecord.getCp() + ",");
+		 content.append(perSecondRecord.getCps() + ",");
+		 content.append(perSecondRecord.getCpsAverage() + ",");
+		 content.append(perSecondRecord.getCpAccount() + ",");
+		 content.append(perSecondRecord.getPreviousMaxCPAC() + ",");
+		 content.append(perSecondRecord.getCountingAfterCP() + ",");
+		 content.append(perSecondRecord.getEst() + ",");
+		 content.append(perSecondRecord.getOffOn() + ",");
+		 content.append(perSecondRecord.getPreAction() + ",");
 		 content.append(perSecondRecord.getAction() + ",");
 		 content.append(perSecondRecord.getSmoothAction() + ",");
 		 content.append(perSecondRecord.getPosition() + ",");
-		 content.append(perSecondRecord.getPc() + ",");
+		 content.append(perSecondRecord.getPosCounting() + ",");
 		 content.append(perSecondRecord.getMtm() + ",");
-		 content.append(perSecondRecord.getMmtm() + ",");
+		 content.append(perSecondRecord.getMaxMtm() + ",");
 		 content.append(perSecondRecord.getPnl() + ",");
 		 content.append(perSecondRecord.getTradeCount() + ",");
-		 content.append(perSecondRecord.getTotalPnl() + ",");
-		 content.append(perSecondRecord.getHighDiffernece() + ",");
-		 content.append(perSecondRecord.getLowDiffernece());
+		 content.append(perSecondRecord.getTotalPnl());		 
 		 content.append("\n");
 	}
 }

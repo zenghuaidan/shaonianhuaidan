@@ -19,26 +19,26 @@ public class MainUIParam extends TestSet {
 	private String source;
 	private String version;
 
-	private int tShortTo;
-	private int tShortLiteral;
-	private int tLongTo;
-	private int tLongLiteral;
-	private int tLong2To;
-	private int tLong2Literal;
-	private double hldTo;
-	private double hldLiteral;
-	private double stopLossTo;
-	private double stopLossLiteral;
-	private double tradeStopLossTo;
-	private double tradeStopLossLiteral;
-	private double instantTradeStoplossTo;
-	private double instantTradeStoplossLiteral;
-	private double itsCounterTo;
-	private double itsCounterLiteral;
-	private double stopGainPercentTo;
-	private double stopGainPercentLiteral;
-	private double stopGainTriggerTo;
-	private double stopGainTriggerLiteral;
+	private int cpTimerTo;
+	private int cpTimerLiteral;
+	private int cpBufferTo;
+	private int cpBufferLiteral;
+	private int cpHitRateTo;
+	private int cpHitRateLiteral;
+	private int cpSmoothTo;
+	private int cpSmoothLiteral;
+	private int estimationBufferTo;
+	private int estimationBufferLiteral;
+	private int actionTriggerTo;
+	private int actionTriggerLiteral;
+	private int actionCountingTo;
+	private int actionCountingLiteral;
+	private int tradeStopLossTriggerTo;
+	private int tradeStopLossTriggerLiteral;
+	private double tradeStopLossTriggerPercentTo;
+	private double tradeStopLossTriggerPercentLiteral;
+	private int absoluteTradeStopLossTo;
+	private int absoluteTradeStopLossLiteral;
 	@Expose
 	private double pnlThreshold;
 	@Expose
@@ -81,164 +81,165 @@ public class MainUIParam extends TestSet {
 		this.version = version;
 	}
 
-	public int gettShortTo() {
-		return tShortTo;
+	
+	public int getCpTimerTo() {
+		return cpTimerTo;
 	}
 
-	public void settShortTo(int tShortTo) {
-		this.tShortTo = tShortTo;
+	public void setCpTimerTo(int cpTimerTo) {
+		this.cpTimerTo = cpTimerTo;
 	}
 
-	public int gettShortLiteral() {
-		return tShortLiteral;
+	public int getCpTimerLiteral() {
+		return cpTimerLiteral;
 	}
 
-	public void settShortLiteral(int tShortLiteral) {
-		this.tShortLiteral = tShortLiteral;
+	public void setCpTimerLiteral(int cpTimerLiteral) {
+		this.cpTimerLiteral = cpTimerLiteral;
 	}
 
-	public int gettLongTo() {
-		return tLongTo;
+	public int getCpBufferTo() {
+		return cpBufferTo;
 	}
 
-	public void settLongTo(int tLongTo) {
-		this.tLongTo = tLongTo;
+	public void setCpBufferTo(int cpBufferTo) {
+		this.cpBufferTo = cpBufferTo;
 	}
 
-	public int gettLongLiteral() {
-		return tLongLiteral;
+	public int getCpBufferLiteral() {
+		return cpBufferLiteral;
 	}
 
-	public void settLongLiteral(int tLongLiteral) {
-		this.tLongLiteral = tLongLiteral;
+	public void setCpBufferLiteral(int cpBufferLiteral) {
+		this.cpBufferLiteral = cpBufferLiteral;
 	}
 
-	public int gettLong2To() {
-		return tLong2To;
+	public int getCpHitRateTo() {
+		return cpHitRateTo;
 	}
 
-	public void settLong2To(int tLong2To) {
-		this.tLong2To = tLong2To;
+	public void setCpHitRateTo(int cpHitRateTo) {
+		this.cpHitRateTo = cpHitRateTo;
 	}
 
-	public int gettLong2Literal() {
-		return tLong2Literal;
+	public int getCpHitRateLiteral() {
+		return cpHitRateLiteral;
 	}
 
-	public void settLong2Literal(int tLong2Literal) {
-		this.tLong2Literal = tLong2Literal;
+	public void setCpHitRateLiteral(int cpHitRateLiteral) {
+		this.cpHitRateLiteral = cpHitRateLiteral;
 	}
 
-	public double getHldTo() {
-		return hldTo;
+	public int getCpSmoothTo() {
+		return cpSmoothTo;
 	}
 
-	public void setHldTo(double hldTo) {
-		this.hldTo = hldTo;
+	public void setCpSmoothTo(int cpSmoothTo) {
+		this.cpSmoothTo = cpSmoothTo;
 	}
 
-	public double getHldLiteral() {
-		return hldLiteral;
+	public int getCpSmoothLiteral() {
+		return cpSmoothLiteral;
 	}
 
-	public void setHldLiteral(double hldLiteral) {
-		this.hldLiteral = hldLiteral;
+	public void setCpSmoothLiteral(int cpSmoothLiteral) {
+		this.cpSmoothLiteral = cpSmoothLiteral;
 	}
 
-	public double getStopLossTo() {
-		return stopLossTo;
+	public int getEstimationBufferTo() {
+		return estimationBufferTo;
 	}
 
-	public void setStopLossTo(double stopLossTo) {
-		this.stopLossTo = stopLossTo;
+	public void setEstimationBufferTo(int estimationBufferTo) {
+		this.estimationBufferTo = estimationBufferTo;
 	}
 
-	public double getStopLossLiteral() {
-		return stopLossLiteral;
+	public int getEstimationBufferLiteral() {
+		return estimationBufferLiteral;
 	}
 
-	public void setStopLossLiteral(double stopLossLiteral) {
-		this.stopLossLiteral = stopLossLiteral;
+	public void setEstimationBufferLiteral(int estimationBufferLiteral) {
+		this.estimationBufferLiteral = estimationBufferLiteral;
 	}
 
-	public double getTradeStopLossTo() {
-		return tradeStopLossTo;
+	public int getActionTriggerTo() {
+		return actionTriggerTo;
 	}
 
-	public void setTradeStopLossTo(double tradeStopLossTo) {
-		this.tradeStopLossTo = tradeStopLossTo;
+	public void setActionTriggerTo(int actionTriggerTo) {
+		this.actionTriggerTo = actionTriggerTo;
 	}
 
-	public double getTradeStopLossLiteral() {
-		return tradeStopLossLiteral;
+	public int getActionTriggerLiteral() {
+		return actionTriggerLiteral;
 	}
 
-	public void setTradeStopLossLiteral(double tradeStopLossLiteral) {
-		this.tradeStopLossLiteral = tradeStopLossLiteral;
+	public void setActionTriggerLiteral(int actionTriggerLiteral) {
+		this.actionTriggerLiteral = actionTriggerLiteral;
 	}
 
-	public double getInstantTradeStoplossTo() {
-		return instantTradeStoplossTo;
+	public int getActionCountingTo() {
+		return actionCountingTo;
 	}
 
-	public void setInstantTradeStoplossTo(double instantTradeStoplossTo) {
-		this.instantTradeStoplossTo = instantTradeStoplossTo;
+	public void setActionCountingTo(int actionCountingTo) {
+		this.actionCountingTo = actionCountingTo;
 	}
 
-	public double getInstantTradeStoplossLiteral() {
-		return instantTradeStoplossLiteral;
+	public int getActionCountingLiteral() {
+		return actionCountingLiteral;
 	}
 
-	public void setInstantTradeStoplossLiteral(double instantTradeStoplossLiteral) {
-		this.instantTradeStoplossLiteral = instantTradeStoplossLiteral;
+	public void setActionCountingLiteral(int actionCountingLiteral) {
+		this.actionCountingLiteral = actionCountingLiteral;
 	}
 
-	public double getItsCounterTo() {
-		return itsCounterTo;
+	public int getTradeStopLossTriggerTo() {
+		return tradeStopLossTriggerTo;
 	}
 
-	public void setItsCounterTo(double itsCounterTo) {
-		this.itsCounterTo = itsCounterTo;
+	public void setTradeStopLossTriggerTo(int tradeStopLossTriggerTo) {
+		this.tradeStopLossTriggerTo = tradeStopLossTriggerTo;
 	}
 
-	public double getItsCounterLiteral() {
-		return itsCounterLiteral;
+	public int getTradeStopLossTriggerLiteral() {
+		return tradeStopLossTriggerLiteral;
 	}
 
-	public void setItsCounterLiteral(double itsCounterLiteral) {
-		this.itsCounterLiteral = itsCounterLiteral;
+	public void setTradeStopLossTriggerLiteral(int tradeStopLossTriggerLiteral) {
+		this.tradeStopLossTriggerLiteral = tradeStopLossTriggerLiteral;
 	}
 
-	public double getStopGainPercentTo() {
-		return stopGainPercentTo;
+	public double getTradeStopLossTriggerPercentTo() {
+		return tradeStopLossTriggerPercentTo;
 	}
 
-	public void setStopGainPercentTo(double stopGainPercentTo) {
-		this.stopGainPercentTo = stopGainPercentTo;
+	public void setTradeStopLossTriggerPercentTo(double tradeStopLossTriggerPercentTo) {
+		this.tradeStopLossTriggerPercentTo = tradeStopLossTriggerPercentTo;
 	}
 
-	public double getStopGainPercentLiteral() {
-		return stopGainPercentLiteral;
+	public double getTradeStopLossTriggerPercentLiteral() {
+		return tradeStopLossTriggerPercentLiteral;
 	}
 
-	public void setStopGainPercentLiteral(double stopGainPercentLiteral) {
-		this.stopGainPercentLiteral = stopGainPercentLiteral;
+	public void setTradeStopLossTriggerPercentLiteral(double tradeStopLossTriggerPercentLiteral) {
+		this.tradeStopLossTriggerPercentLiteral = tradeStopLossTriggerPercentLiteral;
 	}
 
-	public double getStopGainTriggerTo() {
-		return stopGainTriggerTo;
+	public int getAbsoluteTradeStopLossTo() {
+		return absoluteTradeStopLossTo;
 	}
 
-	public void setStopGainTriggerTo(double stopGainTriggerTo) {
-		this.stopGainTriggerTo = stopGainTriggerTo;
+	public void setAbsoluteTradeStopLossTo(int absoluteTradeStopLossTo) {
+		this.absoluteTradeStopLossTo = absoluteTradeStopLossTo;
 	}
 
-	public double getStopGainTriggerLiteral() {
-		return stopGainTriggerLiteral;
+	public int getAbsoluteTradeStopLossLiteral() {
+		return absoluteTradeStopLossLiteral;
 	}
 
-	public void setStopGainTriggerLiteral(double stopGainTriggerLiteral) {
-		this.stopGainTriggerLiteral = stopGainTriggerLiteral;
+	public void setAbsoluteTradeStopLossLiteral(int absoluteTradeStopLossLiteral) {
+		this.absoluteTradeStopLossLiteral = absoluteTradeStopLossLiteral;
 	}
 
 	public boolean isOutputChart() {
@@ -347,48 +348,47 @@ public class MainUIParam extends TestSet {
 	
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
-		mainUIParam.settShort(120);
-		mainUIParam.settShortTo(120);
-		mainUIParam.settShortLiteral(1);
+		mainUIParam.setCpTimer(1800);
+		mainUIParam.setCpTimerTo(1800);
+		mainUIParam.setCpTimerLiteral(1);
 		
-		mainUIParam.settLong(600);
-		mainUIParam.settLongTo(600);
-		mainUIParam.settLongLiteral(600);
+		mainUIParam.setCpBuffer(4);
+		mainUIParam.setCpBufferTo(4);
+		mainUIParam.setCpBufferLiteral(1);
 		
-		mainUIParam.settLong2(1200);
-		mainUIParam.settLong2To(1200);
-		mainUIParam.settLong2Literal(1200);
+		mainUIParam.setCpHitRate(50);
+		mainUIParam.setCpHitRateTo(50);
+		mainUIParam.setCpHitRateLiteral(1);
 		
-		mainUIParam.setHld(0.001);
-		mainUIParam.setHldTo(0.001);
-		mainUIParam.setHldLiteral(0.001);
+		mainUIParam.setCpSmooth(6);
+		mainUIParam.setCpSmoothTo(6);
+		mainUIParam.setCpSmoothLiteral(6);
 		
 		
-		mainUIParam.setStopLoss(200);
-		mainUIParam.setStopLossTo(200);
-		mainUIParam.setStopLossLiteral(200);
+		mainUIParam.setEstimationBuffer(50);
+		mainUIParam.setEstimationBufferTo(50);
+		mainUIParam.setEstimationBufferLiteral(1);
 		
-		mainUIParam.setTradeStopLoss(50);
-		mainUIParam.setTradeStopLossTo(50);
-		mainUIParam.setTradeStopLossLiteral(50);
+		mainUIParam.setActionTrigger(5);
+		mainUIParam.setActionTriggerTo(5);
+		mainUIParam.setActionTriggerLiteral(1);
 
-		mainUIParam.setInstantTradeStoploss(0.6);
-		mainUIParam.setInstantTradeStoplossTo(0.6);
-		mainUIParam.setInstantTradeStoplossLiteral(0.6);
+		mainUIParam.setActionCounting(10);
+		mainUIParam.setActionCountingTo(10);
+		mainUIParam.setActionCountingLiteral(1);
 		
-		mainUIParam.setItsCounter(50);
-		mainUIParam.setItsCounterTo(50);
-		mainUIParam.setItsCounterLiteral(50);
+		mainUIParam.setTradeStopLossTrigger(50);
+		mainUIParam.setTradeStopLossTriggerTo(50);
+		mainUIParam.setTradeStopLossTriggerLiteral(1);
 		
-		mainUIParam.setStopGainPercent(0.8);
-		mainUIParam.setStopGainPercentTo(0.8);
-		mainUIParam.setStopGainPercentLiteral(0.8);
+		mainUIParam.setTradeStopLossTriggerPercent(0.2);
+		mainUIParam.setTradeStopLossTriggerPercentTo(0.2);
+		mainUIParam.setTradeStopLossTriggerPercentLiteral(0.1);
 		
-		mainUIParam.setStopGainTrigger(30000);
-		mainUIParam.setStopGainTriggerTo(30000);
-		mainUIParam.setStopGainTriggerLiteral(30000);
+		mainUIParam.setAbsoluteTradeStopLoss(50);
+		mainUIParam.setAbsoluteTradeStopLossTo(50);
+		mainUIParam.setAbsoluteTradeStopLossLiteral(1);
 		
-		mainUIParam.setUnit(1);
 		mainUIParam.setOrderTicker(10);
 		
 		mainUIParam.setMarketStartTime("09:15:00");

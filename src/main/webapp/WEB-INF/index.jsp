@@ -148,64 +148,64 @@
 							      <td>Literal</td>
 							   </tr>
 							   <tr>
-							      <td>T-Short</td>
-							      <td><input name="tShort" value="${mainUIParam.tShort}" type="text"/></td>
-							      <td><input name="tShortTo" value="${mainUIParam.tShortTo}" type="text"/></td>
-							      <td><input name="tShortLiteral" value="${mainUIParam.tShortLiteral}" type="text"/></td>
+							      <td>CP timer</td>
+							      <td><input name="cpTimer" value="${mainUIParam.cpTimer}" type="text"/></td>
+							      <td><input name="cpTimerTo" value="${mainUIParam.cpTimerTo}" type="text"/></td>
+							      <td><input name="cpTimerLiteral" value="${mainUIParam.cpTimerLiteral}" type="text"/></td>
 							   </tr>
 							   <tr>
-							      <td>T-Long</td>
-							      <td><input name="tLong" value="${mainUIParam.tLong}" type="text"/></td>
-							      <td><input name="tLongTo" value="${mainUIParam.tLongTo}" type="text"/></td>
-							      <td><input name="tLongLiteral" value="${mainUIParam.tLongLiteral}" type="text"/></td>
+							      <td>CP Buffer</td>
+							      <td><input name="cpBuffer" value="${mainUIParam.cpBuffer}" type="text"/></td>
+							      <td><input name="cpBufferTo" value="${mainUIParam.cpBufferTo}" type="text"/></td>
+							      <td><input name="cpBufferLiteral" value="${mainUIParam.cpBufferLiteral}" type="text"/></td>
 							   </tr>
 							   <tr>
-							      <td>T-Long2</td>
-							      <td><input name="tLong2" value="${mainUIParam.tLong2}" type="text"/></td>
-							      <td><input name="tLong2To" value="${mainUIParam.tLong2To}" type="text"/></td>
-							      <td><input name="tLong2Literal" value="${mainUIParam.tLong2Literal}" type="text"/></td>
+							      <td>CP Hit Rate</td>
+							      <td><input name="cpHitRate" value="${mainUIParam.cpHitRate}" type="text"/></td>
+							      <td><input name="cpHitRateTo" value="${mainUIParam.cpHitRateTo}" type="text"/></td>
+							      <td><input name="cpHitRateLiteral" value="${mainUIParam.cpHitRateLiteral}" type="text"/></td>
 							   </tr>
 							   <tr>
-							      <td>HLD(Without %)</td>
-							      <td><input name="hld" value="${mainUIParam.hld}" type="text"/></td>
-							      <td><input name="hldTo" value="${mainUIParam.hldTo}" type="text"/></td>
-							      <td><input name="hldLiteral" value="${mainUIParam.hldLiteral}" type="text"/></td>
+							      <td>CP smooth</td>
+							      <td><input name="cpSmooth" value="${mainUIParam.cpSmooth}" type="text"/></td>
+							      <td><input name="cpSmoothTo" value="${mainUIParam.cpSmoothTo}" type="text"/></td>
+							      <td><input name="cpSmoothLiteral" value="${mainUIParam.cpSmoothLiteral}" type="text"/></td>
 							   </tr>
 							   <tr>
-							      <td>stoploss</td>
-							      <td><input name="stopLoss" value="${mainUIParam.stopLoss}" type="text"/></td>
-							      <td><input name="stopLossTo" value="${mainUIParam.stopLossTo}" type="text"/></td>
-							      <td><input name="stopLossLiteral" value="${mainUIParam.stopLossLiteral}" type="text"/></td>
+							      <td>estimation buffer</td>
+							      <td><input name="estimationBuffer" value="${mainUIParam.estimationBuffer}" type="text"/></td>
+							      <td><input name="estimationBufferTo" value="${mainUIParam.estimationBufferTo}" type="text"/></td>
+							      <td><input name="estimationBufferLiteral" value="${mainUIParam.estimationBufferLiteral}" type="text"/></td>
 							   </tr>
 							   <tr>
-							      <td>tradestoploss</td>
-							      <td><input name="tradeStopLoss" value="${mainUIParam.tradeStopLoss}" type="text"/></td>
-							      <td><input name="tradeStopLossTo" value="${mainUIParam.tradeStopLossTo}" type="text"/></td>
-							      <td><input name="tradeStopLossLiteral" value="${mainUIParam.tradeStopLossLiteral}" type="text"/></td>
+							      <td>action trigger</td>
+							      <td><input name="actionTrigger" value="${mainUIParam.actionTrigger}" type="text"/></td>
+							      <td><input name="actionTriggerTo" value="${mainUIParam.actionTriggerTo}" type="text"/></td>
+							      <td><input name="actionTriggerLiteral" value="${mainUIParam.actionTriggerLiteral}" type="text"/></td>
 							   </tr>
 							   <tr>
-							      <td>Instant trade stoploss</td>
-							      <td><input name="instantTradeStoploss" value="${mainUIParam.instantTradeStoploss}" type="text"/></td>
-							      <td><input name="instantTradeStoplossTo" value="${mainUIParam.instantTradeStoplossTo}" type="text"/></td>
-							      <td><input name="instantTradeStoplossLiteral" value="${mainUIParam.instantTradeStoplossLiteral}" type="text"/></td>
+							      <td>action counting</td>
+							      <td><input name="actionCounting" value="${mainUIParam.actionCounting}" type="text"/></td>
+							      <td><input name="actionCountingTo" value="${mainUIParam.actionCountingTo}" type="text"/></td>
+							      <td><input name="actionCountingLiteral" value="${mainUIParam.actionCountingLiteral}" type="text"/></td>
 							   </tr>
 							   <tr>
-							      <td>ITS counter</td>
-							      <td><input name="itsCounter" value="${mainUIParam.itsCounter}" type="text"/></td>
-							      <td><input name="itsCounterTo" value="${mainUIParam.itsCounterTo}" type="text"/></td>
-							      <td><input name="itsCounterLiteral" value="${mainUIParam.itsCounterLiteral}" type="text"/></td>
+							      <td>% trade stoploss trigger</td>
+							      <td><input name="tradeStopLossTrigger" value="${mainUIParam.tradeStopLossTrigger}" type="text"/></td>
+							      <td><input name="tradeStopLossTriggerTo" value="${mainUIParam.tradeStopLossTriggerTo}" type="text"/></td>
+							      <td><input name="tradeStopLossTriggerLiteral" value="${mainUIParam.tradeStopLossTriggerLiteral}" type="text"/></td>
 							   </tr>
 							   <tr>
-							      <td>Stop gain percent</td>
-							      <td><input name="stopGainPercent" value="${mainUIParam.stopGainPercent}" type="text"/></td>
-							      <td><input name="stopGainPercentTo" value="${mainUIParam.stopGainPercentTo}" type="text"/></td>
-							      <td><input name="stopGainPercentLiteral" value="${mainUIParam.stopGainPercentLiteral}" type="text"/></td>
+							      <td>% trade stoploss</td>
+							      <td><input name="tradeStopLossTriggerPercent" value="${mainUIParam.tradeStopLossTriggerPercent}" type="text"/></td>
+							      <td><input name="tradeStopLossTriggerPercentTo" value="${mainUIParam.tradeStopLossTriggerPercentTo}" type="text"/></td>
+							      <td><input name="tradeStopLossTriggerPercentLiteral" value="${mainUIParam.tradeStopLossTriggerPercentLiteral}" type="text"/></td>
 							   </tr>
 							   <tr>
-							      <td>Stop gain trigger</td>
-							      <td><input name="stopGainTrigger" value="${mainUIParam.stopGainTrigger}" type="text"/></td>
-							      <td><input name="stopGainTriggerTo" value="${mainUIParam.stopGainTriggerTo}" type="text"/></td>
-							      <td><input name="stopGainTriggerLiteral" value="${mainUIParam.stopGainTriggerLiteral}" type="text"/></td>
+							      <td>Absolute trade stoploss</td>
+							      <td><input name="absoluteTradeStopLoss" value="${mainUIParam.absoluteTradeStopLoss}" type="text"/></td>
+							      <td><input name="absoluteTradeStopLossTo" value="${mainUIParam.absoluteTradeStopLossTo}" type="text"/></td>
+							      <td><input name="absoluteTradeStopLossLiteral" value="${mainUIParam.absoluteTradeStopLossLiteral}" type="text"/></td>
 							   </tr>
 						   		<c:forEach items="${mainUIParam.brokenDateList}" var="brokenDate" varStatus="i">
 						            <c:if test="${ i.index == 0 }" >
@@ -555,62 +555,62 @@
 								      <td>Literal</td>
 								   </tr>
 								   <tr>
-								      <td>T-Short</td>
-								      <td><input name="tShort" value="${strategy.mainUIParam.tShort}" type="text"/></td>
+								      <td>CP timer</td>
+								      <td><input name="tShort" value="${strategy.mainUIParam.cpTimer}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>
 								   <tr>
-								      <td>T-Long</td>
-								      <td><input value="${strategy.mainUIParam.tLong}" type="text"/></td>
+								      <td>CP Buffer</td>
+								      <td><input value="${strategy.mainUIParam.cpBuffer}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>
 								   <tr>
-								      <td>T-Long2</td>
-								      <td><input value="${strategy.mainUIParam.tLong2}" type="text"/></td>
+								      <td>CP Hit Rate</td>
+								      <td><input value="${strategy.mainUIParam.cpHitRate}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>
 								   <tr>
-								      <td>HLD(Without %)</td>
-								      <td><input value="${strategy.mainUIParam.hld}" type="text"/></td>
+								      <td>CP smooth</td>
+								      <td><input value="${strategy.mainUIParam.cpSmooth}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>
 								   <tr>
-								      <td>stoploss</td>
-								      <td><input value="${strategy.mainUIParam.stopLoss}" type="text"/></td>
+								      <td>estimation buffer</td>
+								      <td><input value="${strategy.mainUIParam.estimationBuffer}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>
 								   <tr>
-								      <td>tradestoploss</td>
-								      <td><input value="${strategy.mainUIParam.tradeStopLoss}" type="text"/></td>
+								      <td>action trigger</td>
+								      <td><input value="${strategy.mainUIParam.actionTrigger}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>
 								   <tr>
-								      <td>Instant trade stoploss</td>
-								      <td><input value="${strategy.mainUIParam.instantTradeStoploss}" type="text"/></td>
+								      <td>action counting</td>
+								      <td><input value="${strategy.mainUIParam.actionCounting}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>
 								   <tr>
-								      <td>ITS counter</td>
-								      <td><input value="${strategy.mainUIParam.itsCounter}" type="text"/></td>
+								      <td>% trade stoploss trigger</td>
+								      <td><input value="${strategy.mainUIParam.tradeStopLossTrigger}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>
 								   <tr>
-								      <td>Stop gain percent</td>
-								      <td><input value="${strategy.mainUIParam.stopGainPercent}" type="text"/></td>
+								      <td>% trade stoploss</td>
+								      <td><input value="${strategy.mainUIParam.tradeStopLossTriggerPercent}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>
 								   <tr>
-								      <td>Stop gain trigger</td>
-								      <td><input value="${strategy.mainUIParam.stopGainTrigger}" type="text"/></td>
+								      <td>Absolute trade stoploss</td>
+								      <td><input value="${strategy.mainUIParam.absoluteTradeStopLoss}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>

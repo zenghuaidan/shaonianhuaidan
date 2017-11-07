@@ -4,25 +4,25 @@ import com.google.gson.annotations.Expose;
 
 public class TestSet {
 	@Expose
-	private int tShort;
+	private int cpTimer;
 	@Expose
-	private int tLong;
+	private int cpBuffer;
 	@Expose
-	private int tLong2;
+	private int cpHitRate;
 	@Expose
-	private double hld;
+	private int cpSmooth;
 	@Expose
-	private double stopLoss;
+	private int estimationBuffer;
 	@Expose
-	private double tradeStopLoss;
+	private int actionTrigger;
 	@Expose
-	private double instantTradeStoploss;
+	private int actionCounting;
 	@Expose
-	private double itsCounter;
+	private int tradeStopLossTrigger;
 	@Expose
-	private double stopGainPercent;
+	private double tradeStopLossTriggerPercent;
 	@Expose
-	private double stopGainTrigger;
+	private int absoluteTradeStopLoss;
 	@Expose
 	private double unit;
 	@Expose
@@ -46,22 +46,23 @@ public class TestSet {
 
 	public TestSet() {}
 
-	public TestSet(int tShort, int tLong, int tLong2, double hld, double stopLoss, double tradeStopLoss,
-			double instantTradeStoploss, double itsCounter, double stopGainPercent, double stopGainTrigger, double unit,
+	public TestSet(int cpTimer, int cpBuffer, int cpHitRate, int cpSmooth, int estimationBuffer, int actionTrigger,
+			int actionCounting, int tradeStopLossTrigger, double tradeStopLossTriggerPercent, int absoluteTradeStopLoss, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
 			int lunchLastNumberOfMinutesClearPosition) {
-		this.tShort = tShort;
-		this.tLong = tLong;
-		this.tLong2 = tLong2;
-		this.hld = hld;
-		this.stopLoss = stopLoss;
-		this.tradeStopLoss = tradeStopLoss;
-		this.instantTradeStoploss = instantTradeStoploss;
-		this.itsCounter = itsCounter;
-		this.stopGainPercent = stopGainPercent;
-		this.stopGainTrigger = stopGainTrigger;
+		this.cpTimer = cpTimer;
+		this.cpBuffer = cpBuffer;
+		this.cpHitRate = cpHitRate;
+		this.cpSmooth = cpSmooth;
+		this.estimationBuffer = estimationBuffer;
+		this.actionTrigger = actionTrigger;
+		this.actionCounting = actionCounting;
+		this.tradeStopLossTrigger = tradeStopLossTrigger;
+		this.tradeStopLossTriggerPercent = tradeStopLossTriggerPercent;
+		this.absoluteTradeStopLoss = absoluteTradeStopLoss;
 		this.unit = unit;
+		
 		this.marketStartTime = marketStartTime;
 		this.lunchStartTimeFrom = lunchStartTimeFrom;
 		this.lunchStartTimeTo = lunchStartTimeTo;
@@ -73,84 +74,84 @@ public class TestSet {
 		this.lunchLastNumberOfMinutesClearPosition = lunchLastNumberOfMinutesClearPosition;
 	}
 
-	public int gettShort() {
-		return tShort;
+	public int getCpTimer() {
+		return cpTimer;
 	}
 
-	public void settShort(int tShort) {
-		this.tShort = tShort;
+	public void setCpTimer(int cpTimer) {
+		this.cpTimer = cpTimer;
 	}
 
-	public int gettLong() {
-		return tLong;
+	public int getCpBuffer() {
+		return cpBuffer;
 	}
 
-	public void settLong(int tLong) {
-		this.tLong = tLong;
+	public void setCpBuffer(int cpBuffer) {
+		this.cpBuffer = cpBuffer;
 	}
 
-	public int gettLong2() {
-		return tLong2;
+	public int getCpHitRate() {
+		return cpHitRate;
 	}
 
-	public void settLong2(int tLong2) {
-		this.tLong2 = tLong2;
+	public void setCpHitRate(int cpHitRate) {
+		this.cpHitRate = cpHitRate;
 	}
 
-	public double getHld() {
-		return hld;
+	public int getCpSmooth() {
+		return cpSmooth;
 	}
 
-	public void setHld(double hld) {
-		this.hld = hld;
+	public void setCpSmooth(int cpSmooth) {
+		this.cpSmooth = cpSmooth;
 	}
 
-	public double getStopLoss() {
-		return stopLoss * unit;
+	public int getEstimationBuffer() {
+		return estimationBuffer;
 	}
 
-	public void setStopLoss(double stopLoss) {
-		this.stopLoss = stopLoss;
+	public void setEstimationBuffer(int estimationBuffer) {
+		this.estimationBuffer = estimationBuffer;
 	}
 
-	public double getTradeStopLoss() {
-		return tradeStopLoss * unit;
+	public int getActionTrigger() {
+		return actionTrigger;
 	}
 
-	public void setTradeStopLoss(double tradeStopLoss) {
-		this.tradeStopLoss = tradeStopLoss;
+	public void setActionTrigger(int actionTrigger) {
+		this.actionTrigger = actionTrigger;
 	}
 
-	public double getInstantTradeStoploss() {
-		return instantTradeStoploss;
+	public int getActionCounting() {
+		return actionCounting;
 	}
 
-	public void setInstantTradeStoploss(double instantTradeStoploss) {
-		this.instantTradeStoploss = instantTradeStoploss;
+	public void setActionCounting(int actionCounting) {
+		this.actionCounting = actionCounting;
 	}
 
-	public double getItsCounter() {
-		return itsCounter;
+	public int getTradeStopLossTrigger() {
+		return tradeStopLossTrigger;
 	}
 
-	public void setItsCounter(double itsCounter) {
-		this.itsCounter = itsCounter;
+	public void setTradeStopLossTrigger(int tradeStopLossTrigger) {
+		this.tradeStopLossTrigger = tradeStopLossTrigger;
 	}
 
-	public double getStopGainPercent() {
-		return stopGainPercent;
+	public double getTradeStopLossTriggerPercent() {
+		return tradeStopLossTriggerPercent;
 	}
 
-	public void setStopGainPercent(double stopGainPercent) {
-		this.stopGainPercent = stopGainPercent;
+	public void setTradeStopLossTriggerPercent(double tradeStopLossTriggerPercent) {
+		this.tradeStopLossTriggerPercent = tradeStopLossTriggerPercent;
 	}
 
-	public double getStopGainTrigger() {
-		return stopGainTrigger * unit;
+	public int getAbsoluteTradeStopLoss() {
+		return absoluteTradeStopLoss;
 	}
 
-	public void setStopGainTrigger(double stopGainTrigger) {
-		this.stopGainTrigger = stopGainTrigger;
+	public void setAbsoluteTradeStopLoss(int absoluteTradeStopLoss) {
+		this.absoluteTradeStopLoss = absoluteTradeStopLoss;
 	}
 
 	public String getMarketStartTime() {
@@ -183,14 +184,6 @@ public class TestSet {
 
 	public void setMarketCloseTime(String marketCloseTime) {
 		this.marketCloseTime = marketCloseTime;
-	}
-
-	public double getUnit() {
-		return unit;
-	}
-
-	public void setUnit(double unit) {
-		this.unit = unit;
 	}
 
 	public double getCashPerIndexPoint() {
@@ -231,6 +224,14 @@ public class TestSet {
 
 	public void setLunchLastNumberOfMinutesClearPosition(int lunchLastNumberOfMinutesClearPosition) {
 		this.lunchLastNumberOfMinutesClearPosition = lunchLastNumberOfMinutesClearPosition;
+	}
+
+	public double getUnit() {
+		return unit;
+	}
+
+	public void setUnit(double unit) {
+		this.unit = unit;
 	}
 
 }

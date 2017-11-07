@@ -191,16 +191,16 @@ function updateControlTab() {
 	    	var trs = "<tr>" +
 	    			"<td>Pannel Number</td>" +
 	    			"<td>Execute</td>" +
-	    			"<td>T-Short</td>" +
-	    			"<td>T-Long</td>" +
-	    			"<td>T-Long2</td>" +
-	    			"<td>HLD(Without %)</td>" +
-	    			"<td>stoploss</td>" +
-	    			"<td>tradestoploss</td>" +
-	    			"<td>Instant trade stoploss</td>" +
-	    			"<td>ITS counter</td>" +
-	    			"<td>Stop gain percent</td>" +
-	    			"<td>Stop gain trigger</td>" +
+	    			"<td>CP timer</td>" +
+	    			"<td>CP Buffer</td>" +
+	    			"<td>CP Hit Rate</td>" +
+	    			"<td>CP smooth</td>" +
+	    			"<td>estimation buffer</td>" +
+	    			"<td>action trigger</td>" +
+	    			"<td>action counting</td>" +
+	    			"<td>% trade stoploss trigger</td>" +
+	    			"<td>% trade stoploss</td>" +
+	    			"<td>Absolute trade stoploss</td>" +
 	    			"<td>Trade Count</td>" +
 	    			"<td>pnl</td>" +
 	    			"</tr>";
@@ -208,16 +208,16 @@ function updateControlTab() {
 	    		trs += "<tr>" +
 	    				"<td>" + data[i].strategyName + "</td>" +
 						"<td>" + data[i].active + "</td>" +
-						"<td>" + data[i].mainUIParam.tShort + "</td>" +						
-						"<td>" + data[i].mainUIParam.tLong + "</td>" +
-						"<td>" + data[i].mainUIParam.tLong2 + "</td>" +
-						"<td>" + data[i].mainUIParam.hld + "</td>" +
-						"<td>" + data[i].mainUIParam.stopLoss + "</td>" +
-						"<td>" + data[i].mainUIParam.tradeStopLoss + "</td>" +
-						"<td>" + data[i].mainUIParam.instantTradeStoploss + "</td>" +
-						"<td>" + data[i].mainUIParam.itsCounter + "</td>" +						
-						"<td>" + data[i].mainUIParam.stopGainPercent + "</td>" +
-						"<td>" + data[i].mainUIParam.stopGainTrigger + "</td>" +						
+						"<td>" + data[i].mainUIParam.cpTimer + "</td>" +						
+						"<td>" + data[i].mainUIParam.cpBuffer + "</td>" +
+						"<td>" + data[i].mainUIParam.cpHitRate + "</td>" +
+						"<td>" + data[i].mainUIParam.cpSmooth + "</td>" +
+						"<td>" + data[i].mainUIParam.estimationBuffer + "</td>" +
+						"<td>" + data[i].mainUIParam.actionTrigger + "</td>" +
+						"<td>" + data[i].mainUIParam.actionCounting + "</td>" +
+						"<td>" + data[i].mainUIParam.tradeStopLossTrigger + "</td>" +						
+						"<td>" + data[i].mainUIParam.tradeStopLossTriggerPercent + "</td>" +
+						"<td>" + data[i].mainUIParam.absoluteTradeStopLoss + "</td>" +						
 						"<td>" + data[i].tradeCount + "</td>" +
 						"<td>" + data[i].pnl + "</td>" +
 						"</tr>";
@@ -279,16 +279,16 @@ function getMainUIParam() {
 		}
 	}
 	return {
-	   "tLong":$.trim($("[name='tLong']").val()),
-	   "tLong2":$.trim($("[name='tLong2']").val()),
-	   "tShort":$.trim($("[name='tShort']").val()),
-	   "hld":$.trim($("[name='hld']").val()),
-	   "stopLoss":$.trim($("[name='stopLoss']").val()),
-	   "tradeStopLoss":$.trim($("[name='tradeStopLoss']").val()),
-	   "instantTradeStoploss":$.trim($("[name='instantTradeStoploss']").val()),
-	   "itsCounter":$.trim($("[name='itsCounter']").val()),
-	   "stopGainPercent":$.trim($("[name='stopGainPercent']").val()),
-	   "stopGainTrigger":$.trim($("[name='stopGainTrigger']").val()),
+	   "cpTimer":$.trim($("[name='cpTimer']").val()),
+	   "cpBuffer":$.trim($("[name='cpBuffer']").val()),
+	   "cpHitRate":$.trim($("[name='cpHitRate']").val()),
+	   "cpSmooth":$.trim($("[name='cpSmooth']").val()),
+	   "estimationBuffer":$.trim($("[name='estimationBuffer']").val()),
+	   "actionTrigger":$.trim($("[name='actionTrigger']").val()),
+	   "actionCounting":$.trim($("[name='actionCounting']").val()),
+	   "tradeStopLossTrigger":$.trim($("[name='tradeStopLossTrigger']").val()),
+	   "tradeStopLossTriggerPercent":$.trim($("[name='tradeStopLossTriggerPercent']").val()),
+	   "absoluteTradeStopLoss":$.trim($("[name='absoluteTradeStopLoss']").val()),
 	   "unit":$.trim($("[name='unit']").val()),
 	   "marketStartTime":$.trim($("[name='marketStartTime']").val()),
 	   "lunchStartTimeFrom":$.trim($("[name='lunchStartTimeFrom']").val()),
@@ -300,26 +300,26 @@ function getMainUIParam() {
 	   "lastNumberOfMinutesClearPosition":$.trim($("[name='lastNumberOfMinutesClearPosition']").val()),
 	   "lunchLastNumberOfMinutesClearPosition":$.trim($("[name='lunchLastNumberOfMinutesClearPosition']").val()),
 	   "source":$.trim($("[name='source']").val()),
-	   "tShortTo":$.trim($("[name='tShortTo']").val()),
-	   "tShortLiteral":$.trim($("[name='tShortLiteral']").val()),
-	   "tLongTo":$.trim($("[name='tLongTo']").val()),
-	   "tLongLiteral":$.trim($("[name='tLongLiteral']").val()),
-	   "tLong2To":$.trim($("[name='tLong2To']").val()),
-	   "tLong2Literal":$.trim($("[name='tLong2Literal']").val()),
-	   "hldTo":$.trim($("[name='hldTo']").val()),
-	   "hldLiteral":$.trim($("[name='hldLiteral']").val()),
-	   "stopLossTo":$.trim($("[name='stopLossTo']").val()),
-	   "stopLossLiteral":$.trim($("[name='stopLossLiteral']").val()),
-	   "tradeStopLossTo":$.trim($("[name='tradeStopLossTo']").val()),
-	   "tradeStopLossLiteral":$.trim($("[name='tradeStopLossLiteral']").val()),
-	   "instantTradeStoplossTo":$.trim($("[name='instantTradeStoplossTo']").val()),
-	   "instantTradeStoplossLiteral":$.trim($("[name='instantTradeStoplossLiteral']").val()),
-	   "itsCounterTo":$.trim($("[name='itsCounterTo']").val()),
-	   "itsCounterLiteral":$.trim($("[name='itsCounterLiteral']").val()),
-	   "stopGainPercentTo":$.trim($("[name='stopGainPercentTo']").val()),
-	   "stopGainPercentLiteral":$.trim($("[name='stopGainPercentLiteral']").val()),
-	   "stopGainTriggerTo":$.trim($("[name='stopGainTriggerTo']").val()),
-	   "stopGainTriggerLiteral":$.trim($("[name='stopGainTriggerLiteral']").val()),
+	   "cpTimerTo":$.trim($("[name='cpTimerTo']").val()),
+	   "cpTimerLiteral":$.trim($("[name='cpTimerLiteral']").val()),
+	   "cpBufferTo":$.trim($("[name='cpBufferTo']").val()),
+	   "cpBufferLiteral":$.trim($("[name='cpBufferLiteral']").val()),
+	   "cpHitRateTo":$.trim($("[name='cpHitRateTo']").val()),
+	   "cpHitRateLiteral":$.trim($("[name='cpHitRateLiteral']").val()),
+	   "cpSmoothTo":$.trim($("[name='cpSmoothTo']").val()),
+	   "cpSmoothLiteral":$.trim($("[name='cpSmoothLiteral']").val()),
+	   "estimationBufferTo":$.trim($("[name='estimationBufferTo']").val()),
+	   "estimationBufferLiteral":$.trim($("[name='estimationBufferLiteral']").val()),
+	   "actionTriggerTo":$.trim($("[name='actionTriggerTo']").val()),
+	   "actionTriggerLiteral":$.trim($("[name='actionTriggerLiteral']").val()),
+	   "actionCountingTo":$.trim($("[name='actionCountingTo']").val()),
+	   "actionCountingLiteral":$.trim($("[name='actionCountingLiteral']").val()),
+	   "tradeStopLossTriggerTo":$.trim($("[name='tradeStopLossTriggerTo']").val()),
+	   "tradeStopLossTriggerLiteral":$.trim($("[name='tradeStopLossTriggerLiteral']").val()),
+	   "tradeStopLossTriggerPercentTo":$.trim($("[name='tradeStopLossTriggerPercentTo']").val()),
+	   "tradeStopLossTriggerPercentLiteral":$.trim($("[name='tradeStopLossTriggerPercentLiteral']").val()),
+	   "absoluteTradeStopLossTo":$.trim($("[name='absoluteTradeStopLossTo']").val()),
+	   "absoluteTradeStopLossLiteral":$.trim($("[name='absoluteTradeStopLossLiteral']").val()),
 	   "outputChart":$("[name='outputChart']").is(":checked"),
 	   "tradeDataField":$.trim($("[name='tradeDataField']:checked").val()),
 	   "askDataField":$.trim($("[name='askDataField']:checked").val()),

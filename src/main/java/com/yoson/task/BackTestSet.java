@@ -68,9 +68,9 @@ public class BackTestSet {
 				
 				if (perSecondRecord.getPnl() >= mainUIParam.getPnlThreshold()) {
 					String key = StringUtils.join(scheduleDataPerSecond.getDateStr() , "-" , scheduleDataPerSecond.getTimeStr().replaceAll(":", "-") , "#"
-							, testSet.gettShort() , "_" , testSet.gettLong() , "_" , testSet.gettLong2() , "_" , testSet.getHld() , "_"
-							, testSet.getStopLoss() , "_" , testSet.getTradeStopLoss() , "_" , testSet.getInstantTradeStoploss() 
-							, "_" , testSet.getItsCounter() , "_" , testSet.getStopGainPercent() , "_" , testSet.getStopGainTrigger());
+							, testSet.getCpTimer() , "_" , testSet.getCpBuffer() , "_" , testSet.getCpHitRate() , "_" , testSet.getCpSmooth() , "_"
+							, testSet.getEstimationBuffer() , "_" , testSet.getActionTrigger() , "_" , testSet.getActionCounting() 
+							, "_" , testSet.getTradeStopLossTrigger() , "_" , testSet.getTradeStopLossTriggerPercent() , "_" , testSet.getAbsoluteTradeStopLoss());
 					BackTestTask.allPositivePnlResult.put(key, sb.toString());
 				}				
 			}
