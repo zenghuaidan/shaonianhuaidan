@@ -68,6 +68,8 @@ public class Strategy implements Serializable {
 			this.cancelOrder = new HashSet<Integer>();
 			this.orderCountMap = new HashMap<Integer, Integer>();
 			this.actoinMap = new HashMap<Long, Integer>();
+			this.pnl = 0;
+			this.tradeCount = 0;
 		}
 	}
 
@@ -78,6 +80,8 @@ public class Strategy implements Serializable {
 		this.orderCountMap = null;
 		this.orderTime = null;
 		this.actoinMap = null;
+		this.pnl = 0;
+		this.tradeCount = 0;
 	}
 
 	public int getTradeCount() {
