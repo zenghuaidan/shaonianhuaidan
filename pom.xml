@@ -280,7 +280,7 @@
 			  <configuration>
 			    <scanIntervalSeconds>10</scanIntervalSeconds>
 			    <webApp>
-			      <contextPath>/v21</contextPath>
+			      <contextPath>/idea3</contextPath>
 			    </webApp>
 			    <httpConnector>
 	          		<port>8081</port>
@@ -299,11 +299,11 @@
 		        <version>2.2</version>
 		        <configuration>		        
 		        	<contextReloadable>true</contextReloadable>
-		        	<finalName>v21</finalName>		        	
+		        	<finalName>idea3</finalName>		        	
 		          	<url>http://localhost:8080/manager/text</url>
 		          	<username>tomcat</username>
 		          	<password>123456</password>
-		          	<path>/v21</path>		          			          			          
+		          	<path>/idea3</path>		          			          			          
 		        </configuration>
 	      	</plugin>
       
