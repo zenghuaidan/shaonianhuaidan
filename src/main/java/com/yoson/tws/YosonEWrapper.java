@@ -123,14 +123,14 @@ public class YosonEWrapper extends BasicEWrapper {
 			long current = Long.parseLong(scheduledDataRecord.getTime());
 			if(current > lastSecond) break;
 			while(start < current) {
-				scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), null, mainUIParam, start + ""));
+				scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), scheduleDatas.get(scheduleDatas.size() - 1), mainUIParam, start + ""));
 				start = DateUtils.addSecond(start, 1);
 			}					
 			scheduleDatas.add(toScheduleData(scheduledDataRecord, i != 0 ? scheduleDatas.get(scheduleDatas.size() - 1) : null, mainUIParam, start + ""));				
 			start = DateUtils.addSecond(start, 1);
 		}
 		while(start <= lastSecond) {
-			scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), null, mainUIParam, start + ""));
+			scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), scheduleDatas.get(scheduleDatas.size() - 1), mainUIParam, start + ""));
 			start = DateUtils.addSecond(start, 1);
 		}
 		return scheduleDatas;
@@ -283,7 +283,7 @@ public class YosonEWrapper extends BasicEWrapper {
 			ScheduledDataRecord record = records.get(i);
 			long current = Long.parseLong(record.getTime());
 			while(start < current) {
-				_records.add(new ScheduledDataRecord(start + "", records.get(i - 1), null));
+				_records.add(new ScheduledDataRecord(start + "", records.get(i - 1), _records.get(_records.size() - 1)));
 				start = DateUtils.addSecond(start, 1);
 			}
 			_records.add(new ScheduledDataRecord(start + "", record, i != 0 ? _records.get(_records.size() - 1) : null));				
