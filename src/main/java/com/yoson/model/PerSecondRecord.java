@@ -48,6 +48,26 @@ public class PerSecondRecord {
 		this.reference = lastSecondRecord.getReference() + 1;
 		
 		this.checkMarketTime = checkMarketTime;
+		initCPCounting(dailyScheduleData, testSet);
+		initCP(testSet);
+		initCPS(lastSecondRecord, testSet);
+		initCPAccount(lastSecondRecord);
+		initCPSAverageAndPreviousMaxCPAC(dailyScheduleData, lastSecondRecord);
+		initCountingAfterCP(lastSecondRecord);
+		initEst(lastSecondRecord, testSet);
+		initOffOn(lastSecondRecord);
+		initAction(lastSecondRecord, testSet);
+		initPreAction(lastSecondRecord);
+		initSmoothAction(lastSecondRecord, testSet);
+		initPosition(lastSecondRecord);
+		initMtm();
+		initPosCounting(lastSecondRecord);
+		initMaxMtm(dailyPerSecondRecordList);
+		initPnl(lastSecondRecord);
+		initTotalPnl();
+		initTradeCount(lastSecondRecord);
+		initTotalTrades();
+		initPc(lastSecondRecord);
 	}
 	
 	public void initCPCounting(List<ScheduleData> dailyScheduleData, TestSet testSet) {
@@ -77,9 +97,9 @@ public class PerSecondRecord {
 	}
 	
 	public void initCPAccount(PerSecondRecord lastSecondRecord) {
-		if (lastSecondRecord.getCps() == 0 && this.getCps() != 0) {
+		if (lastSecondRecord.getCps() == 0 && this.cps != 0) {
 			this.cpAccount = 1;
-		} else if (lastSecondRecord.getCps() != 0 && this.getCps() != 0) {
+		} else if (lastSecondRecord.getCps() != 0 && this.cps != 0) {
 			this.cpAccount = lastSecondRecord.getCpAccount() + 1;
 		}
 	}
