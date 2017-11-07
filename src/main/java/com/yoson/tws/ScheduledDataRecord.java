@@ -32,22 +32,22 @@ public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 		this.time = time;
 	}
 	
-	public ScheduledDataRecord(String time, ScheduledDataRecord record) {
+	public ScheduledDataRecord(String time, ScheduledDataRecord record, ScheduledDataRecord lastSecondRecord) {
 		this.time = time;
-		this.bidavg = record.bidavg;
-		this.bidlast = record.bidlast;
-		this.bidmin = record.bidmin;
-		this.bidmax = record.bidmax;
+		this.bidavg = lastSecondRecord != null && record.bidavg == 0 ? lastSecondRecord.getBidavg() : record.bidavg;
+		this.bidlast = lastSecondRecord != null && record.bidlast == 0 ? lastSecondRecord.getBidlast() : record.bidlast;
+		this.bidmin = lastSecondRecord != null && record.bidmin == 0 ? lastSecondRecord.getBidmin() : record.bidmin;
+		this.bidmax = lastSecondRecord != null && record.bidmax == 0 ? lastSecondRecord.getBidmax() : record.bidmax;
 		
-		this.askavg = record.askavg;
-		this.asklast = record.asklast;
-		this.askmin = record.askmin;
-		this.askmax = record.askmax;
+		this.askavg = lastSecondRecord != null && record.askavg == 0 ? lastSecondRecord.getAskavg() : record.askavg;
+		this.asklast = lastSecondRecord != null && record.asklast == 0 ? lastSecondRecord.getAsklast() : record.asklast;
+		this.askmin = lastSecondRecord != null && record.askmin == 0 ? lastSecondRecord.getAskmin() : record.askmin;
+		this.askmax = lastSecondRecord != null && record.askmax == 0 ? lastSecondRecord.getAskmax() : record.askmax;
 		
-		this.tradeavg = record.tradeavg;
-		this.tradelast = record.tradelast;
-		this.trademin = record.trademin;
-		this.trademax = record.trademax;
+		this.tradeavg = lastSecondRecord != null && record.tradeavg == 0 ? lastSecondRecord.getTradeavg() : record.tradeavg;
+		this.tradelast = lastSecondRecord != null && record.tradelast == 0 ? lastSecondRecord.getTradelast() : record.tradelast;
+		this.trademin = lastSecondRecord != null && record.trademin == 0 ? lastSecondRecord.getTrademin() : record.trademin;
+		this.trademax = lastSecondRecord != null && record.trademax == 0 ? lastSecondRecord.getTrademax() : record.trademax;
 	}
 
 	public String getTime() {
