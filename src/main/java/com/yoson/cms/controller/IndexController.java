@@ -245,19 +245,14 @@ public class IndexController  implements StatusCallBack {
 		double ask = scheduledDataRecord.getAsklast();
 		double bid = scheduledDataRecord.getBidlast();
 		double trade = scheduledDataRecord.getTradelast();
-		double close = getLastDoubleValue(YosonEWrapper.closeMap);
-		
-		Double askSize = getLastDoubleValue(YosonEWrapper.askSizeMap);
-		Double bidSize = getLastDoubleValue(YosonEWrapper.bidSizeMap);
-		Double tradeSize = getLastDoubleValue(YosonEWrapper.tradeSizeMap);
 		
 		Format FMT2 = new DecimalFormat( "#,##0.00");
 		Format PCT = new DecimalFormat( "0.0%");
 		
-		String change = close == 0	? "" : PCT.format( (trade - close) / close);
+		String change = YosonEWrapper.close == 0	? "" : PCT.format( (trade - YosonEWrapper.close) / YosonEWrapper.close);
 		String desc = EClientSocketUtils.contract != null && EClientSocketUtils.isConnected() && YosonEWrapper.isValidateTime(new Date()) ? EClientSocketUtils.contract.getSymbol() : "Waiting for input";
 		String time = YosonEWrapper.lastTime == null ? "" : DateUtils.yyyyMMddHHmmss().format(YosonEWrapper.lastTime);
-		return desc + "@" + FMT2.format(bid) + "@" + bidSize + "@" + FMT2.format(ask) + "@" + askSize + "@" + FMT2.format(trade) + "@" + tradeSize + "@" + time + "@" + change;
+		return desc + "@" + FMT2.format(bid) + "@" + YosonEWrapper.bidSize + "@" + FMT2.format(ask) + "@" + YosonEWrapper.askSize + "@" + FMT2.format(trade) + "@" + YosonEWrapper.tradeSize + "@" + time + "@" + change;
 	}
 	
 	@ResponseBody
@@ -514,20 +509,6 @@ public class IndexController  implements StatusCallBack {
 	public String uploadStatus() {
 	  return String.join("<br/>", IndexController.uploadStatus);
 	}
-	
-	private double getLastDoubleValue(Map<Long, List<Double>> map) {
-		if(map == null || map.size() == 0)
-			return 0;
-		List<Double> list = map.get((Long)map.keySet().toArray()[map.keySet().size() - 1]);
-		return list.get(list.size() - 1);
-	}
-	
-//	private int getLastIntValue(Map<Long, List<Integer>> map) {
-//		if(map == null || map.size() == 0)
-//			return 0;
-//		List<Integer> list = map.get((Long)map.keySet().toArray()[map.keySet().size() - 1]);
-//		return list.get(list.size() - 1);
-//	}
 	
 	@ResponseBody
 	@RequestMapping("list")
