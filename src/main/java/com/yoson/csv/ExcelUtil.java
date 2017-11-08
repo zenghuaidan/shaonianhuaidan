@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,7 +28,8 @@ public class ExcelUtil {
 	private static DecimalFormat nf = new DecimalFormat("0.00"); 
 	
 	public static void main(String[] args) {
-		ArrayList<ArrayList<ArrayList<Object>>> _list = readExcel(new File("C:\\Users\\larry\\Desktop\\Intraday_Future_downloader_series_Marc_Gor_NEW_NK1_autosave_Aug2017_1_done.xlsm"));
+		ArrayList<ArrayList<ArrayList<Object>>> _list1 = readExcel(new File("C:\\Users\\larry\\Desktop\\mine\\A Trading Day FOR CHECK.xlsx"));
+		ArrayList<ArrayList<ArrayList<Object>>> _list2 = readExcel(new File("C:\\Users\\larry\\Desktop\\mine\\TradeIdea3_reference1.xlsx"));
 //		for(ArrayList<ArrayList<Object>> list : _list) {
 //			for(ArrayList<Object> list2 : list) {
 //				for(Object object : list2) {
@@ -37,25 +39,57 @@ public class ExcelUtil {
 //			}
 //			System.out.println("#################################################################################################################################");
 //		}
-		System.out.println(_list.get(2).get(2).get(0).toString());
-		System.out.println(_list.get(2).get(2).get(1).toString());
-		System.out.println(_list.get(2).get(2).get(2).toString());
-		System.out.println(_list.get(2).get(2).get(3).toString());
-		System.out.println(_list.get(2).get(2).get(4).toString());
-		System.out.println(_list.get(2).get(2).get(5).toString());
-		System.out.println(_list.get(2).get(2).get(6).toString());
-		System.out.println(_list.get(2).get(2).get(7).toString());
+		//time,bid size,bid price,ask price,ask size,last trade,last trade Size,Nominal Px,check time,Reference,CP counting,CP,CPS,CPS Av. L,CP Acc count,Previous Max CPAC,counting after CP,Est.,ON/ OFF,Pre.Action,Action,smooth Action,Position,Pos. counting,MTM,Max. MTM,PnL,No. Trades,Total PnL,
+		//Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,CP counting,CP,CPS,CPS Av. L,CP Acc count,Previous Max CPAC,counting after CP,Est.,ON/ OFF,Pre.Action,Action,smooth Action,Position,Pos. counting,MTM,Max. MTM,PnL,No. Trades,Total PnL		
+		int columnIndex = 0;
+		Map<String, Integer> columnMap = new HashMap<String, Integer>();
+		columnMap.put("CP counting", columnIndex++);
+		columnMap.put("CP", columnIndex++);
+		columnMap.put("CPS", columnIndex++);
+		columnMap.put("CPS Av. L", columnIndex++);
+		columnMap.put("CP Acc count", columnIndex++);
+		columnMap.put("Previous Max CPAC", columnIndex++);
+		columnMap.put("counting after CP", columnIndex++);
+		columnMap.put("Est.", columnIndex++);
+		columnMap.put("ON/ OFF", columnIndex++);
+		columnMap.put("Pre.Action", columnIndex++);
+		columnMap.put("Action", columnIndex++);
+		columnMap.put("smooth Action", columnIndex++);
+		columnMap.put("Position", columnIndex++);
+		columnMap.put("Pos. counting", columnIndex++);
+		columnMap.put("MTM", columnIndex++);
+		columnMap.put("Max. MTM", columnIndex++);
+		columnMap.put("PnL", columnIndex++);
+		columnMap.put("No. Trades", columnIndex++);
+		columnMap.put("Total PnL", columnIndex++);
 		
+		int columnStart1 = 6;
+		int columnStart2 = 10;
 		
+		int rowStart1 = 1;
+		int rowEnd1 = 22502;
 		
-		System.out.println(_list.get(2).get(3).get(0).toString());
-		System.out.println(_list.get(2).get(3).get(1).toString());
-		System.out.println(_list.get(2).get(3).get(2).toString());
-		System.out.println(_list.get(2).get(3).get(3).toString());
-		System.out.println(_list.get(2).get(3).get(4).toString());
-		System.out.println(_list.get(2).get(3).get(5).toString());
-		System.out.println(_list.get(2).get(3).get(6).toString());
-		System.out.println(_list.get(2).get(3).get(7).toString());
+		int rowStart2 = 5;
+		
+		for (String key : columnMap.keySet()) {
+			int compareColumn1 = columnMap.get(key) + columnStart1;
+			int compareColumn2 = columnMap.get(key) + columnStart2;
+			int j = 0;
+			for(int i = rowStart1; i <= rowEnd1; i++, j++) {
+				String value1 = _list1.get(0).get(i).get(compareColumn1).toString();
+				if(value1.indexOf(".") >= 0)
+					value1 = value1.substring(0, value1.indexOf("."));
+				String value2 = _list2.get(0).get(rowStart2 + j).get(compareColumn2).toString();
+				if(value2.indexOf(".") >= 0)
+					value2 = value2.substring(0, value2.indexOf("."));
+				String time1 = _list1.get(0).get(i).get(0).toString();
+				if(!value1.equals(value2)) {
+					System.out.println(key + " => reference=" + i + " ===> " + time1 + " =======> " + value1 + " &&&&& " + value2);
+					break;
+				}
+				
+			}			
+		}
 	}
 	
 	public static ArrayList<ArrayList<ArrayList<Object>>> readExcel(File file){
