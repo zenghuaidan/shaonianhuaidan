@@ -567,6 +567,8 @@ function updateStatus() {
 		    error: function() {
 		    }
 		});			
+	} else {
+		taskCompleted = false;
 	}
 }
 
