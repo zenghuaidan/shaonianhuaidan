@@ -167,7 +167,7 @@ public class BackTestTask implements Runnable {
 			BackTestTask.allBTSummaryResults.add(BackTestCSVWriter.getBTSummaryContent(mainUIParam, backTestResult));
 			
 			if(index == 1 && backTestResult.dayRecords.size() > 0) {
-				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(2));
+				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(0));
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.aTradingDayForCheckFileName), BackTestCSVWriter.getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult, true);
 			}	
 			
