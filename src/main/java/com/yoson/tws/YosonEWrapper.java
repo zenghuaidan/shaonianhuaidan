@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.io.FileUtils;
@@ -35,14 +34,13 @@ public class YosonEWrapper extends BasicEWrapper {
 	public static double bid;
 	public static double ask;
 	public static double trade;
+	public static int bidSize;
+	public static int askSize;
+	public static int tradeSize;
 	public static double close;
 	
 	public static List<ScheduledDataRecord> scheduledDataRecords;
 	
-	public static Map<Long, List<Double>> tradeSizeMap;
-	public static Map<Long, List<Double>> askSizeMap;
-	public static Map<Long, List<Double>> bidSizeMap;
-	public static Map<Long, List<Double>> closeMap;
 	public static Integer currentOrderId;
 	public static Date lastTime = new Date();
 	
@@ -94,20 +92,10 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	public static void initData() {
 		scheduledDataRecords = new CopyOnWriteArrayList<ScheduledDataRecord>();
-		closeMap = new TreeMap<Long, List<Double>>();
-		
-		tradeSizeMap = new TreeMap<Long, List<Double>>();
-		askSizeMap = new TreeMap<Long, List<Double>>();
-		bidSizeMap = new TreeMap<Long, List<Double>>();
 	}
 	
 	public static void clear() {
 		scheduledDataRecords = null;
-		closeMap = null;
-		
-		tradeSizeMap = null;
-		askSizeMap = null;
-		bidSizeMap = null;	
 		
 		lastTime = null;
 		currentOrderId = null;
@@ -454,21 +442,21 @@ public class YosonEWrapper extends BasicEWrapper {
 		String time = DateUtils.yyyyMMddHHmmss2().format(now);
 		switch (field) {
 		case 0:
-			addLiveData(bidSizeMap, now, size);
+			bidSize = size;
 			addLiveData(scheduledDataRecords, now, bid, BID);
 			String liveResult = time + "," + bid + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(livePath(), BID + "," + liveResult, true);
 			BackTestCSVWriter.writeText(bidPath(), liveResult, true);
 			break;
 		case 3:
-			addLiveData(askSizeMap, now, size);
+			askSize = size;
 			addLiveData(scheduledDataRecords, now, ask, ASK);
 			String askResult = time + "," + ask + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(livePath(), ASK + "," + askResult, true);
 			BackTestCSVWriter.writeText(askPath(), askResult, true);
 			break;
 		case 5:
-			addLiveData(tradeSizeMap, now, size);
+			tradeSize = size;
 			addLiveData(scheduledDataRecords, now, trade, TRADE);
 			String tradeResult = time + "," + trade + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(livePath(), TRADE + "," + tradeResult, true);
