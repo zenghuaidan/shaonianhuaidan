@@ -52,7 +52,7 @@ public class PerSecondRecord {
 		initCP(testSet);
 		initCPS(lastSecondRecord, testSet);
 		initCPAccount(lastSecondRecord);
-		initCPSAverageAndPreviousMaxCPAC(dailyScheduleData, lastSecondRecord);
+		initCPSAverageAndPreviousMaxCPAC(dailyScheduleData, dailyPerSecondRecordList, lastSecondRecord);
 		initCountingAfterCP(lastSecondRecord);
 		initEst(lastSecondRecord, testSet);
 		initOffOn(lastSecondRecord);
@@ -72,11 +72,12 @@ public class PerSecondRecord {
 	
 	public void initCPCounting(List<ScheduleData> dailyScheduleData, TestSet testSet) {
 		if (this.reference > testSet.getCpTimer()) {
-			for(int i = this.reference - testSet.getCpTimer(); i < this.reference; i++) {
+			for(int i = this.reference - testSet.getCpTimer(); i < this.reference - 1; i++) {
 				if(dailyScheduleData.get(i).getLastTrade() >= this.lastTrade - testSet.getCpBuffer() && dailyScheduleData.get(i).getLastTrade() <= this.lastTrade + testSet.getCpBuffer()) {
 					this.cpCounting++;
 				}
 			}
+			this.cpCounting++;
 		}
 	}
 	
@@ -104,16 +105,16 @@ public class PerSecondRecord {
 		}
 	}
 	
-	public void initCPSAverageAndPreviousMaxCPAC(List<ScheduleData> dailyScheduleData, PerSecondRecord lastSecondRecord) {
+	public void initCPSAverageAndPreviousMaxCPAC(List<ScheduleData> dailyScheduleData, List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord) {
 		if (this.cpAccount == 0) {
 			this.cpsAverage = lastSecondRecord.getCpsAverage();
 			this.previousMaxCPAC = lastSecondRecord.getPreviousMaxCPAC();
 		} else {
-			this.previousMaxCPAC = Double.MIN_VALUE;
-			double total = 0;
-			int count = 0;
-			for(int i = this.reference - this.cpAccount; i < this.reference; i++) {
-				this.previousMaxCPAC = Math.max(this.previousMaxCPAC, dailyScheduleData.get(i).getLastTrade());
+			this.previousMaxCPAC = this.cpAccount;
+			double total = this.lastTrade;
+			int count = 1;
+			for(int i = this.reference - this.cpAccount; i < this.reference - 1; i++) {
+				this.previousMaxCPAC = Math.max(this.previousMaxCPAC, dailyPerSecondRecordList.get(i).getCpAccount());
 				total += dailyScheduleData.get(i).getLastTrade();
 				count++;
 			}
@@ -241,11 +242,10 @@ public class PerSecondRecord {
 		if (this.posCounting == 0) {
 			this.maxMtm = 0;
 		} else {
-			double max = Double.MIN_VALUE;
-			for(int i = this.reference - this.posCounting; i < this.reference; i++) {
-				max = Math.max(max, dailyPerSecondRecordList.get(i).getMtm());
+			this.maxMtm = this.mtm;
+			for(int i = this.reference - this.posCounting; i < this.reference - 1; i++) {
+				this.maxMtm = Math.max(this.maxMtm, dailyPerSecondRecordList.get(i).getMtm());
 			}
-			this.maxMtm = max;
 		}
 	}
 	
