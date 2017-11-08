@@ -46,7 +46,10 @@ public class PerSecondRecord {
 		this.bidPrice = scheduleDataPerSecond.getBidPrice();
 		this.lastTrade = scheduleDataPerSecond.getLastTrade();
 		this.reference = lastSecondRecord.getReference() + 1;
-		
+		//2015-01-19  9:41:16
+//		if ("2015-01-19 15:45:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
+//			System.out.println("debug point");
+//		}
 		this.checkMarketTime = checkMarketTime;
 		initCPCounting(dailyScheduleData, testSet);
 		initCP(testSet);
@@ -64,9 +67,9 @@ public class PerSecondRecord {
 		initPosCounting(lastSecondRecord);
 		initMaxMtm(dailyPerSecondRecordList);
 		initPnl(lastSecondRecord);
-		initTotalPnl();
+		initTotalPnl(lastSecondRecord);
 		initTradeCount(lastSecondRecord);
-		initTotalTrades();
+		initTotalTrades(lastSecondRecord);
 		initPc(lastSecondRecord);
 	}
 	
@@ -192,14 +195,16 @@ public class PerSecondRecord {
 		} else if (lastSecondRecord.getMtm() < 0 && lastSecondRecord.getMtm() >= -testSet.getAbsoluteTradeStopLoss() && lastSecondRecord.getSmoothAction() != 0) {
 			this.smoothAction = lastSecondRecord.getSmoothAction();
 		} else if(lastSecondRecord.getSmoothAction() == 1 && this.action == 0 
-				&& lastSecondRecord.getMaxMtm() >= testSet.getTradeStopLossTrigger() 
+				&& (lastSecondRecord.getMaxMtm() >= testSet.getTradeStopLossTrigger() 
 				&& (this.lastTrade - lastSecondRecord.getPosition()) >= (1 - testSet.getTradeStopLossTriggerPercent())*lastSecondRecord.getMaxMtm()
-				&& (this.lastTrade - lastSecondRecord.getPosition()) >= lastSecondRecord.getMaxMtm() - testSet.getAbsoluteTradeStopLoss()) {
+				|| lastSecondRecord.getMaxMtm() < testSet.getTradeStopLossTrigger()
+				&& (this.lastTrade - lastSecondRecord.getPosition()) >= lastSecondRecord.getMaxMtm() - testSet.getAbsoluteTradeStopLoss())) {
 			this.smoothAction = 1;
 		} else if (lastSecondRecord.getSmoothAction() == -1 && this.action == 0
-				&& lastSecondRecord.getMaxMtm() >= testSet.getTradeStopLossTrigger() 
+				&& (lastSecondRecord.getMaxMtm() >= testSet.getTradeStopLossTrigger() 
 				&& (lastSecondRecord.getPosition() - this.lastTrade) >= (1 - testSet.getTradeStopLossTriggerPercent())*lastSecondRecord.getMaxMtm()
-				&& (lastSecondRecord.getPosition() - this.lastTrade) >= lastSecondRecord.getMaxMtm() - testSet.getAbsoluteTradeStopLoss()) {
+				|| lastSecondRecord.getMaxMtm() < testSet.getTradeStopLossTrigger()
+				&& (lastSecondRecord.getPosition() - this.lastTrade) >= lastSecondRecord.getMaxMtm() - testSet.getAbsoluteTradeStopLoss())) {
 			this.smoothAction = -1;
 		} else if(lastSecondRecord.getSmoothAction() == 0 && this.action != 0 
 				|| lastSecondRecord.getSmoothAction() == this.action 
@@ -261,16 +266,16 @@ public class PerSecondRecord {
 		}
 	}
 	
-	public void initTotalPnl() {
-		this.totalPnl += this.pnl;
+	public void initTotalPnl(PerSecondRecord lastSecondRecord) {
+		this.totalPnl = lastSecondRecord.totalPnl + this.pnl;
 	}
 	
 	public void initTradeCount(PerSecondRecord lastSecondRecord) {
 		this.tradeCount = Math.abs(this.smoothAction - lastSecondRecord.getSmoothAction());		
 	}
 	
-	public void initTotalTrades() {
-		this.totalTrade += this.tradeCount; 
+	public void initTotalTrades(PerSecondRecord lastSecondRecord) {
+		this.totalTrade = lastSecondRecord.totalTrade + this.tradeCount; 
 	}
 	
 	private void initPc(PerSecondRecord lastSecondRecord) {

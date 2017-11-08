@@ -348,8 +348,8 @@ public class MainUIParam extends TestSet {
 	
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
-		mainUIParam.setCpTimer(1800);
-		mainUIParam.setCpTimerTo(1800);
+		mainUIParam.setCpTimer(60);
+		mainUIParam.setCpTimerTo(60);
 		mainUIParam.setCpTimerLiteral(1);
 		
 		mainUIParam.setCpBuffer(4);
