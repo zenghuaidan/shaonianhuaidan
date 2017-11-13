@@ -1,11 +1,14 @@
 package com.yoson.model;
 
+import java.io.File;
+import java.io.FileReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
+import com.opencsv.CSVReader;
 import com.yoson.date.BrokenDate;
 import com.yoson.date.DateUtils;
 
@@ -417,6 +420,49 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setBrokenDateList(brokenDateList);
 		
 		return mainUIParam;
+	}
+	
+	public static MainUIParam loadMainUIParamFromCSV(File strategyFile) {
+		try {
+			CSVReader csvReader = new CSVReader(new FileReader(strategyFile), ',', '\n', 0);
+			String [] lines;
+			MainUIParam mainUIParam = new MainUIParam();
+			List<String []> params = new ArrayList<String []>();
+			int index = 0;
+			while ((lines = csvReader.readNext()) != null && index <= 23 )  {
+				params.add(lines);
+				index++;
+			}
+			index = 0;
+			mainUIParam.setSource(params.get(index++)[1]);
+			mainUIParam.setTradeDataField(params.get(index++)[1]);
+			mainUIParam.setAskDataField(params.get(index++)[1]);
+			mainUIParam.setBidDataField(params.get(index++)[1]);
+			mainUIParam.settShort(Integer.parseInt(params.get(index++)[1]));
+			mainUIParam.settLong(Integer.parseInt(params.get(index++)[1]));
+			mainUIParam.settLong2(Integer.parseInt(params.get(index++)[1]));
+			mainUIParam.setHld(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setStopLoss(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setTradeStopLoss(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setInstantTradeStoploss(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setItsCounter(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setStopGainPercent(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setStopGainTrigger(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setMarketStartTime(params.get(index++)[1]);
+			mainUIParam.setLunchStartTimeFrom(params.get(index++)[1]);
+			mainUIParam.setLunchStartTimeTo(params.get(index++)[1]);
+			mainUIParam.setMarketCloseTime(params.get(index++)[1]);
+			mainUIParam.setCashPerIndexPoint(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setTradingFee(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setOtherCostPerTrade(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setUnit(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setLastNumberOfMinutesClearPosition(Integer.parseInt(params.get(index++)[1]));
+			mainUIParam.setLunchLastNumberOfMinutesClearPosition(Integer.parseInt(params.get(index++)[1]));
+			csvReader.close();
+			return mainUIParam;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 	public boolean isMarketTime(String timeStr) throws ParseException {
