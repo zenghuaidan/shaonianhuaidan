@@ -575,7 +575,6 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	@Override
 	public void nextValidId(int orderId) {
-		System.out.println("Next OrderId : " + orderId);
 		currentOrderId = currentOrderId != null && currentOrderId <= orderId ? currentOrderId + 1 : orderId;
 		retryTimes = 0;
 	}
