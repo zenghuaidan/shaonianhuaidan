@@ -249,7 +249,7 @@ public class IndexController  implements StatusCallBack {
 		Format FMT2 = new DecimalFormat( "#,##0.00");
 		Format PCT = new DecimalFormat( "0.0%");
 		
-		String change = YosonEWrapper.close == 0	? "" : PCT.format( (trade - YosonEWrapper.close) / YosonEWrapper.close);
+		String change = YosonEWrapper.close == 0 ? "" : PCT.format( (trade - YosonEWrapper.close) / YosonEWrapper.close);
 		String desc = EClientSocketUtils.contract != null && EClientSocketUtils.isConnected() && YosonEWrapper.isValidateTime(new Date()) ? EClientSocketUtils.contract.getSymbol() : "Waiting for input";
 		String time = YosonEWrapper.lastTime == null ? "" : DateUtils.yyyyMMddHHmmss().format(YosonEWrapper.lastTime);
 		return desc + "@" + FMT2.format(bid) + "@" + YosonEWrapper.bidSize + "@" + FMT2.format(ask) + "@" + YosonEWrapper.askSize + "@" + FMT2.format(trade) + "@" + YosonEWrapper.tradeSize + "@" + time + "@" + change;

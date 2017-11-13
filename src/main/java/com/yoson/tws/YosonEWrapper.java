@@ -173,7 +173,7 @@ public class YosonEWrapper extends BasicEWrapper {
 			}
 		}, TrueFileFilter.TRUE);
 		for (File strategyFile : strategyFiles) {
-			MainUIParam mainUIParam = loadMainUIParamFromCSV(strategyFile);
+			MainUIParam mainUIParam = MainUIParam.loadMainUIParamFromCSV(strategyFile);
 			if(mainUIParam != null) {
 				String strategyName = strategyFile.getName().split("_")[0];
 				Strategy strategy = new Strategy();
@@ -197,46 +197,6 @@ public class YosonEWrapper extends BasicEWrapper {
 					dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime));
 		}
 		TradePerSecondDetailsCSVWriter.WriteCSV(folderPath, strategy, symbol, dailyPerSecondRecord);
-	}
-	
-	private static MainUIParam loadMainUIParamFromCSV(File strategyFile) {
-		try {
-			CSVReader csvReader = new CSVReader(new FileReader(strategyFile), ',', '\n', 0);
-			String [] lines;
-			MainUIParam mainUIParam = new MainUIParam();
-			List<String []> params = new ArrayList<String []>();
-			int index = 0;
-			while ((lines = csvReader.readNext()) != null && index <= 20 )  {
-				params.add(lines);
-				index++;
-			}
-			index = 0;
-			mainUIParam.setSource(params.get(index++)[1]);
-			mainUIParam.setTradeDataField(params.get(index++)[1]);
-			mainUIParam.setAskDataField(params.get(index++)[1]);
-			mainUIParam.setBidDataField(params.get(index++)[1]);
-			mainUIParam.settShort(Integer.parseInt(params.get(index++)[1]));
-			mainUIParam.settLong(Integer.parseInt(params.get(index++)[1]));			
-			mainUIParam.setHld(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setStopLoss(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setTradeStopLoss(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setInstantTradeStoploss(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setItsCounter(Double.parseDouble(params.get(index++)[1]));			
-			mainUIParam.setMarketStartTime(params.get(index++)[1]);
-			mainUIParam.setLunchStartTimeFrom(params.get(index++)[1]);
-			mainUIParam.setLunchStartTimeTo(params.get(index++)[1]);
-			mainUIParam.setMarketCloseTime(params.get(index++)[1]);
-			mainUIParam.setCashPerIndexPoint(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setTradingFee(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setOtherCostPerTrade(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setUnit(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setLastNumberOfMinutesClearPosition(Integer.parseInt(params.get(index++)[1]));
-			mainUIParam.setLunchLastNumberOfMinutesClearPosition(Integer.parseInt(params.get(index++)[1]));
-			csvReader.close();
-			return mainUIParam;
-		} catch (Exception e) {
-			return null;
-		}
 	}
 	
 	public static List<ScheduledDataRecord> extractScheduledDataRecord(String folderPath) throws ParseException {
