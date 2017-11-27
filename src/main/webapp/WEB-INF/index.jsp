@@ -5,7 +5,7 @@
 <head>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>BackTest</title>
+<title>${ title }</title>
 <script type="text/javascript">
 </script>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/script/jquery.datetimepicker.css"/>
