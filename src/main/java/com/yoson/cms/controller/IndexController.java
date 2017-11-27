@@ -69,6 +69,7 @@ public class IndexController  implements StatusCallBack {
 		model.addAttribute("connectionInfo", EClientSocketUtils.connectionInfo == null ? getDefaultConnectionInfo() : EClientSocketUtils.connectionInfo);
 		model.addAttribute("contract", EClientSocketUtils.contract == null ? getDefaultContract() : EClientSocketUtils.contract);
 		model.addAttribute("strategies", EClientSocketUtils.strategies);
+		model.addAttribute("title", InitServlet.getVersion());
 		return "index";
 	}
 	
