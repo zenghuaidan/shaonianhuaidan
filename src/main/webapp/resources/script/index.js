@@ -38,7 +38,7 @@ function yyyymmdd() {
 	var year = new Date().getYear() + 1900;
 	var month = new Date().getMonth() + 1;
 	var monthStr = month < 10 ? "0" + month : month;
-	var day = new Date().getDate() + 1;
+	var day = new Date().getDate();
 	var dayStr = day < 10 ? "0" + day : day;
 	return year  + "-" + monthStr + "-" + dayStr;
 }
