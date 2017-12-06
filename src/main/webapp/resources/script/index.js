@@ -680,7 +680,10 @@ function initTab() {
 			}
 			if (tab == 'controlTab') {
 				updateControlTab();
-			}		
+			}	
+			if (tab == 'connectionTab') {
+				updateConnectStatus();
+			}
 			
 		}  
 	}  
@@ -700,9 +703,6 @@ function scheduleTask() {
 			break;
 		case "uploadDataTab" : 
 			uploadStatus();
-			break;
-		case "connectionTab" : 
-			updateConnectStatus();
 			break;			
 		default : 
 			break;
