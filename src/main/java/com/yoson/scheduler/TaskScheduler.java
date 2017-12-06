@@ -20,20 +20,20 @@ import com.yoson.tws.YosonEWrapper;
 public class TaskScheduler {
 	public static Long expectNextExecuteTime;
 	public synchronized void doTrade() throws ParseException {
+		if(!EClientSocketUtils.isConnected()) {
+			return;
+		}
 		long startTime = System.currentTimeMillis();
 		try {
 			Date now = new Date();
 			boolean validateTime = YosonEWrapper.isValidateTime(now);
 			long nowDateTimeLong = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(now));
 			if(!validateTime) {
-				if(EClientSocketUtils.isConnected()) {
-					Date endTime = DateUtils.yyyyMMddHHmm().parse(EClientSocketUtils.contract.getEndTime());
-					if(DateUtils.addSecond(endTime, 1) == nowDateTimeLong) {
-						//trigger auto backtest
-						EClientSocketUtils.disconnect();
-					}
-					
-				}
+				Date endTime = DateUtils.yyyyMMddHHmm().parse(EClientSocketUtils.contract.getEndTime());
+				if(DateUtils.addSecond(endTime, 1) == nowDateTimeLong) {
+					//trigger auto backtest
+					EClientSocketUtils.disconnect();
+				}					
 				return;
 			}
 			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "*************************Do Trade:<" + nowDateTimeLong + ">*************************" + Global.lineSeparator, true);
