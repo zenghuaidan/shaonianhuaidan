@@ -714,6 +714,9 @@ function scheduleTask() {
 		case "uploadDataTab" : 
 			uploadStatus();
 			break;
+		case "connectionTab" : 
+			updateConnectStatus();
+			break;			
 		default : 
 			break;
 	}
