@@ -89,7 +89,7 @@ public class BackTestTask implements Runnable {
 				BackTestTask.rowData.put(dateStr, dataList);
 			}
 			if (BackTestTask.marketTimeMap.containsKey(sData.getTimeStr())) {
-				return;
+				continue;
 			}
 			BackTestTask.marketTimeMap.put(sData.getTimeStr(), mainUIParam.isCheckMarketTime(sData.getTimeStr()));
 		}
