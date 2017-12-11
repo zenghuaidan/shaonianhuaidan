@@ -232,9 +232,17 @@ public class PerSecondRecord {
 		}
 	}
 	
+	private void initSumHighLowDiffernece(TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList) {
+		sumHighLowDiffernece += this.highLowDiffernece;
+		if (this.reference > testSet.gettLong() + 1)
+		{	
+			this.sumHighLowDiffernece -= dailyPerSecondRecordList.get(this.reference - testSet.gettLong() - 2).highLowDiffernece;			
+		}
+	}
+	
 	private void initAverageHLD(TestSet testSet) {
 		if (this.lowLong != 0) {
-			this.averageHLD = sumHighLowDiffernece / testSet.gettLong();
+			this.averageHLD = sumHighLowDiffernece / (testSet.gettLong() + 1);
 		}
 	}
 	
@@ -321,15 +329,6 @@ public class PerSecondRecord {
 			this.highLowDiffernece = Math.max(Math.max(Math.max(lowLong, highLong), lowShort), lowLong) - Math.min(Math.min(Math.min(lowLong, highLong), lowShort), lowLong);			
 		}
 	}
-	
-	private void initSumHighLowDiffernece(TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList) {
-		sumHighLowDiffernece += this.highLowDiffernece;
-		if (this.reference > testSet.gettLong())
-		{	
-			this.sumHighLowDiffernece -= dailyPerSecondRecordList.get(this.reference - testSet.gettLong() - 1).highLowDiffernece;			
-		}
-	}
-	
 
 	public long getTime() {
 		return time;
