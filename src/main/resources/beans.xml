@@ -92,6 +92,7 @@
 	<bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	 	<property name="targetObject" ref="taskScheduler" />
 	 	<property name="targetMethod" value="doTrade" />
+	 	<property name="concurrent" value="false" />
 	</bean>
 	
 	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
