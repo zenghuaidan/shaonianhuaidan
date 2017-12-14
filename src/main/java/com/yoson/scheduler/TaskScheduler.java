@@ -30,7 +30,7 @@ public class TaskScheduler {
 			long nowDateTimeLong = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(now));
 			if(!validateTime) {
 				Date endTime = DateUtils.yyyyMMddHHmm().parse(EClientSocketUtils.contract.getEndTime());
-				if(DateUtils.addSecond(endTime, 1) == nowDateTimeLong) {
+				if(DateUtils.addSecond(endTime, 1) <= nowDateTimeLong && EClientSocketUtils.isConnected()) {
 					//trigger auto backtest
 					EClientSocketUtils.disconnect();
 				}					
