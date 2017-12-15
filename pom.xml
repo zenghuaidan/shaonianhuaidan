@@ -300,9 +300,9 @@
 		        <configuration>		        
 		        	<contextReloadable>true</contextReloadable>
 		        	<finalName>idea3</finalName>		        	
-		          	<url>http://localhost:8080/manager/text</url>
+		          	<url>http://146.196.52.71:8080/manager/text</url>
 		          	<username>tomcat</username>
-		          	<password>123456</password>
+		          	<password>yoson^123</password>
 		          	<path>/idea3</path>		          			          			          
 		        </configuration>
 	      	</plugin>
