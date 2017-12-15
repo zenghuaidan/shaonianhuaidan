@@ -3,7 +3,9 @@ package com.yoson.task;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,6 +22,7 @@ public class BackTestSet {
 	{		
 		long start = System.currentTimeMillis();
 		List<PerSecondRecord> dailyPerSecondRecordList = new ArrayList<PerSecondRecord>();
+		Map<Integer, Integer> lastTradeMap = new HashMap<>();
 		PerDayRecord perDayRecord = new PerDayRecord(new Date(dailyScheduleData.get(0).getId()));
 		
 		perDayRecord.indexPerformance = Math.abs(dailyScheduleData.get(0).getLastTrade() - dailyScheduleData.get(dailyScheduleData.size() - 1).getLastTrade());
@@ -36,7 +39,7 @@ public class BackTestSet {
 		StringBuilder sb = new StringBuilder();
 		for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {
 			//long start1 = System.currentTimeMillis();
-			PerSecondRecord perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()));
+			PerSecondRecord perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()), lastTradeMap);
 			//System.out.println("initPerSecondRecord:" + (System.currentTimeMillis() - start1));
 			dailyPerSecondRecordList.add(perSecondRecord);
 			
@@ -86,7 +89,7 @@ public class BackTestSet {
 		perDayRecord.performanceInVol = totalPnl / perDayRecord.dailyIndexVol;
 		perDayRecord.totalPnL = totalPnl;
 		perDayRecord.dailyPerSecondRecordList = dailyPerSecondRecordList;
-//		System.out.println("initPerDayRecord:" + (System.currentTimeMillis() - start));
+		System.out.println("initPerDayRecord(" + dailyScheduleData.get(0).getDateStr() + "):" + (System.currentTimeMillis() - start));
 		return perDayRecord;		
 	}
 
