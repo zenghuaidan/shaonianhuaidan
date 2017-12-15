@@ -176,7 +176,7 @@ public class PerSecondRecord {
 			
 			this.previousMaxCPAC = this.cpAccount;
 			if(lastSecondRecord.getCpAccount() != 0 && this.cpAccount == (lastSecondRecord.getCpAccount() + 1)) {
-				this.cpsToatl += this.lastTrade;
+				this.cpsToatl = lastSecondRecord.getCpsToatl() + this.lastTrade;
 				this.previousMaxCPAC = Math.max(this.previousMaxCPAC, lastSecondRecord.getPreviousMaxCPAC());
 			} else {
 				this.cpsToatl = this.lastTrade;
