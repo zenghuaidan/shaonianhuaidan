@@ -106,15 +106,11 @@ public class PerSecondRecord {
 			if (this.reference > testSet.getCpTimer()) {
 				if(this.lastTrade == lastSecondRecord.lastTrade) {
 					this.cpCounting = lastSecondRecord.cpCounting;
-					if(isWithinCpBuffer(dailyScheduleData.get(this.reference - 2).getLastTrade(), this.lastTrade, testSet.getCpBuffer())) {
-						this.cpCounting++;
-					}
 					int index = this.reference - testSet.getCpTimer() - 1;
 					if(index >= 0 && isWithinCpBuffer(dailyScheduleData.get(index).getLastTrade(), this.lastTrade, testSet.getCpBuffer())) {
 						this.cpCounting--;
 					}
 				} else {
-					
 					for(int i = this.reference - testSet.getCpTimer(), j = this.reference - 2; i <= j; i++,j--) {
 						if(isWithinCpBuffer(dailyScheduleData.get(i).getLastTrade(), this.lastTrade, testSet.getCpBuffer())) {
 							this.cpCounting++;
