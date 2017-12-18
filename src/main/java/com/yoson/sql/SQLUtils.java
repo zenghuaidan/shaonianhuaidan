@@ -62,7 +62,7 @@ public class SQLUtils {
 		Session session = getSession();		
 		try {
 //			String sql = "select distinct CONCAT_WS(' ',date,time) as sdata from schedule_data where source = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "') order by date asc, time asc";
-			String sql = "select count(*) as totalCount from schedule_data2 where ticker = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "')";
+			String sql = "select count(*) as totalCount from schedule_data where ticker = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "')";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("totalCount", IntegerType.INSTANCE);
 			return (Integer)sqlQuery.uniqueResult();			
 		} catch (Exception e) {
