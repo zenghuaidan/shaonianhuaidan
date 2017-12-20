@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -598,6 +599,53 @@ public class IndexController  implements StatusCallBack {
 		}
 	}
 	
+	public void genCleanLog(String basePath) {
+		try {
+			String fileIn = FilenameUtils.concat(basePath, "log.txt");
+			String fileOut = FilenameUtils.concat(basePath, "log_only_buy_sell.txt");
+			FileInputStream fileInputStream = new FileInputStream(fileIn);
+			List<String> readLines = IOUtils.readLines(fileInputStream);
+			FileOutputStream fileOutputStream = new FileOutputStream(fileOut);
+			Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>();
+			String BUY = "BUY";
+			String SELL = "SELL";
+			for (String line : readLines) {
+				if (line.trim().length() == 0 || !line.contains("action:BUY,") && !line.contains("action:SELL,"))
+					continue;
+				String substring = line.substring(0, line.indexOf(", orderId"));
+				String categoryName = substring.substring(substring.lastIndexOf(":") + 1).trim();
+				if(!map.containsKey(categoryName)) {				
+					Map<String, List<String>> map2 = new HashMap<String, List<String>>();
+					map2.put(BUY, new ArrayList<String>());
+					map2.put(SELL, new ArrayList<String>());
+					map.put(categoryName, map2);
+				}
+				if (line.contains("action:BUY,")) {				
+					map.get(categoryName).get(BUY).add(line + System.lineSeparator());
+				}
+				if (line.contains("action:SELL,")) {
+					map.get(categoryName).get(SELL).add(line + System.lineSeparator());
+				}
+			}
+			
+			for (String key : map.keySet()) {
+				IOUtils.write("------------------------------------" + key + "------------------------------------" + System.lineSeparator(), fileOutputStream);			
+				for (String line : map.get(key).get(BUY)) {			
+					IOUtils.write(line, fileOutputStream);
+				}
+				IOUtils.write(System.lineSeparator(), fileOutputStream);
+				for (String line : map.get(key).get(SELL)) {			
+					IOUtils.write(line, fileOutputStream);
+				}			
+				IOUtils.write(System.lineSeparator() + System.lineSeparator(), fileOutputStream);
+			}			
+			
+			fileInputStream.close();
+			fileOutputStream.close();			
+		} catch (Exception e) {
+		}
+	}
+	
 	@RequestMapping("downloadlive")
 	public void downloadlive(@RequestParam String id, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException {
 		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
@@ -615,6 +663,8 @@ public class IndexController  implements StatusCallBack {
 		ScheduledDataCSVWriter.WriteCSV(scheduledDataFilePath, instrumentName, scheduledDataRecords);
 		
 		YosonEWrapper.genTradingDayPerSecondDetails(downloadFolder, scheduledDataRecords);
+		
+		genCleanLog(downloadFolder);
 		File downloadFolderFile = new File(downloadFolder);
 		if (downloadFolderFile.exists()) {
 			String zipName = id + ".zip";
