@@ -600,12 +600,14 @@ public class IndexController  implements StatusCallBack {
 	}
 	
 	public void genCleanLog(String basePath) {
+		FileInputStream fileInputStream = null;
+		FileOutputStream fileOutputStream = null;
 		try {
 			String fileIn = FilenameUtils.concat(basePath, "log.txt");
 			String fileOut = FilenameUtils.concat(basePath, "log_only_buy_sell.txt");
-			FileInputStream fileInputStream = new FileInputStream(fileIn);
+			fileInputStream = new FileInputStream(fileIn);
 			List<String> readLines = IOUtils.readLines(fileInputStream);
-			FileOutputStream fileOutputStream = new FileOutputStream(fileOut);
+			fileOutputStream = new FileOutputStream(fileOut);
 			Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>();
 			String BUY = "BUY";
 			String SELL = "SELL";
@@ -640,9 +642,13 @@ public class IndexController  implements StatusCallBack {
 				IOUtils.write(System.lineSeparator() + System.lineSeparator(), fileOutputStream);
 			}			
 			
-			fileInputStream.close();
-			fileOutputStream.close();			
 		} catch (Exception e) {
+		} finally {
+			try {
+				fileInputStream.close();
+				fileOutputStream.close();								
+			} catch (Exception e) {
+			}
 		}
 	}
 	
