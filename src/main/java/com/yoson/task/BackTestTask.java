@@ -199,7 +199,7 @@ public class BackTestTask implements Runnable {
 		callBack.updateStatus(getStatus("All task done, total time cost: " + DateUtils.dateDiff(milliseconds)));
 		
 //		BackTestCSVWriter.writeCSVResult(mainUIParam);
-		SQLUtils.saveTestSetResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.summaryFileName), mainUIParam.getVersion());
+		SQLUtils.saveTestSetResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.summaryFileName), mainUIParam.getVersion().replaceAll(" ", "") + "_" + FilenameUtils.getBaseName(mainUIParam.getSourcePath()));
 		gc();
 	}
 
