@@ -118,7 +118,7 @@ public class SQLUtils {
 		}
 	}
 	
-	public static String saveTestSetResult(String path, String version) {
+	public static String saveTestSetResult(String path, String tableName) {
 		File file = new File(path);
 		if (!file.exists())
 			return "Could not find the file.";
@@ -127,7 +127,6 @@ public class SQLUtils {
 			CSVReader csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);
 			String [] lines;
 			String sqlSchema = null;
-			String tableName = "Idea2_" + version.replaceAll(" ", "");
 			StringBuilder sql = new StringBuilder();
 			boolean hasRecord = false;
 			int columCount = 0;
