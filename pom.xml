@@ -300,7 +300,7 @@
 		        <configuration>		        
 		        	<contextReloadable>true</contextReloadable>
 		        	<finalName>v21</finalName>		        	
-		          	<url>http://146.196.52.71:8080/manager/text</url>
+		          	<url>http://146.196.52.71:8082/manager/text</url>
 		          	<username>tomcat</username>
 		          	<password>yoson^123</password>
 		          	<path>/v21</path>		          			          			          
