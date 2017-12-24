@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -87,8 +90,13 @@ public class BackTestCSVWriter {
 //		return "key,version,Source,T-Short,T-Long,T-Long2,HLD,Stoploss,Trade Stop Loss,Morning_Start_Time,Lunch_Start_Time,Cash_per_index_point,Trading_fee,Other_cost_per_trade,No_of_days,TotalPnL,AveragePnL,Total_trades,Average_trades,No_of_win_days,No_of_loss_days,winning_percent,Average_gain_per_+ve_trade,Average_gain_per_-ve_trade,Average_0PnL_trades,Average_no_of_positive_trade,Average_no_of_negative_trade,Average _holding_time,Adjusted_Profi_ after_fee,Worst_Lossing_Day,Best_Profit_Day,Worst_Lossing_Streak,Best_Winning_Streak,Lossing_Streak_freq,Winning_Streak_freq,Sum_Of_Lossing_Streak,Sum_Of_Winning_Streak,Avg_Of_Lossing_Streak,Avg_Of_Winning_Streak,Max_Lossing_Streak_Length,Max_Winning_Streak_Length,\n";
 	}
 
-	public static String getSummaryHeader() {
-		return "Test no.,T-Short,T-Long,T-Long2,HLD,Stoploss,Trade Stop Loss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length\n";
+	public static String getSummaryHeader(Set<Integer> years) {
+		List<String> yearColums = new ArrayList<String>();
+		for (Integer year : years) {
+			yearColums.add("Total Pnl of " + year);
+		}
+		String yearColumnStr = String.join(",", yearColums);
+		return "Test no.,T-Short,T-Long,T-Long2,HLD,Stoploss,Trade Stop Loss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length," + yearColumnStr +"\n";
 	}
 	
 	public static String getSummaryContent(int id, BackTestResult backTestResult) {
@@ -138,7 +146,11 @@ public class BackTestCSVWriter {
 		content.append(backTestResult.averageOfLossingStreak + ",");
 		content.append(backTestResult.averageOfWinningStreak + ",");
 		content.append(backTestResult.maxLossingStreakLength + ",");
-		content.append(backTestResult.maxWinningStreakLength);
+		content.append(backTestResult.maxWinningStreakLength + ",");
+		for (int year : backTestResult.yearPnlMap.keySet()) {
+			content.append(backTestResult.yearPnlMap.get(year) + ",");		
+		}
+			
 		content.append("\n");
 		return content.toString();
 	}
