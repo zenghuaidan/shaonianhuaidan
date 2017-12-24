@@ -2,8 +2,11 @@ package com.yoson.model;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class BackTestResult
 {
@@ -34,6 +37,7 @@ public class BackTestResult
 	public double averageOfWinningStreak;
 	public int maxLossingStreakLength;
 	public int maxWinningStreakLength;
+	public Map<Integer, Double> yearPnlMap;
 	
 	public List<PerDayRecord> dayRecords;
 
@@ -64,7 +68,8 @@ public class BackTestResult
 		calNoZeroPnLTrade();
 		calAverageholdingTime();
 		calAdjustedPnLAfterFee();
-		calPnL();	
+		calPnL();
+		calPnLByYear();
 	}
 	
 	public void calPnL()
@@ -408,5 +413,18 @@ public class BackTestResult
 	public void calAdjustedPnLAfterFee()
 	{
 		adjustedPnLAfterFee = (testSet.getCashPerIndexPoint()*totalPnL) - ((testSet.getTradingFee() + testSet.getOtherCostPerTrade())*totalTrades);
+	}
+	
+	public void calPnLByYear() {
+		yearPnlMap = new TreeMap<Integer, Double>();
+		for (PerDayRecord dayRecord : dayRecords)
+		{
+			int year = dayRecord.getDate().getYear() + 1900;
+			if (yearPnlMap.containsKey(year)) {
+				yearPnlMap.replace(year, yearPnlMap.get(year) + dayRecord.totalPnL);				
+			} else {
+				yearPnlMap.put(year, dayRecord.totalPnL);
+			}
+		}
 	}
 }

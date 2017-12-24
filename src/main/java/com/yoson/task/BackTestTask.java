@@ -172,7 +172,7 @@ public class BackTestTask implements Runnable {
 			}	
 			
 			if (index % Global.savePoint == 0 || index == testSets.size()) {
-				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.summaryFileName), (first ? BackTestCSVWriter.getSummaryHeader() : "") + String.join("", BackTestTask.allSummaryResults), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.summaryFileName), (first ? BackTestCSVWriter.getSummaryHeader(backTestResult.yearPnlMap.keySet()) : "") + String.join("", BackTestTask.allSummaryResults), true);
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btPnlFileName), (first ? BackTestCSVWriter.getBTPnlHeader() : "") + String.join("", BackTestTask.allBTPnlResults), true);
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btTradeFileName), (first ? BackTestCSVWriter.getBTTradeHeader() : "") + String.join("", BackTestTask.allBTTradeResults), true);
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader() : "") + String.join("", BackTestTask.allBTSummaryResults), true);
