@@ -43,11 +43,14 @@ public class DateUtils {
     } 
 	
 	public static boolean isValidateTime(Date when, String startTimeStr, String endTimeStr) {
+		
 		try {		
 			if (StringUtils.isEmpty(startTimeStr) && StringUtils.isEmpty(endTimeStr))
 				return false;
 			if(StringUtils.isNotEmpty(startTimeStr) && StringUtils.isNotEmpty(endTimeStr))
-				return DateUtils.yyyyMMddHHmm().parse(startTimeStr).before(when) && DateUtils.yyyyMMddHHmm().parse(endTimeStr).after(when);
+				return DateUtils.yyyyMMddHHmm().parse(startTimeStr).equals(when) || 
+					   DateUtils.yyyyMMddHHmm().parse(endTimeStr).equals(when) || 
+					   DateUtils.yyyyMMddHHmm().parse(startTimeStr).before(when) && DateUtils.yyyyMMddHHmm().parse(endTimeStr).after(when);
 			else if(StringUtils.isNotEmpty(startTimeStr))
 				return DateUtils.yyyyMMddHHmm().parse(startTimeStr).before(when);
 			else
@@ -55,6 +58,16 @@ public class DateUtils {
 		} catch (ParseException e) {
 			return false;
 		}
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(isValidateTime(new Date(117, 11,24,9,29,59),"2017-12-24 09:30", "2017-12-24 16:15"));
+		System.out.println(isValidateTime(new Date(117, 11,24,9,30,0),"2017-12-24 09:30", "2017-12-24 16:15"));
+		System.out.println(isValidateTime(new Date(117, 11,24,9,30,1),"2017-12-24 09:30", "2017-12-24 16:15"));
+		System.out.println();
+		System.out.println(isValidateTime(new Date(117, 11,24,16,14,59),"2017-12-24 09:30", "2017-12-24 16:15"));
+		System.out.println(isValidateTime(new Date(117, 11,24,16,15,0),"2017-12-24 09:30", "2017-12-24 16:15"));
+		System.out.println(isValidateTime(new Date(117, 11,24,16,15,1),"2017-12-24 09:30", "2017-12-24 16:15"));
 	}
 	
 	private static final Object lockObj = new Object();

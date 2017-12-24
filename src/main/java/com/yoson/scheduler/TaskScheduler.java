@@ -24,6 +24,7 @@ public class TaskScheduler {
 			return;
 		}
 		long startTime = System.currentTimeMillis();
+		StringBuffer log = new StringBuffer();
 		try {
 			Date now = new Date();
 			boolean validateTime = YosonEWrapper.isValidateTime(now);
@@ -36,9 +37,9 @@ public class TaskScheduler {
 				}					
 				return;
 			}
-			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "*************************Do Trade:<" + nowDateTimeLong + ">*************************" + Global.lineSeparator, true);
+			log.append("*************************Do Trade:<" + nowDateTimeLong + ">*************************" + Global.lineSeparator);
 			if(expectNextExecuteTime != null && expectNextExecuteTime != nowDateTimeLong) {
-				BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Warning: Miss executing for " + expectNextExecuteTime + Global.lineSeparator, true);
+				log.append("Warning: Miss executing for " + expectNextExecuteTime + Global.lineSeparator);
 			}
 			expectNextExecuteTime = DateUtils.addSecond(now, 1);
 			long lastSecond = DateUtils.addSecond(now, -1);
@@ -58,7 +59,7 @@ public class TaskScheduler {
 							scheduleDataMap.put(key, scheduleDatas);
 							if (scheduleDatas.size() > 0) {
 								ScheduleData scheduleData = scheduleDatas.get(scheduleDatas.size() - 1);
-								BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), scheduleData.getDateTimeStr() + "," + scheduleData.getAskPrice() + "," + scheduleData.getBidPrice() + "," + scheduleData.getLastTrade() + "," + key  + Global.lineSeparator, true);
+								log.append(scheduleData.getDateTimeStr() + "," + scheduleData.getAskPrice() + "," + scheduleData.getBidPrice() + "," + scheduleData.getLastTrade() + "," + key  + Global.lineSeparator);
 							}
 						}
 						
@@ -74,25 +75,30 @@ public class TaskScheduler {
 								int quantity = currentSecondRecord.getSmoothAction() - lastSecondRecord.getSmoothAction();
 								if (quantity != 0 && !strategy.getActoinMap().containsKey(scheduleData.getId())) {
 									strategy.getActoinMap().put(scheduleData.getId(), quantity);
-									placeAnOrder(strategy, scheduleData.getDateTimeStr(), quantity);
+									log.append(placeAnOrder(strategy, scheduleData.getDateTimeStr(), quantity));
 								}
 							}
 						}						
 						strategy.setPnl(perSecondRecords.size() > 0 ? perSecondRecords.get(perSecondRecords.size() - 1).getTotalPnl() : 0);
+						log.append("Total pnl for " + strategy.getStrategyName() + " is " + strategy.getPnl()  + Global.lineSeparator);
 					}
 				}			
 			}
-			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Calculation finish with " + (System.currentTimeMillis() - startTime)  + Global.lineSeparator, true);
+			log.append("Calculation finish with " + (System.currentTimeMillis() - startTime)  + Global.lineSeparator);
 		} catch (Exception e) {
-			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Sytem Exception:" + e.toString() + ">" + e.getMessage()  + Global.lineSeparator, true);
+			log.append("Sytem Exception:" + e.toString() + ">" + e.getMessage()  + Global.lineSeparator);
 			for(StackTraceElement s : e.getStackTrace()) {
 				System.out.println(s.toString());
+			}
+		} finally {
+			if(log.length() > 0) {
+				BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), log.toString(), true);
 			}
 		}
 	}
 
-	public void placeAnOrder(Strategy strategy, String now, int quantity) {
-		if(YosonEWrapper.currentOrderId == null) return;
+	public String placeAnOrder(Strategy strategy, String now, int quantity) {
+		if(YosonEWrapper.currentOrderId == null) return "";
 		YosonEWrapper.currentOrderId++;
 		int newOrderId = YosonEWrapper.currentOrderId;
 
@@ -110,9 +116,10 @@ public class TaskScheduler {
 		double lmtPrice = YosonEWrapper.trade + ((isBuy ? 1 : -1 ) * strategy.getMainUIParam().getUnit() * strategy.getMainUIParam().getOrderTicker());
 		newOrder.m_lmtPrice = Math.round(lmtPrice * 100) / 100D;
 		
+		strategy.setTradeCount(strategy.getTradeCount() + totalQuantity);
 		strategy.getOrderMap().put(newOrderId, newOrder);
 		strategy.setOrderTime(new Date());
 		EClientSocketUtils.placeOrder(newOrderId, newOrder);
-		BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Limit Order(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + totalQuantity + Global.lineSeparator, true);
+		return "Limit Order(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + totalQuantity + Global.lineSeparator;
 	}
 }
