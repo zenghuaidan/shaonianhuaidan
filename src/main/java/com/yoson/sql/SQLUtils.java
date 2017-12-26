@@ -157,7 +157,7 @@ public class SQLUtils {
 			if (sqlSchema != null)
 				session.createSQLQuery(sqlSchema).executeUpdate();
 			if (hasRecord) {
-				session.createSQLQuery("truncate table " + tableName).executeUpdate();				
+//				session.createSQLQuery("truncate table " + tableName).executeUpdate();				
 				session.createSQLQuery(sql.substring(0, sql.length() - 1).toString()).executeUpdate();
 			}
 		} catch (Exception e) {
