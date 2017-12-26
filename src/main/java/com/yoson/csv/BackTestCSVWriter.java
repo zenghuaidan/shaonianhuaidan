@@ -21,7 +21,6 @@ import com.yoson.model.PerSecondRecord;
 import com.yoson.task.BackTestTask;
 
 public class BackTestCSVWriter {	
-	public static final String summaryFileName = "Back Test  Summary.csv";
 	public static final String profitAndLossFileName = "Back Test  ProfitAndLoss.csv";
 	public static final String btSummaryFileName = "BT_Summary.csv";
 	public static final String btPnlFileName = "BT_PnL.csv";
@@ -145,14 +144,14 @@ public class BackTestCSVWriter {
 		.append(backTestResult.averageOfLossingStreak + ",")
 		.append(backTestResult.averageOfWinningStreak + ",")
 		.append(backTestResult.maxLossingStreakLength + ",")
-		.append(backTestResult.maxWinningStreakLength + ",")
-		.append(mainUIParam.getStartStr() + ",")
-		.append(mainUIParam.getEndStr() + ",");
+		.append(backTestResult.maxWinningStreakLength + ",");
 		List<String> yearPnlList = new ArrayList<String>();
 		for (int year : backTestResult.yearPnlMap.keySet()) {
 			yearPnlList.add(year + ":" + backTestResult.yearPnlMap.get(year));
 		}
 		content.append(String.join(";", yearPnlList) + ",");		
+		content.append(mainUIParam.getStartStr() + ",");
+		content.append(mainUIParam.getEndStr() + ",");
 		content.append("\n");
 		return content.toString();
 	}
