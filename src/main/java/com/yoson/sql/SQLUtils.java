@@ -142,7 +142,7 @@ public class SQLUtils {
 						}
 					}
 					sqlSchema = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + String.join(",", schemaColumns) + ")";
-					sql.append("INSERT IGNORE INTO " + tableName + " (" + String.join(",", valueColumns) + ") VALUES ");
+					sql.append("REPLACE INTO " + tableName + " (" + String.join(",", valueColumns) + ") VALUES ");
 				} else {
 					List<String> columnValues = new ArrayList<String>();
 					for (int i = 0; i < columCount; i++) {
