@@ -86,102 +86,13 @@ public class BackTestCSVWriter {
 	}
 	
 	public static String getBTSummaryHeader() {
-		return "";
-//		return "key,version,Source,T-Short,T-Long,T-Long2,HLD,Stoploss,Trade Stop Loss,Morning_Start_Time,Lunch_Start_Time,Cash_per_index_point,Trading_fee,Other_cost_per_trade,No_of_days,TotalPnL,AveragePnL,Total_trades,Average_trades,No_of_win_days,No_of_loss_days,winning_percent,Average_gain_per_+ve_trade,Average_gain_per_-ve_trade,Average_0PnL_trades,Average_no_of_positive_trade,Average_no_of_negative_trade,Average _holding_time,Adjusted_Profi_ after_fee,Worst_Lossing_Day,Best_Profit_Day,Worst_Lossing_Streak,Best_Winning_Streak,Lossing_Streak_freq,Winning_Streak_freq,Sum_Of_Lossing_Streak,Sum_Of_Winning_Streak,Avg_Of_Lossing_Streak,Avg_Of_Winning_Streak,Max_Lossing_Streak_Length,Max_Winning_Streak_Length,\n";
+		return "Test no.,key,version,Source,CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length,Total Pnl by Year\n";
 	}
 
-	public static String getSummaryHeader(Set<Integer> years) {
-		List<String> yearColums = new ArrayList<String>();
-		for (Integer year : years) {
-			yearColums.add("Total Pnl of " + year);
-		}
-		String yearColumnStr = String.join(",", yearColums);
-		return "Test no.,CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length," + yearColumnStr +"\n";
-	}
-	
-	public static String getSummaryContent(int id, BackTestResult backTestResult) {
+	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult) {
 		StringBuilder content = new StringBuilder();
-		content.append(id + ",");
-		content.append(backTestResult.testSet.getCpTimer() + ",");
-		content.append(backTestResult.testSet.getCpBuffer() + ",");
-		content.append(backTestResult.testSet.getCpHitRate() + ",");
-		content.append(backTestResult.testSet.getCpSmooth() + ",");
-		content.append(backTestResult.testSet.getEstimationBuffer() + ",");
-		content.append(backTestResult.testSet.getActionTrigger() + ",");
-		content.append(backTestResult.testSet.getActionCounting() + ",");
-		content.append(backTestResult.testSet.getTradeStopLossTrigger() + ",");
-		content.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + ",");
-		content.append(backTestResult.testSet.getAbsoluteTradeStopLoss() + ",");	
-		content.append(backTestResult.testSet.getMarketStartTime() + ",");
-		if ((backTestResult.testSet.getLunchStartTimeFrom().compareTo("23:59:59"))==1)
-		{
-			content.append("No lunch time,");
-		}
-		else
-		{					
-			content.append(backTestResult.testSet.getLunchStartTimeFrom() + ",");
-		}
-		content.append(backTestResult.testSet.getCashPerIndexPoint() + ",");
-		content.append(backTestResult.testSet.getTradingFee() + ",");
-		content.append(backTestResult.testSet.getOtherCostPerTrade() + ",");
-		content.append(backTestResult.totalDays + ",");
-		content.append(backTestResult.totalPnL + ",");
-		content.append(backTestResult.averagePnL + ",");
-		content.append(backTestResult.totalTrades + ",");
-		content.append(backTestResult.averageTrades + ",");
-		content.append(backTestResult.totalWinningDays + ",");
-		content.append(backTestResult.totalLosingDays + ",");
-		content.append(backTestResult.winningPercentage + ",");
-		content.append(backTestResult.averageProfitOfPositiveTrade + ",");
-		content.append(backTestResult.averageProfitOfNegativeTrade + ",");
-		content.append(backTestResult.averageZeroPnLTrade + ",");
-		content.append(backTestResult.averageNoPositiveTrade + ",");
-		content.append(backTestResult.averageNoNegativeTrade + ",");
-		content.append(backTestResult.averageHoldingTime + ",");
-		content.append(backTestResult.adjustedPnLAfterFee + ",");
-		content.append(backTestResult.worstLossDay + ",");
-		content.append(backTestResult.bestProfitDay + ",");
-		content.append(backTestResult.worstLossingStreak + ",");
-		content.append(backTestResult.bestWinningStreak + ",");
-		content.append(backTestResult.lossingStreakfreq + ",");
-		content.append(backTestResult.winningStreakFreq + ",");
-		content.append(backTestResult.sumOfLossingStreak + ",");
-		content.append(backTestResult.sumOfWinningStreak + ",");
-		content.append(backTestResult.averageOfLossingStreak + ",");
-		content.append(backTestResult.averageOfWinningStreak + ",");
-		content.append(backTestResult.maxLossingStreakLength + ",");
-		content.append(backTestResult.maxWinningStreakLength + ",");
-		for (int year : backTestResult.yearPnlMap.keySet()) {
-			content.append(backTestResult.yearPnlMap.get(year) + ",");		
-		}
-			
-		content.append("\n");
-		return content.toString();
-	}
-	
-	
-//	public static String getProfitAndLossContent() throws IOException
-//	{		
-//		StringBuilder header = new StringBuilder("Test no.,");	  
-//		StringBuilder content = new StringBuilder();
-//		boolean headerReady = false;
-//	    for (String dateStr : BackTestTask.allProfitAndLossResults.keySet())
-//	    {
-//	    	content.append(dateStr + "," + String.join("", BackTestTask.allProfitAndLossResults.get(dateStr).values()) + "\n");
-//	    	if (!headerReady) {
-//	    		for(int i = 1; i <= BackTestTask.allProfitAndLossResults.get(dateStr).size(); i++) {
-//	    			header.append(i + ",");
-//	    		}
-//	    		header.append("\n");
-//	    		headerReady = true;
-//	    	}
-//	    }	    
-//		return header.toString() + content.toString();
-//	}
-	
-	public static String getBTSummaryContent(MainUIParam mainUIParam, BackTestResult backTestResult) {
-		StringBuilder content = new StringBuilder();
-		content.append(backTestResult.testSet.getCpTimer()  +  "_")
+		content.append(testNo + ",")
+		.append(backTestResult.testSet.getCpTimer() + "_")
 		.append(backTestResult.testSet.getCpBuffer() + "_")
 		.append(backTestResult.testSet.getCpHitRate() + "_")
 		.append(backTestResult.testSet.getCpSmooth() + "_")
@@ -203,11 +114,11 @@ public class BackTestCSVWriter {
 		.append(backTestResult.testSet.getTradeStopLossTrigger() + ",")
 		.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + ",")
 		.append(backTestResult.testSet.getAbsoluteTradeStopLoss() + ",")
-		.append(mainUIParam.getMarketStartTime() + ",")
-		.append(mainUIParam.getLunchStartTimeFrom() + ",")
-		.append(mainUIParam.getCashPerIndexPoint() + ",")
-		.append(mainUIParam.getTradingFee() + ",")
-		.append(mainUIParam.getOtherCostPerTrade() + ",")
+		.append(backTestResult.testSet.getMarketStartTime() + ",")
+		.append(backTestResult.testSet.getLunchStartTimeFrom() + ",")
+		.append(backTestResult.testSet.getCashPerIndexPoint() + ",")
+		.append(backTestResult.testSet.getTradingFee() + ",")
+		.append(backTestResult.testSet.getOtherCostPerTrade() + ",")
 		.append(backTestResult.totalDays + ",")
 		.append(backTestResult.totalPnL + ",")
 		.append(backTestResult.averagePnL + ",")
@@ -236,8 +147,13 @@ public class BackTestCSVWriter {
 		.append(backTestResult.maxLossingStreakLength + ",")
 		.append(backTestResult.maxWinningStreakLength + ",")
 		.append(mainUIParam.getStartStr() + ",")
-		.append(mainUIParam.getEndStr() + ",")
-		.append("\n");
+		.append(mainUIParam.getEndStr() + ",");
+		List<String> yearPnlList = new ArrayList<String>();
+		for (int year : backTestResult.yearPnlMap.keySet()) {
+			yearPnlList.add(year + ":" + backTestResult.yearPnlMap.get(year));
+		}
+		content.append(String.join(";", yearPnlList) + ",");		
+		content.append("\n");
 		return content.toString();
 	}
 
