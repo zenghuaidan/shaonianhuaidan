@@ -163,6 +163,7 @@ public class BackTestTask implements Runnable {
 			BackTestCSVWriter.initBTPnLAndTradeAndProfitAndLossContent(index, mainUIParam, backTestResult, pnlContent, tradContent);
 			BackTestTask.allBTPnlResults.add(pnlContent.toString());
 			BackTestTask.allBTTradeResults.add(tradContent.toString());
+			BackTestTask.allBTSummaryResults.add(BackTestCSVWriter.getBTSummaryContent(index, mainUIParam, backTestResult));
 			
 			if(index == 1 && backTestResult.dayRecords.size() > 0) {
 				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(0));
