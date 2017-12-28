@@ -528,7 +528,7 @@ public class IndexController  implements StatusCallBack {
 		    }
 		});
 		for(File file : files) {
-			String status = "";
+			String status = "(Not Started)";
 			try {
 				File stepFile = new File(getStepFilePath(dataFolder, file.getName()));
 				String sourceFolder = FilenameUtils.concat(dataFolder, file.getName());
@@ -543,8 +543,6 @@ public class IndexController  implements StatusCallBack {
 					} else {
 						status = "(Paused)";
 					}
-				} else {
-					status = "(Not Started)";
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
