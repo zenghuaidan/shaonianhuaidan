@@ -44,7 +44,7 @@ public class TaskScheduler {
 			expectNextExecuteTime = DateUtils.addSecond(now, 1);
 			long lastSecond = DateUtils.addSecond(now, -1);
 			if(EClientSocketUtils.isConnected()) {
-				Map<String, List<ScheduleData>> scheduleDataMap = new HashMap<String, List<ScheduleData>>();
+				Map<String, List<List<ScheduleData>>> scheduleDataMap = new HashMap<String, List<List<ScheduleData>>>();
 				for (Strategy strategy : EClientSocketUtils.strategies) {
 //					if (strategy.isActive() && strategy.getMainUIParam().isMarketTime(DateUtils.getTimeStr(dateTimeStr))) {
 					if (strategy.isActive()) {
@@ -54,18 +54,23 @@ public class TaskScheduler {
 									 strategy.getMainUIParam().getMarketStartTime() + "," +
 									 strategy.getMainUIParam().getLunchStartTimeFrom() + "," +
 									 strategy.getMainUIParam().getLunchStartTimeTo() + "," +
-									 strategy.getMainUIParam().getMarketCloseTime() + "," +
-									 strategy.getMainUIParam().isIncludeMorningData();
-						List<ScheduleData> scheduleDatas = null;
+									 strategy.getMainUIParam().getMarketCloseTime();
+						List<List<ScheduleData>> resultDatas = null;
 						if(scheduleDataMap.containsKey(key)) {
-							scheduleDatas = scheduleDataMap.get(key);
+							resultDatas = scheduleDataMap.get(key);
 						} else {
-							scheduleDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);	
-							scheduleDataMap.put(key, scheduleDatas);
-							if (scheduleDatas.size() > 0) {
-								ScheduleData scheduleData = scheduleDatas.get(scheduleDatas.size() - 1);
-								log.append(scheduleData.getDateTimeStr() + "," + scheduleData.getAskPrice() + "," + scheduleData.getBidPrice() + "," + scheduleData.getLastTrade() + "," + key  + Global.lineSeparator);
-							}
+							resultDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);	
+							scheduleDataMap.put(key, resultDatas);
+						}
+						
+						List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
+						if(strategy.getMainUIParam().isIncludeMorningData()) {
+							scheduleDatas.addAll(resultDatas.get(0));
+							scheduleDatas.addAll(resultDatas.get(1));
+						} else if(resultDatas.get(1).size() > 0) {
+							scheduleDatas.addAll(resultDatas.get(1));
+						} else {
+							scheduleDatas.addAll(resultDatas.get(0));
 						}
 						
 						List<PerSecondRecord> perSecondRecords = new ArrayList<PerSecondRecord>();
