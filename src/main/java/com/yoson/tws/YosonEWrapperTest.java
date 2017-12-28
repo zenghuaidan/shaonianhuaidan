@@ -19,10 +19,10 @@ public class YosonEWrapperTest {
 	public static void outputlog() {
 		if(bidCount == 0 && askCount == 0 && tradeCount == 0)  {
 			try {
-				List<ScheduleData> scheduleDataList = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, MainUIParam.getMainUIParam(), Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(new Date())));
-				for(ScheduleData s : scheduleDataList) {
-					System.out.println(s.getDateTimeStr() + "  " + s.getAskPrice() + "," + s.getBidPrice() + "," + s.getLastTrade());
-				}
+//				List<ScheduleData> scheduleDataList = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, MainUIParam.getMainUIParam(), Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(new Date())));
+//				for(ScheduleData s : scheduleDataList) {
+//					System.out.println(s.getDateTimeStr() + "  " + s.getAskPrice() + "," + s.getBidPrice() + "," + s.getLastTrade());
+//				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
