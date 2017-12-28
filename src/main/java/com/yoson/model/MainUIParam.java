@@ -18,7 +18,7 @@ public class MainUIParam extends TestSet {
 	private String paramPath;
 	private String stepPath;
 	private String logPath;
-	private boolean includeMorningData = true;
+	private boolean includeMorningData;
 	@Expose
 	private String source;
 	private String version;
