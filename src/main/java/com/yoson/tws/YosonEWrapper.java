@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -121,6 +122,30 @@ public class YosonEWrapper extends BasicEWrapper {
 			scheduleDatas.add(toScheduleData(scheduledDataRecords.get(i-1), scheduleDatas.get(scheduleDatas.size() - 1), mainUIParam, start + ""));
 			start = DateUtils.addSecond(start, 1);
 		}
+		long current = DateUtils.HHmmss().parse(DateUtils.HHmmss().format(DateUtils.yyyyMMddHHmmss2().parse(lastSecond + ""))).getTime();		
+		long marketStartTime = DateUtils.HHmmss().parse(mainUIParam.getMarketStartTime()).getTime();
+		long lunchStartTimeFrom = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeFrom()).getTime();
+		long lunchStartTimeTo = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
+		long marketCloseTime = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
+		boolean isMorning = current >= marketStartTime && current <= lunchStartTimeFrom;
+		boolean isAfternoon = current >= lunchStartTimeTo && current <= marketCloseTime;
+		scheduleDatas.removeIf(new Predicate<ScheduleData>() {
+			@Override
+			public boolean test(ScheduleData t) {
+				try {
+					long time = DateUtils.HHmmss().parse(t.getTimeStr()).getTime();		
+					
+					boolean sMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
+					boolean sAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
+					return !(isMorning && sMorning
+						|| isAfternoon && sAfternoon
+						|| isAfternoon && mainUIParam.isIncludeMorningData() && sMorning);
+				} catch (Exception e) {
+				}
+				return false;
+			}
+		});
+		
 		return scheduleDatas;
 	}
 	
