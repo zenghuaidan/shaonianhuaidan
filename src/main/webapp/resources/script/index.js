@@ -328,7 +328,8 @@ function getMainUIParam() {
 	   "askDataField":$.trim($("[name='askDataField']:checked").val()),
 	   "bidDataField":$.trim($("[name='bidDataField']:checked").val()),
 	   "brokenDateList":brokendateArr,
-	   "orderTicker":$.trim($("[name='orderTicker']").val())
+	   "orderTicker":$.trim($("[name='orderTicker']").val()),
+	   "outputChart":$("[name='includeMorningData']").is(":checked")
 	};
 }
 

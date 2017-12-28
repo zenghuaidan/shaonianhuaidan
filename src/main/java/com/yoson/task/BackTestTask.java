@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +38,6 @@ public class BackTestTask implements Runnable {
 	public static List<String> allBTPnlResults;
 	public static List<String> allBTTradeResults;
 	public static String aTradingDayForCheckResult;
-//	public static Map<String, Map<Integer, String>> allProfitAndLossResults;
 	public static StringBuilder allProfitAndLossResults;
 	public static Map<String, Integer> marketTimeMap;
 	public static Map<String, Double> sumOfLastTrade;
@@ -141,6 +141,10 @@ public class BackTestTask implements Runnable {
 				}
 			}
 		} catch (Exception e) {
+			try {
+				FileUtils.cleanDirectory(new File(mainUIParam.getSourcePath()));			
+			} catch (Exception ex) {
+			}
 		}
 		boolean first = (startStep == 0);
 		for (int index = 1; index <= testSets.size(); index++) {

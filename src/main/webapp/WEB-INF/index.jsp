@@ -276,6 +276,12 @@
 							      <td></td>
 							      <td></td>
 							   </tr>	   
+   							   <tr>
+							      <td>Include Morning Data</td>
+							      <td><input name="includeMorningData" type="checkbox" ${mainUIParam.includeMorningData ? 'checked' : ''} /></td>
+							      <td></td>
+							      <td></td>
+							   </tr>
 							   <tr>
 							      <td><input type="button" onclick="hkClick();" style="width:100%" value="HK"/></td>
 							      <td><input type="button" onclick="km1Click();" style="width:100%" value="KM1"/></td>
@@ -639,6 +645,11 @@
 								   <tr>
 								      <td>Pnl Threshold</td>
 								      <td><input value="${strategy.mainUIParam.pnlThreshold}" type="text"/></td>
+								      <td></td>
+								   </tr>
+      							   <tr>
+								      <td>Include Morning Data</td>
+								      <td><input type="checkbox" ${strategy.mainUIParam.includeMorningData ? 'checked' : ''} /></td>
 								      <td></td>
 								   </tr>
 								</table>
