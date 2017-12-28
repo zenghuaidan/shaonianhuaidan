@@ -50,7 +50,12 @@ public class TaskScheduler {
 					if (strategy.isActive()) {
 						String key = strategy.getMainUIParam().getAskDataField() + "," +
 									 strategy.getMainUIParam().getBidDataField() + "," +
-									 strategy.getMainUIParam().getTradeDataField();
+									 strategy.getMainUIParam().getTradeDataField() + "," +
+									 strategy.getMainUIParam().getMarketStartTime() + "," +
+									 strategy.getMainUIParam().getLunchStartTimeFrom() + "," +
+									 strategy.getMainUIParam().getLunchStartTimeTo() + "," +
+									 strategy.getMainUIParam().getMarketCloseTime() + "," +
+									 strategy.getMainUIParam().isIncludeMorningData();
 						List<ScheduleData> scheduleDatas = null;
 						if(scheduleDataMap.containsKey(key)) {
 							scheduleDatas = scheduleDataMap.get(key);
