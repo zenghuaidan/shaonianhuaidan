@@ -126,21 +126,17 @@ public class YosonEWrapper extends BasicEWrapper {
 			start = DateUtils.addSecond(start, 1);
 		}
 		
-		
-		long current = DateUtils.HHmmss().parse(DateUtils.HHmmss().format(DateUtils.yyyyMMddHHmmss2().parse(lastSecond + ""))).getTime();		
 		long marketStartTime = DateUtils.HHmmss().parse(mainUIParam.getMarketStartTime()).getTime();
 		long lunchStartTimeFrom = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeFrom()).getTime();
 		long lunchStartTimeTo = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
 		long marketCloseTime = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
-		boolean isMorning = current >= marketStartTime && current <= lunchStartTimeFrom;
-		boolean isAfternoon = current >= lunchStartTimeTo && current <= marketCloseTime;		
 		for (ScheduleData scheduleData : scheduleDatas) {
 			long time = DateUtils.HHmmss().parse(scheduleData.getTimeStr()).getTime();		
-			boolean sMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
-			boolean sAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
-			if(isMorning && sMorning)
+			boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
+			boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
+			if(isMorning)
 				morningDatas.add(scheduleData);
-			if (isAfternoon && sAfternoon)
+			if (isAfternoon)
 				afternoonDatas.add(scheduleData);
 		}
 		resultDatas.add(morningDatas);
