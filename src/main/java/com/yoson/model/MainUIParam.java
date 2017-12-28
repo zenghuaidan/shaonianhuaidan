@@ -18,6 +18,7 @@ public class MainUIParam extends TestSet {
 	private String paramPath;
 	private String stepPath;
 	private String logPath;
+	private boolean includeMorningData = true;
 	@Expose
 	private String source;
 	private String version;
@@ -349,6 +350,14 @@ public class MainUIParam extends TestSet {
 		this.orderTicker = orderTicker;
 	}
 	
+	public boolean isIncludeMorningData() {
+		return includeMorningData;
+	}
+
+	public void setIncludeMorningData(boolean includeMorningData) {
+		this.includeMorningData = includeMorningData;
+	}
+
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
 		mainUIParam.setCpTimer(60);
