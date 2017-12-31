@@ -14,6 +14,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.mysql.jdbc.StringUtils;
 import com.opencsv.CSVReader;
+import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.BrokenDate;
 import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
@@ -129,24 +130,45 @@ public class SQLUtils {
 			String sqlSchema = null;
 			StringBuilder sql = new StringBuilder();
 			boolean hasRecord = false;
-			int columCount = 0;
+			boolean pnlColumnFound = false;
+			String pnlColumnName = "Total Pnl by Year";
+			List<String> columnNames = new ArrayList<String>();
+			List<String> years = new ArrayList<String>();
 			while ((lines = csvReader.readNext()) != null)  {
 				if (sqlSchema == null) {
 					List<String> schemaColumns = new ArrayList<String>();
 					List<String> valueColumns = new ArrayList<String>();
 					for (String column : lines) {
 						if (!StringUtils.isNullOrEmpty(column)) {
+							if(column.indexOf(BackTestCSVWriter.TotalPnl) != -1) {
+								years.add(column.substring(column.lastIndexOf(" ") + 1));
+								if(!pnlColumnFound) {
+									column = pnlColumnName;
+									pnlColumnFound = true;									
+								} else {
+									continue;
+								}
+							}
 							schemaColumns.add("`" + column.trim() + "` varchar(255) DEFAULT NULL");
 							valueColumns.add("`" + column.trim() + "`");
-							columCount++;
+							columnNames.add(column);
 						}
 					}
 					sqlSchema = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + String.join(",", schemaColumns) + ")";
 					sql.append("REPLACE INTO " + tableName + " (" + String.join(",", valueColumns) + ") VALUES ");
 				} else {
 					List<String> columnValues = new ArrayList<String>();
-					for (int i = 0; i < columCount; i++) {
-						columnValues.add("'" + lines[i].trim() + "'");
+					for (int i = 0, j = 0; i < columnNames.size(); i++, j++) {
+						if(columnNames.get(i).equals(pnlColumnName)) {
+							List<String> values = new ArrayList<String>();
+							for(String year : years) {
+								values.add(year + ":" + lines[j++]);
+							}
+							j--;
+							columnValues.add("'" + String.join(";", values) + "'");
+						} else {
+							columnValues.add("'" + lines[j].trim() + "'");							
+						}
 					}
 					sql.append("(" + String.join(",", columnValues) + "),");
 					hasRecord = true;

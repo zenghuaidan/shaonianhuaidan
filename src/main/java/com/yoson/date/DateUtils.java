@@ -43,18 +43,28 @@ public class DateUtils {
     } 
 	
 	public static boolean isValidateTime(Date when, String startTimeStr, String endTimeStr) {
-		
+		return isValidateTime(when, startTimeStr, endTimeStr, 0);
+	}
+	
+	public static boolean isValidateTime(Date when, String startTimeStr, String endTimeStr, int bufferInMinutes) {
 		try {		
 			if (StringUtils.isEmpty(startTimeStr) && StringUtils.isEmpty(endTimeStr))
 				return false;
-			if(StringUtils.isNotEmpty(startTimeStr) && StringUtils.isNotEmpty(endTimeStr))
-				return DateUtils.yyyyMMddHHmm().parse(startTimeStr).equals(when) || 
-					   DateUtils.yyyyMMddHHmm().parse(endTimeStr).equals(when) || 
-					   DateUtils.yyyyMMddHHmm().parse(startTimeStr).before(when) && DateUtils.yyyyMMddHHmm().parse(endTimeStr).after(when);
-			else if(StringUtils.isNotEmpty(startTimeStr))
-				return DateUtils.yyyyMMddHHmm().parse(startTimeStr).before(when);
-			else
-				return DateUtils.yyyyMMddHHmm().parse(endTimeStr).after(when);
+			if(StringUtils.isNotEmpty(startTimeStr) && StringUtils.isNotEmpty(endTimeStr)) {
+				Date start = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmm().parse(startTimeStr), Calendar.MINUTE, bufferInMinutes * -1);
+				Date end = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmm().parse(endTimeStr), Calendar.MINUTE, bufferInMinutes);
+				return start.equals(when) || 
+						end.equals(when) || 
+						start.before(when) && end.after(when);
+			}
+			else if(StringUtils.isNotEmpty(startTimeStr)) {
+				Date start = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmm().parse(startTimeStr), Calendar.MINUTE, bufferInMinutes * -1);
+				return start.before(when);
+			}
+			else {
+				Date end = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmm().parse(endTimeStr), Calendar.MINUTE, bufferInMinutes);
+				return end.after(when);
+			}
 		} catch (ParseException e) {
 			return false;
 		}
