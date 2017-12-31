@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Predicate;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -405,10 +404,16 @@ public class YosonEWrapper extends BasicEWrapper {
 		return DateUtils.isValidateTime(when, EClientSocketUtils.contract.startTime, EClientSocketUtils.contract.endTime);
 	}
 	
+	public static boolean isValidateTime(Date when, int bufferInMinutes) {
+		if (EClientSocketUtils.contract == null)
+			return false;
+		return DateUtils.isValidateTime(when, EClientSocketUtils.contract.startTime, EClientSocketUtils.contract.endTime, bufferInMinutes);
+	}
+	
 	@Override
 	public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
 		Date now = new Date();
-		if(!isValidateTime(now))
+		if(!isValidateTime(now, 2))
 			return;
 		switch (field) {
 		case 1:
@@ -432,7 +437,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	public void tickSize(int tickerId, int field, int size) {
 		Date now = new Date();
 		lastTime = now;
-		if(!isValidateTime(now))
+		if(!isValidateTime(now, 2))
 			return;
 		String time = DateUtils.yyyyMMddHHmmss2().format(now);
 		switch (field) {
