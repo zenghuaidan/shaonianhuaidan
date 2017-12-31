@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -83,8 +84,16 @@ public class BackTestCSVWriter {
 //		return "combinationKey,Date,version,Source,PnL,\n";
 	}
 	
-	public static String getBTSummaryHeader() {
-		return "Test no.,key,version,Source,T-Short,T-Long,HLD,Stoploss,Trade Stop Loss,Instant Trade Stop Loss,Its Counter,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length,Total Pnl by Year,Start Time,End Time\n";
+	public static final String TotalPnl = "Total Pnl of ";
+	
+	public static String getBTSummaryHeader(Set<Integer> years) {
+		List<String> yearColums = new ArrayList<String>();
+		for (Integer year : years) {
+			yearColums.add(TotalPnl + year);
+		}
+		String yearColumnStr = String.join(",", yearColums);
+		yearColumnStr = yearColumnStr.length() > 0 ? (yearColumnStr + ",") : yearColumnStr;
+		return "Test no.,key,version,Source,T-Short,T-Long,HLD,Stoploss,Trade Stop Loss,Instant Trade Stop Loss,Its Counter,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length," + yearColumnStr +"Start Time,End Time\n";
 	}
 	
 	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult) {
@@ -138,11 +147,9 @@ public class BackTestCSVWriter {
 		.append(backTestResult.averageOfWinningStreak + ",")
 		.append(backTestResult.maxLossingStreakLength + ",")
 		.append(backTestResult.maxWinningStreakLength + ",");
-		List<String> yearPnlList = new ArrayList<String>();
 		for (int year : backTestResult.yearPnlMap.keySet()) {
-			yearPnlList.add(year + ":" + backTestResult.yearPnlMap.get(year));
+			content.append(backTestResult.yearPnlMap.get(year) + ",");		
 		}
-		content.append(String.join(";", yearPnlList) + ",");		
 		content.append(mainUIParam.getStartStr() + ",");
 		content.append(mainUIParam.getEndStr() + ",");
 		content.append("\n");
