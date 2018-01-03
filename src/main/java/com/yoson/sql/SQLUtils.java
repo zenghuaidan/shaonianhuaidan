@@ -119,6 +119,23 @@ public class SQLUtils {
 		}
 	}
 	
+	public static String getScheduledDataRecordByDate(String dateStr) {
+		Session session = getSession();
+		List<String> values = new ArrayList<String>();
+		values.add("ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source");
+		try {
+			String sql = "select CONCAT(ticker,',',date,',',time,',',bidavg,',',bidlast,',',bidmax,',',bidmin,',',askavg,',',asklast,',',askmax,',',askmin,',',tradeavg,',',tradelast,',',trademax,',',trademin,',',source) as sdata from schedule_data2 where date='" + dateStr + "'";
+			sql += " order by date asc, time asc";
+			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
+			values.addAll(sqlQuery.list());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return String.join(System.lineSeparator(), values);
+	}
+	
 	public static String saveTestSetResult(String path, String tableName) {
 		File file = new File(path);
 		if (!file.exists())
