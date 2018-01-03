@@ -299,11 +299,18 @@ public class IndexController  implements StatusCallBack {
 		}
 		return false;
 	}
+	
+	@RequestMapping("downloadSampleDate")
+	public void downloadSampleDate(String sampleDate, HttpServletResponse response) throws IOException{
+		response.setContentType("application/msexcel");  
+		response.setHeader("Content-Disposition","attachment; filename=" + sampleDate + ".csv");
+		IOUtils.write(SQLUtils.getScheduledDataRecordByDate(sampleDate), response.getOutputStream());
+	}
 
 	public static List<String> uploadStatus = new ArrayList<String>();
 	@ResponseBody
 	@RequestMapping("uploadData")
-	public boolean uploadData(String dataStartTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	public boolean uploadData(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		String FINISHED = "Finished";
 		boolean success = false;
 		if(uploadStatus.size() > 0 && uploadStatus.get(uploadStatus.size() - 1).indexOf(FINISHED) < 0) {
@@ -320,11 +327,17 @@ public class IndexController  implements StatusCallBack {
 			uploadStatus.add("Start upload with <font size='3' color='blue'>Skip</font> mode...");
 		}
 		Date startTime = null;
+		Date lunchTimeFrom = null;
+		Date lunchTimeTo = null;
 		Date endTime = null;
 		try {
 			startTime = DateUtils.HHmmss().parse(dataStartTime);
+			lunchTimeFrom = DateUtils.HHmmss().parse(lunchStartTime);
+			lunchTimeTo = DateUtils.HHmmss().parse(lunchEndTime);
 			endTime = DateUtils.HHmmss().parse(dataEndTime);
-			if(startTime.equals(endTime) || startTime.before(endTime)) {				
+			if(startTime.equals(lunchTimeFrom) || startTime.before(lunchTimeFrom) 
+					&& lunchTimeFrom.equals(lunchTimeTo) || lunchTimeFrom.before(lunchTimeTo) 
+					&& lunchTimeTo.equals(endTime) || lunchTimeTo.before(endTime)) {				
 				try {
 					String ext = liveData == null ? "" : liveData.getOriginalFilename().substring(liveData.getOriginalFilename().lastIndexOf('.')).toLowerCase();
 					if(ext.equals(".zip")) {
@@ -355,17 +368,17 @@ public class IndexController  implements StatusCallBack {
 						
 						if(files.size() > 0) {
 							if (isCheck) {
-								check(dataStartTime, dataEndTime, files);
+								check(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, files);
 								
 								// delete the unzip folder, just keep the zip file
 								FileUtils.deleteQuietly(tempFolderFile);
 							} else {
 								// write audit log
 								FileOutputStream logFileOutputStream = new FileOutputStream(new File(FilenameUtils.concat(tempFolder, "log.txt")));
-								IOUtils.write(dataStartTime + "	" + dataEndTime + "	" + uploadAction, logFileOutputStream);
+								IOUtils.write(dataStartTime + "	" + lunchStartTime + "	" + lunchEndTime + "	"  + dataEndTime + "	" + uploadAction, logFileOutputStream);
 								logFileOutputStream.close();
 								
-								uploadWithAction(dataStartTime, dataEndTime, files, isReplace);				
+								uploadWithAction(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, files, isReplace);				
 								
 								// delete the unzip folder, just keep the zip file
 								FileUtils.deleteQuietly(unzipFolderFile);
@@ -382,7 +395,7 @@ public class IndexController  implements StatusCallBack {
 					uploadStatus.add("Upload with exception => " + ex.getMessage());
 				}
 			} else {
-				uploadStatus.add("The start time should before end time, and they should be the same day");
+				uploadStatus.add("Please check your input time");
 			}
 		} catch (ParseException e) {
 			uploadStatus.add("Please input valdate time!");
@@ -391,7 +404,7 @@ public class IndexController  implements StatusCallBack {
 		return success;
 	}
 
-	private void check(String dataStartTime, String dataEndTime, Collection<File> files) throws ParseException, IOException, OpenXML4JException, SAXException {
+	private void check(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files) throws ParseException, IOException, OpenXML4JException, SAXException {
 		for(File file : files) {
 			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
 			uploadStatus.add("Doing checking for " + name + " ...");
@@ -416,9 +429,12 @@ public class IndexController  implements StatusCallBack {
 //							uploadStatus.add("The data(" + DateUtils.yyyyMMdd().format(date) + ") at " + sheet + " is NOT within you selected period(" + dataStartTime +"-" + dataEndTime + "), this sheet may be <font size='4' color='red'>skipped</font>");
 //						} else {
 	        					String _dataStartTime = dateStr + " " + dataStartTime; 
+	        					String _lunchStartTime = dateStr + " " + lunchStartTime; 
+	        					String _lunchEndTime = dateStr + " " + lunchEndTime;
 	        					String _dataEndTime = dateStr + " " + dataEndTime;
-	        					int totalCount = SQLUtils.checkScheduledDataExisting(_dataStartTime, _dataEndTime, source);						
-	        					if (totalCount == 0) {
+	        					int totalCount1 = SQLUtils.checkScheduledDataExisting(_dataStartTime, _lunchStartTime, source);	
+	        					int totalCount2 = SQLUtils.checkScheduledDataExisting(_lunchEndTime, _dataEndTime, source);
+	        					if (totalCount1 == 0 && totalCount2 == 0 ) {
 	        						// no data in db
 	        						uploadStatus.add("Not exists data within period(" + _dataStartTime +" to " + _dataEndTime + ") in database. The data(" + dateStr + ") at " + sheet + " will be <font size='4' color='blue'>uploaded</font>");
 	        					} else {
@@ -451,7 +467,7 @@ public class IndexController  implements StatusCallBack {
 	private static String source = "";
 	private static String sheet="";
 	private int previousSheetIndex = 0;
-	private void uploadWithAction(String dataStartTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException {
+	private void uploadWithAction(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException {
 		for(File file : files) {
 			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
 			uploadStatus.add("Retriving data from " + name + " ...");
@@ -468,7 +484,7 @@ public class IndexController  implements StatusCallBack {
 	        	@Override  
 	        	protected void outputRow(int sheetIndex, int rowIndex, boolean isLastSheet, List<Object> datas, List<Integer> rowTypes) {
 	        		if(validateSheet && rowIndex == 0 && previousSheetIndex != sheetIndex) {
-	        			wrtingDatabase(dataStartTime, dataEndTime, isReplace);
+	        			wrtingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace);
 	        		}
 	        		previousSheetIndex = sheetIndex;
 	        		if(sheetIndex >= startSheet) {
@@ -526,18 +542,21 @@ public class IndexController  implements StatusCallBack {
 			if(previousSheetIndex < startSheet) {
 				uploadStatus.add("The excel contains less than " + startSheet + " Sheets, so this file will be <font size='4' color='red'>skipped</font>");
 			} if(validateSheet) { //write last sheet
-				wrtingDatabase(dataStartTime, dataEndTime, isReplace);
+				wrtingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace);
 			}
 		}
 	}
 	
-	private void wrtingDatabase(String dataStartTime, String dataEndTime, boolean isReplace) {
+	private void wrtingDatabase(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, boolean isReplace) {
 		try {
 			String _dataStartTime = DateUtils.yyyyMMdd().format(date) + " " + dataStartTime; 
+			String _lunchStartTime = DateUtils.yyyyMMdd().format(date) + " " + lunchStartTime; 
+			String _lunchEndTime = DateUtils.yyyyMMdd().format(date) + " " + lunchEndTime;
 			String _dataEndTime = DateUtils.yyyyMMdd().format(date) + " " + dataEndTime;
 			List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap);
 			uploadStatus.add("Writing database for " + sheet + ", the source is " + source + " ...");							
-			SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _dataEndTime, source, isReplace);
+			SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _lunchStartTime, source, isReplace);
+			SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _lunchEndTime, _dataEndTime, source, isReplace);
 		} catch (Exception e) {
 		}
 	}
