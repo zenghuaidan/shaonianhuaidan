@@ -425,12 +425,16 @@
 				<form id='uploadDatafm' method='post' action='uploadData' enctype='multipart/form-data' style="margin-top:10px; margin-bottom:10px;">
 					<input type="hidden" name="uploadAction" />
 					Start:<input type="text" name="dataStartTime" class="timepicker"/>
+					Lunch Time From:<input type="text" name="lunchStartTime" class="timepicker"/>
+					Lunch Time To:<input type="text" name="lunchEndTime" class="timepicker"/>
 					End:<input type="text" name="dataEndTime" class="timepicker"/>
 					<input type="file" name="liveData" accept="text/txt" value="Select File"/>
 					<input type="button" onclick="uploadDataWithChecking()" value="Check"/>
 					<input type="button" onclick="uploadDataWithReplace()" value="Upload by replace"/>
 					<input type="button" onclick="uploadDataWithSkip()" value="Upload by skip"/>
 				</form>
+				Download Sample Date:<input type="text" id="downloadSampleDate" name="downloadSampleDate" class="datepicker"/>
+				<input type="button" onclick="downloadSampleDate()" value="Download"/>
 				<div id="uploadStatus"></div>
             </div>
             <c:forEach items="${strategies}" var="strategy" varStatus="i">

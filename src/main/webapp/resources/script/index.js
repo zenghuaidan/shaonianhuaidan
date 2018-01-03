@@ -537,6 +537,15 @@ function uploadDataWithSkip() {
 	uploadData("skip");
 }
 
+function downloadSampleDate(){
+	var sampleDate = $.trim($("#downloadSampleDate").val());
+	if(sampleDate == "") {
+		alert("Please select sample date for download.")
+	} else {
+		window.open("downloadSampleDate?sampleDate=" + sampleDate);
+	}
+}
+
 var taskCompletedStr = "Task Completed!";
 function updateStatus() {
 	if($("#status").html().indexOf(taskCompletedStr) == -1) {
