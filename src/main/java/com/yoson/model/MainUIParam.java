@@ -373,7 +373,7 @@ public class MainUIParam extends TestSet {
 			MainUIParam mainUIParam = new MainUIParam();
 			List<String []> params = new ArrayList<String []>();
 			int index = 0;
-			while ((lines = csvReader.readNext()) != null && index <= 20 )  {
+			while ((lines = csvReader.readNext()) != null && index <= 21 )  {
 				params.add(lines);
 				index++;
 			}
