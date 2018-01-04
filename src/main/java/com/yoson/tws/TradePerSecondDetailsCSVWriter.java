@@ -135,6 +135,10 @@ public class TradePerSecondDetailsCSVWriter {
 			writer.append(",");
 			writer.append(mainUIParam.getLunchLastNumberOfMinutesClearPosition() + "");
 			writer.append("\n");
+			writer.append("Include Morning Data");
+			writer.append(",");
+			writer.append(mainUIParam.isIncludeMorningData() + "");
+			writer.append("\n");
 			
 	    	writer.append(BackTestCSVWriter.getATradingDayHeader());
 	    }
