@@ -399,6 +399,7 @@ public class MainUIParam extends TestSet {
 			mainUIParam.setUnit(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setLastNumberOfMinutesClearPosition(Integer.parseInt(params.get(index++)[1]));
 			mainUIParam.setLunchLastNumberOfMinutesClearPosition(Integer.parseInt(params.get(index++)[1]));
+			mainUIParam.setIncludeMorningData(Boolean.parseBoolean(params.get(index++)[1]));
 			csvReader.close();
 			return mainUIParam;
 		} catch (Exception e) {
