@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.ib.client.Order;
 import com.yoson.cms.controller.Global;
+import com.yoson.cms.controller.IndexController;
 import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.DateUtils;
 import com.yoson.model.PerSecondRecord;
@@ -32,6 +33,7 @@ public class TaskScheduler {
 			if(!validateTime) {
 				Date endTime = DateUtils.yyyyMMddHHmm().parse(EClientSocketUtils.contract.getEndTime());
 				if(DateUtils.addSecond(endTime, 1) <= nowDateTimeLong && EClientSocketUtils.isConnected()) {
+					IndexController.genLiveResult(EClientSocketUtils.contract.getSymbol() + "_" + EClientSocketUtils.id);
 					//trigger auto backtest
 					EClientSocketUtils.disconnect();
 				}					
@@ -63,12 +65,14 @@ public class TaskScheduler {
 							scheduleDataMap.put(key, resultDatas);
 						}
 						
+						boolean hasAfternoonData = false;
 						List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
 						if(strategy.getMainUIParam().isIncludeMorningData()) {
 							scheduleDatas.addAll(resultDatas.get(0));
 							scheduleDatas.addAll(resultDatas.get(1));
-						} else if(resultDatas.get(1).size() > 0) {
+						} else if(resultDatas.get(1).size() > 0) { // afternoon data come
 							scheduleDatas.addAll(resultDatas.get(1));
+							hasAfternoonData = true;
 						} else {
 							scheduleDatas.addAll(resultDatas.get(0));
 						}
@@ -90,6 +94,10 @@ public class TaskScheduler {
 							}
 						}						
 						strategy.setPnl(perSecondRecords.size() > 0 ? perSecondRecords.get(perSecondRecords.size() - 1).getTotalPnl() : 0);
+						if(!hasAfternoonData)
+							strategy.setMorningPnl(strategy.getPnl());
+						else if(!strategy.getMainUIParam().isIncludeMorningData())
+							strategy.setPnl(strategy.getPnl() + strategy.getMorningPnl());
 						log.append("Total pnl for " + strategy.getStrategyName() + " is " + strategy.getPnl()  + Global.lineSeparator);
 					}
 				}			
