@@ -21,6 +21,7 @@ public class Strategy implements Serializable {
 	private boolean active = false;
 	private int tradeCount;
 	private double pnl;
+	private double morningPnl;
 	@Expose
 	private MainUIParam mainUIParam;
 	// all the orders for this strategy
@@ -69,6 +70,7 @@ public class Strategy implements Serializable {
 			this.orderCountMap = new HashMap<Integer, Integer>();
 			this.actoinMap = new HashMap<Long, Integer>();
 			this.pnl = 0;
+			this.morningPnl = 0;
 			this.tradeCount = 0;
 		}
 	}
@@ -81,6 +83,7 @@ public class Strategy implements Serializable {
 		this.orderTime = null;
 		this.actoinMap = null;
 		this.pnl = 0;
+		this.morningPnl = 0;
 		this.tradeCount = 0;
 	}
 
@@ -165,6 +168,14 @@ public class Strategy implements Serializable {
 
 	public void setActoinMap(Map<Long, Integer> actoinMap) {
 		this.actoinMap = actoinMap;
+	}
+
+	public double getMorningPnl() {
+		return morningPnl;
+	}
+
+	public void setMorningPnl(double morningPnl) {
+		this.morningPnl = morningPnl;
 	}
 	
 }

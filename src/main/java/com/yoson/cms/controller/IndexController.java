@@ -651,7 +651,7 @@ public class IndexController  implements StatusCallBack {
 		}
 	}
 	
-	public void genCleanLog(String basePath) {
+	public static void genCleanLog(String basePath) {
 		FileInputStream fileInputStream = null;
 		FileOutputStream fileOutputStream = null;
 		try {
@@ -706,23 +706,7 @@ public class IndexController  implements StatusCallBack {
 	
 	@RequestMapping("downloadlive")
 	public void downloadlive(@RequestParam String id, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException {
-		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
-		String downloadFolder = FilenameUtils.concat(dataFolder, id);
-		String rawDataFilePath = FilenameUtils.concat(downloadFolder, id + "_rawData.csv");
-		String scheduledDataFilePath = FilenameUtils.concat(downloadFolder, id + "_scheduledData.csv");
-		List<Record> tradeList = new ArrayList<Record>();
-		List<Record> askList = new ArrayList<Record>();
-		List<Record> bidList = new ArrayList<Record>();
-		YosonEWrapper.getRecordList(downloadFolder, tradeList, askList, bidList);
-		String instrumentName = id.split("_")[0];
-		RawDataCSVWriter.WriteCSV(rawDataFilePath, instrumentName, tradeList, askList, bidList);
-		
-		List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(downloadFolder);
-		ScheduledDataCSVWriter.WriteCSV(scheduledDataFilePath, instrumentName, scheduledDataRecords);
-		
-		YosonEWrapper.genTradingDayPerSecondDetails(downloadFolder, scheduledDataRecords);
-		
-		genCleanLog(downloadFolder);
+		String downloadFolder = genLiveResult(id);
 		File downloadFolderFile = new File(downloadFolder);
 		if (downloadFolderFile.exists()) {
 			String zipName = id + ".zip";
@@ -741,6 +725,27 @@ public class IndexController  implements StatusCallBack {
 				out.close();
 			}
 		}
+	}
+
+	public static String genLiveResult(String id) throws ParseException {
+		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
+		String downloadFolder = FilenameUtils.concat(dataFolder, id);
+		String rawDataFilePath = FilenameUtils.concat(downloadFolder, id + "_rawData.csv");
+		String scheduledDataFilePath = FilenameUtils.concat(downloadFolder, id + "_scheduledData.csv");
+		List<Record> tradeList = new ArrayList<Record>();
+		List<Record> askList = new ArrayList<Record>();
+		List<Record> bidList = new ArrayList<Record>();
+		YosonEWrapper.getRecordList(downloadFolder, tradeList, askList, bidList);
+		String instrumentName = id.split("_")[0];
+		RawDataCSVWriter.WriteCSV(rawDataFilePath, instrumentName, tradeList, askList, bidList);
+		
+		List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(downloadFolder);
+		ScheduledDataCSVWriter.WriteCSV(scheduledDataFilePath, instrumentName, scheduledDataRecords);
+		
+		YosonEWrapper.genTradingDayPerSecondDetails(downloadFolder, scheduledDataRecords);
+		
+		genCleanLog(downloadFolder);
+		return downloadFolder;
 	}
 	
 	@ResponseBody
