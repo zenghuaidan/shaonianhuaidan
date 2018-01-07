@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.ib.client.Order;
 import com.yoson.cms.controller.Global;
 import com.yoson.cms.controller.IndexController;
@@ -30,7 +32,11 @@ public class TaskScheduler {
 			Date now = new Date();
 			boolean validateTime = YosonEWrapper.isValidateTime(now);
 			long nowDateTimeLong = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(now));
-			if(!validateTime) {
+			if(!validateTime 
+					&& StringUtils.isNotEmpty(EClientSocketUtils.id) 
+					&& StringUtils.isNotEmpty(EClientSocketUtils.contract.startTime) 
+					&& StringUtils.isNotEmpty(EClientSocketUtils.contract.endTime)
+					&& StringUtils.isNotEmpty(EClientSocketUtils.contract.getSymbol())) {
 				Date endTime = DateUtils.yyyyMMddHHmm().parse(EClientSocketUtils.contract.getEndTime());
 				if(DateUtils.addSecond(endTime, 1) <= nowDateTimeLong && EClientSocketUtils.isConnected()) {
 					IndexController.genLiveResult(EClientSocketUtils.contract.getSymbol() + "_" + EClientSocketUtils.id);
