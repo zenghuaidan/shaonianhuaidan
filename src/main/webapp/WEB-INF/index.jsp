@@ -447,6 +447,10 @@
 					Lunch Time To:<input type="text" name="lunchEndTime" class="timepicker"/>
 					End:<input type="text" name="dataEndTime" class="timepicker"/>
 					<input type="file" name="liveData" accept="text/txt" value="Select File"/>
+					<br/>
+					To Database:<input type="checkbox" name="toDatabase" checked="checked"/>
+					To CSV:<input type="checkbox" name="toCSV" checked="checked"/>
+					CSV Path:<input type="text" name="csvPath"/>
 					<input type="button" onclick="uploadDataWithChecking()" value="Check"/>
 					<input type="button" onclick="uploadDataWithReplace()" value="Upload by replace"/>
 					<input type="button" onclick="uploadDataWithSkip()" value="Upload by skip"/>

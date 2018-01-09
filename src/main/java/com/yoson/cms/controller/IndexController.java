@@ -309,11 +309,25 @@ public class IndexController  implements StatusCallBack {
 	public static List<String> uploadStatus = new ArrayList<String>();
 	@ResponseBody
 	@RequestMapping("uploadData")
-	public boolean uploadData(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	public boolean uploadData(String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
+		isToCSV = toCSV != null && "on".equals(toCSV.toLowerCase());
+		isToDatabase = toDatabase != null && "on".equals(toDatabase.toLowerCase());
 		String FINISHED = "Finished";
 		boolean success = false;
+		csvDownloadFolder=FilenameUtils.concat(System.getProperty("java.io.tmpdir"),DateUtils.yyyyMMddHHmmss2().format(new Date()));
+		new File(csvDownloadFolder).mkdirs();
+		try{
+			if(new File(csvPath).isDirectory()) {
+				csvDownloadFolder = toCSV;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		if(uploadStatus.size() > 0 && uploadStatus.get(uploadStatus.size() - 1).indexOf(FINISHED) < 0) {
 			return success;
+		}
+		if(isToCSV) {
+			uploadStatus.add("The csv result will store on the folder:" + csvDownloadFolder);
 		}
 		boolean isCheck = "check".equals(uploadAction);
 		uploadStatus = new ArrayList<String>();
@@ -466,6 +480,9 @@ public class IndexController  implements StatusCallBack {
 	private static String source = "";
 	private static String sheet="";
 	private int previousSheetIndex = 0;
+	private String csvDownloadFolder;
+	private boolean isToCSV;
+	private boolean isToDatabase;
 	private void uploadWithAction(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException {
 		for(File file : files) {
 			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
@@ -553,9 +570,16 @@ public class IndexController  implements StatusCallBack {
 			String _lunchEndTime = DateUtils.yyyyMMdd().format(date) + " " + lunchEndTime;
 			String _dataEndTime = DateUtils.yyyyMMdd().format(date) + " " + dataEndTime;
 			List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap);
-			uploadStatus.add("Writing database for " + sheet + ", the source is " + source + " ...");							
-			SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _lunchStartTime, source, isReplace);
-			SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _lunchEndTime, _dataEndTime, source, isReplace);
+			if(isToDatabase) {
+				uploadStatus.add("Writing database for " + sheet + ", the source is " + source + " ...");							
+				SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _lunchStartTime, source, isReplace);
+				SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _lunchEndTime, _dataEndTime, source, isReplace);
+			}
+			
+			if(isToCSV) {
+				String scheduledDataFilePath = FilenameUtils.concat(csvDownloadFolder, source + "_" + DateUtils.yyyyMMdd().format(date) + "_scheduledData.csv");
+				ScheduledDataCSVWriter.WriteCSV(scheduledDataFilePath, source, scheduledDataRecords);
+			}
 		} catch (Exception e) {
 		}
 	}
@@ -631,24 +655,7 @@ public class IndexController  implements StatusCallBack {
 	public void download(@RequestParam String id, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		String dataFolder = InitServlet.createDataFoderAndReturnPath();
 		String downloadFolder = FilenameUtils.concat(dataFolder, id);
-		File downloadFolderFile = new File(downloadFolder);
-		if (downloadFolderFile.exists()) {
-			String zipName = id + ".zip";
-			response.setContentType("APPLICATION/OCTET-STREAM");  
-			response.setHeader("Content-Disposition","attachment; filename="+zipName);
-			ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
-			try {
-				File[] files = new File(downloadFolder).listFiles();
-				for(File file : files) {
-					ZipUtils.doCompress(file, out);
-					response.flushBuffer();					
-				}				
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally{
-				out.close();
-			}
-		}
+		execDownload(response, downloadFolder, id);
 	}
 	
 	public static void genCleanLog(String basePath) {
@@ -707,9 +714,13 @@ public class IndexController  implements StatusCallBack {
 	@RequestMapping("downloadlive")
 	public void downloadlive(@RequestParam String id, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException {
 		String downloadFolder = genLiveResult(id);
+		execDownload(response, downloadFolder, id);
+	}
+
+	private void execDownload(HttpServletResponse response, String downloadFolder, String downloadFileName) throws IOException {
 		File downloadFolderFile = new File(downloadFolder);
 		if (downloadFolderFile.exists()) {
-			String zipName = id + ".zip";
+			String zipName = downloadFileName + ".zip";
 			response.setContentType("APPLICATION/OCTET-STREAM");  
 			response.setHeader("Content-Disposition","attachment; filename="+zipName);
 			ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
