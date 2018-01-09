@@ -326,9 +326,6 @@ public class IndexController  implements StatusCallBack {
 		if(uploadStatus.size() > 0 && uploadStatus.get(uploadStatus.size() - 1).indexOf(FINISHED) < 0) {
 			return success;
 		}
-		if(isToCSV) {
-			uploadStatus.add("The csv result will store on the folder:" + csvDownloadFolder);
-		}
 		boolean isCheck = "check".equals(uploadAction);
 		uploadStatus = new ArrayList<String>();
 		boolean isReplace = "replace".equals(uploadAction);
@@ -338,6 +335,9 @@ public class IndexController  implements StatusCallBack {
 			uploadStatus.add("Start upload with <font size='3' color='blue'>Replace</font> mode...");
 		} else {
 			uploadStatus.add("Start upload with <font size='3' color='blue'>Skip</font> mode...");
+		}
+		if(isToCSV) {
+			uploadStatus.add("The csv result will store on the folder:<font size='5' color='blue'>" + csvDownloadFolder + "</font>");
 		}
 		Date startTime = null;
 		Date lunchTimeFrom = null;
