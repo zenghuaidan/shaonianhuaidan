@@ -326,9 +326,6 @@ public class IndexController  implements StatusCallBack {
 		if(uploadStatus.size() > 0 && uploadStatus.get(uploadStatus.size() - 1).indexOf(FINISHED) < 0) {
 			return success;
 		}
-		if(isToCSV) {
-			uploadStatus.add("The csv result will store on the folder:" + csvDownloadFolder);
-		}
 		boolean isCheck = "check".equals(uploadAction);
 		uploadStatus = new ArrayList<String>();
 		boolean isReplace = "replace".equals(uploadAction);
