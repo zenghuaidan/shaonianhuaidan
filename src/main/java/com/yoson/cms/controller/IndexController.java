@@ -22,6 +22,8 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -577,6 +579,19 @@ public class IndexController  implements StatusCallBack {
 			}
 			
 			if(isToCSV) {
+				uploadStatus.add("Writing scheduled data csv for " + sheet + ", the source is " + source + " ...");
+				CollectionUtils.filter(scheduledDataRecords, new Predicate() {
+					@Override
+					public boolean evaluate(Object o) {
+						ScheduledDataRecord s = (ScheduledDataRecord) o;
+						try {
+							return DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(s.getTime()), _dataStartTime, _lunchStartTime)
+									|| DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(s.getTime()), _lunchEndTime, _dataEndTime);
+						} catch (ParseException e) {							
+						}
+						return false;
+					}
+				});
 				String scheduledDataFilePath = FilenameUtils.concat(csvDownloadFolder, source + "_" + DateUtils.yyyyMMdd().format(date) + "_scheduledData.csv");
 				ScheduledDataCSVWriter.WriteCSV(scheduledDataFilePath, source, scheduledDataRecords);
 			}
