@@ -496,11 +496,6 @@ function loadTemplate() {
 	   $("#templatefm").ajaxSubmit(options);   
 }
 
-function parseData() {
-   $("#parseDatafm").ajaxForm(options);
-   $("#parseDatafm").ajaxSubmit(options);	
-}
-
 function uploadData(action) {
 	var file = $("#uploadDatafm input[type=file]").val();
 	if (file == "" || file.split(".")[file.split(".").length - 1].toLocaleLowerCase() != "zip") {
@@ -540,6 +535,10 @@ function uploadDataWithChecking() {
 }
 function uploadDataWithSkip() {
 	uploadData("skip");
+}
+
+function uploadDataWithTransfer() {
+	uploadData("transfer");
 }
 
 function downloadSampleDate(){

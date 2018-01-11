@@ -430,17 +430,15 @@
 					End:<input type="text" name="dataEndTime" class="timepicker"/>
 					<input type="file" name="liveData" accept="text/txt" value="Select File"/>
 					<br/>
+					Ignore Lunch Time:<input type="checkbox" name="ignoreLunchTime"/>
 					To Database:<input type="checkbox" name="toDatabase" checked="checked"/>
 					To CSV:<input type="checkbox" name="toCSV" checked="checked"/>
 					CSV Path:<input type="text" name="csvPath"/>
 					<input type="button" onclick="uploadDataWithChecking()" value="Check"/>
 					<input type="button" onclick="uploadDataWithReplace()" value="Upload by replace"/>
 					<input type="button" onclick="uploadDataWithSkip()" value="Upload by skip"/>
+					<input type="button" onclick="uploadDataWithTransfer()" value="Transfer Data"/>
 				</form>
-				<!--form id='parseDatafm' method='post' action='parseData' enctype='multipart/form-data' style="margin-top:10px; margin-bottom:10px;">
-					<input type="file" name="parserData" accept="text/txt" value="Select File"/>
-					<input type="button" onclick="parseData()" value="Parse Data"/>
-				</form-->
 				Download Sample Date:<input type="text" id="downloadSampleDate" name="downloadSampleDate" class="datepicker"/>
 				<input type="button" onclick="downloadSampleDate()" value="Download"/>
 				<div id="uploadStatus"></div>

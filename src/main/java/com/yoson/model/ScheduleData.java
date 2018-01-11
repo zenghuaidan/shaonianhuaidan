@@ -1,6 +1,7 @@
 package com.yoson.model;
 
 import java.text.ParseException;
+import java.util.Date;
 
 import com.yoson.date.DateUtils;
 
@@ -11,6 +12,24 @@ public class ScheduleData {
 	private double askPrice;
 	private double bidPrice;
 	private double lastTrade;
+	private int askSize;
+	private int bidSize;
+	private int lastTradeSize;
+	
+	public ScheduleData() {
+	}
+
+	public ScheduleData(Date date, double askPrice, int askSize, double bidPrice, int bidSize, double lastTrade, int lastTradeSize) {
+		this.id = date.getTime();
+		this.dateStr = DateUtils.yyyyMMdd().format(date);
+		this.timeStr = DateUtils.HHmmss().format(date);
+		this.askPrice = askPrice;
+		this.bidPrice = bidPrice;
+		this.lastTrade = lastTrade;
+		this.askSize = askSize;
+		this.bidSize = bidSize;
+		this.lastTrade = lastTrade;
+	}
 	
 	public ScheduleData(String dateStr, String timeStr, String askPrice, String bidPrice, String lastTrade) {
 		try {
@@ -68,6 +87,30 @@ public class ScheduleData {
 
 	public void setLastTrade(double lastTrade) {
 		this.lastTrade = lastTrade;
+	}
+	
+	public int getAskSize() {
+		return askSize;
+	}
+
+	public void setAskSize(int askSize) {
+		this.askSize = askSize;
+	}
+
+	public int getBidSize() {
+		return bidSize;
+	}
+
+	public void setBidSize(int bidSize) {
+		this.bidSize = bidSize;
+	}
+
+	public int getLastTradeSize() {
+		return lastTradeSize;
+	}
+
+	public void setLastTradeSize(int lastTradeSize) {
+		this.lastTradeSize = lastTradeSize;
 	}
 
 	public String getTimeStr() {
