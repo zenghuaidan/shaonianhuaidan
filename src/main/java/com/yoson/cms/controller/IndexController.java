@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -50,6 +51,7 @@ import com.yoson.callback.StatusCallBack;
 import com.yoson.csv.BigExcelReader;
 import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
+import com.yoson.model.ScheduleData;
 import com.yoson.sql.SQLUtils;
 import com.yoson.task.BackTestTask;
 import com.yoson.tws.ConnectionInfo;
@@ -308,116 +310,20 @@ public class IndexController  implements StatusCallBack {
 		IOUtils.write(SQLUtils.getScheduledDataRecordByDate(sampleDate), response.getOutputStream());
 	}
 	
-	@ResponseBody
-	@RequestMapping("uploadData")
-	public boolean uploadData(MultipartFile parserData, HttpServletResponse response, HttpServletRequest request) throws IOException {
-		String FINISHED = "Finished";
-		boolean success = false;
-		csvDownloadFolder = FilenameUtils.concat(System.getProperty("java.io.tmpdir"), DateUtils.yyyyMMddHHmmss2().format(new Date()));
-		new File(csvDownloadFolder).mkdirs();
-		if (uploadStatus.size() > 0 && uploadStatus.get(uploadStatus.size() - 1).indexOf(FINISHED) < 0) {
-			return success;
-		}
-		uploadStatus = new ArrayList<String>();
-		uploadStatus.add("The csv result will store on the folder:<font size='5' color='blue'>" + csvDownloadFolder + "</font>");
-		try {
-			String ext = parserData == null ? "" : parserData.getOriginalFilename().substring(parserData.getOriginalFilename().lastIndexOf('.')).toLowerCase();
-			if (ext.equals(".zip")) {
-				// create temp folder
-				String tempFolder = FilenameUtils.concat(InitServlet.createUploadFoderAndReturnPath(), DateUtils.yyyyMMddHHmmss2().format(new Date()));
-				File tempFolderFile = new File(tempFolder);
-				if (tempFolderFile.exists())
-					FileUtils.deleteQuietly(tempFolderFile);
-				tempFolderFile.mkdirs();
-
-				uploadStatus.add("Uploading....");
-				// save zip file to local disk
-				String zipFile = FilenameUtils.concat(tempFolder, parserData.getOriginalFilename());
-				FileUtils.copyInputStreamToFile(parserData.getInputStream(), new File(zipFile));
-				uploadStatus.add("Upload completed");
-
-				// unzip to a folder
-				uploadStatus.add("Unzipping....");
-				String unzipFolder = FilenameUtils.concat(tempFolder, FilenameUtils.getBaseName(parserData.getOriginalFilename()));
-				File unzipFolderFile = new File(unzipFolder);
-				unzipFolderFile.mkdirs();
-				ZipUtils.decompress(zipFile, unzipFolder);
-				uploadStatus.add("Unzip completed");
-
-				// retrieve the excel files
-				Collection<File> files = FileUtils.listFiles(unzipFolderFile, new SuffixFileFilter(new ArrayList<String>() {{add("xlsm");add("xls");add("xlsx");}}), TrueFileFilter.TRUE);
-				if (files.size() > 0) {
-					for(File file : files) {
-						Map<String, Integer> entityMap = new HashMap<String, Integer>();
-						new BigExcelReader(file) {  
-				        	@Override  
-				        	protected void outputRow(int sheetIndex, int rowIndex, boolean isLastSheet, List<Object> datas, List<Integer> rowTypes) {
-				        		if(sheetIndex != 0) return;
-				        		if(rowIndex == 0) {
-				        			int start = 10;
-				        			for(; start < datas.size(); ) {
-				        				entityMap.put(datas.get(start).toString(), start);
-				        				start = start + 5;
-				        			}
-				        		}
-				        		try {
-	    							Date tradeDate = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(0).toString()));
-	    							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, tradeDate)) {
-	    								Double tradePrice = Double.valueOf(datas.get(2).toString());
-	    								YosonEWrapper.addLiveData(tradeMap, tradeDate, tradePrice);																									
-	    							}
-	    						} catch (Exception e) {
-	    						}
-	    						
-	    						try {
-	    							Date askDate = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(4).toString()));
-	    							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, askDate)) {
-	    								Double askPrice = Double.valueOf(datas.get(5).toString());
-	    								YosonEWrapper.addLiveData(askMap, askDate, askPrice);									
-	    							}
-	    						} catch (Exception e) {
-	    						}
-	    						
-	    						try {
-	    							Date bidDate = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(8).toString()));
-	    							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, bidDate)) {
-	    								Double bidPrice = Double.valueOf(datas.get(10).toString());
-	    								YosonEWrapper.addLiveData(bidMap, bidDate, bidPrice);									
-	    							}
-	    						} catch (Exception e) {
-	    						}				
-				        	}
-			        	};
-					}
-					// delete the unzip folder, just keep the zip file
-					FileUtils.deleteQuietly(unzipFolderFile);
-					success = true;
-				} else {
-					uploadStatus.add("No excel file found from the upload zip file");
-				}
-			} else {
-				uploadStatus.add("Please upload a zip file");
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			uploadStatus.add("Upload with exception => " + ex.getMessage());
-		}
-		return success;
-	}
-
 	public static List<String> uploadStatus = new ArrayList<String>();
 	@ResponseBody
 	@RequestMapping("uploadData")
-	public boolean uploadData(String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	public boolean uploadData(String ignoreLunchTime, String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		isToCSV = toCSV != null && "on".equals(toCSV.toLowerCase());
 		isToDatabase = toDatabase != null && "on".equals(toDatabase.toLowerCase());
+		isIgnoreLunchTime= ignoreLunchTime != null && "on".equals(ignoreLunchTime.toLowerCase());
 		String FINISHED = "Finished";
 		boolean success = false;
 		csvDownloadFolder=FilenameUtils.concat(System.getProperty("java.io.tmpdir"),DateUtils.yyyyMMddHHmmss2().format(new Date()));
 		new File(csvDownloadFolder).mkdirs();
 		try{
 			if(new File(csvPath).isDirectory()) {
-				csvDownloadFolder = toCSV;
+				csvDownloadFolder = csvPath;
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -428,28 +334,32 @@ public class IndexController  implements StatusCallBack {
 		boolean isCheck = "check".equals(uploadAction);
 		uploadStatus = new ArrayList<String>();
 		boolean isReplace = "replace".equals(uploadAction);
+		boolean isSkip = "skip".equals(uploadAction);
+		boolean isTransfer = "transfer".equals(uploadAction);
 		if(isCheck) {
 			uploadStatus.add("Start with checking(<font size='3' color='blue'>data will not be uploaded</font>)...");		
 		} else if(isReplace) {
 			uploadStatus.add("Start upload with <font size='3' color='blue'>Replace</font> mode...");
-		} else {
+		} else if(isSkip) {
 			uploadStatus.add("Start upload with <font size='3' color='blue'>Skip</font> mode...");
+		} else {
+			uploadStatus.add("Start upload with data transfer");
 		}
-		if(isToCSV) {
+		if(isToCSV && (isReplace || isSkip) || isTransfer) {
 			uploadStatus.add("The csv result will store on the folder:<font size='5' color='blue'>" + csvDownloadFolder + "</font>");
 		}
-		Date startTime = null;
-		Date lunchTimeFrom = null;
-		Date lunchTimeTo = null;
-		Date endTime = null;
-		try {
-			startTime = DateUtils.HHmmss().parse(dataStartTime);
-			lunchTimeFrom = DateUtils.HHmmss().parse(lunchStartTime);
-			lunchTimeTo = DateUtils.HHmmss().parse(lunchEndTime);
-			endTime = DateUtils.HHmmss().parse(dataEndTime);
-			if(startTime.equals(lunchTimeFrom) || startTime.before(lunchTimeFrom) 
-					&& lunchTimeFrom.equals(lunchTimeTo) || lunchTimeFrom.before(lunchTimeTo) 
-					&& lunchTimeTo.equals(endTime) || lunchTimeTo.before(endTime)) {				
+//		Date startTime = null;
+//		Date lunchTimeFrom = null;
+//		Date lunchTimeTo = null;
+//		Date endTime = null;
+//		try {
+//			startTime = DateUtils.HHmmss().parse(dataStartTime);
+//			lunchTimeFrom = DateUtils.HHmmss().parse(lunchStartTime);
+//			lunchTimeTo = DateUtils.HHmmss().parse(lunchEndTime);
+//			endTime = DateUtils.HHmmss().parse(dataEndTime);
+//			if(startTime.equals(lunchTimeFrom) || startTime.before(lunchTimeFrom) 
+//					&& lunchTimeFrom.equals(lunchTimeTo) || lunchTimeFrom.before(lunchTimeTo) 
+//					&& lunchTimeTo.equals(endTime) || lunchTimeTo.before(endTime)) {				
 				try {
 					String ext = liveData == null ? "" : liveData.getOriginalFilename().substring(liveData.getOriginalFilename().lastIndexOf('.')).toLowerCase();
 					if(ext.equals(".zip")) {
@@ -484,7 +394,7 @@ public class IndexController  implements StatusCallBack {
 								
 								// delete the unzip folder, just keep the zip file
 								FileUtils.deleteQuietly(tempFolderFile);
-							} else {
+							} else if(isReplace || isSkip) {
 								// write audit log
 								FileOutputStream logFileOutputStream = new FileOutputStream(new File(FilenameUtils.concat(tempFolder, "log.txt")));
 								IOUtils.write(dataStartTime + "	" + lunchStartTime + "	" + lunchEndTime + "	"  + dataEndTime + "	" + uploadAction, logFileOutputStream);
@@ -494,7 +404,11 @@ public class IndexController  implements StatusCallBack {
 								
 								// delete the unzip folder, just keep the zip file
 								FileUtils.deleteQuietly(unzipFolderFile);
-							}					
+							} else {
+								uploadWithTransfer(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, files);
+								// delete the unzip folder, just keep the zip file
+								FileUtils.deleteQuietly(unzipFolderFile);
+							}
 							success = true;
 						} else {
 							uploadStatus.add("No excel file found from the upload zip file");
@@ -506,12 +420,12 @@ public class IndexController  implements StatusCallBack {
 					ex.printStackTrace();			
 					uploadStatus.add("Upload with exception => " + ex.getMessage());
 				}
-			} else {
-				uploadStatus.add("Please check your input time");
-			}
-		} catch (ParseException e) {
-			uploadStatus.add("Please input valdate time!");
-		}
+//			} else {
+//				uploadStatus.add("Please check your input time");
+//			}
+//		} catch (ParseException e) {
+//			uploadStatus.add("Please input valdate time!");
+//		}
 		uploadStatus.add((isCheck ? "Check " : "Upload ") + FINISHED);
 		return success;
 	}
@@ -582,6 +496,63 @@ public class IndexController  implements StatusCallBack {
 	private String csvDownloadFolder;
 	private boolean isToCSV;
 	private boolean isToDatabase;
+	private boolean isIgnoreLunchTime;
+	private void uploadWithTransfer(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files) throws IOException, OpenXML4JException, SAXException {
+		for(File file : files) {
+			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
+			uploadStatus.add("Retriving data from " + name + " ...");
+			List<String> entities = new ArrayList<String>();
+			List<Map<Long, ScheduleData>> dataMap = new ArrayList<Map<Long, ScheduleData>>();
+			new BigExcelReader(file) {  
+	        	@Override  
+	        	protected void outputRow(int sheetIndex, int rowIndex, boolean isLastSheet, List<Object> datas, List<Integer> rowTypes) {
+	        		if(sheetIndex != 0) return;
+	        		if(rowIndex == 0) {
+	        			for(Object data : datas) {
+	        				if(data != null && !StringUtils.isBlank(data.toString())) {
+	        					entities.add(dataEndTime.toString());
+	        				}
+	        			}
+	        		} else {
+	        			for(int i = 0; i < entities.size(); ) {
+	        				try {
+	        					Date date = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(i * 4).toString()));
+	        					long id = date.getTime();
+        						String type = datas.get(i *4 + 1).toString().trim();
+        						double price = Double.parseDouble(datas.get(i *4 + 2).toString().trim());
+        						int size = Integer.parseInt(datas.get(i *4 + 3).toString().trim());
+        						if(dataMap.get(i) == null) dataMap.add(new HashMap<Long, ScheduleData>());
+        						Map<Long, ScheduleData> sMap = dataMap.get(i);
+        						ScheduleData scheduleData = new ScheduleData();
+        						if(sMap.containsKey(id)) {
+        							scheduleData = sMap.get(id);
+        						} else {
+        							sMap.put(id, scheduleData);
+        						}
+        						switch (type) {
+									case "ASK":
+										scheduleData.setAskPrice(price);
+										scheduleData.setAskSize(size);
+										break;
+									case "BID":
+										scheduleData.setBidPrice(price);
+										scheduleData.setBidSize(size);
+										break;
+									case "TRADE":
+										scheduleData.setLastTrade(price);
+										scheduleData.setLastTradeSize(size);
+										break;	
+									default:
+										break;
+								}
+	        				} catch (Exception e) {
+							}
+	        			}
+	        		}
+	        	}
+        	};
+		}
+	}
 	private void uploadWithAction(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException {
 		for(File file : files) {
 			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
@@ -636,7 +607,7 @@ public class IndexController  implements StatusCallBack {
     						try {
     							Date askDate = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(4).toString()));
     							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, askDate)) {
-    								Double askPrice = Double.valueOf(datas.get(5).toString());
+    								Double askPrice = Double.valueOf(datas.get(6).toString());
     								YosonEWrapper.addLiveData(askMap, askDate, askPrice);									
     							}
     						} catch (Exception e) {
@@ -670,9 +641,13 @@ public class IndexController  implements StatusCallBack {
 			String _dataEndTime = DateUtils.yyyyMMdd().format(date) + " " + dataEndTime;
 			List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap);
 			if(isToDatabase) {
-				uploadStatus.add("Writing database for " + sheet + ", the source is " + source + " ...");							
-				SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _lunchStartTime, source, isReplace);
-				SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _lunchEndTime, _dataEndTime, source, isReplace);
+				uploadStatus.add("Writing database for " + sheet + ", the source is " + source + " ...");	
+				if(isIgnoreLunchTime) {
+					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _dataEndTime, source, isReplace);
+				} else {
+					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _lunchStartTime, source, isReplace);
+					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _lunchEndTime, _dataEndTime, source, isReplace);
+				}
 			}
 			
 			if(isToCSV) {
@@ -682,8 +657,12 @@ public class IndexController  implements StatusCallBack {
 					public boolean evaluate(Object o) {
 						ScheduledDataRecord s = (ScheduledDataRecord) o;
 						try {
-							return DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(s.getTime()), _dataStartTime, _lunchStartTime)
-									|| DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(s.getTime()), _lunchEndTime, _dataEndTime);
+							if(isIgnoreLunchTime) {
+								return DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(s.getTime()), _dataStartTime, _dataEndTime);
+							} else {
+								return DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(s.getTime()), _dataStartTime, _lunchStartTime)
+										|| DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(s.getTime()), _lunchEndTime, _dataEndTime);
+							}
 						} catch (ParseException e) {							
 						}
 						return false;
