@@ -307,6 +307,103 @@ public class IndexController  implements StatusCallBack {
 		response.setHeader("Content-Disposition","attachment; filename=" + sampleDate + ".csv");
 		IOUtils.write(SQLUtils.getScheduledDataRecordByDate(sampleDate), response.getOutputStream());
 	}
+	
+	@ResponseBody
+	@RequestMapping("uploadData")
+	public boolean uploadData(MultipartFile parserData, HttpServletResponse response, HttpServletRequest request) throws IOException {
+		String FINISHED = "Finished";
+		boolean success = false;
+		csvDownloadFolder = FilenameUtils.concat(System.getProperty("java.io.tmpdir"), DateUtils.yyyyMMddHHmmss2().format(new Date()));
+		new File(csvDownloadFolder).mkdirs();
+		if (uploadStatus.size() > 0 && uploadStatus.get(uploadStatus.size() - 1).indexOf(FINISHED) < 0) {
+			return success;
+		}
+		uploadStatus = new ArrayList<String>();
+		uploadStatus.add("The csv result will store on the folder:<font size='5' color='blue'>" + csvDownloadFolder + "</font>");
+		try {
+			String ext = parserData == null ? "" : parserData.getOriginalFilename().substring(parserData.getOriginalFilename().lastIndexOf('.')).toLowerCase();
+			if (ext.equals(".zip")) {
+				// create temp folder
+				String tempFolder = FilenameUtils.concat(InitServlet.createUploadFoderAndReturnPath(), DateUtils.yyyyMMddHHmmss2().format(new Date()));
+				File tempFolderFile = new File(tempFolder);
+				if (tempFolderFile.exists())
+					FileUtils.deleteQuietly(tempFolderFile);
+				tempFolderFile.mkdirs();
+
+				uploadStatus.add("Uploading....");
+				// save zip file to local disk
+				String zipFile = FilenameUtils.concat(tempFolder, parserData.getOriginalFilename());
+				FileUtils.copyInputStreamToFile(parserData.getInputStream(), new File(zipFile));
+				uploadStatus.add("Upload completed");
+
+				// unzip to a folder
+				uploadStatus.add("Unzipping....");
+				String unzipFolder = FilenameUtils.concat(tempFolder, FilenameUtils.getBaseName(parserData.getOriginalFilename()));
+				File unzipFolderFile = new File(unzipFolder);
+				unzipFolderFile.mkdirs();
+				ZipUtils.decompress(zipFile, unzipFolder);
+				uploadStatus.add("Unzip completed");
+
+				// retrieve the excel files
+				Collection<File> files = FileUtils.listFiles(unzipFolderFile, new SuffixFileFilter(new ArrayList<String>() {{add("xlsm");add("xls");add("xlsx");}}), TrueFileFilter.TRUE);
+				if (files.size() > 0) {
+					for(File file : files) {
+						Map<String, Integer> entityMap = new HashMap<String, Integer>();
+						new BigExcelReader(file) {  
+				        	@Override  
+				        	protected void outputRow(int sheetIndex, int rowIndex, boolean isLastSheet, List<Object> datas, List<Integer> rowTypes) {
+				        		if(sheetIndex != 0) return;
+				        		if(rowIndex == 0) {
+				        			int start = 10;
+				        			for(; start < datas.size(); ) {
+				        				entityMap.put(datas.get(start).toString(), start);
+				        				start = start + 5;
+				        			}
+				        		}
+				        		try {
+	    							Date tradeDate = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(0).toString()));
+	    							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, tradeDate)) {
+	    								Double tradePrice = Double.valueOf(datas.get(2).toString());
+	    								YosonEWrapper.addLiveData(tradeMap, tradeDate, tradePrice);																									
+	    							}
+	    						} catch (Exception e) {
+	    						}
+	    						
+	    						try {
+	    							Date askDate = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(4).toString()));
+	    							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, askDate)) {
+	    								Double askPrice = Double.valueOf(datas.get(5).toString());
+	    								YosonEWrapper.addLiveData(askMap, askDate, askPrice);									
+	    							}
+	    						} catch (Exception e) {
+	    						}
+	    						
+	    						try {
+	    							Date bidDate = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(8).toString()));
+	    							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, bidDate)) {
+	    								Double bidPrice = Double.valueOf(datas.get(10).toString());
+	    								YosonEWrapper.addLiveData(bidMap, bidDate, bidPrice);									
+	    							}
+	    						} catch (Exception e) {
+	    						}				
+				        	}
+			        	};
+					}
+					// delete the unzip folder, just keep the zip file
+					FileUtils.deleteQuietly(unzipFolderFile);
+					success = true;
+				} else {
+					uploadStatus.add("No excel file found from the upload zip file");
+				}
+			} else {
+				uploadStatus.add("Please upload a zip file");
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			uploadStatus.add("Upload with exception => " + ex.getMessage());
+		}
+		return success;
+	}
 
 	public static List<String> uploadStatus = new ArrayList<String>();
 	@ResponseBody
