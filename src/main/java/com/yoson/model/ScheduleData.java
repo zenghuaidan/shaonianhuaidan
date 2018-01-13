@@ -28,7 +28,7 @@ public class ScheduleData {
 		this.lastTrade = lastTrade;
 		this.askSize = askSize;
 		this.bidSize = bidSize;
-		this.lastTrade = lastTrade;
+		this.lastTradeSize = lastTradeSize;
 	}
 	
 	public ScheduleData(String dateStr, String timeStr, String askPrice, String bidPrice, String lastTrade) {

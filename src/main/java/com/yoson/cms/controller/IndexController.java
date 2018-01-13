@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,11 +44,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.ib.client.Contract;
 import com.yoson.callback.StatusCallBack;
+import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.csv.BigExcelReader;
 import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
@@ -385,6 +388,9 @@ public class IndexController  implements StatusCallBack {
 						ZipUtils.decompress(zipFile, unzipFolder);
 						uploadStatus.add("Unzip completed");
 						
+						// delete zip file
+						new File(zipFile).delete();
+						
 						// retrieve the excel files
 						Collection<File> files = FileUtils.listFiles(unzipFolderFile, new SuffixFileFilter(new ArrayList<String>(){{add("xlsm"); add("xls"); add("xlsx");}}), TrueFileFilter.TRUE);
 						
@@ -426,7 +432,7 @@ public class IndexController  implements StatusCallBack {
 //		} catch (ParseException e) {
 //			uploadStatus.add("Please input valdate time!");
 //		}
-		uploadStatus.add((isCheck ? "Check " : "Upload ") + FINISHED);
+		uploadStatus.add((isCheck ? "Check " : ((isReplace || isSkip) ?  "Upload " : "Transfer ")) + FINISHED);
 		return success;
 	}
 
@@ -436,21 +442,26 @@ public class IndexController  implements StatusCallBack {
 			uploadStatus.add("Doing checking for " + name + " ...");
 	        new BigExcelReader(file) {  
 	        	@Override  
-	        	protected void outputRow(int sheetIndex, int rowIndex, boolean isLastSheet, List<Object> datas, List<Integer> rowTypes) {  
+	        	protected void outputRow(int sheetIndex, int rowIndex, int curCol, List<String> datas) {  
 	        			if(sheetIndex >= startSheet && rowIndex == 0) {
 	        				boolean validateSource = false;
 	        				boolean validateDate = false;
-	        				if(datas.size() > 0 && !StringUtils.isEmpty(datas.get(0).toString())) {
+	        				String source = null;
+	        				String dateStr = null;
+	        				Date date = null;
+	        				if(datas.size() > 1 && !StringUtils.isEmpty(datas.get(1))) {
+	        					source = genSouce((String)datas.get(1));						
 	        					validateSource = true;
 	        				}
-	        				if(datas.size() > 1 && datas.get(1) instanceof Date) {
+	        				try {
+	        					dateStr = datas.get(2);
+	        					date = DateUtils.yyyyMMdd().parse(dateStr);	        					
 	        					validateDate = true;
-	        				}
+	        				} catch (Exception e) {
+	        					validateDate = false;
+							}
 	        				String sheet = "<font size='3' color='red'>Sheet" + (sheetIndex + 1) + "</font>";
 	        				if (validateDate && validateSource) {
-	        					String source = genSouce((String)datas.get(0));						
-	        					Date date = (Date)datas.get(1);
-	        					String dateStr = DateUtils.yyyyMMdd().format(date);
 //						if(!org.apache.commons.lang.time.DateUtils.isSameDay(date, DateUtils.yyyyMMddHHmm().parse(dataStartTime))) {
 //							uploadStatus.add("The data(" + DateUtils.yyyyMMdd().format(date) + ") at " + sheet + " is NOT within you selected period(" + dataStartTime +"-" + dataEndTime + "), this sheet may be <font size='4' color='red'>skipped</font>");
 //						} else {
@@ -502,32 +513,39 @@ public class IndexController  implements StatusCallBack {
 			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
 			uploadStatus.add("Retriving data from " + name + " ...");
 			List<String> entities = new ArrayList<String>();
-			List<Map<Long, ScheduleData>> dataMap = new ArrayList<Map<Long, ScheduleData>>();
+//			entity->yyyy-mm-dd->time id->scheduledata
+			List<Map<String, Map<Long, ScheduleData>>> dataMap = new ArrayList<Map<String, Map<Long, ScheduleData>>>();
 			new BigExcelReader(file) {  
 	        	@Override  
-	        	protected void outputRow(int sheetIndex, int rowIndex, boolean isLastSheet, List<Object> datas, List<Integer> rowTypes) {
+	        	protected void outputRow(int sheetIndex, int rowIndex, int curCol, List<String> datas) {
 	        		if(sheetIndex != 0) return;
 	        		if(rowIndex == 0) {
-	        			for(Object data : datas) {
-	        				if(data != null && !StringUtils.isBlank(data.toString())) {
-	        					entities.add(dataEndTime.toString());
+	        			for(String data : datas) {
+	        				if(!StringUtils.isBlank(data)) {
+	        					entities.add(data);
 	        				}
 	        			}
 	        		} else {
-	        			for(int i = 0; i < entities.size(); ) {
+	        			for(int i = 0; i < entities.size(); i++) {
 	        				try {
-	        					Date date = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(i * 4).toString()));
+	        					int index = i * 5;
+								Date date = DateUtils.yyyyMMddHHmmss().parse(datas.get(index));
+	        					String dateStr = DateUtils.yyyyMMdd().format(date);
 	        					long id = date.getTime();
-        						String type = datas.get(i *4 + 1).toString().trim();
-        						double price = Double.parseDouble(datas.get(i *4 + 2).toString().trim());
-        						int size = Integer.parseInt(datas.get(i *4 + 3).toString().trim());
-        						if(dataMap.get(i) == null) dataMap.add(new HashMap<Long, ScheduleData>());
-        						Map<Long, ScheduleData> sMap = dataMap.get(i);
-        						ScheduleData scheduleData = new ScheduleData();
+        						String type = datas.get(index + 1).trim();
+        						double price = Double.parseDouble(datas.get(index + 2).trim());
+        						String preDateStr = "";
+        						try {
+        							preDateStr = (String)dataMap.get(i).keySet().toArray()[0];
+        						} catch (Exception e) {
+								}
+        						int size = Integer.parseInt(datas.get(index + 3).trim());
+        						if(dataMap.size() == i) dataMap.add(new HashMap<String, Map<Long, ScheduleData>>());
+        						if(!dataMap.get(i).containsKey(dateStr)) dataMap.get(i).put(dateStr, new HashMap<Long, ScheduleData>());
+        						Map<Long, ScheduleData> sMap = dataMap.get(i).get(dateStr);
+        						ScheduleData scheduleData = new ScheduleData(date, 0, 0, 0, 0, 0, 0);
         						if(sMap.containsKey(id)) {
         							scheduleData = sMap.get(id);
-        						} else {
-        							sMap.put(id, scheduleData);
         						}
         						switch (type) {
 									case "ASK":
@@ -545,14 +563,137 @@ public class IndexController  implements StatusCallBack {
 									default:
 										break;
 								}
+        						if(sMap.containsKey(id)) {
+        							sMap.replace(id, scheduleData);
+        						} else {
+        							sMap.put(id, scheduleData);
+        						}
+        						if(dataMap.get(i).keySet().size() == 2) {
+        							List<ScheduleData> scheduledDataRecords = new ArrayList<ScheduleData>(dataMap.get(i).get(preDateStr).values());
+        							String fileName = entities.get(i) + "_" + preDateStr + ".csv";
+        							transferData(scheduledDataRecords, fileName, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime);
+        							dataMap.get(i).remove(preDateStr);
+        						}
 	        				} catch (Exception e) {
 							}
 	        			}
 	        		}
 	        	}
         	};
+		
+        	for(int i = 0; i < entities.size(); i++) {
+        		try {
+        			for(String key : dataMap.get(i).keySet()) {
+        				String fileName = entities.get(i) + "_" + key + ".csv";
+        				List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>(dataMap.get(i).get(key).values());
+        				transferData(scheduleDatas, fileName, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime);
+        			}        			
+        		} catch (Exception e) {
+				}
+        	}
 		}
 	}
+	
+	private void transferData(List<ScheduleData> scheduleDatas, String fileName, String dataStartTime, String lunchStartTime, String lunchEndTime,
+			String dataEndTime) throws ParseException {
+		if(scheduleDatas.size() == 0) return;
+		scheduleDatas.sort(new Comparator<ScheduleData>() {
+
+			@Override
+			public int compare(ScheduleData o1, ScheduleData o2) {
+				// TODO Auto-generated method stub
+				return new Long(o1.getId()).compareTo(o2.getId());
+			}
+		});
+		StringBuffer sb = new StringBuffer("Time,BID,bid size,ASK,ask size,TRADE,trade size" + System.lineSeparator());
+		long start = scheduleDatas.get(0).getId();
+		double askPrice = 0; 
+		int askSize = 0;
+		double bidPrice = 0;
+		int bidSize = 0;
+		double lastTrade = 0;
+		int lastTradeSize = 0;
+		Date startTime = DateUtils.yyyyMMddHHmmss().parse(scheduleDatas.get(0).getDateStr() + " " + dataStartTime); 
+		long _start = startTime.getTime();
+		while(_start < start) {
+			ScheduleData s = new ScheduleData(new Date(_start), 
+					askPrice, askSize, 
+					bidPrice, bidSize, 
+					lastTrade, lastTradeSize);
+			sb.append(toTransferRecord(s, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime));
+			_start = _start + 1000;
+		}
+		for(int j = 0; j < scheduleDatas.size(); j++) {
+			ScheduleData scheduledData = scheduleDatas.get(j);
+			if(scheduledData.getAskPrice() > 0) {
+				askPrice = scheduledData.getAskPrice(); 
+				askSize = scheduledData.getAskSize();
+			}
+			if(scheduledData.getBidPrice() > 0) {
+				bidPrice = scheduledData.getBidPrice();
+				bidSize = scheduledData.getBidSize();			
+			}
+			if(scheduledData.getLastTrade() > 0) {
+				lastTrade = scheduledData.getLastTrade();
+				lastTradeSize = scheduledData.getLastTradeSize();
+			}
+			long current = scheduledData.getId();
+			while(start < current) {
+				ScheduleData s = new ScheduleData(new Date(start), 
+						askPrice, askSize, 
+						bidPrice, bidSize, 
+						lastTrade, lastTradeSize);
+				sb.append(toTransferRecord(s, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime));
+				start = start + 1000;
+			}
+			ScheduleData s = new ScheduleData(new Date(start), 
+					scheduledData.getAskPrice() == 0 ? askPrice : scheduledData.getAskPrice(), scheduledData.getAskPrice() == 0 ? askSize : scheduledData.getAskSize(), 
+					scheduledData.getBidPrice() == 0 ? bidPrice : scheduledData.getBidPrice(), scheduledData.getBidPrice() == 0 ? bidSize : scheduledData.getBidSize(), 
+					scheduledData.getLastTrade() == 0 ? lastTrade : scheduledData.getLastTrade(), scheduledData.getLastTrade() == 0 ? lastTradeSize :scheduledData.getLastTradeSize());
+			sb.append(toTransferRecord(s, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime));				
+			start = start + 1000;
+		}
+		Date endTime = DateUtils.yyyyMMddHHmmss().parse(scheduleDatas.get(0).getDateStr() + " " + dataEndTime); 
+		long lastSecond = endTime.getTime();
+		while(start <= lastSecond) {
+			ScheduleData s = new ScheduleData(new Date(start), 
+					askPrice, askSize, 
+					bidPrice, bidSize, 
+					lastTrade, lastTradeSize);
+			sb.append(toTransferRecord(s, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime));
+			start = start + 1000;
+		}
+		BackTestCSVWriter.writeText(FilenameUtils.concat(csvDownloadFolder, fileName), sb.toString(), false);
+	}
+
+	private String toTransferRecord(ScheduleData s, String dataStartTime, String lunchStartTime, String lunchEndTime,
+			String dataEndTime) {
+		Date when = new Date(s.getId());
+		if(s.getTimeStr().equals("16:00:00")) {
+			int i = 0;
+		}
+		String _dataStartTime = DateUtils.yyyyMMdd().format(when) + " " + dataStartTime; 
+		String _lunchStartTime = DateUtils.yyyyMMdd().format(when) + " " + lunchStartTime; 
+		String _lunchEndTime = DateUtils.yyyyMMdd().format(when) + " " + lunchEndTime;
+		String _dataEndTime = DateUtils.yyyyMMdd().format(when) + " " + dataEndTime;
+		boolean flag = false;
+		if(isIgnoreLunchTime) {
+			flag = DateUtils.isValidateTime(when, _dataStartTime, _dataEndTime);
+		} else {
+			flag = DateUtils.isValidateTime(when, _dataStartTime, _lunchStartTime)
+					|| DateUtils.isValidateTime(when, _lunchEndTime, _dataEndTime);
+		}
+		if(flag)
+			return s.getDateTimeStr() + ","
+				+ s.getBidPrice() + ","
+				+ s.getBidSize() + ","
+				+ s.getAskPrice() + ","
+				+ s.getAskSize() + ","
+				+ s.getLastTrade() + ","
+				+ s.getLastTradeSize() + System.lineSeparator();
+		return "";
+	}
+	
 	private void uploadWithAction(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException {
 		for(File file : files) {
 			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
@@ -568,7 +709,7 @@ public class IndexController  implements StatusCallBack {
 			previousSheetIndex = 0;
 	        new BigExcelReader(file) {  
 	        	@Override  
-	        	protected void outputRow(int sheetIndex, int rowIndex, boolean isLastSheet, List<Object> datas, List<Integer> rowTypes) {
+	        	protected void outputRow(int sheetIndex, int rowIndex, int curCol, List<String> datas) {
 	        		if(validateSheet && rowIndex == 0 && previousSheetIndex != sheetIndex) {
 	        			wrtingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace);
 	        		}
@@ -582,8 +723,8 @@ public class IndexController  implements StatusCallBack {
     						date = null;
     						source = "";
     						try {
-    							source = genSouce((String)datas.get(0));						
-    							date = (Date)datas.get(1);
+    							source = genSouce((String)datas.get(1));						
+    							date = DateUtils.yyyyMMdd().parse(datas.get(2));
     						} catch (Exception e) {
     						}
     						if (StringUtils.isEmpty(source) || date == null) {
@@ -596,27 +737,27 @@ public class IndexController  implements StatusCallBack {
     						
     					} else if(validateSheet && rowIndex >= 3) {
     						try {
-    							Date tradeDate = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(0).toString()));
+    							Date tradeDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(1));
     							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, tradeDate)) {
-    								Double tradePrice = Double.valueOf(datas.get(2).toString());
+    								Double tradePrice = Double.valueOf(datas.get(3).toString());
     								YosonEWrapper.addLiveData(tradeMap, tradeDate, tradePrice);																									
     							}
     						} catch (Exception e) {
     						}
     						
     						try {
-    							Date askDate = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(4).toString()));
+    							Date askDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(6));
     							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, askDate)) {
-    								Double askPrice = Double.valueOf(datas.get(6).toString());
+    								Double askPrice = Double.valueOf(datas.get(8).toString());
     								YosonEWrapper.addLiveData(askMap, askDate, askPrice);									
     							}
     						} catch (Exception e) {
     						}
     						
     						try {
-    							Date bidDate = HSSFDateUtil.getJavaDate(Double.parseDouble(datas.get(8).toString()));
+    							Date bidDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(11));
     							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, bidDate)) {
-    								Double bidPrice = Double.valueOf(datas.get(10).toString());
+    								Double bidPrice = Double.valueOf(datas.get(13).toString());
     								YosonEWrapper.addLiveData(bidMap, bidDate, bidPrice);									
     							}
     						} catch (Exception e) {
