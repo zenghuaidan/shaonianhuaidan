@@ -664,6 +664,7 @@ public class IndexController  implements StatusCallBack {
 			start = start + 1000;
 		}
 		BackTestCSVWriter.writeText(FilenameUtils.concat(csvDownloadFolder, fileName), sb.toString(), false);
+		uploadStatus.add("Writting " + "<font size='3' color='blue'>" + fileName + "</font>" + " successfully");
 	}
 
 	private String toTransferRecord(ScheduleData s, String dataStartTime, String lunchStartTime, String lunchEndTime,
