@@ -537,89 +537,90 @@ public class YosonEWrapper extends BasicEWrapper {
 			break;
 		}
 	}
-	
+	private static final Object object = new Object();
 	@Override
 	public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId,
-			int parentId, double lastFillPrice, int clientId, String whyHeld) {	
-		String time = DateUtils.yyyyMMddHHmmss2().format(new Date());
-		StringBuffer orderLog = new StringBuffer();
-		StringBuffer log = new StringBuffer();
-		
-		// match any strategy
-		boolean found = false;
-		
-		// the flag of the order status which cancel by api call
-		boolean cancel = false;
-		
-		boolean activeStrategyOrder = false;
-		for (Strategy strategy : EClientSocketUtils.strategies) {
-			if(strategy.getOrderMap().containsKey(orderId)) {
-				activeStrategyOrder = strategy.isActive();
-				found = true;
-				break;
-			}
-			if(strategy.getCancelOrder().contains(orderId)) {
-				cancel = true;
-			}
-		}
-		orderLog.append(
-				time
-				+ (found ? "Hit Strategy(" + (activeStrategyOrder ? "Active" : "Inactive") + ")," : "Miss Strategy,")
-				+ (cancel ? "A Cancel Order Result(Cancelled by API)," : "")
-				+  "=>orderId:" + orderId 
-				+ ", status:" + status
-				+ ", filled:" + filled
-				+ ", remaining:" + remaining
-				+ ", avgFillPrice:" + avgFillPrice
-				+ ", permId:" + permId
-				+ ", parentId:" + parentId
-				+ ", lastFillPrice:" + lastFillPrice
-				+ ", clientId:" + clientId
-				+ ", whyHeld:" + whyHeld + Global.lineSeparator);
-
-		if(!cancel) {
+			int parentId, double lastFillPrice, int clientId, String whyHeld) {
+		synchronized (object) {
+			String time = DateUtils.yyyyMMddHHmmss2().format(new Date());
+			StringBuffer orderLog = new StringBuffer();
+			StringBuffer log = new StringBuffer();
+			
+			// match any strategy
+			boolean found = false;
+			
+			// the flag of the order status which cancel by api call
+			boolean cancel = false;
+			
+			boolean activeStrategyOrder = false;
 			for (Strategy strategy : EClientSocketUtils.strategies) {
-				if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
-					Order order = strategy.getOrderMap().get(orderId);
-					if((status.equals("Cancelled") || status.equals("Inactive")) && remaining > 0) {
-						YosonEWrapper.currentOrderId++;
-						int newOrderId = YosonEWrapper.currentOrderId;
-						int orderCount = 2;
-						if(strategy.getOrderCountMap().containsKey(orderId)) {
-							orderCount = strategy.getOrderCountMap().get(orderId) + 1;
+				if(strategy.getOrderMap().containsKey(orderId)) {
+					activeStrategyOrder = strategy.isActive();
+					found = true;
+					break;
+				}
+				if(strategy.getCancelOrder().contains(orderId)) {
+					cancel = true;
+				}
+			}
+			orderLog.append(
+					time
+					+ (found ? "Hit Strategy(" + (activeStrategyOrder ? "Active" : "Inactive") + ")," : "Miss Strategy,")
+					+ (cancel ? "A Cancel Order Result(Cancelled by API)," : "")
+					+  "=>orderId:" + orderId 
+					+ ", status:" + status
+					+ ", filled:" + filled
+					+ ", remaining:" + remaining
+					+ ", avgFillPrice:" + avgFillPrice
+					+ ", permId:" + permId
+					+ ", parentId:" + parentId
+					+ ", lastFillPrice:" + lastFillPrice
+					+ ", clientId:" + clientId
+					+ ", whyHeld:" + whyHeld + Global.lineSeparator);
+			
+			if(!cancel) {
+				for (Strategy strategy : EClientSocketUtils.strategies) {
+					if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
+						Order order = strategy.getOrderMap().get(orderId);
+						if((status.equals("Cancelled") || status.equals("Inactive")) && remaining > 0) {
+							YosonEWrapper.currentOrderId++;
+							int newOrderId = YosonEWrapper.currentOrderId;
+							int orderCount = 2;
+							if(strategy.getOrderCountMap().containsKey(orderId)) {
+								orderCount = strategy.getOrderCountMap().get(orderId) + 1;
+							}
+							Order newOrder = new Order();
+							newOrder.m_account = EClientSocketUtils.connectionInfo.getAccount();
+							newOrder.m_tif = EClientSocketUtils.contract.getTif();
+							newOrder.m_action = order.m_action;
+							newOrder.m_totalQuantity = remaining;
+							if (orderCount > 10) {
+								newOrder.m_orderType = Global.MKT;
+							} else {
+								newOrder.m_orderType = Global.LMT;
+								newOrder.m_auxPrice = 0;
+								double lmtPrice = YosonEWrapper.trade + ((order.m_action.equals(Global.BUY) ? 1 : -1 ) * strategy.getMainUIParam().getUnit() * strategy.getMainUIParam().getOrderTicker());
+								newOrder.m_lmtPrice = Math.round(lmtPrice * 100) / 100D;
+							}
+							EClientSocketUtils.placeOrder(newOrderId, newOrder);
+							log.append("Retry For(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + time + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + remaining + Global.lineSeparator);
+							
+							strategy.getOrderMap().put(newOrderId, newOrder);
+							strategy.getOrderCountMap().put(newOrderId, orderCount);
+							strategy.setOrderTime(new Date());
+							//EClientSocketUtils.cancelOrder(orderId);
+							strategy.getCancelOrder().add(orderId);						
+						} else if(remaining > 0) {
+							orderLog.append("Warning:" + status + " order with remaining=" + remaining + Global.lineSeparator);
 						}
-						Order newOrder = new Order();
-						newOrder.m_account = EClientSocketUtils.connectionInfo.getAccount();
-						newOrder.m_tif = EClientSocketUtils.contract.getTif();
-						newOrder.m_action = order.m_action;
-						newOrder.m_totalQuantity = remaining;
-						if (orderCount > 10) {
-							newOrder.m_orderType = Global.MKT;
-						} else {
-							newOrder.m_orderType = Global.LMT;
-							newOrder.m_auxPrice = 0;
-							double lmtPrice = YosonEWrapper.trade + ((order.m_action.equals(Global.BUY) ? 1 : -1 ) * strategy.getMainUIParam().getUnit() * strategy.getMainUIParam().getOrderTicker());
-							newOrder.m_lmtPrice = Math.round(lmtPrice * 100) / 100D;
-						}
-						EClientSocketUtils.placeOrder(newOrderId, newOrder);
-						log.append("Retry For(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + time + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + remaining + Global.lineSeparator);
-						
-						strategy.getOrderMap().put(newOrderId, newOrder);
-						strategy.getOrderCountMap().put(newOrderId, orderCount);
-						strategy.setOrderTime(new Date());
-						EClientSocketUtils.cancelOrder(orderId);
-						strategy.getCancelOrder().add(orderId);						
-					} else if(remaining > 0) {
-						orderLog.append("Warning:" + status + " order with remaining=" + remaining + Global.lineSeparator);
 					}
 				}
 			}
+			if(log.length() > 0) {
+				BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), log.toString() + Global.lineSeparator, true);
+			}
+			BackTestCSVWriter.writeText(getOrderStatusLogPath(), orderLog.toString() + Global.lineSeparator, true);
 		}
-		if(log.length() > 0) {
-			BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), log.toString() + Global.lineSeparator, true);
-		}
-		BackTestCSVWriter.writeText(getOrderStatusLogPath(), orderLog.toString() + Global.lineSeparator, true);
-		
 	}
 	
 	@Override
