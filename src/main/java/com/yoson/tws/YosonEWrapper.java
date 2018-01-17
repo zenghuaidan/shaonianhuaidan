@@ -559,17 +559,28 @@ public class YosonEWrapper extends BasicEWrapper {
 			boolean cancel = false;
 			
 			boolean activeStrategyOrder = false;
+			
 			for (Strategy strategy : EClientSocketUtils.strategies) {
 				if(strategy.getOrderMap().containsKey(orderId)) {
 					activeStrategyOrder = strategy.isActive();
 					found = true;
-					break;
 				}
 				if(strategy.getCancelOrder().containsKey(orderId)) {
 					cancel = true;
 				}
+				
+				if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
+					if((status.equals("Cancelled") || status.equals("Inactive")) && remaining > 0) {
+						if (!strategy.getCancelOrder().containsKey(orderId)) {
+							strategy.getCancelOrder().put(orderId, false);//set pending for retry
+						}					
+					} else if(remaining > 0) {
+						orderLog.append("Warning:" + status + " order with remaining=" + remaining + Global.lineSeparator);
+					}
+				}
 			}
-			orderLog.append(
+			
+			String log = 
 					time
 					+ (found ? "Hit Strategy(" + (activeStrategyOrder ? "Active" : "Inactive") + ")," : "Miss Strategy,")
 					+ (cancel ? "A Previous Cancel Order Result," : "")
@@ -582,23 +593,9 @@ public class YosonEWrapper extends BasicEWrapper {
 					+ ", parentId:" + parentId
 					+ ", lastFillPrice:" + lastFillPrice
 					+ ", clientId:" + clientId
-					+ ", whyHeld:" + whyHeld + Global.lineSeparator);
+					+ ", whyHeld:" + ", endTime:" +  System.nanoTime() + Global.lineSeparator;
 			
-			if(!cancel) {
-				for (Strategy strategy : EClientSocketUtils.strategies) {
-					if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
-						if((status.equals("Cancelled") || status.equals("Inactive")) && remaining > 0) {
-							if (!strategy.getCancelOrder().containsKey(orderId)) {
-								strategy.getCancelOrder().put(orderId, false);//set pending for retry
-							}					
-						} else if(remaining > 0) {
-							orderLog.append("Warning:" + status + " order with remaining=" + remaining + Global.lineSeparator);
-						}
-					}
-				}
-			}
-			long endTime = System.nanoTime();
-			BackTestCSVWriter.writeText(getOrderStatusLogPath(), orderLog.toString() + ", endTime:" +  endTime + Global.lineSeparator, true);
+			BackTestCSVWriter.writeText(getOrderStatusLogPath(), log + orderLog.toString() + Global.lineSeparator, true);
 		}
 	}
 	
