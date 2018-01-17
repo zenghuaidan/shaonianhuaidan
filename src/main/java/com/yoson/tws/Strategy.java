@@ -1,13 +1,9 @@
 package com.yoson.tws;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
@@ -61,14 +57,10 @@ public class Strategy implements Serializable {
 	public void active() {
 		if(!active) {
 			this.active = true;		
-			this.orderMap = new TreeMap<Integer, Order>(new Comparator<Integer>(){  
-	            public int compare(Integer o1, Integer o2) {  
-	                return o2.compareTo(o1);  
-	            }     
-	        });
-			this.cancelOrder = new HashMap<Integer, Boolean>();
-			this.orderCountMap = new HashMap<Integer, Integer>();
-			this.actoinMap = new HashMap<Long, Integer>();
+			this.orderMap = new ConcurrentHashMap<Integer, Order>();
+			this.cancelOrder = new ConcurrentHashMap<Integer, Boolean>();
+			this.orderCountMap = new ConcurrentHashMap<Integer, Integer>();
+			this.actoinMap = new ConcurrentHashMap<Long, Integer>();
 			this.pnl = 0;
 			this.morningPnl = 0;
 			this.tradeCount = 0;
@@ -113,27 +105,24 @@ public class Strategy implements Serializable {
 	}
 
 	public int getOrderId() {
-		if(orderMap == null) return 0;
+		int currentOrderId = -1;
+		if(orderMap == null) return currentOrderId;
 		for(int orderId : orderMap.keySet()) {
-			return orderId;
+			currentOrderId = Math.max(orderId, currentOrderId);
 		}
-		return 0;
+		return currentOrderId;
 	}
 	
 	public int getQuantity() {
 		if(orderMap == null) return 0;
-		for(int orderId : orderMap.keySet()) {
-			return orderMap.get(orderId).m_totalQuantity;
-		}
-		return 0;
+		int id = getOrderId();
+		return orderMap.containsKey(id) ? orderMap.get(id).m_totalQuantity : 0;
 	}
 	
 	public String getAction() {
 		if(orderMap == null) return "";
-		for(int orderId : orderMap.keySet()) {
-			return orderMap.get(orderId).m_action;
-		}
-		return "";
+		int id = getOrderId();
+		return orderMap.containsKey(id) ? orderMap.get(id).m_action : "";
 	}
 
 	public String getOrderTime() {

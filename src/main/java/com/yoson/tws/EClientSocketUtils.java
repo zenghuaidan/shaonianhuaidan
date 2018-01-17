@@ -1,9 +1,9 @@
 package com.yoson.tws;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -20,7 +20,7 @@ public class EClientSocketUtils {
 	private static EClientSocket socket;
 	public static ConnectionInfo connectionInfo;
 	public static Contract contract;
-	public static List<Strategy> strategies = new ArrayList<Strategy>();
+	public static List<Strategy> strategies = new CopyOnWriteArrayList<Strategy>();
 	public static String id;
 	public static String CONTRACT = "contract.txt";
 	
