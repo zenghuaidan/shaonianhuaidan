@@ -600,6 +600,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	public void nextValidId(int orderId) {
 		currentOrderId = orderId;
 		retryTimes = 0;
+		System.out.println("currentOrderId:" + currentOrderId);
 	}
 	
 	public static int retryTimes = 0;
