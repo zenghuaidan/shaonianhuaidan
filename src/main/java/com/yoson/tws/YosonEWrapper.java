@@ -543,66 +543,65 @@ public class YosonEWrapper extends BasicEWrapper {
 			break;
 		}
 	}
-	private static final Object object = new Object();
+	
 	@Override
 	public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId,
 			int parentId, double lastFillPrice, int clientId, String whyHeld) {
-		synchronized (object) {
-			long startTime = System.nanoTime();
-			String time = DateUtils.yyyyMMddHHmmss2().format(new Date()) +"(" + startTime + ")";			
-			StringBuffer orderLog = new StringBuffer();
-			
-			// match any strategy
-			boolean found = false;
-			
-			// the flag of the order status which cancel by api call
-			boolean cancel = false;
-			
-			boolean activeStrategyOrder = false;
-			
-			for (Strategy strategy : EClientSocketUtils.strategies) {
-				if(strategy.getOrderMap().containsKey(orderId)) {
-					activeStrategyOrder = strategy.isActive();
-					found = true;
-				}
-				if(strategy.getCancelOrder().containsKey(orderId)) {
-					cancel = true;
-				}
-				
-				if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
-					if((status.equals("Cancelled") || status.equals("Inactive")) && remaining > 0) {
-						if (!strategy.getCancelOrder().containsKey(orderId)) {
-							strategy.getCancelOrder().put(orderId, false);//set pending for retry
-						}					
-					} else if(remaining > 0) {
-						orderLog.append("Warning:" + status + " order with remaining=" + remaining + Global.lineSeparator);
-					}
-				}
+		long startTime = System.nanoTime();
+		String time = DateUtils.yyyyMMddHHmmss2().format(new Date()) +"(" + startTime + ")";			
+		StringBuffer orderLog = new StringBuffer();
+		
+		// match any strategy
+		boolean found = false;
+		
+		// the flag of the order status which cancel by TWS
+		boolean cancel = false;
+		
+		boolean isActiveStrategyOrder = false;
+		
+		for (Strategy strategy : EClientSocketUtils.strategies) {
+			if(strategy.getOrderMap().containsKey(orderId)) {
+				isActiveStrategyOrder = strategy.isActive();
+				found = true;
+			}
+			if(strategy.getCancelOrder().containsKey(orderId)) {
+				cancel = true;
 			}
 			
-			String log = 
-					time
-					+ (found ? "Hit Strategy(" + (activeStrategyOrder ? "Active" : "Inactive") + ")," : "Miss Strategy,")
-					+ (cancel ? "A Previous Cancel Order Result," : "")
-					+  "=>orderId:" + orderId 
-					+ ", status:" + status
-					+ ", filled:" + filled
-					+ ", remaining:" + remaining
-					+ ", avgFillPrice:" + avgFillPrice
-					+ ", permId:" + permId
-					+ ", parentId:" + parentId
-					+ ", lastFillPrice:" + lastFillPrice
-					+ ", clientId:" + clientId
-					+ ", whyHeld:" + ", endTime:" +  System.nanoTime() + Global.lineSeparator;
-			
-			BackTestCSVWriter.writeText(getOrderStatusLogPath(), log + orderLog.toString() + Global.lineSeparator, true);
+			if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
+				if((status.equals("Cancelled") || status.equals("Inactive")) && remaining > 0) {
+					if (!strategy.getCancelOrder().containsKey(orderId)) {
+						strategy.getCancelOrder().put(orderId, false);//set pending for retry
+					}					
+				} else if(remaining > 0) {
+					orderLog.append("Warning:" + status + " order with remaining=" + remaining + Global.lineSeparator);
+				}
+			}
 		}
+		
+		String log = 
+				time
+				+ (found ? "Hit Strategy(" + (isActiveStrategyOrder ? "Active" : "Inactive") + ")," : "Miss Strategy,")
+				+ (cancel ? "A Previous Cancel Order Result," : "")
+				+  "=>orderId:" + orderId 
+				+ ", status:" + status
+				+ ", filled:" + filled
+				+ ", remaining:" + remaining
+				+ ", avgFillPrice:" + avgFillPrice
+				+ ", permId:" + permId
+				+ ", parentId:" + parentId
+				+ ", lastFillPrice:" + lastFillPrice
+				+ ", clientId:" + clientId
+				+ ", whyHeld:" + ", endTime:" + System.nanoTime() + Global.lineSeparator;
+		
+		BackTestCSVWriter.writeText(getOrderStatusLogPath(), log + orderLog.toString() + Global.lineSeparator, true);		
 	}
 	
 	@Override
 	public void nextValidId(int orderId) {
 		currentOrderId = orderId;
 		retryTimes = 0;
+		BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Next Valid Id: " + currentOrderId  + Global.lineSeparator, true);
 	}
 	
 	public static int retryTimes = 0;
