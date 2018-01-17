@@ -542,7 +542,8 @@ public class YosonEWrapper extends BasicEWrapper {
 	public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId,
 			int parentId, double lastFillPrice, int clientId, String whyHeld) {
 		synchronized (object) {
-			String time = DateUtils.yyyyMMddHHmmss2().format(new Date());
+			long startTime = System.nanoTime();
+			String time = DateUtils.yyyyMMddHHmmss2().format(new Date()) +"(" + startTime + ")";			
 			StringBuffer orderLog = new StringBuffer();
 			StringBuffer log = new StringBuffer();
 			
@@ -566,7 +567,7 @@ public class YosonEWrapper extends BasicEWrapper {
 			orderLog.append(
 					time
 					+ (found ? "Hit Strategy(" + (activeStrategyOrder ? "Active" : "Inactive") + ")," : "Miss Strategy,")
-					+ (cancel ? "A Cancel Order Result(Cancelled by API)," : "")
+					+ (cancel ? "A Previous Cancel Order Result," : "")
 					+  "=>orderId:" + orderId 
 					+ ", status:" + status
 					+ ", filled:" + filled
@@ -616,10 +617,11 @@ public class YosonEWrapper extends BasicEWrapper {
 					}
 				}
 			}
+			long endTime = System.nanoTime();
 			if(log.length() > 0) {
-				BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), log.toString() + Global.lineSeparator, true);
+				BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), log.toString() + ", endTime:" +  endTime + Global.lineSeparator, true);
 			}
-			BackTestCSVWriter.writeText(getOrderStatusLogPath(), orderLog.toString() + Global.lineSeparator, true);
+			BackTestCSVWriter.writeText(getOrderStatusLogPath(), orderLog.toString() + ", endTime:" +  endTime + Global.lineSeparator, true);
 		}
 	}
 	
