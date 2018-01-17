@@ -100,7 +100,8 @@ public class TaskScheduler {
 									}
 								}
 							}
-						}						
+						}
+						retryOrder(strategy, nowDateTimeLong + "");
 						strategy.setPnl(perSecondRecords.size() > 0 ? perSecondRecords.get(perSecondRecords.size() - 1).getTotalPnl() : 0);
 						if(!hasAfternoonData)
 							strategy.setMorningPnl(strategy.getPnl());
@@ -122,11 +123,45 @@ public class TaskScheduler {
 			}
 		}
 	}
+	
+	public String retryOrder(Strategy strategy, String now) {
+		StringBuffer log = new StringBuffer();
+		for(int orderId : strategy.getCancelOrder().keySet()) {
+			if(!strategy.getCancelOrder().get(orderId)) {//pending for retry
+				Order order = strategy.getOrderMap().get(orderId);
+				int orderCount = 2;
+				if(strategy.getOrderCountMap().containsKey(orderId)) {
+					orderCount = strategy.getOrderCountMap().get(orderId) + 1;
+				}
+				Order newOrder = new Order();
+				newOrder.m_account = EClientSocketUtils.connectionInfo.getAccount();
+				newOrder.m_tif = EClientSocketUtils.contract.getTif();
+				newOrder.m_action = order.m_action;
+				newOrder.m_totalQuantity = 1;
+				if (orderCount > 10) {
+					newOrder.m_orderType = Global.MKT;
+				} else {
+					newOrder.m_orderType = Global.LMT;
+					newOrder.m_auxPrice = 0;
+					double lmtPrice = YosonEWrapper.trade + ((order.m_action.equals(Global.BUY) ? 1 : -1 ) * strategy.getMainUIParam().getUnit() * strategy.getMainUIParam().getOrderTicker());
+					newOrder.m_lmtPrice = Math.round(lmtPrice * 100) / 100D;
+				}
+				int newOrderId = YosonEWrapper.increaseOrderId();
+				EClientSocketUtils.placeOrder(newOrderId, newOrder);
+				log.append("Retry For(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + 1 + Global.lineSeparator);
+				
+				strategy.getOrderMap().put(newOrderId, newOrder);
+				strategy.getOrderCountMap().put(newOrderId, orderCount);
+				strategy.setOrderTime(new Date());
+				strategy.getCancelOrder().replace(orderId, true);						
+			}
+		}				
+		return log.toString();
+	}
 
 	public String placeAnOrder(Strategy strategy, String now, int quantity) {
-		if(YosonEWrapper.currentOrderId == null) return "";
-		YosonEWrapper.currentOrderId++;
-		int newOrderId = YosonEWrapper.currentOrderId;
+		int newOrderId = YosonEWrapper.increaseOrderId();
+		if(newOrderId < 0) return "";	
 
 		int totalQuantity = Math.abs(quantity);
 		boolean isBuy = quantity > 0;

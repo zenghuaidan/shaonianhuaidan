@@ -28,8 +28,8 @@ public class Strategy implements Serializable {
 	private Map<Integer, Order> orderMap;
 	// the order with the cancel count, key=orderId, value=cancelCount
 	private Map<Integer, Integer> orderCountMap;
-	// cancel order map by API
-	private Set<Integer> cancelOrder;
+	// cancel order for retry
+	private Map<Integer, Boolean> cancelOrder;
 	// action map, key=time, value=action
 	private Map<Long, Integer> actoinMap;
 	private Date orderTime;
@@ -66,7 +66,7 @@ public class Strategy implements Serializable {
 	                return o2.compareTo(o1);  
 	            }     
 	        });
-			this.cancelOrder = new HashSet<Integer>();
+			this.cancelOrder = new HashMap<Integer, Boolean>();
 			this.orderCountMap = new HashMap<Integer, Integer>();
 			this.actoinMap = new HashMap<Long, Integer>();
 			this.pnl = 0;
@@ -146,11 +146,11 @@ public class Strategy implements Serializable {
 		this.orderTime = orderTime;
 	}
 
-	public Set<Integer> getCancelOrder() {
+	public Map<Integer, Boolean> getCancelOrder() {
 		return cancelOrder;
 	}
 
-	public void setCancelOrder(Set<Integer> cancelOrder) {
+	public void setCancelOrder(Map<Integer, Boolean> cancelOrder) {
 		this.cancelOrder = cancelOrder;
 	}
 
