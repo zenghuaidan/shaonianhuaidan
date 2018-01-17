@@ -101,13 +101,14 @@ public class TaskScheduler {
 								}
 							}
 						}
-						retryOrder(strategy, nowDateTimeLong + "");
 						strategy.setPnl(perSecondRecords.size() > 0 ? perSecondRecords.get(perSecondRecords.size() - 1).getTotalPnl() : 0);
 						if(!hasAfternoonData)
 							strategy.setMorningPnl(strategy.getPnl());
 						else if(!strategy.getMainUIParam().isIncludeMorningData())
 							strategy.setPnl(strategy.getPnl() + strategy.getMorningPnl());
-						log.append("Total pnl for " + strategy.getStrategyName() + " is " + strategy.getPnl()  + Global.lineSeparator);
+						
+						retryOrder(strategy, nowDateTimeLong + "");
+//						log.append("Total pnl for " + strategy.getStrategyName() + " is " + strategy.getPnl()  + Global.lineSeparator);
 					}
 				}			
 			}
@@ -148,12 +149,12 @@ public class TaskScheduler {
 				}
 				int newOrderId = YosonEWrapper.increaseOrderId();
 				EClientSocketUtils.placeOrder(newOrderId, newOrder);
-				log.append("Retry For(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + 1 + Global.lineSeparator);
 				
 				strategy.getOrderMap().put(newOrderId, newOrder);
 				strategy.getOrderCountMap().put(newOrderId, orderCount);
 				strategy.setOrderTime(new Date());
 				strategy.getCancelOrder().replace(orderId, true);						
+				log.append("Retry For(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + 1 + Global.lineSeparator);
 			}
 		}				
 		return log.toString();
