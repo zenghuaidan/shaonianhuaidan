@@ -41,7 +41,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	public static List<ScheduledDataRecord> scheduledDataRecords;
 	
-	public static Integer currentOrderId;
+	public static int currentOrderId = -1;
 	public static Date lastTime = new Date();
 	
 	public final static String BID = "Bid";
@@ -98,7 +98,13 @@ public class YosonEWrapper extends BasicEWrapper {
 		scheduledDataRecords = null;
 		
 		lastTime = null;
-		currentOrderId = null;
+		currentOrderId = -1;
+	}
+	
+	public static synchronized  int increaseOrderId() {
+		if (currentOrderId < 0) return currentOrderId;
+		currentOrderId++;
+		return currentOrderId;			
 	}
 	
 	public static List<List<ScheduleData>> toScheduleDataList(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam, long lastSecond) throws ParseException {
@@ -545,7 +551,6 @@ public class YosonEWrapper extends BasicEWrapper {
 			long startTime = System.nanoTime();
 			String time = DateUtils.yyyyMMddHHmmss2().format(new Date()) +"(" + startTime + ")";			
 			StringBuffer orderLog = new StringBuffer();
-			StringBuffer log = new StringBuffer();
 			
 			// match any strategy
 			boolean found = false;
@@ -560,7 +565,7 @@ public class YosonEWrapper extends BasicEWrapper {
 					found = true;
 					break;
 				}
-				if(strategy.getCancelOrder().contains(orderId)) {
+				if(strategy.getCancelOrder().containsKey(orderId)) {
 					cancel = true;
 				}
 			}
@@ -582,35 +587,10 @@ public class YosonEWrapper extends BasicEWrapper {
 			if(!cancel) {
 				for (Strategy strategy : EClientSocketUtils.strategies) {
 					if(strategy.isActive() && strategy.getOrderMap().containsKey(orderId)) {
-						Order order = strategy.getOrderMap().get(orderId);
 						if((status.equals("Cancelled") || status.equals("Inactive")) && remaining > 0) {
-							YosonEWrapper.currentOrderId++;
-							int newOrderId = YosonEWrapper.currentOrderId;
-							int orderCount = 2;
-							if(strategy.getOrderCountMap().containsKey(orderId)) {
-								orderCount = strategy.getOrderCountMap().get(orderId) + 1;
-							}
-							Order newOrder = new Order();
-							newOrder.m_account = EClientSocketUtils.connectionInfo.getAccount();
-							newOrder.m_tif = EClientSocketUtils.contract.getTif();
-							newOrder.m_action = order.m_action;
-							newOrder.m_totalQuantity = remaining;
-							if (orderCount > 10) {
-								newOrder.m_orderType = Global.MKT;
-							} else {
-								newOrder.m_orderType = Global.LMT;
-								newOrder.m_auxPrice = 0;
-								double lmtPrice = YosonEWrapper.trade + ((order.m_action.equals(Global.BUY) ? 1 : -1 ) * strategy.getMainUIParam().getUnit() * strategy.getMainUIParam().getOrderTicker());
-								newOrder.m_lmtPrice = Math.round(lmtPrice * 100) / 100D;
-							}
-							EClientSocketUtils.placeOrder(newOrderId, newOrder);
-							log.append("Retry For(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + time + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + remaining + Global.lineSeparator);
-							
-							strategy.getOrderMap().put(newOrderId, newOrder);
-							strategy.getOrderCountMap().put(newOrderId, orderCount);
-							strategy.setOrderTime(new Date());
-							//EClientSocketUtils.cancelOrder(orderId);
-							strategy.getCancelOrder().add(orderId);						
+							if (!strategy.getCancelOrder().containsKey(orderId)) {
+								strategy.getCancelOrder().put(orderId, false);//set pending for retry
+							}					
 						} else if(remaining > 0) {
 							orderLog.append("Warning:" + status + " order with remaining=" + remaining + Global.lineSeparator);
 						}
@@ -618,16 +598,13 @@ public class YosonEWrapper extends BasicEWrapper {
 				}
 			}
 			long endTime = System.nanoTime();
-			if(log.length() > 0) {
-				BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), log.toString() + ", endTime:" +  endTime + Global.lineSeparator, true);
-			}
 			BackTestCSVWriter.writeText(getOrderStatusLogPath(), orderLog.toString() + ", endTime:" +  endTime + Global.lineSeparator, true);
 		}
 	}
 	
 	@Override
 	public void nextValidId(int orderId) {
-		currentOrderId = currentOrderId != null && currentOrderId <= orderId ? currentOrderId + 1 : orderId;
+		currentOrderId = orderId;
 		retryTimes = 0;
 	}
 	
