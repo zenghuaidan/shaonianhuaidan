@@ -26,6 +26,7 @@ public class TaskScheduler {
 		if(!EClientSocketUtils.isConnected()) {
 			return;
 		}
+		long start = System.nanoTime();
 		long startTime = System.currentTimeMillis();
 		StringBuffer log = new StringBuffer();
 		try {
@@ -107,12 +108,12 @@ public class TaskScheduler {
 						else if(!strategy.getMainUIParam().isIncludeMorningData())
 							strategy.setPnl(strategy.getPnl() + strategy.getMorningPnl());
 						
-						retryOrder(strategy, nowDateTimeLong + "");
+						log.append(retryOrder(strategy, nowDateTimeLong + ""));
 //						log.append("Total pnl for " + strategy.getStrategyName() + " is " + strategy.getPnl()  + Global.lineSeparator);
 					}
 				}			
 			}
-			log.append("Calculation finish with " + (System.currentTimeMillis() - startTime)  + Global.lineSeparator);
+			log.append("Calculation finish with " + (System.currentTimeMillis() - startTime) + "(" + start + "-" + System.nanoTime() + ")" + Global.lineSeparator);
 		} catch (Exception e) {
 			log.append("Sytem Exception:" + e.toString() + ">" + e.getMessage()  + Global.lineSeparator);
 			for(StackTraceElement s : e.getStackTrace()) {
@@ -154,7 +155,7 @@ public class TaskScheduler {
 				strategy.getOrderCountMap().put(newOrderId, orderCount);
 				strategy.setOrderTime(new Date());
 				strategy.getCancelOrder().replace(orderId, true);						
-				log.append("Retry For(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + 1 + Global.lineSeparator);
+				log.append("Retry For(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:1"+ Global.lineSeparator);
 			}
 		}				
 		return log.toString();
