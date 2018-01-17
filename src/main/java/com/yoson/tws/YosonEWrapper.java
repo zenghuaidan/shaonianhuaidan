@@ -600,7 +600,6 @@ public class YosonEWrapper extends BasicEWrapper {
 	public void nextValidId(int orderId) {
 		currentOrderId = orderId;
 		retryTimes = 0;
-		BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), "Next Valid Id: " + currentOrderId  + Global.lineSeparator, true);
 	}
 	
 	public static int retryTimes = 0;
