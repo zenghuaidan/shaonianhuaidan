@@ -10,7 +10,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
-import org.springframework.web.context.WebApplicationContext;
 
 import com.mysql.jdbc.StringUtils;
 import com.opencsv.CSVReader;
@@ -19,18 +18,18 @@ import com.yoson.date.BrokenDate;
 import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
 import com.yoson.tws.ScheduledDataRecord;
-import com.yoson.web.InitServlet;
 
 public class SQLUtils {
     
 	public static List<String> initScheduleData(MainUIParam mainUIParam) {
-		Session session = getSession();
+		Session session = null;
 		List<BrokenDate> datePeriods = mainUIParam.getBrokenDateList();
 		String source = mainUIParam.getSource(); 
 		String askDataField = mainUIParam.getAskDataField(); 
 		String bidDataField = mainUIParam.getBidDataField(); 
 		String tradeDataField = mainUIParam.getTradeDataField();
 		try {
+			session = getSession();
 			String sql = "select CONCAT_WS(',',date,time, " + askDataField + ", " + bidDataField + ", " + tradeDataField + ") as sdata from schedule_data where source = '" + source + "'";
 
 			if (datePeriods != null && datePeriods.size() > 0) {
@@ -47,21 +46,27 @@ public class SQLUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			session.close();
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
 		}
 		return new ArrayList<String>();
 	}
 
 	private static Session getSession() {
-		WebApplicationContext wc = InitServlet.getWc();
-		SessionFactory sessionFactory = (SessionFactory)wc.getBean("sessionFactory");
-		Session session = sessionFactory.openSession();
-		return session;
+		try {
+			SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+			return sessionFactory.openSession();			
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 	public static int checkScheduledDataExisting(String from, String to, String source) {
-		Session session = getSession();		
+		Session session = null;		
 		try {
+			session = getSession();
 //			String sql = "select distinct CONCAT_WS(' ',date,time) as sdata from schedule_data where source = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "') order by date asc, time asc";
 			String sql = "select count(*) as totalCount from schedule_data where ticker = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "')";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("totalCount", IntegerType.INSTANCE);
@@ -70,13 +75,17 @@ public class SQLUtils {
 			e.printStackTrace();
 			return 0;
 		} finally {
-			session.close();
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
 		}
 	}
 	
 	public static List<String> getSources() {
-		Session session = getSession();		
+		Session session = null;		
 		try {
+			session = getSession();
 			String sql = "select distinct source from schedule_data order by source asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
 			return sqlQuery.list();			
@@ -84,13 +93,17 @@ public class SQLUtils {
 			e.printStackTrace();
 			return new ArrayList<String>();
 		} finally {
-			session.close();
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
 		}
 	}
 	
 	public static void saveScheduledDataRecord(List<ScheduledDataRecord> scheduledDataRecords, String dataStartTime, String dataEndTime, String source, boolean isReplace) {
-		Session session = getSession();
+		Session session = null;
 		try {
+			session = getSession();
 			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " schedule_data2(ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source) VALUES";
 			List<String> values = new ArrayList<String>();
 			for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
@@ -115,15 +128,19 @@ public class SQLUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			session.close();
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
 		}
 	}
 	
 	public static String getScheduledDataRecordByDate(String dateStr) {
-		Session session = getSession();
+		Session session = null;
 		List<String> values = new ArrayList<String>();
 		values.add("ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source");
 		try {
+			session = getSession();
 			String sql = "select CONCAT(ticker,',',date,',',time,',',bidavg,',',bidlast,',',bidmax,',',bidmin,',',askavg,',',asklast,',',askmax,',',askmin,',',tradeavg,',',tradelast,',',trademax,',',trademin,',',source) as sdata from schedule_data2 where date='" + dateStr + "'";
 			sql += " order by date asc, time asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
@@ -131,7 +148,10 @@ public class SQLUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			session.close();
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
 		}
 		return String.join(System.lineSeparator(), values);
 	}
@@ -140,8 +160,9 @@ public class SQLUtils {
 		File file = new File(path);
 		if (!file.exists())
 			return "Could not find the file.";
-		Session session = getSession();
+		Session session = null;
 		try {
+			session = getSession();
 			CSVReader csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);
 			String [] lines;
 			String sqlSchema = null;
@@ -201,7 +222,10 @@ public class SQLUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			session.close();
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
 		}
 		return "";
 	}
