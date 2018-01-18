@@ -196,7 +196,7 @@ public class PerSecondRecord {
 	}
 	
 	public void initEst(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if (this.cpsAverage !=0) {
+		if (this.cpsAverage !=0 && lastSecondRecord.getCountingAfterCP() != 0) {
 			if(this.cpsAverage != lastSecondRecord.getCpsAverage() 
 					&& lastSecondRecord.getCpsAverage() != 0
 					&& this.cpsAverage != 0 && Math.abs(this.cpsAverage - lastSecondRecord.getCpsAverage()) >= testSet.getEstimationBuffer()) {
