@@ -74,13 +74,16 @@ public class TaskScheduler {
 						
 						boolean hasAfternoonData = false;
 						List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
-						if(strategy.getMainUIParam().isIncludeMorningData()) {
+						if(!strategy.getMainUIParam().isIgnoreLunchTime() && strategy.getMainUIParam().isIncludeMorningData()) {
+							// Don't ignore lunch time and including morning data, then combine morning and afternoon data
 							scheduleDatas.addAll(resultDatas.get(0));
 							scheduleDatas.addAll(resultDatas.get(1));
-						} else if(resultDatas.get(1).size() > 0) { // afternoon data come
+						} else if(resultDatas.size() == 2 && resultDatas.get(1).size() > 0) { // afternoon data come
+							// this means have afternoon data, then it is set to don't ingore lunch time but not including morning data, then just add afternoon data 
 							scheduleDatas.addAll(resultDatas.get(1));
 							hasAfternoonData = true;
 						} else {
+							// this means ignore lunch time is set to true or afternoon is not coming yet
 							scheduleDatas.addAll(resultDatas.get(0));
 						}
 						
@@ -103,10 +106,14 @@ public class TaskScheduler {
 							}
 						}
 						strategy.setPnl(perSecondRecords.size() > 0 ? perSecondRecords.get(perSecondRecords.size() - 1).getTotalPnl() : 0);
-						if(!hasAfternoonData)
-							strategy.setMorningPnl(strategy.getPnl());
-						else if(!strategy.getMainUIParam().isIncludeMorningData())
+						if(!hasAfternoonData) {
+							// set the morning pnl before afternoon data come
+							strategy.setMorningPnl(strategy.getPnl());							
+						}
+						else if(!strategy.getMainUIParam().isIncludeMorningData()) {
+							//	not including morning data is set then should count back the morning pnl
 							strategy.setPnl(strategy.getPnl() + strategy.getMorningPnl());
+						}
 						
 						log.append(retryOrder(strategy, nowDateTimeLong + ""));
 //						log.append("Total pnl for " + strategy.getStrategyName() + " is " + strategy.getPnl()  + Global.lineSeparator);
