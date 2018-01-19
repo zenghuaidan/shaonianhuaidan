@@ -108,6 +108,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	public static List<List<ScheduleData>> toScheduleDataList(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam, long lastSecond) throws ParseException {
 		List<List<ScheduleData>> resultDatas = new ArrayList<List<ScheduleData>>();
+		List<ScheduleData> allDatas = new ArrayList<ScheduleData>();
 		List<ScheduleData> morningDatas = new ArrayList<ScheduleData>();
 		List<ScheduleData> afternoonDatas = new ArrayList<ScheduleData>();
 		List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
@@ -135,16 +136,24 @@ public class YosonEWrapper extends BasicEWrapper {
 		long lunchStartTimeTo = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
 		long marketCloseTime = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
 		for (ScheduleData scheduleData : scheduleDatas) {
-			long time = DateUtils.HHmmss().parse(scheduleData.getTimeStr()).getTime();		
-			boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
-			boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
-			if(isMorning)
-				morningDatas.add(scheduleData);
-			if (isAfternoon)
-				afternoonDatas.add(scheduleData);
+			if (mainUIParam.isIgnoreLunchTime()) {
+				allDatas.add(scheduleData);
+			} else {
+				long time = DateUtils.HHmmss().parse(scheduleData.getTimeStr()).getTime();		
+				boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
+				boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
+				if(isMorning)
+					morningDatas.add(scheduleData);
+				if (isAfternoon)
+					afternoonDatas.add(scheduleData);				
+			}
 		}
-		resultDatas.add(morningDatas);
-		resultDatas.add(afternoonDatas);
+		if (mainUIParam.isIgnoreLunchTime()) {
+			resultDatas.add(allDatas);
+		} else {
+			resultDatas.add(morningDatas);
+			resultDatas.add(afternoonDatas);
+		}
 		return resultDatas;
 	}
 	
@@ -216,7 +225,7 @@ public class YosonEWrapper extends BasicEWrapper {
 		List<List<ScheduleData>> resultDatas = toScheduleDataList(scheduledDataRecords, strategy.getMainUIParam(), Long.parseLong(scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime()));		
 		
 		List<PerSecondRecord> allDailyPerSecondRecord = new ArrayList<PerSecondRecord>();
-		if(strategy.getMainUIParam().isIncludeMorningData()) {
+		if(!strategy.getMainUIParam().isIgnoreLunchTime() && strategy.getMainUIParam().isIncludeMorningData()) {
 			List<ScheduleData> dailyScheduleData = new ArrayList<ScheduleData>();
 			dailyScheduleData.addAll(resultDatas.get(0));
 			dailyScheduleData.addAll(resultDatas.get(1));

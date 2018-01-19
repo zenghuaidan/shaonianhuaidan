@@ -329,7 +329,8 @@ function getMainUIParam() {
 	   "bidDataField":$.trim($("[name='bidDataField']:checked").val()),
 	   "brokenDateList":brokendateArr,
 	   "orderTicker":$.trim($("[name='orderTicker']").val()),
-	   "includeMorningData":$("[name='includeMorningData']").is(":checked")
+	   "includeMorningData":$("[name='includeMorningData']").is(":checked"),
+	   "ignoreLunchTime":$("[name='ignoreLunchTime']").is(":checked")	   
 	};
 }
 

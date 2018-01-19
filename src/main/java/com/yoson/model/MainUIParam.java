@@ -21,6 +21,8 @@ public class MainUIParam extends TestSet {
 	@Expose
 	private boolean includeMorningData;
 	@Expose
+	private boolean ignoreLunchTime;
+	@Expose
 	private String source;
 	private String version;
 
@@ -305,6 +307,14 @@ public class MainUIParam extends TestSet {
 		this.includeMorningData = includeMorningData;
 	}
 
+	public boolean isIgnoreLunchTime() {
+		return ignoreLunchTime;
+	}
+
+	public void setIgnoreLunchTime(boolean ignoreLunchTime) {
+		this.ignoreLunchTime = ignoreLunchTime;
+	}
+
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
 		mainUIParam.settShort(120);
@@ -374,7 +384,7 @@ public class MainUIParam extends TestSet {
 			MainUIParam mainUIParam = new MainUIParam();
 			List<String []> params = new ArrayList<String []>();
 			int index = 0;
-			while ((lines = csvReader.readNext()) != null && index <= 21 )  {
+			while ((lines = csvReader.readNext()) != null && index <= 22 )  {
 				params.add(lines);
 				index++;
 			}
@@ -401,6 +411,7 @@ public class MainUIParam extends TestSet {
 			mainUIParam.setLastNumberOfMinutesClearPosition(Integer.parseInt(params.get(index++)[1]));
 			mainUIParam.setLunchLastNumberOfMinutesClearPosition(Integer.parseInt(params.get(index++)[1]));
 			mainUIParam.setIncludeMorningData(Boolean.parseBoolean(params.get(index++)[1]));
+			mainUIParam.setIgnoreLunchTime(Boolean.parseBoolean(params.get(index++)[1]));
 			csvReader.close();
 			return mainUIParam;
 		} catch (Exception e) {
@@ -423,12 +434,13 @@ public class MainUIParam extends TestSet {
 			return 0;
 		} else // Within the trading hours
 		{
-			if ((current < (lunch_start_time - lunchLastMinutes)) || (current >= lunch_end_time)) {
+			if (this.isIgnoreLunchTime() || (current < (lunch_start_time - lunchLastMinutes)) || (current >= lunch_end_time)) {
 				return 1;
 			} else // In exactly lunch time (not in the trading hour)
 			{
 				return 0;
 			}
-		}
+		}					
+		
 	}
 }
