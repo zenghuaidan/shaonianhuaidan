@@ -666,10 +666,7 @@ public class IndexController  implements StatusCallBack {
 
 	private String toTransferRecord(ScheduleData s, String dataStartTime, String lunchStartTime, String lunchEndTime,
 			String dataEndTime) {
-		Date when = new Date(s.getId());
-		if(s.getTimeStr().equals("16:00:00")) {
-			int i = 0;
-		}
+		Date when = new Date(s.getId());		
 		String _dataStartTime = DateUtils.yyyyMMdd().format(when) + " " + dataStartTime; 
 		String _lunchStartTime = DateUtils.yyyyMMdd().format(when) + " " + lunchStartTime; 
 		String _lunchEndTime = DateUtils.yyyyMMdd().format(when) + " " + lunchEndTime;
