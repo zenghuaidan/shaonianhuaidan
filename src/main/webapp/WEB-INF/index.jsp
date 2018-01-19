@@ -301,6 +301,12 @@
 							      <td></td>
 							   </tr>
 							   <tr>
+							      <td>Ignore Lunch Time</td>
+							      <td><input name="ignoreLunchTime" type="checkbox" ${mainUIParam.ignoreLunchTime ? 'checked' : ''} /></td>
+							      <td></td>
+							      <td></td>
+							   </tr>
+							   <tr>
 							      <td><input type="button" onclick="hkClick();" style="width:100%" value="HK"/></td>
 							      <td><input type="button" onclick="km1Click();" style="width:100%" value="KM1"/></td>
 							      <td><input type="button" onclick="nk1Click();" style="width:100%" value="NK1"/></td>
@@ -696,6 +702,11 @@
       							   <tr>
 								      <td>Include Morning Data</td>
 								      <td><input type="checkbox" ${strategy.mainUIParam.includeMorningData ? 'checked' : ''} /></td>
+								      <td></td>
+								   </tr>
+								   <tr>
+								      <td>Ignore Lunch Time</td>
+								      <td><input type="checkbox" ${strategy.mainUIParam.ignoreLunchTime ? 'checked' : ''} /></td>
 								      <td></td>
 								   </tr>
 								</table>
