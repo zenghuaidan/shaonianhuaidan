@@ -408,16 +408,6 @@ public class MainUIParam extends TestSet {
 		}
 	}
 	
-	public boolean isMarketTime(String timeStr) throws ParseException {
-		long current = DateUtils.HHmmss().parse(timeStr).getTime();
-		
-		long morningStartTime = DateUtils.HHmmss().parse(this.getMarketStartTime()).getTime();
-		long lunch_start_time = DateUtils.HHmmss().parse(this.getLunchStartTimeFrom()).getTime();
-		long lunch_end_time = DateUtils.HHmmss().parse(this.getLunchStartTimeTo()).getTime();
-		long market_close_time = DateUtils.HHmmss().parse(this.getMarketCloseTime()).getTime();
-		return current >= morningStartTime && current <= lunch_start_time || current >= lunch_end_time && current <= market_close_time;
-	}
-	
 	public int isCheckMarketTime(String timeStr) throws ParseException {
 		long lastMinutes = this.getLastNumberOfMinutesClearPosition() * 60 * 1000;
 		long lunchLastMinutes = this.getLunchLastNumberOfMinutesClearPosition() * 60 * 1000;
