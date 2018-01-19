@@ -3,6 +3,7 @@ package com.yoson.tws;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class ScheduledDataCSVWriter {
 			writeHeader(writer);
 			writeContent(writer, scheduledDataRecords);
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -84,11 +87,11 @@ public class ScheduledDataCSVWriter {
 	}
 	
 	//Write the CSV content
-	private static void writeContent(FileWriter writer, List<ScheduledDataRecord> scheduledDataRecords) throws IOException
+	private static void writeContent(FileWriter writer, List<ScheduledDataRecord> scheduledDataRecords) throws IOException, ParseException
 	{
 		for (int i = 0; i< scheduledDataRecords.size(); i++)
 		{
-			 writer.append(scheduledDataRecords.get(i).getTime());
+			 writer.append(DateUtils.yyyyMMddHHmmss().format(DateUtils.yyyyMMddHHmmss2().parse(scheduledDataRecords.get(i).getTime())));
 			 writer.append(",");
 
 			 writer.append(Double.toString(scheduledDataRecords.get(i).getTradeavg()));
