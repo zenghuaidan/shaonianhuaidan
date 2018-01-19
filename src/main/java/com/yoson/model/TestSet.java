@@ -83,7 +83,7 @@ public class TestSet {
 	}
 
 	public int getCpBuffer() {
-		return cpBuffer;
+		return (int)(cpBuffer * getUnit());
 	}
 
 	public void setCpBuffer(int cpBuffer) {
@@ -99,7 +99,7 @@ public class TestSet {
 	}
 
 	public int getCpSmooth() {
-		return cpSmooth;
+		return (int)(cpSmooth * getUnit());
 	}
 
 	public void setCpSmooth(int cpSmooth) {
@@ -107,7 +107,7 @@ public class TestSet {
 	}
 
 	public int getEstimationBuffer() {
-		return estimationBuffer;
+		return (int)(estimationBuffer * getUnit());
 	}
 
 	public void setEstimationBuffer(int estimationBuffer) {
@@ -115,7 +115,7 @@ public class TestSet {
 	}
 
 	public int getActionTrigger() {
-		return actionTrigger;
+		return (int)(actionTrigger * getUnit());
 	}
 
 	public void setActionTrigger(int actionTrigger) {
@@ -131,7 +131,7 @@ public class TestSet {
 	}
 
 	public int getTradeStopLossTrigger() {
-		return tradeStopLossTrigger;
+		return (int)(tradeStopLossTrigger * getUnit());
 	}
 
 	public void setTradeStopLossTrigger(int tradeStopLossTrigger) {
@@ -147,7 +147,7 @@ public class TestSet {
 	}
 
 	public int getAbsoluteTradeStopLoss() {
-		return absoluteTradeStopLoss;
+		return (int)(absoluteTradeStopLoss * getUnit());
 	}
 
 	public void setAbsoluteTradeStopLoss(int absoluteTradeStopLoss) {
@@ -227,7 +227,7 @@ public class TestSet {
 	}
 
 	public double getUnit() {
-		return unit;
+		return unit == 0 ? 1 : unit;
 	}
 
 	public void setUnit(double unit) {
