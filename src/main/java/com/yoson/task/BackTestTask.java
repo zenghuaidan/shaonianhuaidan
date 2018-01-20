@@ -116,20 +116,21 @@ public class BackTestTask implements Runnable {
 		
 		List<TestSet> testSets = new ArrayList<TestSet>();
 		for (int cpTimer = mainUIParam.getCpTimer(); cpTimer<= mainUIParam.getCpTimerTo() ; cpTimer = cpTimer + mainUIParam.getCpTimerLiteral())
-		for (int cpBuffer = mainUIParam.getCpBuffer(); cpBuffer<= mainUIParam.getCpBufferTo() ; cpBuffer = cpBuffer + mainUIParam.getCpBufferLiteral())
+		for (double cpBuffer = mainUIParam.getCpBuffer(); cpBuffer<= mainUIParam.getCpBufferTo() ; cpBuffer = cpBuffer + mainUIParam.getCpBufferLiteral())
 		for (int cpHitRate = mainUIParam.getCpHitRate(); cpHitRate<= mainUIParam.getCpHitRateTo() ; cpHitRate = cpHitRate + mainUIParam.getCpHitRateLiteral())
-		for (int cpSmooth = mainUIParam.getCpSmooth(); cpSmooth<= mainUIParam.getCpSmoothTo(); cpSmooth = cpSmooth + mainUIParam.getCpSmoothLiteral())
-		for (int estimationBuffer = mainUIParam.getEstimationBuffer(); estimationBuffer<= mainUIParam.getEstimationBufferTo() ; estimationBuffer = estimationBuffer + mainUIParam.getEstimationBufferLiteral())
-		for (int actionTrigger = mainUIParam.getActionTrigger(); actionTrigger<= mainUIParam.getActionTriggerTo() ; actionTrigger = actionTrigger + mainUIParam.getActionTriggerLiteral())
+		for (double cpSmooth = mainUIParam.getCpSmooth(); cpSmooth<= mainUIParam.getCpSmoothTo(); cpSmooth = cpSmooth + mainUIParam.getCpSmoothLiteral())
+		for (double estimationBuffer = mainUIParam.getEstimationBuffer(); estimationBuffer<= mainUIParam.getEstimationBufferTo() ; estimationBuffer = estimationBuffer + mainUIParam.getEstimationBufferLiteral())
+		for (double actionTrigger = mainUIParam.getActionTrigger(); actionTrigger<= mainUIParam.getActionTriggerTo() ; actionTrigger = actionTrigger + mainUIParam.getActionTriggerLiteral())
 		for (int actionCounting = mainUIParam.getActionCounting(); actionCounting<= mainUIParam.getActionCountingTo() ; actionCounting = actionCounting + mainUIParam.getActionCountingLiteral())
-		for (int tradeStopLossTrigger = mainUIParam.getTradeStopLossTrigger(); tradeStopLossTrigger<= mainUIParam.getTradeStopLossTriggerTo() ; tradeStopLossTrigger = tradeStopLossTrigger + mainUIParam.getTradeStopLossTriggerLiteral())
+		for (double tradeStopLossTrigger = mainUIParam.getTradeStopLossTrigger(); tradeStopLossTrigger<= mainUIParam.getTradeStopLossTriggerTo() ; tradeStopLossTrigger = tradeStopLossTrigger + mainUIParam.getTradeStopLossTriggerLiteral())
 		for (double tradeStopLossTriggerPercent = mainUIParam.getTradeStopLossTriggerPercent(); tradeStopLossTriggerPercent<= mainUIParam.getTradeStopLossTriggerPercentTo() ; tradeStopLossTriggerPercent = tradeStopLossTriggerPercent + mainUIParam.getTradeStopLossTriggerPercentLiteral())
-		for (int absoluteTradeStopLoss = mainUIParam.getAbsoluteTradeStopLoss(); absoluteTradeStopLoss<= mainUIParam.getAbsoluteTradeStopLossTo() ; absoluteTradeStopLoss = absoluteTradeStopLoss + mainUIParam.getAbsoluteTradeStopLossLiteral()) {
+		for (double absoluteTradeStopLoss = mainUIParam.getAbsoluteTradeStopLoss(); absoluteTradeStopLoss<= mainUIParam.getAbsoluteTradeStopLossTo() ; absoluteTradeStopLoss = absoluteTradeStopLoss + mainUIParam.getAbsoluteTradeStopLossLiteral()) {
 			testSets.add(new TestSet(cpTimer, cpBuffer, cpHitRate, cpSmooth, estimationBuffer, actionTrigger,
 					actionCounting, tradeStopLossTrigger, tradeStopLossTriggerPercent, absoluteTradeStopLoss, mainUIParam.getUnit(),
 					mainUIParam.getMarketStartTime(), mainUIParam.getLunchStartTimeFrom(), mainUIParam.getLunchStartTimeTo(), 
 					mainUIParam.getMarketCloseTime(), mainUIParam.getCashPerIndexPoint(), mainUIParam.getTradingFee(), 
 					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition()));
+		
 		}
 		BackTestCSVWriter.writeText(mainUIParam.getParamPath(), new Gson().toJson(mainUIParam), false);
 		int startStep = 0;

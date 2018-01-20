@@ -6,23 +6,23 @@ public class TestSet {
 	@Expose
 	private int cpTimer;
 	@Expose
-	private int cpBuffer;
+	private double cpBuffer;
 	@Expose
 	private int cpHitRate;
 	@Expose
-	private int cpSmooth;
+	private double cpSmooth;
 	@Expose
-	private int estimationBuffer;
+	private double estimationBuffer;
 	@Expose
-	private int actionTrigger;
+	private double actionTrigger;
 	@Expose
 	private int actionCounting;
 	@Expose
-	private int tradeStopLossTrigger;
+	private double tradeStopLossTrigger;
 	@Expose
 	private double tradeStopLossTriggerPercent;
 	@Expose
-	private int absoluteTradeStopLoss;
+	private double absoluteTradeStopLoss;
 	@Expose
 	private double unit;
 	@Expose
@@ -46,8 +46,8 @@ public class TestSet {
 
 	public TestSet() {}
 
-	public TestSet(int cpTimer, int cpBuffer, int cpHitRate, int cpSmooth, int estimationBuffer, int actionTrigger,
-			int actionCounting, int tradeStopLossTrigger, double tradeStopLossTriggerPercent, int absoluteTradeStopLoss, double unit,
+	public TestSet(int cpTimer, double cpBuffer, int cpHitRate, double cpSmooth, double estimationBuffer, double actionTrigger,
+			int actionCounting, double tradeStopLossTrigger, double tradeStopLossTriggerPercent, double absoluteTradeStopLoss, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
 			int lunchLastNumberOfMinutesClearPosition) {
@@ -82,11 +82,11 @@ public class TestSet {
 		this.cpTimer = cpTimer;
 	}
 
-	public int getCpBuffer() {
-		return (int)(cpBuffer * getUnit());
+	public double getCpBuffer() {
+		return cpBuffer;
 	}
 
-	public void setCpBuffer(int cpBuffer) {
+	public void setCpBuffer(double cpBuffer) {
 		this.cpBuffer = cpBuffer;
 	}
 
@@ -98,27 +98,27 @@ public class TestSet {
 		this.cpHitRate = cpHitRate;
 	}
 
-	public int getCpSmooth() {
-		return (int)(cpSmooth * getUnit());
+	public double getCpSmooth() {
+		return cpSmooth;
 	}
 
-	public void setCpSmooth(int cpSmooth) {
+	public void setCpSmooth(double cpSmooth) {
 		this.cpSmooth = cpSmooth;
 	}
 
-	public int getEstimationBuffer() {
-		return (int)(estimationBuffer * getUnit());
+	public double getEstimationBuffer() {
+		return estimationBuffer;
 	}
 
-	public void setEstimationBuffer(int estimationBuffer) {
+	public void setEstimationBuffer(double estimationBuffer) {
 		this.estimationBuffer = estimationBuffer;
 	}
 
-	public int getActionTrigger() {
-		return (int)(actionTrigger * getUnit());
+	public double getActionTrigger() {
+		return actionTrigger;
 	}
 
-	public void setActionTrigger(int actionTrigger) {
+	public void setActionTrigger(double actionTrigger) {
 		this.actionTrigger = actionTrigger;
 	}
 
@@ -130,11 +130,11 @@ public class TestSet {
 		this.actionCounting = actionCounting;
 	}
 
-	public int getTradeStopLossTrigger() {
-		return (int)(tradeStopLossTrigger * getUnit());
+	public double getTradeStopLossTrigger() {
+		return tradeStopLossTrigger;
 	}
 
-	public void setTradeStopLossTrigger(int tradeStopLossTrigger) {
+	public void setTradeStopLossTrigger(double tradeStopLossTrigger) {
 		this.tradeStopLossTrigger = tradeStopLossTrigger;
 	}
 
@@ -146,11 +146,11 @@ public class TestSet {
 		this.tradeStopLossTriggerPercent = tradeStopLossTriggerPercent;
 	}
 
-	public int getAbsoluteTradeStopLoss() {
-		return (int)(absoluteTradeStopLoss * getUnit());
+	public double getAbsoluteTradeStopLoss() {
+		return absoluteTradeStopLoss;
 	}
 
-	public void setAbsoluteTradeStopLoss(int absoluteTradeStopLoss) {
+	public void setAbsoluteTradeStopLoss(double absoluteTradeStopLoss) {
 		this.absoluteTradeStopLoss = absoluteTradeStopLoss;
 	}
 

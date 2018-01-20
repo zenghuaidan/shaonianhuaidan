@@ -25,27 +25,27 @@ public class MainUIParam extends TestSet {
 	@Expose
 	private String source;
 	private String version;
-
+	
 	private int cpTimerTo;
 	private int cpTimerLiteral;
-	private int cpBufferTo;
-	private int cpBufferLiteral;
+	private double cpBufferTo;
+	private double cpBufferLiteral;
 	private int cpHitRateTo;
 	private int cpHitRateLiteral;
-	private int cpSmoothTo;
-	private int cpSmoothLiteral;
-	private int estimationBufferTo;
-	private int estimationBufferLiteral;
-	private int actionTriggerTo;
-	private int actionTriggerLiteral;
+	private double cpSmoothTo;
+	private double cpSmoothLiteral;
+	private double estimationBufferTo;
+	private double estimationBufferLiteral;
+	private double actionTriggerTo;
+	private double actionTriggerLiteral;
 	private int actionCountingTo;
 	private int actionCountingLiteral;
-	private int tradeStopLossTriggerTo;
-	private int tradeStopLossTriggerLiteral;
+	private double tradeStopLossTriggerTo;
+	private double tradeStopLossTriggerLiteral;
 	private double tradeStopLossTriggerPercentTo;
 	private double tradeStopLossTriggerPercentLiteral;
-	private int absoluteTradeStopLossTo;
-	private int absoluteTradeStopLossLiteral;
+	private double absoluteTradeStopLossTo;
+	private double absoluteTradeStopLossLiteral;
 	@Expose
 	private double pnlThreshold;
 	@Expose
@@ -105,19 +105,19 @@ public class MainUIParam extends TestSet {
 		this.cpTimerLiteral = cpTimerLiteral;
 	}
 
-	public int getCpBufferTo() {
+	public double getCpBufferTo() {
 		return cpBufferTo;
 	}
 
-	public void setCpBufferTo(int cpBufferTo) {
+	public void setCpBufferTo(double cpBufferTo) {
 		this.cpBufferTo = cpBufferTo;
 	}
 
-	public int getCpBufferLiteral() {
+	public double getCpBufferLiteral() {
 		return cpBufferLiteral;
 	}
 
-	public void setCpBufferLiteral(int cpBufferLiteral) {
+	public void setCpBufferLiteral(double cpBufferLiteral) {
 		this.cpBufferLiteral = cpBufferLiteral;
 	}
 
@@ -137,51 +137,51 @@ public class MainUIParam extends TestSet {
 		this.cpHitRateLiteral = cpHitRateLiteral;
 	}
 
-	public int getCpSmoothTo() {
+	public double getCpSmoothTo() {
 		return cpSmoothTo;
 	}
 
-	public void setCpSmoothTo(int cpSmoothTo) {
+	public void setCpSmoothTo(double cpSmoothTo) {
 		this.cpSmoothTo = cpSmoothTo;
 	}
 
-	public int getCpSmoothLiteral() {
+	public double getCpSmoothLiteral() {
 		return cpSmoothLiteral;
 	}
 
-	public void setCpSmoothLiteral(int cpSmoothLiteral) {
+	public void setCpSmoothLiteral(double cpSmoothLiteral) {
 		this.cpSmoothLiteral = cpSmoothLiteral;
 	}
 
-	public int getEstimationBufferTo() {
+	public double getEstimationBufferTo() {
 		return estimationBufferTo;
 	}
 
-	public void setEstimationBufferTo(int estimationBufferTo) {
+	public void setEstimationBufferTo(double estimationBufferTo) {
 		this.estimationBufferTo = estimationBufferTo;
 	}
 
-	public int getEstimationBufferLiteral() {
+	public double getEstimationBufferLiteral() {
 		return estimationBufferLiteral;
 	}
 
-	public void setEstimationBufferLiteral(int estimationBufferLiteral) {
+	public void setEstimationBufferLiteral(double estimationBufferLiteral) {
 		this.estimationBufferLiteral = estimationBufferLiteral;
 	}
 
-	public int getActionTriggerTo() {
+	public double getActionTriggerTo() {
 		return actionTriggerTo;
 	}
 
-	public void setActionTriggerTo(int actionTriggerTo) {
+	public void setActionTriggerTo(double actionTriggerTo) {
 		this.actionTriggerTo = actionTriggerTo;
 	}
 
-	public int getActionTriggerLiteral() {
+	public double getActionTriggerLiteral() {
 		return actionTriggerLiteral;
 	}
 
-	public void setActionTriggerLiteral(int actionTriggerLiteral) {
+	public void setActionTriggerLiteral(double actionTriggerLiteral) {
 		this.actionTriggerLiteral = actionTriggerLiteral;
 	}
 
@@ -201,19 +201,19 @@ public class MainUIParam extends TestSet {
 		this.actionCountingLiteral = actionCountingLiteral;
 	}
 
-	public int getTradeStopLossTriggerTo() {
+	public double getTradeStopLossTriggerTo() {
 		return tradeStopLossTriggerTo;
 	}
 
-	public void setTradeStopLossTriggerTo(int tradeStopLossTriggerTo) {
+	public void setTradeStopLossTriggerTo(double tradeStopLossTriggerTo) {
 		this.tradeStopLossTriggerTo = tradeStopLossTriggerTo;
 	}
 
-	public int getTradeStopLossTriggerLiteral() {
+	public double getTradeStopLossTriggerLiteral() {
 		return tradeStopLossTriggerLiteral;
 	}
 
-	public void setTradeStopLossTriggerLiteral(int tradeStopLossTriggerLiteral) {
+	public void setTradeStopLossTriggerLiteral(double tradeStopLossTriggerLiteral) {
 		this.tradeStopLossTriggerLiteral = tradeStopLossTriggerLiteral;
 	}
 
@@ -233,19 +233,19 @@ public class MainUIParam extends TestSet {
 		this.tradeStopLossTriggerPercentLiteral = tradeStopLossTriggerPercentLiteral;
 	}
 
-	public int getAbsoluteTradeStopLossTo() {
+	public double getAbsoluteTradeStopLossTo() {
 		return absoluteTradeStopLossTo;
 	}
 
-	public void setAbsoluteTradeStopLossTo(int absoluteTradeStopLossTo) {
+	public void setAbsoluteTradeStopLossTo(double absoluteTradeStopLossTo) {
 		this.absoluteTradeStopLossTo = absoluteTradeStopLossTo;
 	}
 
-	public int getAbsoluteTradeStopLossLiteral() {
+	public double getAbsoluteTradeStopLossLiteral() {
 		return absoluteTradeStopLossLiteral;
 	}
 
-	public void setAbsoluteTradeStopLossLiteral(int absoluteTradeStopLossLiteral) {
+	public void setAbsoluteTradeStopLossLiteral(double absoluteTradeStopLossLiteral) {
 		this.absoluteTradeStopLossLiteral = absoluteTradeStopLossLiteral;
 	}
 
@@ -371,45 +371,45 @@ public class MainUIParam extends TestSet {
 
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
-		mainUIParam.setCpTimer(60);
-		mainUIParam.setCpTimerTo(60);
+		mainUIParam.setCpTimer(300);
+		mainUIParam.setCpTimerTo(300);
 		mainUIParam.setCpTimerLiteral(1);
 		
-		mainUIParam.setCpBuffer(4);
-		mainUIParam.setCpBufferTo(4);
+		mainUIParam.setCpBuffer(1);
+		mainUIParam.setCpBufferTo(1);
 		mainUIParam.setCpBufferLiteral(1);
 		
-		mainUIParam.setCpHitRate(50);
-		mainUIParam.setCpHitRateTo(50);
+		mainUIParam.setCpHitRate(250);
+		mainUIParam.setCpHitRateTo(250);
 		mainUIParam.setCpHitRateLiteral(1);
 		
-		mainUIParam.setCpSmooth(6);
-		mainUIParam.setCpSmoothTo(6);
+		mainUIParam.setCpSmooth(1);
+		mainUIParam.setCpSmoothTo(1);
 		mainUIParam.setCpSmoothLiteral(6);
 		
 		
-		mainUIParam.setEstimationBuffer(50);
-		mainUIParam.setEstimationBufferTo(50);
+		mainUIParam.setEstimationBuffer(2);
+		mainUIParam.setEstimationBufferTo(2);
 		mainUIParam.setEstimationBufferLiteral(1);
 		
-		mainUIParam.setActionTrigger(5);
-		mainUIParam.setActionTriggerTo(5);
+		mainUIParam.setActionTrigger(2);
+		mainUIParam.setActionTriggerTo(2);
 		mainUIParam.setActionTriggerLiteral(1);
 
 		mainUIParam.setActionCounting(10);
 		mainUIParam.setActionCountingTo(10);
 		mainUIParam.setActionCountingLiteral(1);
 		
-		mainUIParam.setTradeStopLossTrigger(50);
-		mainUIParam.setTradeStopLossTriggerTo(50);
+		mainUIParam.setTradeStopLossTrigger(20);
+		mainUIParam.setTradeStopLossTriggerTo(20);
 		mainUIParam.setTradeStopLossTriggerLiteral(1);
 		
-		mainUIParam.setTradeStopLossTriggerPercent(0.2);
-		mainUIParam.setTradeStopLossTriggerPercentTo(0.2);
+		mainUIParam.setTradeStopLossTriggerPercent(0.8);
+		mainUIParam.setTradeStopLossTriggerPercentTo(0.8);
 		mainUIParam.setTradeStopLossTriggerPercentLiteral(0.1);
 		
-		mainUIParam.setAbsoluteTradeStopLoss(50);
-		mainUIParam.setAbsoluteTradeStopLossTo(50);
+		mainUIParam.setAbsoluteTradeStopLoss(20);
+		mainUIParam.setAbsoluteTradeStopLossTo(20);
 		mainUIParam.setAbsoluteTradeStopLossLiteral(1);
 		
 		mainUIParam.setOrderTicker(10);
@@ -426,7 +426,7 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setLastNumberOfMinutesClearPosition(2);
 		mainUIParam.setLunchLastNumberOfMinutesClearPosition(2);
 														
-		mainUIParam.setSource("BBG_HSI");
+		mainUIParam.setSource("BBG_KM1L");
 		mainUIParam.setVersion("6");
 		
 		mainUIParam.setOutputChart(false);
@@ -436,7 +436,7 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setBidDataField("bidlast");	
 		
 		List<BrokenDate> brokenDateList = new ArrayList<BrokenDate>();
-		brokenDateList.add(new BrokenDate("2014-01-01", DateUtils.yyyyMMdd().format(new Date())));
+		brokenDateList.add(new BrokenDate("2017-01-01", DateUtils.yyyyMMdd().format(new Date())));
 		mainUIParam.setBrokenDateList(brokenDateList);
 		
 		return mainUIParam;

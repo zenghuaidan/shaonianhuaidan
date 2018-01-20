@@ -23,7 +23,7 @@ public class BackTestSet {
 	{		
 		long start = System.currentTimeMillis();
 		List<PerSecondRecord> dailyPerSecondRecordList = new ArrayList<PerSecondRecord>();
-		Map<Integer, Integer> lastTradeMap = new HashMap<>();
+		Map<Double, Integer> lastTradeMap = new HashMap<Double, Integer>();
 		List<PerSecondRecord> afternoonPerSecondRecordList = new ArrayList<PerSecondRecord>();
 		PerDayRecord perDayRecord = new PerDayRecord(new Date(dailyScheduleData.get(0).getId()));
 		
@@ -50,16 +50,15 @@ public class BackTestSet {
 				boolean isValidateTime = time >= marketStartTime && time <= marketCloseTime;
 				if(!isValidateTime) continue;
 				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()), lastTradeMap);
-				dailyPerSecondRecordList.add(perSecondRecord);
 			} else {
 				boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
 				boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
 				if(!isMorning && !isAfternoon) continue;
-				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, mainUIParam.isIncludeMorningData() ? dailyPerSecondRecordList : afternoonPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()), lastTradeMap);
-				dailyPerSecondRecordList.add(perSecondRecord);
+				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, isMorning || mainUIParam.isIncludeMorningData() ? dailyPerSecondRecordList : afternoonPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()), lastTradeMap);
 				if (isAfternoon && !mainUIParam.isIncludeMorningData())
 					afternoonPerSecondRecordList.add(perSecondRecord);				
 			}
+			dailyPerSecondRecordList.add(perSecondRecord);
 			
 			perDayRecord.positiveTrades += perSecondRecord.getPnl() > 0 ? 1 : 0;
 			perDayRecord.negativeTrades += perSecondRecord.getPnl() < 0 ? 1 : 0;
