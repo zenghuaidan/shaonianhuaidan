@@ -2,6 +2,8 @@ package com.yoson.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -9,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -65,5 +69,13 @@ public class InitServlet extends HttpServlet {
 			}
 		}
 		return dataFolder;
+	}
+	
+	public static String getComment() {
+		Collection<File> files = FileUtils.listFiles(new File(getWebappsPath()), new SuffixFileFilter(new ArrayList<String>(){{add("txt");}}), FalseFileFilter.FALSE);
+		for(File file : files) {
+			return FilenameUtils.getBaseName(file.getName());
+		}
+		return "";
 	}
 }

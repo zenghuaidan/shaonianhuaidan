@@ -45,7 +45,7 @@
 							         <input name="strategyName" />	         
 							      </td>
 							      <td><input type="button" onclick="addStrategy(this);" value="Add Strategy"/></td>
-							      <td></td>
+							      <td>${comment}</td>
 							   </tr>	   
 							   <tr>
 							      <td>Source</td>
