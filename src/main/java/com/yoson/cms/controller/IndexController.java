@@ -567,7 +567,11 @@ public class IndexController  implements StatusCallBack {
         						}
         						if(dataMap.get(i).keySet().size() == 2) {
         							List<ScheduleData> scheduledDataRecords = new ArrayList<ScheduleData>(dataMap.get(i).get(preDateStr).values());
-        							String fileName = entities.get(i) + "_" + preDateStr + ".csv";
+        							String folder = FilenameUtils.concat(csvDownloadFolder, preDateStr);
+        							if (!new File(folder).exists()) {
+        								new File(folder).mkdirs();
+        							}
+        							String fileName = FilenameUtils.concat(folder, entities.get(i) + ".csv");
         							transferData(scheduledDataRecords, fileName, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime);
         							dataMap.get(i).remove(preDateStr);
         						}
@@ -581,7 +585,11 @@ public class IndexController  implements StatusCallBack {
         	for(int i = 0; i < entities.size(); i++) {
         		try {
         			for(String key : dataMap.get(i).keySet()) {
-        				String fileName = entities.get(i) + "_" + key + ".csv";
+						String folder = FilenameUtils.concat(csvDownloadFolder, key);
+						if (!new File(folder).exists()) {
+							new File(folder).mkdirs();
+						}
+						String fileName = FilenameUtils.concat(folder, entities.get(i) + ".csv");
         				List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>(dataMap.get(i).get(key).values());
         				transferData(scheduleDatas, fileName, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime);
         			}        			
@@ -660,7 +668,7 @@ public class IndexController  implements StatusCallBack {
 			sb.append(toTransferRecord(s, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime));
 			start = start + 1000;
 		}
-		BackTestCSVWriter.writeText(FilenameUtils.concat(csvDownloadFolder, fileName), sb.toString(), false);
+		BackTestCSVWriter.writeText(fileName, sb.toString(), false);
 		uploadStatus.add("Writting " + "<font size='3' color='blue'>" + fileName + "</font>" + " successfully");
 	}
 
