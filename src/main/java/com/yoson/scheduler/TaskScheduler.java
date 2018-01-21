@@ -33,17 +33,18 @@ public class TaskScheduler {
 			Date now = new Date();
 			boolean validateTime = YosonEWrapper.isValidateTime(now);
 			long nowDateTimeLong = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(now));
-			if(!validateTime 
-					&& StringUtils.isNotEmpty(EClientSocketUtils.id) 
-					&& StringUtils.isNotEmpty(EClientSocketUtils.contract.startTime) 
-					&& StringUtils.isNotEmpty(EClientSocketUtils.contract.endTime)
-					&& StringUtils.isNotEmpty(EClientSocketUtils.contract.getSymbol())) {
-				Date endTime = DateUtils.yyyyMMddHHmm().parse(EClientSocketUtils.contract.getEndTime());
-				if(DateUtils.addSecond(endTime, 1) <= nowDateTimeLong && EClientSocketUtils.isConnected()) {
-					IndexController.genLiveResult(EClientSocketUtils.contract.getSymbol() + "_" + EClientSocketUtils.id);
-					//trigger auto backtest
-					EClientSocketUtils.disconnect();
-				}					
+			if(!validateTime) {
+				if(StringUtils.isNotEmpty(EClientSocketUtils.id) 
+						&& StringUtils.isNotEmpty(EClientSocketUtils.contract.startTime) 
+						&& StringUtils.isNotEmpty(EClientSocketUtils.contract.endTime)
+						&& StringUtils.isNotEmpty(EClientSocketUtils.contract.getSymbol())) {
+					Date endTime = DateUtils.yyyyMMddHHmm().parse(EClientSocketUtils.contract.getEndTime());
+					if(DateUtils.addSecond(endTime, 1) <= nowDateTimeLong && EClientSocketUtils.isConnected()) {
+						IndexController.genLiveResult(EClientSocketUtils.contract.getSymbol() + "_" + EClientSocketUtils.id);
+						//trigger auto backtest
+						EClientSocketUtils.disconnect();
+					}					
+				}
 				return;
 			}
 			log.append("*************************Do Trade:<" + nowDateTimeLong + ">*************************" + Global.lineSeparator);
@@ -52,74 +53,70 @@ public class TaskScheduler {
 			}
 			expectNextExecuteTime = DateUtils.addSecond(now, 1);
 			long lastSecond = DateUtils.addSecond(now, -1);
-			if(EClientSocketUtils.isConnected()) {
-				Map<String, List<List<ScheduleData>>> scheduleDataMap = new HashMap<String, List<List<ScheduleData>>>();
-				for (Strategy strategy : EClientSocketUtils.strategies) {
-//					if (strategy.isActive() && strategy.getMainUIParam().isMarketTime(DateUtils.getTimeStr(dateTimeStr))) {
-					if (strategy.isActive()) {
-						String key = strategy.getMainUIParam().getAskDataField() + "," +
-									 strategy.getMainUIParam().getBidDataField() + "," +
-									 strategy.getMainUIParam().getTradeDataField() + "," +
-									 strategy.getMainUIParam().getMarketStartTime() + "," +
-									 strategy.getMainUIParam().getLunchStartTimeFrom() + "," +
-									 strategy.getMainUIParam().getLunchStartTimeTo() + "," +
-									 strategy.getMainUIParam().getMarketCloseTime();
-						List<List<ScheduleData>> resultDatas = null;
-						if(scheduleDataMap.containsKey(key)) {
-							resultDatas = scheduleDataMap.get(key);
-						} else {
-							resultDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);	
-							scheduleDataMap.put(key, resultDatas);
-						}
-						
-						boolean hasAfternoonData = false;
-						List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
-						if(!strategy.getMainUIParam().isIgnoreLunchTime() && strategy.getMainUIParam().isIncludeMorningData()) {
-							// Don't ignore lunch time and including morning data, then combine morning and afternoon data
-							scheduleDatas.addAll(resultDatas.get(0));
-							scheduleDatas.addAll(resultDatas.get(1));
-						} else if(resultDatas.size() == 2 && resultDatas.get(1).size() > 0) { // afternoon data come
-							// this means have afternoon data, then it is set to don't ingore lunch time but not including morning data, then just add afternoon data 
-							scheduleDatas.addAll(resultDatas.get(1));
-							hasAfternoonData = true;
-						} else {
-							// this means ignore lunch time is set to true or afternoon is not coming yet
-							scheduleDatas.addAll(resultDatas.get(0));
-						}
-						
-						List<PerSecondRecord> perSecondRecords = new ArrayList<PerSecondRecord>();
-						for (int i = 0; i < scheduleDatas.size(); i++) {
-							ScheduleData scheduleData = scheduleDatas.get(i);
-							int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleData.getTimeStr());
-							PerSecondRecord currentSecondRecord = new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), 
-									perSecondRecords, scheduleData, checkMarketTime);
-							perSecondRecords.add(currentSecondRecord);
-							if (i >= 1) {
-								PerSecondRecord lastSecondRecord = perSecondRecords.get(i - 1);			
-								int quantity = currentSecondRecord.getSmoothAction() - lastSecondRecord.getSmoothAction();
-								if (quantity != 0 && !strategy.getActoinMap().containsKey(scheduleData.getId())) {
-									strategy.getActoinMap().put(scheduleData.getId(), quantity);
-									for(int j = 1; j <= Math.abs(quantity); j++) {
-										log.append(placeAnOrder(strategy, scheduleData.getDateTimeStr(), quantity < 0 ? -1: 1));
-									}
+			Map<String, List<List<ScheduleData>>> scheduleDataMap = new HashMap<String, List<List<ScheduleData>>>();
+			for (Strategy strategy : EClientSocketUtils.strategies) {
+				if (strategy.isActive()) {
+					String key = strategy.getMainUIParam().getAskDataField() + "," +
+								 strategy.getMainUIParam().getBidDataField() + "," +
+								 strategy.getMainUIParam().getTradeDataField() + "," +
+								 strategy.getMainUIParam().getMarketStartTime() + "," +
+								 strategy.getMainUIParam().getLunchStartTimeFrom() + "," +
+								 strategy.getMainUIParam().getLunchStartTimeTo() + "," +
+								 strategy.getMainUIParam().getMarketCloseTime();
+					List<List<ScheduleData>> resultDatas = null;
+					if(scheduleDataMap.containsKey(key)) {
+						resultDatas = scheduleDataMap.get(key);
+					} else {
+						resultDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);	
+						scheduleDataMap.put(key, resultDatas);
+					}
+					
+					boolean hasAfternoonData = false;
+					List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
+					if(!strategy.getMainUIParam().isIgnoreLunchTime() && strategy.getMainUIParam().isIncludeMorningData()) {
+						// Don't ignore lunch time and including morning data, then combine morning and afternoon data
+						scheduleDatas.addAll(resultDatas.get(0));
+						scheduleDatas.addAll(resultDatas.get(1));
+					} else if(resultDatas.size() == 2 && resultDatas.get(1).size() > 0) { // afternoon data come
+						// this means have afternoon data, then it is set to don't ingore lunch time but not including morning data, then just add afternoon data 
+						scheduleDatas.addAll(resultDatas.get(1));
+						hasAfternoonData = true;
+					} else {
+						// this means ignore lunch time is set to true or afternoon is not coming yet
+						scheduleDatas.addAll(resultDatas.get(0));
+					}
+					
+					List<PerSecondRecord> perSecondRecords = new ArrayList<PerSecondRecord>();
+					for (int i = 0; i < scheduleDatas.size(); i++) {
+						ScheduleData scheduleData = scheduleDatas.get(i);
+						int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleData.getTimeStr());
+						PerSecondRecord currentSecondRecord = new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), 
+								perSecondRecords, scheduleData, checkMarketTime);
+						perSecondRecords.add(currentSecondRecord);
+						if (i >= 1) {
+							PerSecondRecord lastSecondRecord = perSecondRecords.get(i - 1);			
+							int quantity = currentSecondRecord.getSmoothAction() - lastSecondRecord.getSmoothAction();
+							if (quantity != 0 && !strategy.getActoinMap().containsKey(scheduleData.getId())) {
+								strategy.getActoinMap().put(scheduleData.getId(), quantity);
+								for(int j = 1; j <= Math.abs(quantity); j++) {
+									log.append(placeAnOrder(strategy, scheduleData.getDateTimeStr(), quantity < 0 ? -1: 1));
 								}
 							}
 						}
-						strategy.setPnl(perSecondRecords.size() > 0 ? perSecondRecords.get(perSecondRecords.size() - 1).getTotalPnl() : 0);
-						if(!hasAfternoonData) {
-							// set the morning pnl before afternoon data come
-							strategy.setMorningPnl(strategy.getPnl());							
-						}
-						else if(!strategy.getMainUIParam().isIncludeMorningData()) {
-							//	not including morning data is set then should count back the morning pnl
-							strategy.setPnl(strategy.getPnl() + strategy.getMorningPnl());
-						}
-						
-						log.append(retryOrder(strategy, nowDateTimeLong + ""));
-//						log.append("Total pnl for " + strategy.getStrategyName() + " is " + strategy.getPnl()  + Global.lineSeparator);
 					}
-				}			
-			}
+					strategy.setPnl(perSecondRecords.size() > 0 ? perSecondRecords.get(perSecondRecords.size() - 1).getTotalPnl() : 0);
+					if(!hasAfternoonData) {
+						// set the morning pnl before afternoon data come
+						strategy.setMorningPnl(strategy.getPnl());							
+					}
+					else if(!strategy.getMainUIParam().isIncludeMorningData()) {
+						//	not including morning data is set then should count back the morning pnl
+						strategy.setPnl(strategy.getPnl() + strategy.getMorningPnl());
+					}
+					
+					log.append(retryOrder(strategy, nowDateTimeLong + ""));
+				}
+			}			
 			log.append("Calculation finish with " + (System.currentTimeMillis() - startTime) + "(" + start + "-" + System.nanoTime() + ")" + Global.lineSeparator);
 		} catch (Exception e) {
 			log.append("Sytem Exception:" + e.toString() + ">" + e.getMessage()  + Global.lineSeparator);
