@@ -27,7 +27,7 @@
     			<li tab="marketDataTab">Market Data</li>
     			<li tab="orderStatusTab">Order Status</li>
     			<li tab="controlTab">Control</li>
-    			<li tab="uploadDataTab">Upload Data</li>
+    			<li tab="uploadDataTab" style="display:none">Upload Data</li>
                 <c:forEach items="${strategies}" var="strategy" varStatus="i"> 
         			<li tab="strategyTab">${ strategy.strategyName }</li>
         		</c:forEach>
