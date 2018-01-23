@@ -20,7 +20,8 @@ import com.yoson.model.MainUIParam;
 import com.yoson.tws.ScheduledDataRecord;
 
 public class SQLUtils {
-    
+	public static String SCHEDULE_DATA_TABLE = "schedule_data";
+	
 	public static List<String> initScheduleData(MainUIParam mainUIParam) {
 		Session session = null;
 		List<BrokenDate> datePeriods = mainUIParam.getBrokenDateList();
@@ -104,7 +105,7 @@ public class SQLUtils {
 		Session session = null;
 		try {
 			session = getSession();
-			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " schedule_data2(ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source) VALUES";
+			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ")  + SCHEDULE_DATA_TABLE + "(ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source) VALUES";
 			List<String> values = new ArrayList<String>();
 			for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
 				if(DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(scheduledDataRecord.getTime()), dataStartTime, dataEndTime)) {
@@ -141,7 +142,7 @@ public class SQLUtils {
 		values.add("ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source");
 		try {
 			session = getSession();
-			String sql = "select CONCAT(ticker,',',date,',',time,',',bidavg,',',bidlast,',',bidmax,',',bidmin,',',askavg,',',asklast,',',askmax,',',askmin,',',tradeavg,',',tradelast,',',trademax,',',trademin,',',source) as sdata from schedule_data2 where date='" + dateStr + "'";
+			String sql = "select CONCAT(ticker,',',date,',',time,',',bidavg,',',bidlast,',',bidmax,',',bidmin,',',askavg,',',asklast,',',askmax,',',askmin,',',tradeavg,',',tradelast,',',trademax,',',trademin,',',source) as sdata from " + SCHEDULE_DATA_TABLE + " where date='" + dateStr + "'";
 			sql += " order by date asc, time asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
 			values.addAll(sqlQuery.list());
