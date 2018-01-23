@@ -3,6 +3,7 @@ package com.yoson.sql;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.SQLQuery;
@@ -92,6 +93,24 @@ public class SQLUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<String>();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static String getStartDateBySource(String source) {
+		Session session = null;		
+		try {
+			session = getSession();
+			String sql = "select min(date) from schedule_data where source = '" + source + "'";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return DateUtils.yyyyMMdd().format((Date)sqlQuery.uniqueResult());			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "2014-01-01";
 		} finally {
 			try {
 				session.close();				
