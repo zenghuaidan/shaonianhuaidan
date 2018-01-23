@@ -86,6 +86,7 @@ function doInitTab() {
 		$("#uploadDataWithReplace").show();
 		$("#uploadDataWithSkip").show();
 		$("#uploadDataWithTransfer").hide();
+		$("#downloadSampleDateDiv").show();
 	}	
 	if (tab == 'transferDataTab') {
 		$(".dom").eq(0).html("");
@@ -98,6 +99,7 @@ function doInitTab() {
 		$("#uploadDataWithReplace").hide();
 		$("#uploadDataWithSkip").hide();
 		$("#uploadDataWithTransfer").show();
+		$("#downloadSampleDateDiv").hide();
 	}
 	$("#uploadDataWithChecking").click(function(){
 		uploadDataWithChecking();
@@ -111,9 +113,24 @@ function doInitTab() {
 	$("#uploadDataWithTransfer").click(function(){
 		uploadDataWithTransfer();
 	});
+	
+	$("#downloadSampleDateBtn").click(function(){
+		downloadSampleDate();
+	});
+	
+	$('.timepicker').TimePickerAlone();
+	jQuery('.datepicker').datetimepicker({
+		 timepicker:false,			 
+		 format:'Y-m-d'
+	});
+	jQuery('.datetimepicker').datetimepicker({
+		 timepicker:true,			 
+		 format:'Y-m-d H:i'
+	});
 }
 
 $(function() {
 	initTab();
 	$("li[tab='uploadDataTab']").click();
+	setInterval(uploadStatus, 3000);
 });

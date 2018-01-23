@@ -309,11 +309,11 @@
 		        <version>2.2</version>
 		        <configuration>		        
 		        	<contextReloadable>true</contextReloadable>
-		        	<finalName>idea3</finalName>		        	
+		        	<finalName>datamanage</finalName>		        	
 		          	<url>http://146.196.52.71:8080/manager/text</url>
 		          	<username>tomcat</username>
 		          	<password>yoson^123</password>
-		          	<path>/idea3</path>		          			          			          
+		          	<path>/datamanage</path>		          			          			          
 		        </configuration>
 	      	</plugin>
       

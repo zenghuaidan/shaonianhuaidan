@@ -46,9 +46,11 @@
 						<input type="button" id="uploadDataWithSkip" value="Upload by skip"/>
 						<input type="button" id="uploadDataWithTransfer" value="Transfer Data"/>
 					</form>
+					<div id="downloadSampleDateDiv">
 					Download Sample Date:<input type="text" id="downloadSampleDate" name="downloadSampleDate" class="datepicker"/>
-					<input type="button" onclick="downloadSampleDate()" value="Download"/>
-					<div id="uploadStatus"></div>
+					<input id="downloadSampleDateBtn" type="button" value="Download"/>
+					</div>
+					<div id="uploadStatus"></div>					
 				</div>
             </div>
             <div class="dom"></div>
