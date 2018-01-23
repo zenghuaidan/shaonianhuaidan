@@ -50,7 +50,7 @@
 							   <tr>
 							      <td>Source</td>
 							      <td>
-							         <select name="source">
+							         <select name="source" onchange="sourceChange();">
 								         <c:forEach items="${sources}" var="source" varStatus="i">
 								            <option ${source eq mainUIParam.source ? "selected" : ""}>${source}</option>
 								         </c:forEach>

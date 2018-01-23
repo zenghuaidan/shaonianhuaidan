@@ -685,6 +685,19 @@ function deleteLiveItem(id) {
 	});
 }
 
+function sourceChange() {
+	var source = $.trim($("[name='source']").val());
+	$.ajax({
+	    type: "GET",
+	    url: "getStartDateBySource?source=" + source,
+	    success: function(data) {
+	    	$("#dateFrom").val(data);
+	    },
+	    error: function() {
+	    }
+	});
+}
+
 var tab = "backtestTab";
 function initTab() {
 	var titles = document.getElementById('tab-header').getElementsByTagName('li');  
@@ -760,6 +773,7 @@ $(function() {
 	renderLiveDataFileList();
 	updateConnectStatus();
 	startRefresh();
+	$("[name='source']").change();
 });
 
 function startRefresh() {
