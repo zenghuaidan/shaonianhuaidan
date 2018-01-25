@@ -28,9 +28,7 @@
     			<li tab="orderStatusTab">Order Status</li>
     			<li tab="controlTab">Control</li>
     			<li tab="uploadDataTab" style="display:none">Upload Data</li>
-                <c:forEach items="${strategies}" var="strategy" varStatus="i"> 
-        			<li tab="strategyTab">${ strategy.strategyName }</li>
-        		</c:forEach>
+    			<li tab="strategyTab">Strategy</li>
             </ul>  
         </div>  
         <div id="tab-content">  
@@ -449,8 +447,17 @@
 				<input type="button" onclick="downloadSampleDate()" value="Download"/>
 				<div id="uploadStatus"></div>
             </div>
-            <c:forEach items="${strategies}" var="strategy" varStatus="i">
-            	<div class="dom" strategyName="${strategy.strategyName}">  
+			<div class="dom">
+				<div style="text-align: center;color: blue;padding-top: 10px;padding-bottom: 10px;">
+					Select the strategy to view details: 
+					<select id="strategySelect">
+						<c:forEach items="${strategies}" var="strategy" varStatus="i"> 
+		        			<option value="${ strategy.strategyName }">${ strategy.strategyName }</option>
+		        		</c:forEach>
+        			</select>
+        		</div>            
+        		<c:forEach items="${strategies}" var="strategy" varStatus="i">
+            	<div class="strategyName" strategyName="${strategy.strategyName}">  
 					<table style="width:100%">
 						<tr>
 							<td style="width:40%;text-align:start;vertical-align:baseline;">
@@ -678,7 +685,8 @@
 						</tr>
 					</table>  
            		</div> 
-	        </c:forEach>
+	        	</c:forEach>
+        	</div>
         </div>  
     </div>  
 </body>
