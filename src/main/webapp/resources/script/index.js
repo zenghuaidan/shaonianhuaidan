@@ -766,6 +766,10 @@ $(function() {
 //		 timepicker:false,			 
 //		 format:'Ym'
 //	});
+	$("#strategySelect").change(function() {
+		$(".strategyName").hide();
+		$("div[strategyName='" + $(this).val() + "']").show();
+	});
 	initTab();
 	updateStatus();
 	getMarketData();	
@@ -773,7 +777,8 @@ $(function() {
 	renderLiveDataFileList();
 	updateConnectStatus();
 	startRefresh();
-	$("[name='source']").change();
+	//$("[name='source']").change();
+	$("#strategySelect").change();
 });
 
 function startRefresh() {
