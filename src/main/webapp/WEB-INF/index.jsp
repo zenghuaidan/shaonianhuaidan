@@ -22,16 +22,16 @@
 	<div id="tab">  
         <div id="tab-header">  
             <ul>  
-                <li tab="backtestTab" class="selected">Back Test</li>  
-                <li tab="connectionTab">Connection</li>
-    			<li tab="marketDataTab">Market Data</li>
-    			<li tab="orderStatusTab">Order Status</li>
-    			<li tab="controlTab">Control</li>
-    			<li tab="strategyTab">Strategy</li>
+                <li tab="backtestTab" style="display:none">Back Test</li>  
+                <li tab="connectionTab" class="selected">Connection</li>
+    			<li tab="marketDataTab" style="display:none">Market Data</li>
+    			<li tab="orderStatusTab" style="display:none">Order Status</li>
+    			<li tab="controlTab" style="display:none">Control</li>
+    			<li tab="strategyTab" style="display:none">Strategy</li>
             </ul>  
         </div>  
         <div id="tab-content">  
-            <div class="dom" style="display: block;">  
+            <div class="dom">  
 				<table style="width:100%">
 					<tr>
 						<td style="width:40%;text-align:start;vertical-align:baseline;">
@@ -321,7 +321,7 @@
 					</tr>
 				</table>  
             </div>  
-            <div class="dom">  
+            <div class="dom" style="display: block;">  
   				<table>
 				   <tr>
 				      <td>Host</td>
