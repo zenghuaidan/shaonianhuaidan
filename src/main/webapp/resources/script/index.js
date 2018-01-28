@@ -1,32 +1,36 @@
 function hkClick() {
-	$("[name='marketStartTime']").val("09:30:00");
+	$("[name='marketStartTime']").val("09:15:00");
 	$("[name='lunchStartTimeFrom']").val("12:00:00");
 	$("[name='lunchStartTimeTo']").val("13:00:00");
-	$("[name='marketCloseTime']").val("16:00:00");
+	$("[name='marketCloseTime']").val("16:15:00");
 	$("[name='cashPerIndexPoint']").val("50");
 	$("[name='tradingFee']").val("18");
 	$("[name='otherCostPerTrade']").val("0");
 	$("[name='unit']").val("1");
+	$("[name='ignoreLunchTime']").removeProp('checked');
 }
+
 function km1Click() {
 	$("[name='marketStartTime']").val("08:00:00");
-	$("[name='lunchStartTimeFrom']").val("14:30:00");
-	$("[name='lunchStartTimeTo']").val("23:59:00");
-	$("[name='marketCloseTime']").val("23:59:00");
+	$("[name='lunchStartTimeFrom']").val("12:00:00");
+	$("[name='lunchStartTimeTo']").val("12:00:00");
+	$("[name='marketCloseTime']").val("14:10:00");
 	$("[name='cashPerIndexPoint']").val("500000");
 	$("[name='tradingFee']").val("5000");
 	$("[name='otherCostPerTrade']").val("0");
 	$("[name='unit']").val("0.05");
+	$("[name='ignoreLunchTime']").prop('checked', true);
 }
 function nk1Click() {
-	$("[name='marketStartTime']").val("08:00:00");
-	$("[name='lunchStartTimeFrom']").val("10:30:00");
-	$("[name='lunchStartTimeTo']").val("11:30:00");
-	$("[name='marketCloseTime']").val("14:00:00");
+	$("[name='marketStartTime']").val("07:45:00");
+	$("[name='lunchStartTimeFrom']").val("12:00:00");
+	$("[name='lunchStartTimeTo']").val("12:00:00");
+	$("[name='marketCloseTime']").val("14:15:00");
 	$("[name='cashPerIndexPoint']").val("1000");
 	$("[name='tradingFee']").val("400");
 	$("[name='otherCostPerTrade']").val("0");
 	$("[name='unit']").val("5");
+	$("[name='ignoreLunchTime']").prop('checked', true);
 }
 function yyyymm() {
 	var year = new Date().getYear() + 1900;
