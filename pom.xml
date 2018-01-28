@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>  
  <groupId>com.yoson.cms</groupId>
   <artifactId>yoson</artifactId>
-  <version>idea3</version>
+  <version>DataDownloader</version>
   <packaging>war</packaging>
   
   <name>cms Maven Webapp</name>
@@ -290,7 +290,7 @@
 			  <configuration>
 			    <scanIntervalSeconds>10</scanIntervalSeconds>
 			    <webApp>
-			      <contextPath>/idea3</contextPath>
+			      <contextPath>/DataDownloader</contextPath>
 			    </webApp>
 			    <httpConnector>
 	          		<port>8081</port>
@@ -309,11 +309,11 @@
 		        <version>2.2</version>
 		        <configuration>		        
 		        	<contextReloadable>true</contextReloadable>
-		        	<finalName>idea3</finalName>		        	
+		        	<finalName>DataDownloader</finalName>		        	
 		          	<url>http://146.196.52.71:8080/manager/text</url>
 		          	<username>tomcat</username>
 		          	<password>yoson^123</password>
-		          	<path>/idea3</path>		          			          			          
+		          	<path>/DataDownloader</path>		          			          			          
 		        </configuration>
 	      	</plugin>
       
