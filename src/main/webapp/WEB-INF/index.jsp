@@ -27,7 +27,6 @@
     			<li tab="marketDataTab">Market Data</li>
     			<li tab="orderStatusTab">Order Status</li>
     			<li tab="controlTab">Control</li>
-    			<li tab="uploadDataTab" style="display:none">Upload Data</li>
     			<li tab="strategyTab">Strategy</li>
             </ul>  
         </div>  
@@ -425,28 +424,6 @@
 					</tr>					
 				</table>
 			</div>
-            <div class="dom">
-				<form id='uploadDatafm' method='post' action='uploadData' enctype='multipart/form-data' style="margin-top:10px; margin-bottom:10px;">
-					<input type="hidden" name="uploadAction" />
-					Start:<input type="text" name="dataStartTime" class="timepicker"/>
-					Lunch Time From:<input type="text" name="lunchStartTime" class="timepicker"/>
-					Lunch Time To:<input type="text" name="lunchEndTime" class="timepicker"/>
-					End:<input type="text" name="dataEndTime" class="timepicker"/>
-					<input type="file" name="liveData" accept="text/txt" value="Select File"/>
-					<br/>
-					Ignore Lunch Time:<input type="checkbox" name="ignoreLunchTime"/>
-					To Database:<input type="checkbox" name="toDatabase" checked="checked"/>
-					To CSV:<input type="checkbox" name="toCSV" checked="checked"/>
-					CSV Path:<input type="text" name="csvPath"/>
-					<input type="button" onclick="uploadDataWithChecking()" value="Check"/>
-					<input type="button" onclick="uploadDataWithReplace()" value="Upload by replace"/>
-					<input type="button" onclick="uploadDataWithSkip()" value="Upload by skip"/>
-					<input type="button" onclick="uploadDataWithTransfer()" value="Transfer Data"/>
-				</form>
-				Download Sample Date:<input type="text" id="downloadSampleDate" name="downloadSampleDate" class="datepicker"/>
-				<input type="button" onclick="downloadSampleDate()" value="Download"/>
-				<div id="uploadStatus"></div>
-            </div>
 			<div class="dom">
 				<div style="text-align: center;color: blue;padding-top: 10px;padding-bottom: 10px;">
 					Select the strategy to view details: 
