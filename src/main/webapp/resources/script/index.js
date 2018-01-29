@@ -96,23 +96,22 @@ function defaultConnectClick() {
 	$("[name='clientId']").val("1");
 	$("[name='account']").val("U8979091");
 }
-function searchClick() {
+function searchClick(type) {
 	if(!confirm("Are you sure to start a new search, the previous search will be stopped.")) {
 		return;
 	}
-	var secType = $.trim($("[name='secType']").val());
-	var symbol = $.trim($("[name='symbol']").val());
-	var currency = $.trim($("[name='currency']").val());
-	var exchange = $.trim($("[name='exchange']").val());
-	var localSymbol = $.trim($("[name='localSymbol']").val());
-	var expirary = $.trim($("[name='expirary']").val());
-	var startTime = $.trim($("[name='startTime']").val());
-	var endTime = $.trim($("[name='endTime']").val());
-	var tif = $.trim($("[name='tif']").val());
-	$.ajax({
-	    type: "POST",
-	    url: "search",
-	    data: JSON.stringify({
+	var contracts = new Array();
+	for(var i = 1; i <= 3; i++) {
+		var secType = $.trim($("[name='secType" + i + "']").val());
+		var symbol = $.trim($("[name='symbol" + i + "']").val());
+		var currency = $.trim($("[name='currency" + i + "']").val());
+		var exchange = $.trim($("[name='exchange" + i + "']").val());
+		var localSymbol = $.trim($("[name='localSymbol" + i + "']").val());
+		var expirary = $.trim($("[name='expirary" + i + "']").val());
+		var startTime = $.trim($("[name='startTime" + i + "']").val());
+		var endTime = $.trim($("[name='endTime" + i + "']").val());
+		var tif = $.trim($("[name='tif" + i + "']").val());
+		contracts.push({
 	    	"secType" : secType,
 	    	"symbol" : symbol,
 	    	"currency" : currency,
@@ -122,7 +121,12 @@ function searchClick() {
 	    	"startTime" : startTime,
 	    	"endTime" : endTime,
 	    	"tif" : tif
-	    }),
+	    });
+	}
+	$.ajax({
+	    type: "POST",
+	    url: "search/" + type,
+	    data: JSON.stringify(contracts),
 	    contentType:"application/json;charset=utf-8",
 	    success: function(data) {
 	    	if(data == "Success") {

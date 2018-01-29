@@ -426,60 +426,63 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	@Override
 	public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
-		Date now = new Date();
-		if(!isValidateTime(now, 2))
-			return;
-		switch (field) {
-		case 1:
-			bid = price;
-			break;
-		case 2:
-			ask = price;
-			break;
-		case 4:
-			trade = price;
-			break;
-		case 9:
-			close = price;
-			BackTestCSVWriter.writeText(closePath(), DateUtils.yyyyMMddHHmmss2().format(now) + "," + close + Global.lineSeparator, true);
-			break;
-		}
+		BackTestCSVWriter.writeText(livePath(), "tickerId=" + tickerId + ", field=" + field + ", price=" + price + ", canAutoExecute" + canAutoExecute + Global.lineSeparator, true);
+		//		Date now = new Date();
+//		if(!isValidateTime(now, 2))
+//			return;
+//		switch (field) {
+//		case 1:
+//			bid = price;
+//			break;
+//		case 2:
+//			ask = price;
+//			break;
+//		case 4:
+//			trade = price;
+//			break;
+//		case 9:
+//			close = price;
+//			BackTestCSVWriter.writeText(closePath(), DateUtils.yyyyMMddHHmmss2().format(now) + "," + close + Global.lineSeparator, true);
+//			break;
+//		}
+		
 
 	}
 	
 	@Override
 	public void tickSize(int tickerId, int field, int size) {
-		Date now = new Date();
-		lastTime = now;
-		if(!isValidateTime(now, 2))
-			return;
-		String time = DateUtils.yyyyMMddHHmmss2().format(now);
-		switch (field) {
-		case 0:
-			bidSize = size;
-			addLiveData(scheduledDataRecords, now, bid, BID);
-			String liveResult = time + "," + bid + "," + size + Global.lineSeparator;
-			BackTestCSVWriter.writeText(livePath(), BID + "," + liveResult, true);
-			BackTestCSVWriter.writeText(bidPath(), liveResult, true);
-			break;
-		case 3:
-			askSize = size;
-			addLiveData(scheduledDataRecords, now, ask, ASK);
-			String askResult = time + "," + ask + "," + size + Global.lineSeparator;
-			BackTestCSVWriter.writeText(livePath(), ASK + "," + askResult, true);
-			BackTestCSVWriter.writeText(askPath(), askResult, true);
-			break;
-		case 5:
-			tradeSize = size;
-			addLiveData(scheduledDataRecords, now, trade, TRADE);
-			String tradeResult = time + "," + trade + "," + size + Global.lineSeparator;
-			BackTestCSVWriter.writeText(livePath(), TRADE + "," + tradeResult, true);
-			BackTestCSVWriter.writeText(tradePath(), tradeResult, true);
-			break;
-		case 8:
-			BackTestCSVWriter.writeText(volumePath(), time + "," + size + Global.lineSeparator, true);
-			break;
-		}
+		BackTestCSVWriter.writeText(livePath(), "tickerId=" + tickerId + ", field=" + field + ", size=" + size + Global.lineSeparator, true);
+		//		Date now = new Date();
+//		lastTime = now;
+//		if(!isValidateTime(now, 2))
+//			return;
+//		String time = DateUtils.yyyyMMddHHmmss2().format(now);
+//		switch (field) {
+//		case 0:
+//			bidSize = size;
+//			addLiveData(scheduledDataRecords, now, bid, BID);
+//			String liveResult = time + "," + bid + "," + size + Global.lineSeparator;
+//			BackTestCSVWriter.writeText(livePath(), BID + "," + liveResult, true);
+//			BackTestCSVWriter.writeText(bidPath(), liveResult, true);
+//			break;
+//		case 3:
+//			askSize = size;
+//			addLiveData(scheduledDataRecords, now, ask, ASK);
+//			String askResult = time + "," + ask + "," + size + Global.lineSeparator;
+//			BackTestCSVWriter.writeText(livePath(), ASK + "," + askResult, true);
+//			BackTestCSVWriter.writeText(askPath(), askResult, true);
+//			break;
+//		case 5:
+//			tradeSize = size;
+//			addLiveData(scheduledDataRecords, now, trade, TRADE);
+//			String tradeResult = time + "," + trade + "," + size + Global.lineSeparator;
+//			BackTestCSVWriter.writeText(livePath(), TRADE + "," + tradeResult, true);
+//			BackTestCSVWriter.writeText(tradePath(), tradeResult, true);
+//			break;
+//		case 8:
+//			BackTestCSVWriter.writeText(volumePath(), time + "," + size + Global.lineSeparator, true);
+//			break;
+//		}
 	}
 	
 	public synchronized static void addLiveData(List<ScheduledDataRecord> list, Date date, double value, String type) {
