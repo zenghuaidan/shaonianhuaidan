@@ -105,6 +105,7 @@ public class SQLUtils {
 		Session session = null;
 		try {
 			session = getSession();
+			session.beginTransaction();
 			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ")  + SCHEDULE_DATA_TABLE + "(ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source) VALUES";
 			List<String> values = new ArrayList<String>();
 			for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
@@ -126,12 +127,14 @@ public class SQLUtils {
 			if (values.size() > 0) {
 				session.createSQLQuery(sql + String.join(",", values)).executeUpdate();							
 			}
+			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
 				session.close();				
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
