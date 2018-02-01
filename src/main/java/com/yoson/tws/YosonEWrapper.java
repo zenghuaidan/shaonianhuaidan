@@ -237,12 +237,20 @@ public class YosonEWrapper extends BasicEWrapper {
 			}
 			allDailyPerSecondRecord.addAll(dailyPerSecondRecord);
 		} else {
-			for (List<ScheduleData> dailyScheduleData : resultDatas) {
+			double morningPnl = 0;
+			for (int index = 0; index < resultDatas.size(); index++) {
+				List<ScheduleData> dailyScheduleData = resultDatas.get(index);
 				List<PerSecondRecord> dailyPerSecondRecord = new ArrayList<PerSecondRecord>();
 				for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {				
 					int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
-					dailyPerSecondRecord.add(new PerSecondRecord(dailyScheduleData, strategy.getMainUIParam(), 
-							dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime));
+					PerSecondRecord perSecondRecord = new PerSecondRecord(dailyScheduleData, strategy.getMainUIParam(), 
+							dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime);
+					if(index == 0) {
+						morningPnl = perSecondRecord.getTotalPnl();
+					} else {
+						perSecondRecord.setTotalPnl(morningPnl + perSecondRecord.getTotalPnl());
+					}
+					dailyPerSecondRecord.add(perSecondRecord);
 				}
 				allDailyPerSecondRecord.addAll(dailyPerSecondRecord);
 			}
