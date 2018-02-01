@@ -123,6 +123,7 @@ public class SQLUtils {
 		Session session = null;
 		try {
 			session = getSession();
+			session.beginTransaction();
 			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " schedule_data2(ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source) VALUES";
 			List<String> values = new ArrayList<String>();
 			for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
@@ -144,6 +145,7 @@ public class SQLUtils {
 			if (values.size() > 0) {
 				session.createSQLQuery(sql + String.join(",", values)).executeUpdate();							
 			}
+			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -182,6 +184,7 @@ public class SQLUtils {
 		Session session = null;
 		try {
 			session = getSession();
+			session.beginTransaction();
 			CSVReader csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);
 			String [] lines;
 			String sqlSchema = null;
@@ -238,6 +241,7 @@ public class SQLUtils {
 			if (hasRecord) {			
 				session.createSQLQuery(sql.substring(0, sql.length() - 1).toString()).executeUpdate();
 			}
+			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
