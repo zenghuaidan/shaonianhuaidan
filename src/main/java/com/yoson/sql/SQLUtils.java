@@ -31,7 +31,7 @@ public class SQLUtils {
 		String tradeDataField = mainUIParam.getTradeDataField();
 		try {
 			session = getSession();
-			String sql = "select CONCAT_WS(',',date,time, " + askDataField + ", " + bidDataField + ", " + tradeDataField + ") as sdata from schedule_data where source = '" + source + "'";
+			String sql = "select CONCAT_WS(',',date,time, " + askDataField + ", " + bidDataField + ", " + tradeDataField + ") as sdata from schedule_data2 where source = '" + source + "'";
 
 			if (datePeriods != null && datePeriods.size() > 0) {
 				List<String> datePeriodCriteria = new ArrayList<String>();
@@ -68,8 +68,8 @@ public class SQLUtils {
 		Session session = null;		
 		try {
 			session = getSession();
-//			String sql = "select distinct CONCAT_WS(' ',date,time) as sdata from schedule_data where source = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "') order by date asc, time asc";
-			String sql = "select count(*) as totalCount from schedule_data where ticker = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "')";
+//			String sql = "select distinct CONCAT_WS(' ',date,time) as sdata from schedule_data2 where source = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "') order by date asc, time asc";
+			String sql = "select count(*) as totalCount from schedule_data2 where ticker = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "')";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("totalCount", IntegerType.INSTANCE);
 			return (Integer)sqlQuery.uniqueResult();			
 		} catch (Exception e) {
@@ -87,7 +87,7 @@ public class SQLUtils {
 		Session session = null;		
 		try {
 			session = getSession();
-			String sql = "select distinct source from schedule_data order by source asc";
+			String sql = "select distinct source from schedule_data2 order by source asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
 			return sqlQuery.list();			
 		} catch (Exception e) {
@@ -105,7 +105,7 @@ public class SQLUtils {
 		Session session = null;		
 		try {
 			session = getSession();
-			String sql = "select min(date) from schedule_data where source = '" + source + "'";
+			String sql = "select min(date) from schedule_data2 where source = '" + source + "'";
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
 			return DateUtils.yyyyMMdd().format((Date)sqlQuery.uniqueResult());			
 		} catch (Exception e) {
