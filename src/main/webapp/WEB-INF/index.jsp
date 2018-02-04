@@ -289,7 +289,14 @@
 							      <td><input type="button" onclick="hkClick();" style="width:100%" value="HK"/></td>
 							      <td><input type="button" onclick="km1Click();" style="width:100%" value="KM1"/></td>
 							      <td><input type="button" onclick="nk1Click();" style="width:100%" value="NK1"/></td>
-							      <td><input type="button" onclick="runClick();" style="width:100%" value="Run Test"/></td>
+							      <td>
+							        <table>
+							        	<tr>
+							        		<td><input type="button" onclick="runClick();" style="width:100%" value="Run Test"/></td>
+							        		<td><input type="button" onclick="runWithLiveTradingDataClick();" style="width:100%" value="Set BT Parameters for Live Tading"/></td>
+							        	</tr>
+							        </table>
+						      	  </td>
 							   </tr>
 							</table>
 						</td>

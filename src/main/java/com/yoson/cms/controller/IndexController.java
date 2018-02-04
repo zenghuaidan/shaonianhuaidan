@@ -992,6 +992,8 @@ public class IndexController  implements StatusCallBack {
 		YosonEWrapper.genTradingDayPerSecondDetails(downloadFolder, scheduledDataRecords);
 		
 		genCleanLog(downloadFolder);
+		
+		new IndexController().runTest(downloadFolder, true);
 		return downloadFolder;
 	}
 	
@@ -1091,16 +1093,32 @@ public class IndexController  implements StatusCallBack {
 	
 	@RequestMapping(path = "/", method = {RequestMethod.POST})
 	public String index(@RequestBody MainUIParam mainUIParam, HttpServletRequest request) {
-	  if (!BackTestTask.running) {
-		  String dataFolder = InitServlet.createDataFoderAndReturnPath();
-		  String id = DateUtils.yyyyMMddHHmmss2().format(new Date());
+      if (!BackTestTask.running) {
+    	  IndexController.mainUIParam = mainUIParam;
+    	  String dataFolder = InitServlet.createDataFoderAndReturnPath();
+    	  runTest(dataFolder, false);
+	  }
+	  return "index";
+	}
+	
+	@RequestMapping(path = "/runWithLiveTradingDataClick", method = {RequestMethod.POST})
+	public String runWithLiveTradingDataClick(@RequestBody MainUIParam mainUIParam, HttpServletRequest request) {
+      if (!BackTestTask.running) {
+    	  IndexController.mainUIParam = mainUIParam;
+	  }
+	  return "index";
+	}
+
+	public void runTest(String dataFolder, boolean isLiveData) {
+		if (!BackTestTask.running) {
+		  String id = isLiveData ? "BT_Result" : DateUtils.yyyyMMddHHmmss2().format(new Date());
+		  if(mainUIParam == null) mainUIParam = MainUIParam.getMainUIParam();
 		  mainUIParam.setDataRootPath(dataFolder);
 		  mainUIParam.setSourcePath(FilenameUtils.concat(dataFolder, id));
 		  mainUIParam.setParamPath(getParamFilePath(dataFolder, id));
 		  mainUIParam.setStepPath(getStepFilePath(dataFolder, id));
 		  mainUIParam.setLogPath(getLogFilePath(dataFolder, id));
 		  mainUIParam.setVersion(InitServlet.getVersion());
-		  IndexController.mainUIParam = mainUIParam;
 		  BackTestTask.running = true;	
 			try {
 				FileUtils.forceMkdir(new File(mainUIParam.getSourcePath()));
@@ -1111,13 +1129,11 @@ public class IndexController  implements StatusCallBack {
 				@Override
 				public void run() {
 					statusStr = new StringBuilder();
-					new Thread(new BackTestTask(IndexController.mainUIParam, IndexController.this)).start();
+					new Thread(new BackTestTask(IndexController.mainUIParam, IndexController.this, isLiveData)).start();
 				}
 			}).start();
-	  }
-	  return "index";
+		}
 	}
-	
 	
 	@ResponseBody
 	@RequestMapping(path = "getStartDateBySource", method = {RequestMethod.GET})
