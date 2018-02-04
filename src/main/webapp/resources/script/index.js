@@ -368,6 +368,22 @@ function runClick() {
 	});
 }
 
+function runWithLiveTradingDataClick() {
+	var paramData = getMainUIParam();
+	$.ajax({
+	    type: "POST",
+	    url: "runWithLiveTradingDataClick",
+	    data: JSON.stringify(paramData),
+	    contentType:"application/json;charset=utf-8",
+	    success: function(data) {
+	    	$("#status").html("");
+	    	updateStatus();
+	    },
+	    error: function() {		        
+	    }
+	});
+}
+
 function addStrategy(_this) {
 	var paramData = getMainUIParam();
 	$.ajax({
