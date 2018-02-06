@@ -121,12 +121,12 @@ public class IndexController {
 						ArrayList<Object> row = sheet.get(i);
 						Contract contract = new Contract();
 						int j = 0;
-						contract.m_secType = row.size() >= (j + 1) ? row.get(j++).toString() : "";
-						contract.m_symbol = row.size() >= (j + 1) ? row.get(j++).toString() : "";
-						contract.m_currency = row.size() >= (j + 1) ? row.get(j++).toString() : "";
-					    contract.m_exchange = row.size() >= (j + 1) ? row.get(j++).toString() : "";
-					    contract.m_localSymbol = row.size() >= (j + 1) ? row.get(j++).toString() : "";
-					    contract.m_expiry = row.size() >= (j + 1) ? row.get(j++).toString() : "";
+						contract.m_secType = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+						contract.m_symbol = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+						contract.m_currency = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+					    contract.m_exchange = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+					    contract.m_localSymbol = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+					    contract.m_expiry = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
 					    try {
 					    	// if time in excel is not validate, then use the GUI time
 					    	_startTime = (Date)row.get(j++);

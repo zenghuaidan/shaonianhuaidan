@@ -161,7 +161,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	@Override
 	public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
 		Date now = new Date();
-		if(EClientSocketUtils.contracts != null && EClientSocketUtils.contracts.size() >= (tickerId + 1) && !isValidateTime(EClientSocketUtils.contracts.get(tickerId), now))
+		if(EClientSocketUtils.contracts == null || EClientSocketUtils.contracts.size() < (tickerId + 1) || !isValidateTime(EClientSocketUtils.contracts.get(tickerId), now))
 			return;
 		switch (field) {
 		case 1:			
@@ -180,16 +180,19 @@ public class YosonEWrapper extends BasicEWrapper {
 	@Override
 	public void tickSize(int tickerId, int field, int size) {
 		Date now = new Date();
-		if(EClientSocketUtils.contracts != null && EClientSocketUtils.contracts.size() >= (tickerId + 1) && !isValidateTime(EClientSocketUtils.contracts.get(tickerId), now))
+		if(EClientSocketUtils.contracts == null || EClientSocketUtils.contracts.size() < (tickerId + 1) || !isValidateTime(EClientSocketUtils.contracts.get(tickerId), now))
 			return;
 		String time = DateUtils.yyyyMMddHHmmss2().format(now);
 		Contract contract = EClientSocketUtils.contracts.get(tickerId);
 		String folder = FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), (tickerId + 1) + "_" + contract.m_secType + "_" + contract.m_symbol + "_" + contract.m_currency + "_" + contract.m_exchange);
+		if(!new File(folder).exists()) {
+			new File(folder).mkdir();
+		}
 		String path = getPath(folder);
 		switch (field) {
 		case 0:
-			String liveResult = time + "," + (priceMap.contains(tickerId + BID) ? priceMap.get(tickerId + BID) : 0) + "," + size + Global.lineSeparator;
-			BackTestCSVWriter.writeText(path, BID + "," + liveResult, true);			
+			String bidResult = time + "," + (priceMap.contains(tickerId + BID) ? priceMap.get(tickerId + BID) : 0) + "," + size + Global.lineSeparator;
+			BackTestCSVWriter.writeText(path, BID + "," + bidResult, true);			
 			break;
 		case 3:
 			String askResult = time + "," + (priceMap.contains(tickerId + ASK) ? priceMap.get(tickerId + ASK) : 0) + "," + size + Global.lineSeparator;
