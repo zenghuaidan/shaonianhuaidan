@@ -98,6 +98,9 @@ public class IndexController {
 		IndexController.isFundamentalData = !StringUtils.isBlank(fundamentalData) && "on".equals(fundamentalData);
 		
 		try {
+			if(!EClientSocketUtils.isConnected()) {				
+				return "Connect failed, please check your connection";
+			}
 			Date _startTime = DateUtils.yyyyMMddHHmm().parse(startTime);
 			Date _endTime = DateUtils.yyyyMMddHHmm().parse(endTime);
 			if((_startTime.equals(_endTime) || _startTime.before(_endTime)) && startTime.split(" ")[0].equals(endTime.split(" ")[0])) {// within same day and start time must equal or before end time
@@ -114,7 +117,7 @@ public class IndexController {
 				List<Contract> contracts = new CopyOnWriteArrayList<Contract>();
 				if(list.size() > 0) {
 					ArrayList<ArrayList<Object>> sheet = list.get(0);
-					for(int i = 1; i < sheet.size() - 1; i++) {
+					for(int i = 1; i <= sheet.size() - 1; i++) {
 						ArrayList<Object> row = sheet.get(i);
 						Contract contract = new Contract();
 						int j = 0;
@@ -148,8 +151,7 @@ public class IndexController {
 					    }
 					}
 				}
-				boolean success = false;
-				if (EClientSocketUtils.isConnected() && contracts.size() > 0) {
+				if (contracts.size() > 0) {
 					// stop previous market data if have
 					if (EClientSocketUtils.contracts != null && EClientSocketUtils.contracts.size() > 0) {
 						for(int i = 0; i < EClientSocketUtils.contracts.size() - 1; i++) {
@@ -168,13 +170,9 @@ public class IndexController {
 					}
 					
 					EClientSocketUtils.socket.reqCurrentTime();
-					success = true;
-				}				
-				if(success) {
 					return "Success";
-				} else {
-					return "Connect failed, please check your connection";
-				}
+				}								
+				return "Can not parse any contract from the excel, please check your excel data format";
 			} else {
 				return "The start time should before end time, and they should be the same day";
 			}
