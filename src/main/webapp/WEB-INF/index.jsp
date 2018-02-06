@@ -354,44 +354,38 @@
   				<hr/>
   				<input type="hidden" name="tif" value="${contract.tif}"/>
 				<table>
-					<c:forEach var="i" begin="1" end="3">
-						<tr>
-					      <td>Sec Type</td>
-					      <td><input name="secType${i}" value="${contract.secType}" type="text"/></td>
-					   </tr>
-					   	<tr>
-					      <td>Symbol</td>
-					      <td><input name="symbol${i}" value="${contract.symbol}" type="text"/></td>
-					   </tr>
-					   	<tr>
-					      <td>Currency</td>
-					      <td><input name="currency${i}" value="${contract.currency}" type="text"/></td>
-					   </tr>
-					   	<tr>
-					      <td>Exchange</td>
-					      <td><input name="exchange${i}" value="${contract.exchange}" type="text"/></td>
-					   </tr>
-					   	<tr>
-					      <td>Local symbol</td>
-					      <td><input name="localSymbol${i}" value="${contract.localSymbol}" type="text"/></td>
-					   </tr>
-					   	<tr>
-					      <td>Expirary</td>
-					      <td><input class="yearmonthpicker" name="expirary${i}" value="${contract.expirary}" type="text"/></td>
-					   </tr>
-	   			   		<tr>
-					      <td>Start Time</td>
-					      <td><input class="datetimepicker" name="startTime${i}" value="${contract.startTime}" type="text"/></td>
-					   </tr>
-		   			   	<tr>
-					      <td>End Time</td>
-					      <td><input class="datetimepicker" name="endTime${i}" value="${contract.endTime}" type="text"/></td>
-					   </tr>
-	   	   			   	<tr>
-					      <td colspan="2">===================================================</td>
-					   </tr>
-					</c:forEach>
-				   
+					<tr>
+				      <td>Sec Type</td>
+				      <td><input name="secType" value="${contract.secType}" type="text"/></td>
+				   </tr>
+				   	<tr>
+				      <td>Symbol</td>
+				      <td><input name="symbol" value="${contract.symbol}" type="text"/></td>
+				   </tr>
+				   	<tr>
+				      <td>Currency</td>
+				      <td><input name="currency" value="${contract.currency}" type="text"/></td>
+				   </tr>
+				   	<tr>
+				      <td>Exchange</td>
+				      <td><input name="exchange" value="${contract.exchange}" type="text"/></td>
+				   </tr>
+				   	<tr>
+				      <td>Local symbol</td>
+				      <td><input name="localSymbol" value="${contract.localSymbol}" type="text"/></td>
+				   </tr>
+				   	<tr>
+				      <td>Expirary</td>
+				      <td><input class="yearmonthpicker" name="expirary" value="${contract.expirary}" type="text"/></td>
+				   </tr>
+   			   		<tr>
+				      <td>Start Time</td>
+				      <td><input class="datetimepicker" name="startTime" value="${contract.startTime}" type="text"/></td>
+				   </tr>
+	   			   	<tr>
+				      <td>End Time</td>
+				      <td><input class="datetimepicker" name="endTime" value="${contract.endTime}" type="text"/></td>
+				   </tr>
 				   <tr>
 				   	  <td colspan="2">
 				   	  	<table>
@@ -400,9 +394,7 @@
 						      <td><input type="button" onclick="contractKM1Click();" style="width:100%" value="KM1"/></td>
 						      <td><input type="button" onclick="contractNK1Click();" style="width:100%" value="NK1"/></td>
 						      <td><input type="button" onclick="contractHSIClick();" style="width:100%" value="HSI"/></td>
-						      <td><input type="button" onclick="searchClick(1);" style="width:100%" value="SearchOnlyMktData" /></td>
-						      <td><input type="button" onclick="searchClick(2);" style="width:100%" value="SearchOnlyFundamentalData" /></td>
-						      <td><input type="button" onclick="searchClick(3);" style="width:100%" value="SearchBothMktAndFundamentalData" /></td>
+						      <td><input type="button" onclick="searchClick();" style="width:100%" value="Search" /></td>
 				   	  		</tr>
 				   	  	</table>
 				   	  </td>

@@ -34,7 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -129,30 +128,24 @@ public class IndexController  implements StatusCallBack {
 	}
 	
 	@ResponseBody
-	@RequestMapping("search/{type}")
-	public String search(@RequestBody List<Contract> contracts, @PathVariable int type) {
-		StringBuffer sBuffer = new StringBuffer();
-		for(int i = 0; i < contracts.size(); i++) {
-			Contract contract = contracts.get(i);
-			try {
-				Date startTime = DateUtils.yyyyMMddHHmm().parse(contract.getStartTime());
-				Date endTime = DateUtils.yyyyMMddHHmm().parse(contract.getEndTime());
-				if((startTime.equals(endTime) || startTime.before(endTime)) && contract.getStartTime().split(" ")[0].equals(contract.getEndTime().split(" ")[0])) {
-					boolean success =  EClientSocketUtils.reqMktData(i, contract, type);
-					if(success) {
-						
-					} else {
-						sBuffer.append("Connect failed, please check your connection");
-					}
+	@RequestMapping("search")
+	public String search(@RequestBody Contract contract) {
+		try {
+			Date startTime = DateUtils.yyyyMMddHHmm().parse(contract.getStartTime());
+			Date endTime = DateUtils.yyyyMMddHHmm().parse(contract.getEndTime());
+			if((startTime.equals(endTime) || startTime.before(endTime)) && contract.getStartTime().split(" ")[0].equals(contract.getEndTime().split(" ")[0])) {
+				boolean success =  EClientSocketUtils.reqMktData(0, contract);
+				if(success) {
+					return "Success";
 				} else {
-					sBuffer.append("The start time should before end time, and they should be the same day");
+					return "Connect failed, please check your connection";
 				}
-			} catch (ParseException e) {
-				sBuffer.append("Please input valdate time!");
+			} else {
+				return "The start time should before end time, and they should be the same day";
 			}
+		} catch (ParseException e) {
+			return "Please input valdate time!";
 		}
-		if(sBuffer.length() == 0) return "Success";
-		return sBuffer.toString();
 	}
 	
 	@ResponseBody

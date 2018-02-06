@@ -83,7 +83,7 @@ public class EClientSocketUtils {
 			socket.cancelMktData(tickerId);
 	}
 	
-	public static boolean reqMktData(int tickerId, Contract contract, int type) {
+	public static boolean reqMktData(int tickerId, Contract contract) {
 		if(!isConnected()) {
 			return false;
 		}
@@ -92,14 +92,7 @@ public class EClientSocketUtils {
 		id = DateUtils.yyyyMMddHHmmss2().format(new Date());
 		String dataFolder = initAndReturnLiveDataFolder();
 //		socket.cancelMktData(tickerId);
-		if(type==1)
-			socket.reqMktData(tickerId + 1, contract, null, false, new Vector<TagValue>());
-		if(type==2)
-			socket.reqFundamentalData((tickerId + 1) * 100, contract, "ReportRatios");
-		if(type==3) {
-			socket.reqMktData(tickerId + 1, contract, null, false, new Vector<TagValue>());
-			socket.reqFundamentalData((tickerId + 1) * 100, contract, "ReportRatios");
-		}
+		socket.reqMktData(tickerId, contract, null, false, new Vector<TagValue>());
 		socket.reqCurrentTime();
 		String contractGson = new Gson().toJson(EClientSocketUtils.contract);
 		BackTestCSVWriter.writeText(FilenameUtils.concat(dataFolder, CONTRACT), contractGson, false);
