@@ -40,9 +40,10 @@ public class TaskScheduler {
 						&& StringUtils.isNotEmpty(EClientSocketUtils.contract.getSymbol())) {
 					Date endTime = DateUtils.yyyyMMddHHmm().parse(EClientSocketUtils.contract.getEndTime());
 					if(DateUtils.addSecond(endTime, 1) <= nowDateTimeLong && EClientSocketUtils.isConnected()) {
-						IndexController.genLiveResult(EClientSocketUtils.contract.getSymbol() + "_" + EClientSocketUtils.id);
-						//trigger auto backtest
 						EClientSocketUtils.disconnect();
+
+						//trigger auto backtest, only the live have stop then can do the BT
+						IndexController.genLiveResult(EClientSocketUtils.contract.getSymbol() + "_" + EClientSocketUtils.id);
 					}					
 				}
 				return;
