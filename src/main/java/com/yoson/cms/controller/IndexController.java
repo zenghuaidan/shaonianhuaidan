@@ -993,7 +993,8 @@ public class IndexController  implements StatusCallBack {
 		
 		genCleanLog(downloadFolder);
 		
-		new IndexController().runTest(downloadFolder, true);
+		if (!EClientSocketUtils.isConnected())//don't do BT during live trading
+			new IndexController().runTest(downloadFolder, true);
 		return downloadFolder;
 	}
 	
