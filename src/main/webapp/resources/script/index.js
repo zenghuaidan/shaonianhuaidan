@@ -124,6 +124,18 @@ function renderLiveDataFileList() {
 	});
 }
 
+function deleteLiveItem(id) {
+	$.ajax({
+	    type: "GET",
+	    url: "deleteLiveItem?id=" + id,
+	    success: function(data) {
+	    	renderLiveDataFileList();
+	    },
+	    error: function() {
+	    }
+	});
+}
+
 $(function() {
 	$('.timepicker').TimePickerAlone();
 	jQuery('.datepicker').datetimepicker({
