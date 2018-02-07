@@ -37,7 +37,7 @@ public class RawDataCSVWriter {
 	    {
 		    writer.append(instrumentName);
 		    writer.append(",");
-		    writer.append(DateUtils.yyyyMMddHHmmss2().format(date));
+		    writer.append(DateUtils.yyyyMMddHHmmss().format(date));
 		    writer.append(",");
 		    writer.append(" "); //Intended to write a blank
 		    writer.append(",");
@@ -47,7 +47,7 @@ public class RawDataCSVWriter {
 		    writer.append(",");
 		    writer.append(instrumentName);
 		    writer.append(",");
-		    writer.append(DateUtils.yyyyMMddHHmmss2().format(date));
+		    writer.append(DateUtils.yyyyMMddHHmmss().format(date));
 		    writer.append(",");
 		    writer.append(" "); //Intended to write a blank
 		    writer.append(",");
@@ -57,12 +57,12 @@ public class RawDataCSVWriter {
 		    writer.append(",");
 		    writer.append(instrumentName);
 		    writer.append(",");
-		    writer.append(DateUtils.yyyyMMddHHmmss2().format(date));
+		    writer.append(DateUtils.yyyyMMddHHmmss().format(date));
 		    writer.append("\n"); // Next Line
 		    
 		    writer.append("TRADE");
 		    writer.append(",");
-		    writer.append(DateUtils.yyyyMMddHHmmss2().format(org.apache.commons.lang.time.DateUtils.addDays(date, 1)));
+		    writer.append(DateUtils.yyyyMMddHHmmss().format(org.apache.commons.lang.time.DateUtils.addDays(date, 1)));
 		    writer.append(",");
 		    writer.append(" "); //Intended to write a blank
 		    writer.append(",");
@@ -72,7 +72,7 @@ public class RawDataCSVWriter {
 		    writer.append(",");
 		    writer.append("ASK");
 		    writer.append(",");
-		    writer.append(DateUtils.yyyyMMddHHmmss2().format(org.apache.commons.lang.time.DateUtils.addDays(date, 1)));
+		    writer.append(DateUtils.yyyyMMddHHmmss().format(org.apache.commons.lang.time.DateUtils.addDays(date, 1)));
 		    writer.append(",");
 		    writer.append(" "); //Intended to write a blank
 		    writer.append(",");
@@ -82,7 +82,7 @@ public class RawDataCSVWriter {
 		    writer.append(",");
 		    writer.append("BID");
 		    writer.append(",");
-		    writer.append(DateUtils.yyyyMMddHHmmss2().format(org.apache.commons.lang.time.DateUtils.addDays(date, 1)));
+		    writer.append(DateUtils.yyyyMMddHHmmss().format(org.apache.commons.lang.time.DateUtils.addDays(date, 1)));
 		    writer.append("\n"); // Next Line
 		   
 		    
@@ -173,7 +173,7 @@ public class RawDataCSVWriter {
 	{
 		try
 		{
-			writer.append(DateUtils.yyyyMMddHHmmss2().format(record.getTime()));
+			writer.append(DateUtils.yyyyMMddHHmmss().format(record.getTime()));
 		    writer.append(",");
 			writer.append("TRADE");
 			writer.append(",");
@@ -196,7 +196,7 @@ public class RawDataCSVWriter {
 	{
 		try
 		{
-			writer.append(DateUtils.yyyyMMddHHmmss2().format(record.getTime()));
+			writer.append(DateUtils.yyyyMMddHHmmss().format(record.getTime()));
 			writer.append(",");
 			writer.append("ASK");
 			writer.append(",");
@@ -219,7 +219,7 @@ public class RawDataCSVWriter {
 	{
 		try
 		{
-			writer.append(DateUtils.yyyyMMddHHmmss2().format(record.getTime()));
+			writer.append(DateUtils.yyyyMMddHHmmss().format(record.getTime()));
 			writer.append(",");
 			writer.append("BID");
 			writer.append(",");
