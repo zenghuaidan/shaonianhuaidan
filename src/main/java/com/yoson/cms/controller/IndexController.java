@@ -154,7 +154,7 @@ public class IndexController {
 				if (contracts.size() > 0) {
 					// stop previous market data if have
 					if (EClientSocketUtils.contracts != null && EClientSocketUtils.contracts.size() > 0) {
-						for(int i = 0; i < EClientSocketUtils.contracts.size() - 1; i++) {
+						for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
 							EClientSocketUtils.cancelMktData(i);
 						}
 					}
@@ -165,7 +165,7 @@ public class IndexController {
 					EClientSocketUtils.initAndReturnLiveDataFolder();
 					
 					// start new market data
-					for(int i = 0; i < EClientSocketUtils.contracts.size() - 1; i++) {
+					for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
 						EClientSocketUtils.socket.reqMktData(i, EClientSocketUtils.contracts.get(i), null, false, new Vector<TagValue>());						
 					}
 					
