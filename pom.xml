@@ -310,7 +310,7 @@
 		        <configuration>		        
 		        	<contextReloadable>true</contextReloadable>
 		        	<finalName>DataDownloader</finalName>		        	
-		          	<url>http://146.196.52.71:8080/manager/text</url>
+		          	<url>http://146.196.52.71:8083/manager/text</url>
 		          	<username>tomcat</username>
 		          	<password>yoson^123</password>
 		          	<path>/DataDownloader</path>		          			          			          

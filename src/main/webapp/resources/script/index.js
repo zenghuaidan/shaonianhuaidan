@@ -141,4 +141,5 @@ $(function() {
 		$("tr.contract-" + $(this).val()).show();
 	});
 	$("#contractSelect").change();
+	updateConnectStatus();
 });
