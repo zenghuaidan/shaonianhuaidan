@@ -15,6 +15,7 @@ public class Strategy implements Serializable {
 	@Expose
 	private String strategyName;
 	private boolean active = false;
+	private long activeTime;
 	private int tradeCount;
 	private double pnl;
 	private double morningPnl;
@@ -54,6 +55,14 @@ public class Strategy implements Serializable {
 		this.active = active;
 	}
 
+	public long getActiveTime() {
+		return activeTime;
+	}
+
+	public void setActiveTime(long activeTime) {
+		this.activeTime = activeTime;
+	}
+
 	public void active() {
 		if(!active) {
 			this.active = true;		
@@ -64,6 +73,7 @@ public class Strategy implements Serializable {
 			this.pnl = 0;
 			this.morningPnl = 0;
 			this.tradeCount = 0;
+			this.activeTime = new Date().getTime();
 		}
 	}
 
