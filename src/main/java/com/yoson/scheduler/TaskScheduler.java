@@ -97,7 +97,7 @@ public class TaskScheduler {
 						if (i >= 1) {
 							PerSecondRecord lastSecondRecord = perSecondRecords.get(i - 1);			
 							int quantity = currentSecondRecord.getSmoothAction() - lastSecondRecord.getSmoothAction();
-							if (quantity != 0 && !strategy.getActoinMap().containsKey(scheduleData.getId())) {
+							if (quantity != 0 && !strategy.getActoinMap().containsKey(scheduleData.getId()) && scheduleData.getId() > strategy.getActiveTime()) {
 								strategy.getActoinMap().put(scheduleData.getId(), quantity);
 								for(int j = 1; j <= Math.abs(quantity); j++) {
 									log.append(placeAnOrder(strategy, scheduleData.getDateTimeStr(), quantity < 0 ? -1: 1));

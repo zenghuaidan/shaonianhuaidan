@@ -615,15 +615,17 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	@Override
 	public void nextValidId(int orderId) {
-		currentOrderId = orderId;
+		if (currentOrderId < 0)
+			currentOrderId = orderId;
 		retryTimes = 0;
-		System.out.println("currentOrderId:" + currentOrderId);
+		System.out.println("currentOrderId:" + currentOrderId + ", orderId:" + orderId);
 	}
 	
 	public static int retryTimes = 0;
 	
 	@Override
 	public void connectionClosed() {
+		currentOrderId = -1;
 		BackTestCSVWriter.writeText(YosonEWrapper.getConnectionPath(), "Connection close at " + DateUtils.yyyyMMddHHmmss2().format(new Date())  + Global.lineSeparator, true);
 		if(retryTimes < 10) {
 			retryTimes++;

@@ -67,7 +67,7 @@ public class EClientSocketUtils {
 					strategy.setActive(false);
 				}			
 			}
-//			YosonEWrapper.clear();
+			YosonEWrapper.clear();
 		}
 		return true;
 	}
