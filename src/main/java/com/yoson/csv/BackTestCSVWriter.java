@@ -99,13 +99,7 @@ public class BackTestCSVWriter {
 	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult) {
 		StringBuilder content = new StringBuilder();
 		content.append(testNo + ",")
-		.append(backTestResult.testSet.gettShort()  +  "_")
-		.append(backTestResult.testSet.gettLong() + "_")
-		.append(backTestResult.testSet.getHld() + "_")
-		.append(backTestResult.testSet.getStopLoss() + "_")
-		.append(backTestResult.testSet.getTradeStopLoss() + "_")
-		.append(backTestResult.testSet.getInstantTradeStoploss() + "_")
-		.append(backTestResult.testSet.getItsCounter() + ",")
+		.append(backTestResult.testSet.getKey() + ",")
 		.append(mainUIParam.getVersion() + ",")
 		.append(mainUIParam.getSource() + ",")
 		.append(backTestResult.testSet.gettShort() + ",")
@@ -160,7 +154,7 @@ public class BackTestCSVWriter {
 
 	public static void initBTPnLAndTradeAndProfitAndLossContent(int id, MainUIParam mainUIParam, BackTestResult backTestResult, StringBuilder pnlContent, StringBuilder tradContent) {
 		if (id == 1) {
-			StringBuilder allProfitAndLossResultsHeader = new StringBuilder("Test no.,");
+			StringBuilder allProfitAndLossResultsHeader = new StringBuilder("Test no.,key,");
 			for (PerDayRecord perDayRecord : backTestResult.dayRecords) {
 				String dateStr = perDayRecord.getDateStr();
 				allProfitAndLossResultsHeader.append(dateStr + ",");
@@ -168,7 +162,7 @@ public class BackTestCSVWriter {
 			allProfitAndLossResultsHeader.append("\n");
 			BackTestTask.allProfitAndLossResults.append(allProfitAndLossResultsHeader);
 		}
-		BackTestTask.allProfitAndLossResults.append(id + ",");
+		BackTestTask.allProfitAndLossResults.append(id + "," + backTestResult.testSet.getKey() + ",");
 		for (PerDayRecord perDayRecord : backTestResult.dayRecords) {
 //			String dateStr = perDayRecord.getDateStr();
 //			Map<Integer, String> profitAndLossMap = BackTestTask.allProfitAndLossResults.get(dateStr);
@@ -179,26 +173,14 @@ public class BackTestCSVWriter {
 //			profitAndLossMap.put(id, perDayRecord.totalPnL + ",");
 			BackTestTask.allProfitAndLossResults.append(perDayRecord.totalPnL + ",");
 			
-			pnlContent.append(backTestResult.testSet.gettShort()+"_")
-			.append(backTestResult.testSet.gettLong()+"_")
-			.append(backTestResult.testSet.getHld()+"_")
-			.append(backTestResult.testSet.getStopLoss()+"_")
-			.append(backTestResult.testSet.getTradeStopLoss()+"_")
-			.append(backTestResult.testSet.getInstantTradeStoploss()+"_")
-			.append(backTestResult.testSet.getItsCounter()+",")		
+			pnlContent.append(backTestResult.testSet.getKey() + ",")		
 			.append(perDayRecord.getDateStr() + ",")
 			.append(mainUIParam.getVersion() + ",")
 			.append(mainUIParam.getSource() + ",")
 			.append(perDayRecord.totalPnL + ",")
 			.append("\n"); 
 			
-			tradContent.append(backTestResult.testSet.gettShort() + "_")
-			.append(backTestResult.testSet.gettLong() + "_")
-			.append(backTestResult.testSet.getHld() + "_")
-			.append(backTestResult.testSet.getStopLoss() + "_")
-			.append(backTestResult.testSet.getTradeStopLoss() + "_")
-			.append(backTestResult.testSet.getInstantTradeStoploss() + "_")
-			.append(backTestResult.testSet.getItsCounter() + ",")
+			tradContent.append(backTestResult.testSet.getKey() + ",")
 			.append(mainUIParam.getVersion() + ",")
 			.append(mainUIParam.getSource() + ",")
 			.append(perDayRecord.getDateStr() + ",")
