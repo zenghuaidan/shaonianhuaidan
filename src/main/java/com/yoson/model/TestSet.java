@@ -233,4 +233,16 @@ public class TestSet {
 		this.lunchLastNumberOfMinutesClearPosition = lunchLastNumberOfMinutesClearPosition;
 	}
 
+	public String getKey() {
+		return gettShort() + "_" +
+		gettLong() + "_" +
+		gettLong2() + "_" +
+		getHld() + "_" +
+		getStopLoss() + "_" +
+		getTradeStopLoss() + "_" +
+		getInstantTradeStoploss() + "_" +
+		getItsCounter() + "_" +
+		getStopGainPercent() + "_" +
+		getStopGainTrigger();
+	}
 }
