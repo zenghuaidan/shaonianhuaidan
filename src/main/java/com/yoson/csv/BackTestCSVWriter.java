@@ -99,16 +99,7 @@ public class BackTestCSVWriter {
 	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult) {
 		StringBuilder content = new StringBuilder();
 		content.append(testNo + ",")
-		.append(backTestResult.testSet.getCpTimer() + "_")
-		.append(backTestResult.testSet.getCpBuffer() + "_")
-		.append(backTestResult.testSet.getCpHitRate() + "_")
-		.append(backTestResult.testSet.getCpSmooth() + "_")
-		.append(backTestResult.testSet.getEstimationBuffer() + "_")
-		.append(backTestResult.testSet.getActionTrigger() + "_")
-		.append(backTestResult.testSet.getActionCounting() + "_")
-		.append(backTestResult.testSet.getTradeStopLossTrigger() + "_")
-		.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + "_")
-		.append(backTestResult.testSet.getAbsoluteTradeStopLoss()  +  ",")
+		.append(backTestResult.testSet.getKey()  +  ",")
 		.append(mainUIParam.getVersion() + ",")
 		.append(mainUIParam.getSource() + ",")
 		.append(backTestResult.testSet.getCpTimer() + ",")
@@ -166,7 +157,7 @@ public class BackTestCSVWriter {
 
 	public static void initBTPnLAndTradeAndProfitAndLossContent(int id, MainUIParam mainUIParam, BackTestResult backTestResult, StringBuilder pnlContent, StringBuilder tradContent) {
 		if (id == 1) {
-			StringBuilder allProfitAndLossResultsHeader = new StringBuilder("Test no.,");
+			StringBuilder allProfitAndLossResultsHeader = new StringBuilder("Test no.,key,");
 			for (PerDayRecord perDayRecord : backTestResult.dayRecords) {
 				String dateStr = perDayRecord.getDateStr();
 				allProfitAndLossResultsHeader.append(dateStr + ",");
@@ -174,7 +165,7 @@ public class BackTestCSVWriter {
 			allProfitAndLossResultsHeader.append("\n");
 			BackTestTask.allProfitAndLossResults.append(allProfitAndLossResultsHeader);
 		}
-		BackTestTask.allProfitAndLossResults.append(id + ",");
+		BackTestTask.allProfitAndLossResults.append(id + "," + backTestResult.testSet.getKey()  +  ",");
 		for (PerDayRecord perDayRecord : backTestResult.dayRecords) {
 //			String dateStr = perDayRecord.getDateStr();
 //			Map<Integer, String> profitAndLossMap = BackTestTask.allProfitAndLossResults.get(dateStr);
@@ -185,32 +176,14 @@ public class BackTestCSVWriter {
 //			profitAndLossMap.put(id, perDayRecord.totalPnL + ",");
 			BackTestTask.allProfitAndLossResults.append(perDayRecord.totalPnL + ",");
 			
-			pnlContent.append(backTestResult.testSet.getCpTimer()  +  "_")
-			.append(backTestResult.testSet.getCpBuffer() + "_")
-			.append(backTestResult.testSet.getCpHitRate() + "_")
-			.append(backTestResult.testSet.getCpSmooth() + "_")
-			.append(backTestResult.testSet.getEstimationBuffer() + "_")
-			.append(backTestResult.testSet.getActionTrigger() + "_")
-			.append(backTestResult.testSet.getActionCounting() + "_")
-			.append(backTestResult.testSet.getTradeStopLossTrigger() + "_")
-			.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + "_")
-			.append(backTestResult.testSet.getAbsoluteTradeStopLoss()  +  ",")
+			pnlContent.append(backTestResult.testSet.getKey()  +  ",")
 			.append(perDayRecord.getDateStr() + ",")
 			.append(mainUIParam.getVersion() + ",")
 			.append(mainUIParam.getSource() + ",")
 			.append(perDayRecord.totalPnL + ",")
 			.append("\n"); 
 			
-			tradContent.append(backTestResult.testSet.getCpTimer()  +  "_")
-			.append(backTestResult.testSet.getCpBuffer() + "_")
-			.append(backTestResult.testSet.getCpHitRate() + "_")
-			.append(backTestResult.testSet.getCpSmooth() + "_")
-			.append(backTestResult.testSet.getEstimationBuffer() + "_")
-			.append(backTestResult.testSet.getActionTrigger() + "_")
-			.append(backTestResult.testSet.getActionCounting() + "_")
-			.append(backTestResult.testSet.getTradeStopLossTrigger() + "_")
-			.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + "_")
-			.append(backTestResult.testSet.getAbsoluteTradeStopLoss()  +  ",")
+			tradContent.append(backTestResult.testSet.getKey()  +  ",")
 			.append(mainUIParam.getVersion() + ",")
 			.append(mainUIParam.getSource() + ",")
 			.append(perDayRecord.getDateStr() + ",")

@@ -234,4 +234,17 @@ public class TestSet {
 		this.unit = unit;
 	}
 
+	public String getKey() {
+		return getCpTimer()  +  "_" +
+		getCpBuffer() + "_" +
+		getCpHitRate() + "_" +
+		getCpSmooth() + "_" +
+		getEstimationBuffer() + "_" +
+		getActionTrigger() + "_" +
+		getActionCounting() + "_" +
+		getTradeStopLossTrigger() + "_" +
+		getTradeStopLossTriggerPercent() + "_" +
+		getAbsoluteTradeStopLoss();
+	}
+	
 }
