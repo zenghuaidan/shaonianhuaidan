@@ -1150,7 +1150,7 @@ public class IndexController  implements StatusCallBack {
 	
 	@Override
 	public void updateStatus(String status) {
-		if (statusStr.length() >= 1000) {
+		if (statusStr.length() >= 10000) {
 			statusStr = new StringBuilder();
 		}
 		statusStr.append(status + "<br/>");
