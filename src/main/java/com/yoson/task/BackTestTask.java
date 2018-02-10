@@ -209,6 +209,7 @@ public class BackTestTask implements Runnable {
 				BackTestTask.allBTTradeResults.clear();
 				BackTestTask.allBTSummaryResults.clear();
 				BackTestTask.allPositivePnlResult.clear();
+				BackTestTask.allProfitAndLossResults = new StringBuilder();
 				BackTestCSVWriter.writeText(mainUIParam.getStepPath(), index + "," + testSets.size(), false);
 				first = false;
 			}
@@ -240,6 +241,7 @@ public class BackTestTask implements Runnable {
 		BackTestTask.rowData = null;
 		BackTestTask.sortedDateList = null;
 		BackTestTask.allPositivePnlResult = null;
+		BackTestTask.allProfitAndLossResults = null;
 		System.gc();
 		Runtime.getRuntime().freeMemory();
 	}
