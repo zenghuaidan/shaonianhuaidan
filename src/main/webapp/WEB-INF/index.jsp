@@ -286,6 +286,12 @@
 							      <td></td>
 							   </tr>
 							   <tr>
+							      <td>n For Pnl(separate by comman, e.g. 2,4,6)</td>
+							      <td><input name="nForPnl" type="text" value="${mainUIParam.nForPnl}" /></td>
+							      <td></td>
+							      <td></td>
+							   </tr>
+							   <tr>
 							      <td><input type="button" onclick="hkClick();" style="width:100%" value="HK"/></td>
 							      <td><input type="button" onclick="km1Click();" style="width:100%" value="KM1"/></td>
 							      <td><input type="button" onclick="nk1Click();" style="width:100%" value="NK1"/></td>
