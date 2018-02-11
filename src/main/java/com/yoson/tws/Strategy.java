@@ -53,6 +53,8 @@ public class Strategy implements Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+		if (this.active)
+			this.activeTime = new Date().getTime();
 	}
 
 	public long getActiveTime() {
@@ -65,7 +67,7 @@ public class Strategy implements Serializable {
 
 	public void active() {
 		if(!active) {
-			this.active = true;		
+			this.setActive(true);
 			this.orderMap = new ConcurrentHashMap<Integer, Order>();
 			this.cancelOrder = new ConcurrentHashMap<Integer, Boolean>();
 			this.orderCountMap = new ConcurrentHashMap<Integer, Integer>();
@@ -73,7 +75,6 @@ public class Strategy implements Serializable {
 			this.pnl = 0;
 			this.morningPnl = 0;
 			this.tradeCount = 0;
-			this.activeTime = new Date().getTime();
 		}
 	}
 
