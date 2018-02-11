@@ -6,7 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -14,6 +16,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import com.yoson.chart.chartWriter;
+import com.yoson.date.DateUtils;
 import com.yoson.model.BackTestResult;
 import com.yoson.model.MainUIParam;
 import com.yoson.model.PerDayRecord;
@@ -21,7 +24,9 @@ import com.yoson.model.PerSecondRecord;
 import com.yoson.task.BackTestTask;
 
 public class BackTestCSVWriter {	
-	public static final String profitAndLossFileName = "Back Test  ProfitAndLoss.csv";
+	public static final String profitAndLossFileName = "Back Test ProfitAndLoss.csv";
+	public static final String profitAndLossByDateFileName = "Back Test ProfitAndLoss By Date.csv";
+	public static final String profitAndLossByDateRangeFileName = "Back Test ProfitAndLoss By Date Range.csv";
 	public static final String btSummaryFileName = "BT_Summary.csv";
 	public static final String btPnlFileName = "BT_PnL.csv";
 	public static final String btTradeFileName = "BT_Trade.csv";
@@ -167,13 +172,14 @@ public class BackTestCSVWriter {
 		}
 		BackTestTask.allProfitAndLossResults.append(id + "," + backTestResult.testSet.getKey()  +  ",");
 		for (PerDayRecord perDayRecord : backTestResult.dayRecords) {
-//			String dateStr = perDayRecord.getDateStr();
-//			Map<Integer, String> profitAndLossMap = BackTestTask.allProfitAndLossResults.get(dateStr);
-//			if(profitAndLossMap == null) {
-//				profitAndLossMap = new TreeMap<Integer, String>();
-//				BackTestTask.allProfitAndLossResults.put(dateStr, profitAndLossMap);
-//			}
-//			profitAndLossMap.put(id, perDayRecord.totalPnL + ",");
+			Long dateLong = perDayRecord.getDate().getTime();
+			if(!BackTestTask.allProfitAndLossResultMap.containsKey(dateLong) || (Double)BackTestTask.allProfitAndLossResultMap.get(dateLong).get(0) < perDayRecord.totalPnL) {
+				List<Object> pnlInfo = new ArrayList<Object>();
+				pnlInfo.add(perDayRecord.totalPnL);
+				pnlInfo.add(id);
+				pnlInfo.add(backTestResult.testSet.getKey());
+				BackTestTask.allProfitAndLossResultMap.put(dateLong, pnlInfo);
+			}
 			BackTestTask.allProfitAndLossResults.append(perDayRecord.totalPnL + ",");
 			
 			pnlContent.append(backTestResult.testSet.getKey()  +  ",")
@@ -201,6 +207,60 @@ public class BackTestCSVWriter {
 			}
 		}
 		BackTestTask.allProfitAndLossResults.append("\n");
+	}
+	
+	public static String getBestPnlByDate() {
+		StringBuilder content = new StringBuilder();
+		content.append("Date,Test no.,key,Total Pnl").append("\n");
+		if(BackTestTask.allProfitAndLossResultMap != null) {
+			for(Long dateLong : BackTestTask.allProfitAndLossResultMap.keySet()) {
+				List<Object> pnlInfo = BackTestTask.allProfitAndLossResultMap.get(dateLong);
+				Date date = new Date(dateLong);
+				String dateStr = DateUtils.yyyyMMdd().format(date);
+				content.append(dateStr + "," + pnlInfo.get(1) + "," + pnlInfo.get(2) + "," + pnlInfo.get(0)).append("\n");
+			}
+		}
+		return content.toString();
+	}
+	
+	public static String getBestPnlBySpecifyDates(Set<Integer> specifyDateRanges) {
+		StringBuilder content = new StringBuilder();
+		if(specifyDateRanges != null && specifyDateRanges.size() > 0) {
+			content.append("Date,");
+			for(int specifyDateRange : specifyDateRanges) {
+				content.append("," + "n=" + specifyDateRange + " Test no.," + "n=" + specifyDateRange + " key," + "n=" + specifyDateRange + " Total Pnl,");
+			}
+			content.append("\n");
+			if(BackTestTask.allProfitAndLossResultMap != null) {
+				List<List<Object>> allProfitAndLossResultList = new ArrayList<List<Object>>();
+				for(Long dateLong : BackTestTask.allProfitAndLossResultMap.keySet()) {
+					allProfitAndLossResultList.add(BackTestTask.allProfitAndLossResultMap.get(dateLong));
+				}
+				int i = 1;
+				for(Long dateLong : BackTestTask.allProfitAndLossResultMap.keySet()) {
+					Date date = new Date(dateLong);
+					String dateStr = DateUtils.yyyyMMdd().format(date);
+					content.append(dateStr + ",");
+					for(int specifyDateRange : specifyDateRanges) {
+						if(specifyDateRange >= i) {
+							content.append(",0,0,0,");							
+						} else {
+							int j = i - specifyDateRange - 1;
+							List<Object> maxPnlInfo = allProfitAndLossResultList.get(j);
+							for(; j < i - 1; j++) {
+								if((double)maxPnlInfo.get(0) < (double)allProfitAndLossResultList.get(j).get(0)) {
+									maxPnlInfo = allProfitAndLossResultList.get(j);
+								}
+							}
+							content.append("," + maxPnlInfo.get(1) + "," + maxPnlInfo.get(2) + "," + maxPnlInfo.get(0) + ",");
+						}						
+					}
+					content.append("\n");
+					i++;
+				}
+			}
+		}
+		return content.toString();
 	}
 	
 	public static String getATradingDayContent(MainUIParam mainUIParam, PerDayRecord perDayRecord)

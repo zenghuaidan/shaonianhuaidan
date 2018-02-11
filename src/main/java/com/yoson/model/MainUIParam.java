@@ -25,6 +25,7 @@ public class MainUIParam extends TestSet {
 	@Expose
 	private String source;
 	private String version;
+	private String nForPnl;
 	
 	private int cpTimerTo;
 	private int cpTimerLiteral;
@@ -87,8 +88,15 @@ public class MainUIParam extends TestSet {
 	public void setVersion(String version) {
 		this.version = version;
 	}
-
 	
+	public String getnForPnl() {
+		return nForPnl;
+	}
+
+	public void setnForPnl(String nForPnl) {
+		this.nForPnl = nForPnl;
+	}
+
 	public int getCpTimerTo() {
 		return cpTimerTo;
 	}

@@ -347,7 +347,8 @@ function getMainUIParam() {
 	   "brokenDateList":brokendateArr,
 	   "orderTicker":$.trim($("[name='orderTicker']").val()),
 	   "includeMorningData":$("[name='includeMorningData']").is(":checked"),
-	   "ignoreLunchTime":$("[name='ignoreLunchTime']").is(":checked")	   
+	   "ignoreLunchTime":$("[name='ignoreLunchTime']").is(":checked"),	
+	   "nForPnl":$("[name='nForPnl']").val()
 	};
 }
 
