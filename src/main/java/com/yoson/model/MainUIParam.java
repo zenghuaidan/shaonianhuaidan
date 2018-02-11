@@ -25,6 +25,7 @@ public class MainUIParam extends TestSet {
 	@Expose
 	private String source;
 	private String version;
+	private String nForPnl;
 
 	private int tShortTo;
 	private int tShortLiteral;
@@ -87,9 +88,17 @@ public class MainUIParam extends TestSet {
 	public void setVersion(String version) {
 		this.version = version;
 	}
-
+	
 	public int gettShortTo() {
 		return tShortTo;
+	}
+
+	public String getnForPnl() {
+		return nForPnl;
+	}
+
+	public void setnForPnl(String nForPnl) {
+		this.nForPnl = nForPnl;
 	}
 
 	public void settShortTo(int tShortTo) {

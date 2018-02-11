@@ -11,6 +11,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -41,6 +44,7 @@ public class BackTestTask implements Runnable {
 	public static List<String> allBTTradeResults;
 	public static String aTradingDayForCheckResult;
 	public static StringBuilder allProfitAndLossResults;
+	public static Map<Long, List<Object>> allProfitAndLossResultMap;
 	public static Map<String, Integer> marketTimeMap;
 	public static Map<String, Double> sumOfLastTrade;
 	public static Map<String, List<ScheduleData>> rowData;
@@ -71,7 +75,7 @@ public class BackTestTask implements Runnable {
 		BackTestTask.allBTPnlResults = new ArrayList<String>();
 		BackTestTask.allBTTradeResults = new ArrayList<String>();
 		BackTestTask.aTradingDayForCheckResult = "";
-//		BackTestTask.allProfitAndLossResults = new TreeMap<String, Map<Integer, String>>(new DateComparator());
+		BackTestTask.allProfitAndLossResultMap = new TreeMap<Long, List<Object>>();
 		BackTestTask.allProfitAndLossResults = new StringBuilder();
 		
 		BackTestTask.rowData = new HashMap<String, List<ScheduleData>>();		
@@ -223,7 +227,15 @@ public class BackTestTask implements Runnable {
 			if (!BackTestTask.running)
 				break;
 		}
-		
+		Set<Integer> specifyDateRanges = new TreeSet<Integer>();
+		for(String nForPnl : mainUIParam.getnForPnl().split(",")) {
+			try {
+				specifyDateRanges.add(Integer.parseInt(nForPnl));				
+			} catch (Exception e) {
+			}
+		}
+		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(), true);
+		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges), true);
 		milliseconds = System.currentTimeMillis() - start;
 		callBack.updateStatus(getStatus("All task done, total time cost: " + DateUtils.dateDiff(milliseconds)));
 		
@@ -239,6 +251,7 @@ public class BackTestTask implements Runnable {
 		BackTestTask.allBTTradeResults = null;
 		BackTestTask.aTradingDayForCheckResult = null;
 		BackTestTask.allProfitAndLossResults = null;
+		BackTestTask.allProfitAndLossResultMap = null;
 		BackTestTask.marketTimeMap = null;
 		BackTestTask.sumOfLastTrade = null;
 		BackTestTask.rowData = null;
