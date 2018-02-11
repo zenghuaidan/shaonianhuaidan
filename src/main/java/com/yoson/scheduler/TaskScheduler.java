@@ -82,7 +82,7 @@ public class TaskScheduler {
 						// this means have afternoon data, then it is set to don't ingore lunch time but not including morning data, then just add afternoon data 
 						scheduleDatas.addAll(resultDatas.get(1));
 						hasAfternoonData = true;
-					} else {
+					} else if(resultDatas.size() > 0) {
 						// this means ignore lunch time is set to true or afternoon is not coming yet
 						scheduleDatas.addAll(resultDatas.get(0));
 					}
