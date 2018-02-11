@@ -224,4 +224,77 @@ public class YosonEWrapper extends BasicEWrapper {
 		
 	}
 
+//	@Override
+//    public void tickPrice( int tickerId, int field, double price, int canAutoExecute) {
+//		String path = getPath(EClientSocketUtils.initAndReturnLiveDataFolder());
+//		BackTestCSVWriter.writeText(path, "tickPrice:" 
+//				+ tickerId + ","
+//				+ field + ","
+//				+ price + ","
+//				+ canAutoExecute + "," + Global.lineSeparator, true);		
+//	}
+//    
+//	@Override
+//	public void tickSize( int tickerId, int field, int size) {
+//		String path = getPath(EClientSocketUtils.initAndReturnLiveDataFolder());
+//		BackTestCSVWriter.writeText(path, "tickSize:" 
+//				+ tickerId + ","
+//				+ field + ","
+//				+ size + "," + Global.lineSeparator, true);		
+//	}
+//    
+//	@Override
+//	public void tickOptionComputation( int tickerId, int field, double impliedVol,
+//    		double delta, double optPrice, double pvDividend,
+//    		double gamma, double vega, double theta, double undPrice) {
+//		String path = getPath(EClientSocketUtils.initAndReturnLiveDataFolder());
+//		BackTestCSVWriter.writeText(path, "tickOptionComputation:" 
+//				+ tickerId + ","
+//				+ field + ","
+//				+ impliedVol + ","
+//				+ delta + ","
+//				+ optPrice + ","
+//				+ pvDividend + ","
+//				+ gamma + ","
+//				+ vega + ","
+//				+ theta + ","
+//				+ undPrice + "," + Global.lineSeparator, true);		
+//	}
+//	
+//	@Override
+//	public void tickGeneric(int tickerId, int tickType, double value) {
+//		String path = getPath(EClientSocketUtils.initAndReturnLiveDataFolder());
+//		BackTestCSVWriter.writeText(path, "tickGeneric:" 
+//				+ tickerId + ","
+//				+ tickType + ","
+//				+ value + "," + Global.lineSeparator, true);			
+//	}
+//	
+//	@Override
+//	public void tickString(int tickerId, int tickType, String value) {
+//		String path = getPath(EClientSocketUtils.initAndReturnLiveDataFolder());
+//		BackTestCSVWriter.writeText(path, "tickString:" 
+//				+ tickerId + ","
+//				+ tickType + ","
+//				+ value + "," + Global.lineSeparator, true);			
+//	}
+//	
+//	@Override
+//	public void tickEFP(int tickerId, int tickType, double basisPoints,
+//			String formattedBasisPoints, double impliedFuture, int holdDays,
+//			String futureExpiry, double dividendImpact, double dividendsToExpiry) {
+//		String path = getPath(EClientSocketUtils.initAndReturnLiveDataFolder());
+//		BackTestCSVWriter.writeText(path, "tickEFP:" 
+//				+ tickerId + ","
+//				+ tickType + ","
+//				+ basisPoints + ","
+//				+ formattedBasisPoints + ","
+//				+ impliedFuture + ","
+//				+ holdDays + ","
+//				+ futureExpiry + ","
+//				+ dividendImpact + ","
+//				+ dividendsToExpiry + "," + Global.lineSeparator, true);
+//	}
+
+	
 }
