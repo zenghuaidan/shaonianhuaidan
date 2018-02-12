@@ -127,6 +127,7 @@ public class IndexController {
 					    contract.m_exchange = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
 					    contract.m_localSymbol = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
 					    contract.m_expiry = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+					    contract.tif = "IOC";
 					    try {
 					    	// if time in excel is not validate, then use the GUI time
 					    	_startTime = (Date)row.get(j++);
