@@ -191,15 +191,15 @@ public class YosonEWrapper extends BasicEWrapper {
 		String path = getPath(folder);
 		switch (field) {
 		case 0:
-			String bidResult = time + "," + (priceMap.contains(tickerId + BID) ? priceMap.get(tickerId + BID) : 0) + "," + size + Global.lineSeparator;
+			String bidResult = time + "," + (priceMap.containsKey(tickerId + BID) ? priceMap.get(tickerId + BID) : 0) + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(path, BID + "," + bidResult, true);			
 			break;
 		case 3:
-			String askResult = time + "," + (priceMap.contains(tickerId + ASK) ? priceMap.get(tickerId + ASK) : 0) + "," + size + Global.lineSeparator;
+			String askResult = time + "," + (priceMap.containsKey(tickerId + ASK) ? priceMap.get(tickerId + ASK) : 0) + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(path, ASK + "," + askResult, true);			
 			break;
 		case 5:
-			String tradeResult = time + "," + (priceMap.contains(tickerId + TRADE) ? priceMap.get(tickerId + TRADE) : 0) + "," + size + Global.lineSeparator;
+			String tradeResult = time + "," + (priceMap.containsKey(tickerId + TRADE) ? priceMap.get(tickerId + TRADE) : 0) + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(path, TRADE + "," + tradeResult, true);			
 			break;		
 		}
