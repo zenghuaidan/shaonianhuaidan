@@ -947,6 +947,31 @@ public class IndexController  implements StatusCallBack {
 		}
 	}
 	
+	public static void genCleanLogByDate(String basePath) {
+		FileInputStream fileInputStream = null;
+		FileOutputStream fileOutputStream = null;
+		try {
+			String fileIn = FilenameUtils.concat(basePath, "log.txt");
+			String fileOut = FilenameUtils.concat(basePath, "log_by_date.txt");
+			fileInputStream = new FileInputStream(fileIn);
+			List<String> readLines = IOUtils.readLines(fileInputStream);
+			fileOutputStream = new FileOutputStream(fileOut);
+			for (String line : readLines) {
+				if (line.trim().length() == 0 || !line.contains("action:BUY,") && !line.contains("action:SELL,"))
+					continue;
+				IOUtils.write(line, fileOutputStream);
+			}						
+			
+		} catch (Exception e) {
+		} finally {
+			try {
+				fileInputStream.close();
+				fileOutputStream.close();								
+			} catch (Exception e) {
+			}
+		}
+	}
+	
 	@RequestMapping("downloadlive")
 	public void downloadlive(@RequestParam String id, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException {
 		String downloadFolder = genLiveResult(id);
@@ -992,6 +1017,7 @@ public class IndexController  implements StatusCallBack {
 		YosonEWrapper.genTradingDayPerSecondDetails(downloadFolder, scheduledDataRecords);
 		
 		genCleanLog(downloadFolder);
+		genCleanLogByDate(downloadFolder);
 		
 		if (!EClientSocketUtils.isConnected())//don't do BT during live trading
 			new IndexController().runTest(downloadFolder, true);
