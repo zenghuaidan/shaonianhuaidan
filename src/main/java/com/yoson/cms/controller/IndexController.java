@@ -977,7 +977,16 @@ public class IndexController  implements StatusCallBack {
 		String downloadFolder = genLiveResult(id);
 		execDownload(response, downloadFolder, id);
 	}
-
+	
+	@RequestMapping("runBTWithLiveData")
+	@ResponseBody
+	public String runBTWithLiveData(@RequestParam String id, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException {
+		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
+		String downloadFolder = FilenameUtils.concat(dataFolder, id);
+		new IndexController().runTest(downloadFolder, true);
+		return "Success";
+	}
+	
 	private void execDownload(HttpServletResponse response, String downloadFolder, String downloadFileName) throws IOException {
 		File downloadFolderFile = new File(downloadFolder);
 		if (downloadFolderFile.exists()) {
@@ -1018,9 +1027,7 @@ public class IndexController  implements StatusCallBack {
 		
 		genCleanLog(downloadFolder);
 		genCleanLogByDate(downloadFolder);
-		
-		if (!EClientSocketUtils.isConnected())//don't do BT during live trading
-			new IndexController().runTest(downloadFolder, true);
+	
 		return downloadFolder;
 	}
 	
