@@ -224,23 +224,24 @@ public class BackTestTask implements Runnable {
 			if (!BackTestTask.running)
 				break;
 		}
-		Set<Integer> specifyDateRanges = new TreeSet<Integer>();
-		if (!StringUtils.isBlank(mainUIParam.getnForPnl())) {
-			for(String nForPnl : mainUIParam.getnForPnl().split(",")) {
-				try {
-					specifyDateRanges.add(Integer.parseInt(nForPnl));				
-				} catch (Exception e) {
-				}
-			}			
-		}
-		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(), true);
-		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges), true);
 		milliseconds = System.currentTimeMillis() - start;
 		callBack.updateStatus(getStatus("All task done, total time cost: " + DateUtils.dateDiff(milliseconds)));
 		
 //		BackTestCSVWriter.writeCSVResult(mainUIParam);
-		if (!isLiveData)
+		if (!isLiveData) {
+			Set<Integer> specifyDateRanges = new TreeSet<Integer>();
+			if (!StringUtils.isBlank(mainUIParam.getnForPnl())) {
+				for(String nForPnl : mainUIParam.getnForPnl().split(",")) {
+					try {
+						specifyDateRanges.add(Integer.parseInt(nForPnl));				
+					} catch (Exception e) {
+					}
+				}			
+			}
+			BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(), true);
+			BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges), true);
 			SQLUtils.saveTestSetResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), mainUIParam.getVersion().replaceAll(" ", ""));
+		}
 		gc();
 	}
 
