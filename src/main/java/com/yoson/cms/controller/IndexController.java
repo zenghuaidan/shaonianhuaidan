@@ -959,7 +959,7 @@ public class IndexController  implements StatusCallBack {
 			for (String line : readLines) {
 				if (line.trim().length() == 0 || !line.contains("action:BUY,") && !line.contains("action:SELL,"))
 					continue;
-				IOUtils.write(line, fileOutputStream);
+				IOUtils.write(line + System.lineSeparator(), fileOutputStream);
 			}						
 			
 		} catch (Exception e) {

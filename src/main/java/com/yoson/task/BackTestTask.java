@@ -225,11 +225,13 @@ public class BackTestTask implements Runnable {
 				break;
 		}
 		Set<Integer> specifyDateRanges = new TreeSet<Integer>();
-		for(String nForPnl : mainUIParam.getnForPnl().split(",")) {
-			try {
-				specifyDateRanges.add(Integer.parseInt(nForPnl));				
-			} catch (Exception e) {
-			}
+		if (!StringUtils.isBlank(mainUIParam.getnForPnl())) {
+			for(String nForPnl : mainUIParam.getnForPnl().split(",")) {
+				try {
+					specifyDateRanges.add(Integer.parseInt(nForPnl));				
+				} catch (Exception e) {
+				}
+			}			
 		}
 		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(), true);
 		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges), true);
