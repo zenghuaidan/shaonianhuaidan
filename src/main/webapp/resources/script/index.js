@@ -642,6 +642,7 @@ function renderLiveDataFileList() {
 //	    				"<input onclick='start(\"" + datas[0] + "\")' type='button' value='Start'/>" +
 //	    				"<input onclick='stop(\"" + datas[0] + "\")' type='button' value='Stop'/>" +
 	    				"<input onclick='deleteLiveItem(\"" + data[i] + "\")' type='button' value='Delete'/>" +
+	    				"<input onclick='runBTWithLiveData(\"" + data[i] + "\")' type='button' value='Run BT'/>" +
 	    				"<br/>"
 	    	}
 	    	$("#livefiles").html(lis);
@@ -700,6 +701,18 @@ function deleteLiveItem(id) {
 	    url: "deleteLiveItem?id=" + id,
 	    success: function(data) {
 	    	renderLiveDataFileList();
+	    },
+	    error: function() {
+	    }
+	});
+}
+
+function runBTWithLiveData(id) {
+	$.ajax({
+	    type: "GET",
+	    url: "runBTWithLiveData?id=" + id,
+	    success: function(data) {
+	    	alert("Request submited!")
 	    },
 	    error: function() {
 	    }
