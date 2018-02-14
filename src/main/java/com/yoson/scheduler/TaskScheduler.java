@@ -43,7 +43,7 @@ public class TaskScheduler {
 						EClientSocketUtils.disconnect();
 
 						//trigger auto backtest, only the live have stop then can do the BT
-						IndexController.genLiveResult(EClientSocketUtils.contract.getSymbol() + "_" + EClientSocketUtils.id);
+						IndexController.runBTWithLiveData(EClientSocketUtils.contract.getSymbol() + "_" + EClientSocketUtils.id);
 					}					
 				}
 				return;
