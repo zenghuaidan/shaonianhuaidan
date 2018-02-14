@@ -981,10 +981,15 @@ public class IndexController  implements StatusCallBack {
 	@RequestMapping("runBTWithLiveData")
 	@ResponseBody
 	public String runBTWithLiveData(@RequestParam String id, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException {
+		runBTWithLiveData(id);
+		return "Success";
+	}
+	
+	public static String runBTWithLiveData(String id) {
 		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
 		String downloadFolder = FilenameUtils.concat(dataFolder, id);
 		new IndexController().runTest(downloadFolder, true);
-		return "Success";
+		return downloadFolder;
 	}
 	
 	private void execDownload(HttpServletResponse response, String downloadFolder, String downloadFileName) throws IOException {
