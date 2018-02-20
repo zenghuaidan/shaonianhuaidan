@@ -40,6 +40,13 @@ public class SQLUtils {
 				}
 				sql += " and (" + String.join(" or ", datePeriodCriteria) + ")";
 			}
+			
+			if(!StringUtils.isNullOrEmpty(mainUIParam.getMarketStartTime()) 
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getLunchStartTimeFrom()) 
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getLunchStartTimeTo()) 
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getMarketCloseTime())) {
+				sql += " and (time >='" + mainUIParam.getMarketStartTime() + "' and time <= '" + mainUIParam.getLunchStartTimeFrom() + "' or time >='" + mainUIParam.getLunchStartTimeTo() + "' and time <= '" + mainUIParam.getMarketCloseTime() + "')";
+			}
 			sql += " order by date asc, time asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
 			return sqlQuery.list();
