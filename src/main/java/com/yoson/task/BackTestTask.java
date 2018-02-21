@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
@@ -43,8 +42,7 @@ public class BackTestTask implements Runnable {
 	public static List<String> allBTPnlResults;
 	public static List<String> allBTTradeResults;
 	public static String aTradingDayForCheckResult;
-	public static StringBuilder allProfitAndLossResults;
-	public static Map<Long, List<Object>> allProfitAndLossResultMap;
+	public static StringBuilder allProfitAndLossResults;	
 	public static Map<String, Integer> marketTimeMap;
 	public static Map<String, Double> sumOfLastTrade;
 	public static Map<String, List<ScheduleData>> rowData;
@@ -70,7 +68,6 @@ public class BackTestTask implements Runnable {
 		BackTestTask.allBTPnlResults = new ArrayList<String>();
 		BackTestTask.allBTTradeResults = new ArrayList<String>();
 		BackTestTask.aTradingDayForCheckResult = "";
-		BackTestTask.allProfitAndLossResultMap = new TreeMap<Long, List<Object>>();
 		BackTestTask.allProfitAndLossResults = new StringBuilder();
 		
 		BackTestTask.rowData = new HashMap<String, List<ScheduleData>>();		
@@ -205,9 +202,9 @@ public class BackTestTask implements Runnable {
 				if (!isLiveData) {
 					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btPnlFileName), (first ? BackTestCSVWriter.getBTPnlHeader() : "") + String.join("", BackTestTask.allBTPnlResults), true);
 					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btTradeFileName), (first ? BackTestCSVWriter.getBTTradeHeader() : "") + String.join("", BackTestTask.allBTTradeResults), true);
-					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName), BackTestTask.allProfitAndLossResults.toString(), true);
 					BackTestCSVWriter.writePositivePnlResult(mainUIParam);					
 				}
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName), BackTestTask.allProfitAndLossResults.toString(), true);
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader(backTestResult.yearPnlMap.keySet()) : "") + String.join("", BackTestTask.allBTSummaryResults), true);
 				
 				BackTestTask.allBTPnlResults.clear();
@@ -234,8 +231,8 @@ public class BackTestTask implements Runnable {
 				}
 			}			
 		}
-		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(), true);
-		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges), true);
+		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(mainUIParam), true);
+		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges, mainUIParam), true);
 		milliseconds = System.currentTimeMillis() - start;
 		callBack.updateStatus(getStatus("All task done, total time cost: " + DateUtils.dateDiff(milliseconds)));
 		
@@ -252,7 +249,6 @@ public class BackTestTask implements Runnable {
 		BackTestTask.allBTTradeResults = null;
 		BackTestTask.aTradingDayForCheckResult = null;
 		BackTestTask.allProfitAndLossResults = null;
-		BackTestTask.allProfitAndLossResultMap = null;
 		BackTestTask.marketTimeMap = null;
 		BackTestTask.sumOfLastTrade = null;
 		BackTestTask.rowData = null;
