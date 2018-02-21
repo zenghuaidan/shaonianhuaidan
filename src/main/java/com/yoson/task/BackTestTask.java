@@ -51,7 +51,7 @@ public class BackTestTask implements Runnable {
 	public static List<String> sortedDateList;
 	public static Map<String, String> allPositivePnlResult;
 	private StatusCallBack callBack;
-	private boolean isLiveData = false;
+	public static boolean isLiveData = false;
 	
 	@Override
 	public void run() {
@@ -62,12 +62,7 @@ public class BackTestTask implements Runnable {
 		} finally {
 			callBack.done();
 		}
-	}
-	
-	public BackTestTask(MainUIParam mainUIParam, StatusCallBack callBack, boolean isLiveData) {
-		this(mainUIParam, callBack);
-		this.isLiveData = isLiveData;
-	}
+	}		
 	
 	public BackTestTask(MainUIParam mainUIParam, StatusCallBack callBack) {
 		this.mainUIParam = mainUIParam;

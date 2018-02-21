@@ -980,10 +980,24 @@ public class IndexController  implements StatusCallBack {
 	
 	@RequestMapping("runBTWithLiveData")
 	@ResponseBody
-	public String runBTWithLiveData(@RequestParam String id, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException {
-		runBTWithLiveData(id);
-		return "Success";
+	public boolean runBTWithLiveData(@RequestParam String id, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException {
+		if (!BackTestTask.running) {
+			runBTWithLiveData(id);
+			return true;
+		}
+		return false;
 	}
+	
+	@RequestMapping("stopBTWithLiveData")
+	@ResponseBody
+	public boolean stopBTWithLiveData(@RequestParam String id, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException {
+		boolean runningBT = BackTestTask.running && BackTestTask.isLiveData && mainUIParam != null && !StringUtils.isBlank(mainUIParam.getSourcePath()) && mainUIParam.getSourcePath().contains(id);
+		if (runningBT) {
+			BackTestTask.running = false;
+			return true;
+		}
+		return false;
+	}		
 	
 	public static String runBTWithLiveData(String id) {
 		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
@@ -1065,9 +1079,9 @@ public class IndexController  implements StatusCallBack {
 	public boolean deleteLiveItem(@RequestParam String id, HttpServletRequest request) throws IOException {
 		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
 		String sourceFolder = FilenameUtils.concat(dataFolder, id);
-		if (!EClientSocketUtils.isConnected()
-				|| EClientSocketUtils.id == null 
-				|| !EClientSocketUtils.id.equals(id)) {
+		boolean runningLiveTrading = EClientSocketUtils.isConnected() && !StringUtils.isBlank(EClientSocketUtils.id) && EClientSocketUtils.id.equals(id);
+		boolean runningBT = BackTestTask.running && BackTestTask.isLiveData && mainUIParam != null && !StringUtils.isBlank(mainUIParam.getSourcePath()) && mainUIParam.getSourcePath().contains(id); 
+		if (!runningLiveTrading && !runningBT) {
 			File file = new File(sourceFolder);
 			if (file.exists()) {
 				FileUtils.forceDelete(file);
@@ -1106,6 +1120,7 @@ public class IndexController  implements StatusCallBack {
 			}
 			
 			BackTestTask.running = true;
+			BackTestTask.isLiveData = false;
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -1158,7 +1173,8 @@ public class IndexController  implements StatusCallBack {
 		  mainUIParam.setStepPath(getStepFilePath(dataFolder, id));
 		  mainUIParam.setLogPath(getLogFilePath(dataFolder, id));
 		  mainUIParam.setVersion(InitServlet.getVersion());
-		  BackTestTask.running = true;	
+		  BackTestTask.running = true;
+		  BackTestTask.isLiveData = isLiveData;
 			try {
 				FileUtils.forceMkdir(new File(mainUIParam.getSourcePath()));
 			} catch (IOException e) {
@@ -1168,7 +1184,7 @@ public class IndexController  implements StatusCallBack {
 				@Override
 				public void run() {
 					statusStr = new StringBuilder();
-					new Thread(new BackTestTask(IndexController.mainUIParam, IndexController.this, isLiveData)).start();
+					new Thread(new BackTestTask(IndexController.mainUIParam, IndexController.this)).start();
 				}
 			}).start();
 		}

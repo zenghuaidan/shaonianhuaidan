@@ -112,7 +112,7 @@ public class BackTestSet {
 		perDayRecord.performanceInVol = totalPnl / perDayRecord.dailyIndexVol;
 		perDayRecord.totalPnL = totalPnl;
 		perDayRecord.dailyPerSecondRecordList = dailyPerSecondRecordList;
-		System.out.println("initPerDayRecord(" + dailyScheduleData.get(0).getDateStr() + "):" + (System.currentTimeMillis() - start));
+//		System.out.println("initPerDayRecord(" + dailyScheduleData.get(0).getDateStr() + "):" + (System.currentTimeMillis() - start));
 		return perDayRecord;		
 	}
 
