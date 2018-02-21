@@ -44,6 +44,7 @@ public class BackTestSet {
 		long lunchStartTimeTo = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
 		long marketCloseTime = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
 		double morningPnl = 0;
+		boolean morningPnlAdded = false;
 		for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {
 			long time = DateUtils.HHmmss().parse(scheduleDataPerSecond.getTimeStr()).getTime();
 			PerSecondRecord perSecondRecord = null;
@@ -60,7 +61,10 @@ public class BackTestSet {
 					morningPnl = perSecondRecord.getTotalPnl();
 				}
 				if (isAfternoon && !mainUIParam.isIncludeMorningData()) {
-					perSecondRecord.setTotalPnl(perSecondRecord.getTotalPnl() + morningPnl);
+					if (!morningPnlAdded) {
+						perSecondRecord.setTotalPnl(perSecondRecord.getTotalPnl() + morningPnl);
+						morningPnlAdded = true;
+					}
 					afternoonPerSecondRecordList.add(perSecondRecord);				
 				}
 			}
