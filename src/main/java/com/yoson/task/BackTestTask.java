@@ -173,6 +173,9 @@ public class BackTestTask implements Runnable {
 			}
 		}
 		boolean first = (startStep == 0);
+		if(first) {
+			FileUtils.cleanDirectory(new File(mainUIParam.getSourcePath()));
+		}
 		for (int index = 1; index <= testSets.size(); index++) {
 			if (index <= startStep)
 				continue;
@@ -211,7 +214,9 @@ public class BackTestTask implements Runnable {
 				BackTestTask.allBTSummaryResults.clear();
 				BackTestTask.allPositivePnlResult.clear();
 				BackTestTask.allProfitAndLossResults = new StringBuilder();
-				BackTestCSVWriter.writeText(mainUIParam.getStepPath(), index + "," + testSets.size(), false);
+				if (!isLiveData) {
+					BackTestCSVWriter.writeText(mainUIParam.getStepPath(), index + "," + testSets.size(), false);
+				}
 				first = false;
 			}
 			
