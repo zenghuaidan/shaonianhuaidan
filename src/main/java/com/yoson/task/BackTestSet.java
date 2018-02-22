@@ -71,6 +71,7 @@ public class BackTestSet {
 			
 			perDayRecord.positiveTrades += perSecondRecord.getPnl() > 0 ? 1 : 0;
 			perDayRecord.negativeTrades += perSecondRecord.getPnl() < 0 ? 1 : 0;
+			perDayRecord.totalTrades += perSecondRecord.getTradeCount();
 			
 			positiveSum += perSecondRecord.getPnl() > 0 ? perSecondRecord.getPnl() : 0;
 			negativeSum += perSecondRecord.getPnl() < 0 ? perSecondRecord.getPnl() : 0;

@@ -293,7 +293,7 @@ public class BackTestResult
 		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
 		for (PerDayRecord Per_Day :  tempArray)
 		{
-			totalTrades = totalTrades + Per_Day.negativeTrades + Per_Day.positiveTrades;
+			totalTrades = totalTrades + Per_Day.totalTrades;
 		}
 
 	}
