@@ -235,8 +235,10 @@ public class BackTestTask implements Runnable {
 				}
 			}			
 		}
+		BackTestCSVWriter.initProfitAndLossResultMap(mainUIParam);
 		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(mainUIParam), true);
 		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges, mainUIParam), true);
+		BackTestCSVWriter.getAccumulatePnlBySpecifyDates(specifyDateRanges, mainUIParam);
 		milliseconds = System.currentTimeMillis() - start;
 		callBack.updateStatus(getStatus("All task done, total time cost: " + DateUtils.dateDiff(milliseconds)));
 		
