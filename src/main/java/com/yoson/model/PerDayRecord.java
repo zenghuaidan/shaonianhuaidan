@@ -9,6 +9,7 @@ public class PerDayRecord {
 	public Date date;
 	public double positiveTrades;
 	public double negativeTrades;
+	public double totalTrades;
 	public double zeroPnlTrades;
 	public double averagePositiveTrades;
 	public double averageNegativeTrades;
