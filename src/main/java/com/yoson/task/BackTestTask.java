@@ -42,7 +42,9 @@ public class BackTestTask implements Runnable {
 	public static List<String> allBTPnlResults;
 	public static List<String> allBTTradeResults;
 	public static String aTradingDayForCheckResult;
-	public static StringBuilder allProfitAndLossResults;	
+	public static StringBuilder allProfitAndLossResults;
+	public static StringBuilder allMorningProfitAndLossResults;
+	public static StringBuilder allAfternoonProfitAndLossResults;
 	public static Map<String, Integer> marketTimeMap;
 	public static Map<String, Double> sumOfLastTrade;
 	public static Map<String, List<ScheduleData>> rowData;
@@ -69,6 +71,8 @@ public class BackTestTask implements Runnable {
 		BackTestTask.allBTTradeResults = new ArrayList<String>();
 		BackTestTask.aTradingDayForCheckResult = "";
 		BackTestTask.allProfitAndLossResults = new StringBuilder();
+		BackTestTask.allMorningProfitAndLossResults = new StringBuilder();
+		BackTestTask.allAfternoonProfitAndLossResults = new StringBuilder();
 		
 		BackTestTask.rowData = new HashMap<String, List<ScheduleData>>();		
 		BackTestTask.marketTimeMap = new HashMap<String, Integer>();
@@ -208,6 +212,8 @@ public class BackTestTask implements Runnable {
 					BackTestCSVWriter.writePositivePnlResult(mainUIParam);					
 				}
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName), BackTestTask.allProfitAndLossResults.toString(), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.morningProfitAndLossFileName), BackTestTask.allMorningProfitAndLossResults.toString(), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.afternoonProfitAndLossFileName), BackTestTask.allAfternoonProfitAndLossResults.toString(), true);
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader(backTestResult.yearPnlMap.keySet()) : "") + String.join("", BackTestTask.allBTSummaryResults), true);
 				
 				BackTestTask.allBTPnlResults.clear();
@@ -215,6 +221,8 @@ public class BackTestTask implements Runnable {
 				BackTestTask.allBTSummaryResults.clear();
 				BackTestTask.allPositivePnlResult.clear();
 				BackTestTask.allProfitAndLossResults = new StringBuilder();
+				BackTestTask.allMorningProfitAndLossResults = new StringBuilder();
+				BackTestTask.allAfternoonProfitAndLossResults = new StringBuilder();
 				if (!isLiveData) {
 					BackTestCSVWriter.writeText(mainUIParam.getStepPath(), index + "," + testSets.size(), false);
 				}
@@ -256,12 +264,13 @@ public class BackTestTask implements Runnable {
 		BackTestTask.allBTTradeResults = null;
 		BackTestTask.aTradingDayForCheckResult = null;
 		BackTestTask.allProfitAndLossResults = null;
+		BackTestTask.allMorningProfitAndLossResults = null;
+		BackTestTask.allAfternoonProfitAndLossResults = null;
 		BackTestTask.marketTimeMap = null;
 		BackTestTask.sumOfLastTrade = null;
 		BackTestTask.rowData = null;
 		BackTestTask.sortedDateList = null;
 		BackTestTask.allPositivePnlResult = null;
-		BackTestTask.allProfitAndLossResults = null;
 		System.gc();
 		Runtime.getRuntime().freeMemory();
 	}

@@ -26,6 +26,8 @@ import com.yoson.task.BackTestTask;
 
 public class BackTestCSVWriter {	
 	public static final String profitAndLossFileName = "Back Test ProfitAndLoss.csv";
+	public static final String morningProfitAndLossFileName = "Back Test First Half ProfitAndLoss.csv";
+	public static final String afternoonProfitAndLossFileName = "Back Test Second Half ProfitAndLoss.csv";
 	public static final String profitAndLossByDateFileName = "Back Test ProfitAndLoss By Date.csv";
 	public static final String profitAndLossByDateRangeFileName = "Back Test ProfitAndLoss By Date Range.csv";
 	public static final String btSummaryFileName = "BT_Summary.csv";
@@ -170,10 +172,16 @@ public class BackTestCSVWriter {
 			}
 			allProfitAndLossResultsHeader.append("\n");
 			BackTestTask.allProfitAndLossResults.append(allProfitAndLossResultsHeader);
+			BackTestTask.allMorningProfitAndLossResults.append(allProfitAndLossResultsHeader);
+			BackTestTask.allAfternoonProfitAndLossResults.append(allProfitAndLossResultsHeader);
 		}
 		BackTestTask.allProfitAndLossResults.append(id + "," + backTestResult.testSet.getKey()  +  ",");
+		BackTestTask.allMorningProfitAndLossResults.append(id + "," + backTestResult.testSet.getKey()  +  ",");
+		BackTestTask.allAfternoonProfitAndLossResults.append(id + "," + backTestResult.testSet.getKey()  +  ",");
 		for (PerDayRecord perDayRecord : backTestResult.dayRecords) {
 			BackTestTask.allProfitAndLossResults.append(perDayRecord.totalPnL + ",");
+			BackTestTask.allMorningProfitAndLossResults.append(perDayRecord.morningPnL + ",");
+			BackTestTask.allAfternoonProfitAndLossResults.append(perDayRecord.afternoonPnL + ",");
 			
 			pnlContent.append(backTestResult.testSet.getKey()  +  ",")
 			.append(perDayRecord.getDateStr() + ",")
@@ -200,15 +208,18 @@ public class BackTestCSVWriter {
 			}
 		}
 		BackTestTask.allProfitAndLossResults.append("\n");
+		BackTestTask.allMorningProfitAndLossResults.append("\n");
+		BackTestTask.allAfternoonProfitAndLossResults.append("\n");
 	}
 	
-	public static Map<String, List<Object>> bestProfitAndLossResultMap = new TreeMap<String, List<Object>>();
+	public static Map<String, List<Object>> bestMoningProfitAndLossResultMap = new TreeMap<String, List<Object>>();
 	public static Map<String, List<List<Object>>> allProfitAndLossResultMap = new TreeMap<String, List<List<Object>>>();
-	public static List<String> dates = new ArrayList<String>();
 	
 	public static void initProfitAndLossResultMap(MainUIParam mainUIParam) {
 		try {
-			bestProfitAndLossResultMap = new TreeMap<String, List<Object>>();
+			bestMoningProfitAndLossResultMap = new TreeMap<String, List<Object>>();
+			allProfitAndLossResultMap = new TreeMap<String, List<List<Object>>>();
+			List<String> dates = new ArrayList<String>();
 			File file = new File(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName));
 			CSVReader csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);	
 			String [] lines;
@@ -228,10 +239,7 @@ public class BackTestCSVWriter {
 						List<Object> pnlInfo = new ArrayList<Object>();
 						pnlInfo.add(totalPnl);
 						pnlInfo.add(id);
-						pnlInfo.add(key);
-						if(!bestProfitAndLossResultMap.containsKey(dateStr) || (Double)bestProfitAndLossResultMap.get(dateStr).get(0) < totalPnl) {
-							bestProfitAndLossResultMap.put(dateStr, pnlInfo);
-						}
+						pnlInfo.add(key);						
 						
 						if(allProfitAndLossResultMap.containsKey(dateStr)) {
 							allProfitAndLossResultMap.get(dateStr).add(pnlInfo);
@@ -243,7 +251,36 @@ public class BackTestCSVWriter {
 					}
 				}
 			}
-			csvReader.close();						
+			csvReader.close();	
+			
+			dates = new ArrayList<String>();
+			file = new File(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.morningProfitAndLossFileName));
+			csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);	
+			first = true;			
+			while ((lines = csvReader.readNext()) != null)  {
+				if (first) {
+					for(int i = 2; i < lines.length - 1; i++) {
+						dates.add(lines[i]);
+					}	
+					first = false;
+				} else {
+					String id = lines[0]; 
+					String key = lines[1];
+					for(int i = 2; i < lines.length - 1; i++) {
+						String dateStr = dates.get(i - 2);
+						double totalPnl = Double.parseDouble(lines[i]);
+						List<Object> pnlInfo = new ArrayList<Object>();
+						pnlInfo.add(totalPnl);
+						pnlInfo.add(id);
+						pnlInfo.add(key);
+						if(!bestMoningProfitAndLossResultMap.containsKey(dateStr) || (Double)bestMoningProfitAndLossResultMap.get(dateStr).get(0) < totalPnl) {
+							bestMoningProfitAndLossResultMap.put(dateStr, pnlInfo);
+						}
+												
+					}
+				}
+			}
+			csvReader.close();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -254,8 +291,8 @@ public class BackTestCSVWriter {
 		StringBuilder content = new StringBuilder();
 		content.append("Date,Test no.,key,Total Pnl").append("\n");
 		
-		for(String dateStr : bestProfitAndLossResultMap.keySet()) {
-			List<Object> pnlInfo = bestProfitAndLossResultMap.get(dateStr);				
+		for(String dateStr : bestMoningProfitAndLossResultMap.keySet()) {
+			List<Object> pnlInfo = bestMoningProfitAndLossResultMap.get(dateStr);				
 			content.append(dateStr + "," + pnlInfo.get(1) + "," + pnlInfo.get(2) + "," + pnlInfo.get(0)).append("\n");
 		}
 		return content.toString();
@@ -271,6 +308,10 @@ public class BackTestCSVWriter {
 			content.append("\n");
 						
 			int i = 1;
+			List<String> dates = new ArrayList<String>();
+			for(String dateStr : allProfitAndLossResultMap.keySet()) {
+				dates.add(dateStr);
+			}
 			for(String dateStr : dates) {					
 				content.append(dateStr + ",");
 				for(int specifyDateRange : specifyDateRanges) {
@@ -304,7 +345,11 @@ public class BackTestCSVWriter {
 	}
 	
 	public static void getAccumulatePnlBySpecifyDates(Set<Integer> specifyDateRanges, MainUIParam mainUIParam) {
-		if(specifyDateRanges != null && specifyDateRanges.size() > 0) {			
+		if(specifyDateRanges != null && specifyDateRanges.size() > 0) {	
+			List<String> dates = new ArrayList<String>();
+			for(String dateStr : allProfitAndLossResultMap.keySet()) {
+				dates.add(dateStr);
+			}
 			for(int specifyDateRange : specifyDateRanges) {
 				StringBuilder content = new StringBuilder("Test no.,key,");
 				for(String dateStr : dates) {	
