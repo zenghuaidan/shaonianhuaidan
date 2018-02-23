@@ -46,14 +46,14 @@ public class BackTestSet {
 		boolean morningPnlAdded = false;
 		for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {
 			long time = DateUtils.HHmmss().parse(scheduleDataPerSecond.getTimeStr()).getTime();
+			boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
+			boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
 			PerSecondRecord perSecondRecord = null;
 			if (mainUIParam.isIgnoreLunchTime()) {
 				boolean isValidateTime = time >= marketStartTime && time <= marketCloseTime;
 				if(!isValidateTime) continue;
 				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()));
 			} else {
-				boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
-				boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
 				if(!isMorning && !isAfternoon) continue;
 				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, isMorning || mainUIParam.isIncludeMorningData() ? dailyPerSecondRecordList : afternoonPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()));
 				if(isMorning) {
@@ -72,6 +72,10 @@ public class BackTestSet {
 			perDayRecord.positiveTrades += perSecondRecord.getPnl() > 0 ? 1 : 0;
 			perDayRecord.negativeTrades += perSecondRecord.getPnl() < 0 ? 1 : 0;
 			perDayRecord.totalTrades += perSecondRecord.getTradeCount();
+			if(isMorning)
+				perDayRecord.morningPnL += perSecondRecord.getPnl();
+			if(isAfternoon)
+				perDayRecord.afternoonPnL += perSecondRecord.getPnl();
 			
 			positiveSum += perSecondRecord.getPnl() > 0 ? perSecondRecord.getPnl() : 0;
 			negativeSum += perSecondRecord.getPnl() < 0 ? perSecondRecord.getPnl() : 0;
