@@ -21,6 +21,8 @@ public class PerDayRecord {
 	public double performanceInPts;
 	public double averageHLDiff;
 	public double totalPnL;
+	public double morningPnL;
+	public double afternoonPnL;
 	
 	public List<PerSecondRecord> dailyPerSecondRecordList;
 	
