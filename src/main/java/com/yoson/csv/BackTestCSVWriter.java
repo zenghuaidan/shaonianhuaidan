@@ -209,12 +209,12 @@ public class BackTestCSVWriter {
 		BackTestTask.allAfternoonProfitAndLossResults.append("\n");
 	}
 	
-	public static Map<String, List<Object>> bestMoningProfitAndLossResultMap = new TreeMap<String, List<Object>>();
+	public static Map<String, List<Object>> bestMorningProfitAndLossResultMap = new TreeMap<String, List<Object>>();
 	public static Map<String, List<List<Object>>> allProfitAndLossResultMap = new TreeMap<String, List<List<Object>>>();
 	
 	public static void initProfitAndLossResultMap(MainUIParam mainUIParam) {
 		try {
-			bestMoningProfitAndLossResultMap = new TreeMap<String, List<Object>>();
+			bestMorningProfitAndLossResultMap = new TreeMap<String, List<Object>>();
 			allProfitAndLossResultMap = new TreeMap<String, List<List<Object>>>();
 			List<String> dates = new ArrayList<String>();
 			File file = new File(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName));
@@ -270,8 +270,8 @@ public class BackTestCSVWriter {
 						pnlInfo.add(totalPnl);
 						pnlInfo.add(id);
 						pnlInfo.add(key);
-						if(!bestMoningProfitAndLossResultMap.containsKey(dateStr) || (Double)bestMoningProfitAndLossResultMap.get(dateStr).get(0) < totalPnl) {
-							bestMoningProfitAndLossResultMap.put(dateStr, pnlInfo);
+						if(!bestMorningProfitAndLossResultMap.containsKey(dateStr) || (Double)bestMorningProfitAndLossResultMap.get(dateStr).get(0) < totalPnl) {
+							bestMorningProfitAndLossResultMap.put(dateStr, pnlInfo);
 						}
 												
 					}
@@ -286,11 +286,11 @@ public class BackTestCSVWriter {
 	
 	public static String getBestPnlByDate(MainUIParam mainUIParam) {
 		StringBuilder content = new StringBuilder();
-		content.append("Date,Test no.,key,Total Pnl").append("\n");
+		content.append("Date,Test no.,key,Mornint Best Pnl,Total Pnl").append("\n");
 		
-		for(String dateStr : bestMoningProfitAndLossResultMap.keySet()) {
-			List<Object> pnlInfo = bestMoningProfitAndLossResultMap.get(dateStr);				
-			content.append(dateStr + "," + pnlInfo.get(1) + "," + pnlInfo.get(2) + "," + pnlInfo.get(0)).append("\n");
+		for(String dateStr : bestMorningProfitAndLossResultMap.keySet()) {
+			List<Object> pnlInfo = bestMorningProfitAndLossResultMap.get(dateStr);				
+			content.append(dateStr + "," + pnlInfo.get(1) + "," + pnlInfo.get(2) + "," + pnlInfo.get(0) + "," + allProfitAndLossResultMap.get(dateStr).get(Integer.parseInt(pnlInfo.get(1).toString()) - 1).get(0)).append("\n");
 		}
 		return content.toString();
 	}
