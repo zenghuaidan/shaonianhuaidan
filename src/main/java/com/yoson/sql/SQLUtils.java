@@ -124,13 +124,14 @@ public class SQLUtils {
 		Session session = null;
 		try {
 			session = getSession();
+			session.beginTransaction();
 			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " rawdata2(date,time,price,size,source) VALUES";
 			List<String> values = new ArrayList<String>();
 			for (Record rawDataRecord : rawDataRecords) {
 				String dateStr = DateUtils.yyyyMMdd().format(rawDataRecord.getTime());
 				String timeStr = DateUtils.HHmmss().format(rawDataRecord.getTime());
 				values.add("('"+ dateStr + "','" + timeStr + "'," 
-						+ rawDataRecord.getData() + "," + rawDataRecord.getSize() + "'" + source +"')");
+						+ rawDataRecord.getData() + "," + rawDataRecord.getSize() + ",'" + source +"')");
 				if(values.size() == 10000) {
 					session.createSQLQuery(sql + String.join(",", values)).executeUpdate();
 					values.clear();
@@ -139,6 +140,7 @@ public class SQLUtils {
 			if (values.size() > 0) {
 				session.createSQLQuery(sql + String.join(",", values)).executeUpdate();							
 			}
+			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -153,6 +155,7 @@ public class SQLUtils {
 		Session session = null;
 		try {
 			session = getSession();
+			session.beginTransaction();
 			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " schedule_data2(ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source) VALUES";
 			List<String> values = new ArrayList<String>();
 			for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
@@ -172,6 +175,7 @@ public class SQLUtils {
 			if (values.size() > 0) {
 				session.createSQLQuery(sql + String.join(",", values)).executeUpdate();							
 			}
+			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
