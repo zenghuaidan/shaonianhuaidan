@@ -114,7 +114,7 @@ function renderLiveDataFileList() {
 	    		lis += "<a id='" + data[i] + "' href='downloadlive?id=" + data[i] + "'>" + data[i] + "</a>" +
 //	    				"<input onclick='start(\"" + datas[0] + "\")' type='button' value='Start'/>" +
 //	    				"<input onclick='stop(\"" + datas[0] + "\")' type='button' value='Stop'/>" +
-//	    				"<input onclick='uploadData(\"" + data[i] + "\")' type='button' value='Upload'/>" + 
+	    				"<input onclick='uploadData(\"" + data[i] + "\")' type='button' value='Upload'/>" + 
 	    				"<input onclick='deleteLiveItem(\"" + data[i] + "\")' type='button' value='Delete'/>" +
 	    				"<br/>"
 	    	}
@@ -147,6 +147,7 @@ function uploadData(id) {
 	    error: function() {
 	    }
 	});
+	alert("Request submitted!");
 }
 
 $(function() {
