@@ -34,6 +34,7 @@ import com.ib.client.Contract;
 import com.ib.client.TagValue;
 import com.yoson.csv.ExcelUtil;
 import com.yoson.date.DateUtils;
+import com.yoson.sql.SQLUtils;
 import com.yoson.tws.ConnectionInfo;
 import com.yoson.tws.EClientSocketUtils;
 import com.yoson.tws.RawDataCSVWriter;
@@ -253,6 +254,46 @@ public class IndexController {
 		}
 		
 		return downloadFolder;
+	}
+	
+	@ResponseBody
+	@RequestMapping("uploadData")
+	public boolean uploadData(@RequestParam String id, HttpServletRequest request) throws IOException {
+		uploadData(id);
+		return true;
+	}
+	
+	public static void uploadData(String id) {
+		if(StringUtils.isNotEmpty(id)){
+			String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
+			String downloadFolder = FilenameUtils.concat(dataFolder, id);
+			
+			Collection<File> files = FileUtils.listFilesAndDirs(new File(downloadFolder), FalseFileFilter.FALSE, TrueFileFilter.TRUE);
+			for(File file : files) {
+				try {
+					String contractDataPath = file.getAbsolutePath();
+					if (!file.isDirectory() || !new File(YosonEWrapper.getPath(contractDataPath)).exists()) continue;
+					String name = FilenameUtils.getBaseName(contractDataPath);//1_STK_700_HKD_SEHK
+					String source = name.split("_")[1] + "_" + name.split("_")[2];
+					
+					List<Record> tradeList = new ArrayList<Record>();
+					List<Record> askList = new ArrayList<Record>();
+					List<Record> bidList = new ArrayList<Record>();
+					YosonEWrapper.getRecordList(contractDataPath, tradeList, askList, bidList);
+					
+					List<Record> all = new ArrayList<Record>();
+					all.addAll(tradeList);
+					all.addAll(askList);
+					all.addAll(bidList);
+					SQLUtils.saveRawDataRecord(all, source, true);
+					
+					List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(contractDataPath);
+					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, source , true);
+				} catch (Exception e) {
+				}
+			}
+			
+		} 
 	}
 	
 	@ResponseBody

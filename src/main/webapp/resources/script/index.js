@@ -114,6 +114,7 @@ function renderLiveDataFileList() {
 	    		lis += "<a id='" + data[i] + "' href='downloadlive?id=" + data[i] + "'>" + data[i] + "</a>" +
 //	    				"<input onclick='start(\"" + datas[0] + "\")' type='button' value='Start'/>" +
 //	    				"<input onclick='stop(\"" + datas[0] + "\")' type='button' value='Stop'/>" +
+	    				"<input onclick='uploadData(\"" + datas[i] + "\")' type='button' value='Upload'/>" + 
 	    				"<input onclick='deleteLiveItem(\"" + data[i] + "\")' type='button' value='Delete'/>" +
 	    				"<br/>"
 	    	}
@@ -130,6 +131,18 @@ function deleteLiveItem(id) {
 	    url: "deleteLiveItem?id=" + id,
 	    success: function(data) {
 	    	renderLiveDataFileList();
+	    },
+	    error: function() {
+	    }
+	});
+}
+
+function uploadData(id) {
+	$.ajax({
+	    type: "GET",
+	    url: "uploadData?id=" + id,
+	    success: function(data) {
+	    	alert("Request submited!");
 	    },
 	    error: function() {
 	    }

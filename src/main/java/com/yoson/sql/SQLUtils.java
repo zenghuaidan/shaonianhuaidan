@@ -18,6 +18,7 @@ import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.BrokenDate;
 import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
+import com.yoson.tws.Record;
 import com.yoson.tws.ScheduledDataRecord;
 
 public class SQLUtils {
@@ -119,26 +120,53 @@ public class SQLUtils {
 		}
 	}
 	
-	public static void saveScheduledDataRecord(List<ScheduledDataRecord> scheduledDataRecords, String dataStartTime, String dataEndTime, String source, boolean isReplace) {
+	public static void saveRawDataRecord(List<Record> rawDataRecords, String source, boolean isReplace) {
+		Session session = null;
+		try {
+			session = getSession();
+			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " rawdata2(date,time,price,size,source) VALUES";
+			List<String> values = new ArrayList<String>();
+			for (Record rawDataRecord : rawDataRecords) {
+				String dateStr = DateUtils.yyyyMMdd().format(rawDataRecord.getTime());
+				String timeStr = DateUtils.HHmmss().format(rawDataRecord.getTime());
+				values.add("('"+ dateStr + "','" + timeStr + "'," 
+						+ rawDataRecord.getData() + "," + rawDataRecord.getSize() + "'" + source +"')");
+				if(values.size() == 10000) {
+					session.createSQLQuery(sql + String.join(",", values)).executeUpdate();
+					values.clear();
+				}
+			}
+			if (values.size() > 0) {
+				session.createSQLQuery(sql + String.join(",", values)).executeUpdate();							
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static void saveScheduledDataRecord(List<ScheduledDataRecord> scheduledDataRecords, String source, boolean isReplace) {
 		Session session = null;
 		try {
 			session = getSession();
 			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " schedule_data2(ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source) VALUES";
 			List<String> values = new ArrayList<String>();
 			for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
-				if(DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(scheduledDataRecord.getTime()), dataStartTime, dataEndTime)) {
-					String dateTimeStr = scheduledDataRecord.getTime();
-					String dateStr = DateUtils.getDateStr(dateTimeStr);
-					String timeStr = DateUtils.getTimeStr(dateTimeStr);
-					values.add("('"+ source +"','" + dateStr + "','" + timeStr + "'," 
-							+ scheduledDataRecord.getBidavg() + "," + scheduledDataRecord.getBidlast() + "," + scheduledDataRecord.getBidmax() + "," + scheduledDataRecord.getBidmin() + ","
-							+ scheduledDataRecord.getAskavg() + "," + scheduledDataRecord.getAsklast() + "," + scheduledDataRecord.getAskmax() + "," + scheduledDataRecord.getAskmin() + ","
-							+ scheduledDataRecord.getTradeavg() + "," + scheduledDataRecord.getTradelast() + "," + scheduledDataRecord.getTrademax() + "," + scheduledDataRecord.getTrademin() + ","
-							+ "'BBG_" + source +"')");
-					if(values.size() == 10000) {
-						session.createSQLQuery(sql + String.join(",", values)).executeUpdate();
-						values.clear();
-					}
+				String dateTimeStr = scheduledDataRecord.getTime();
+				String dateStr = DateUtils.getDateStr(dateTimeStr);
+				String timeStr = DateUtils.getTimeStr(dateTimeStr);
+				values.add("('"+ source +"','" + dateStr + "','" + timeStr + "'," 
+						+ scheduledDataRecord.getBidavg() + "," + scheduledDataRecord.getBidlast() + "," + scheduledDataRecord.getBidmax() + "," + scheduledDataRecord.getBidmin() + ","
+						+ scheduledDataRecord.getAskavg() + "," + scheduledDataRecord.getAsklast() + "," + scheduledDataRecord.getAskmax() + "," + scheduledDataRecord.getAskmin() + ","
+						+ scheduledDataRecord.getTradeavg() + "," + scheduledDataRecord.getTradelast() + "," + scheduledDataRecord.getTrademax() + "," + scheduledDataRecord.getTrademin() + ","
+						+ "'BBG_" + source +"')");
+				if(values.size() == 10000) {
+					session.createSQLQuery(sql + String.join(",", values)).executeUpdate();
+					values.clear();
 				}
 			}
 			if (values.size() > 0) {
