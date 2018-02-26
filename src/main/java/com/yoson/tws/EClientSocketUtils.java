@@ -83,10 +83,12 @@ public class EClientSocketUtils {
 			socket.cancelMktData(tickerId);
 	}
 	
+	public static boolean lunchBTStart = false;
 	public static boolean reqMktData(int tickerId, Contract contract) {
 		if(!isConnected()) {
 			return false;
 		}
+		lunchBTStart = false;
 		YosonEWrapper.initData();
 		EClientSocketUtils.contract = contract;
 		id = DateUtils.yyyyMMddHHmmss2().format(new Date());
