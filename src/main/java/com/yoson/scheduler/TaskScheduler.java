@@ -33,8 +33,26 @@ public class TaskScheduler {
 			Date now = new Date();
 			boolean validateTime = YosonEWrapper.isValidateTime(now);
 			long nowDateTimeLong = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(now));
+			
+			if(IndexController.mainUIParam != null 
+					&& !EClientSocketUtils.lunchBTStart 
+					&& StringUtils.isNotEmpty(EClientSocketUtils.id)
+					&& EClientSocketUtils.contract != null
+					&& StringUtils.isNotEmpty(EClientSocketUtils.contract.getSymbol())) {
+				long lunchStartTimeFrom = DateUtils.HHmmss().parse(IndexController.mainUIParam.getLunchStartTimeFrom()).getTime();
+				long lunchStartTimeTo = DateUtils.HHmmss().parse(IndexController.mainUIParam.getLunchStartTimeTo()).getTime();
+				long time = DateUtils.HHmmss().parse(DateUtils.HHmmss().format(now)).getTime();
+				boolean isLunchTime = time >= lunchStartTimeFrom && time <= lunchStartTimeTo;
+				if (isLunchTime) {					
+					EClientSocketUtils.lunchBTStart = true;
+					// auto trigger the BT during lunch time
+					IndexController.runBTWithLiveData(EClientSocketUtils.contract.getSymbol() + "_" + EClientSocketUtils.id);
+				}
+			}
+			
 			if(!validateTime) {
 				if(StringUtils.isNotEmpty(EClientSocketUtils.id) 
+						&& EClientSocketUtils.contract != null
 						&& StringUtils.isNotEmpty(EClientSocketUtils.contract.startTime) 
 						&& StringUtils.isNotEmpty(EClientSocketUtils.contract.endTime)
 						&& StringUtils.isNotEmpty(EClientSocketUtils.contract.getSymbol())) {
