@@ -259,12 +259,15 @@ public class IndexController {
 	@ResponseBody
 	@RequestMapping("uploadData")
 	public boolean uploadData(@RequestParam String id, HttpServletRequest request) throws IOException {
-		uploadData(id);
-		return true;
+		return uploadData(id);			
 	}
 	
-	public static void uploadData(String id) {
-		if(StringUtils.isNotEmpty(id)){
+	public static boolean uploading = false;
+	public static boolean uploadData(String id) {
+		if (uploading || StringUtils.isEmpty(id)) return false;
+		try {
+			uploading = true;
+			
 			String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
 			String downloadFolder = FilenameUtils.concat(dataFolder, id);
 			
@@ -292,8 +295,13 @@ public class IndexController {
 				} catch (Exception e) {
 				}
 			}
-			
-		} 
+				
+			return true;
+		} catch (Exception e) {
+			return false;
+		} finally {
+			uploading = false;
+		}
 	}
 	
 	@ResponseBody
