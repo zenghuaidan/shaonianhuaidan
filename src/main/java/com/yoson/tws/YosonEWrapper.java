@@ -1,6 +1,7 @@
 package com.yoson.tws;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
 import com.ib.client.Contract;
 import com.opencsv.CSVReader;
@@ -31,6 +33,14 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	public static List<ScheduledDataRecord> extractScheduledDataRecord(String folderPath) throws ParseException {
 		File file = new File(getPath(folderPath));
+		long lastSecond = 0;
+		try {
+			FileInputStream fi = new FileInputStream(new File(FilenameUtils.concat(folderPath, "time.txt")));		
+			String timeInfo = IOUtils.toString(fi);
+			fi.close();
+			lastSecond = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(DateUtils.yyyyMMddHHmm().parse(timeInfo.split(",")[1])));
+		} catch (Exception e) {
+		}
 		List<ScheduledDataRecord> records = new ArrayList<ScheduledDataRecord>();
 		if (!file.exists())
 			return new ArrayList<ScheduledDataRecord>();
@@ -62,6 +72,10 @@ public class YosonEWrapper extends BasicEWrapper {
 				start = DateUtils.addSecond(start, 1);
 			}
 			_records.add(new ScheduledDataRecord(start + "", record, i != 0 ? _records.get(_records.size() - 1) : null));				
+			start = DateUtils.addSecond(start, 1);
+		}
+		while(start <= lastSecond) {
+			records.add(new ScheduledDataRecord(start + "", _records.get(_records.size() - 1), null));
 			start = DateUtils.addSecond(start, 1);
 		}
 		return _records;

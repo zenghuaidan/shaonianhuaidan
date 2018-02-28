@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ib.client.Contract;
 import com.ib.client.TagValue;
+import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.csv.ExcelUtil;
 import com.yoson.date.DateUtils;
 import com.yoson.sql.SQLUtils;
@@ -138,6 +139,8 @@ public class IndexController {
 					    	if(!((_startTime.equals(_endTime) || _startTime.before(_endTime)) && contract.startTime.split(" ")[0].equals(contract.endTime.split(" ")[0]))) {
 					    		throw new Exception("Invalidate time");
 					    	}
+					    	String folder = FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), i + "_" + contract.m_secType + "_" + contract.m_symbol + "_" + contract.m_currency + "_" + contract.m_exchange);
+					    	BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "time.txt"), contract.startTime + "," + contract.endTime, true);
 					    } catch (Exception e) {
 					    	contract.startTime = startTime;
 					    	contract.endTime = endTime;
