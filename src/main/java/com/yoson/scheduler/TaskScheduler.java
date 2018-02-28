@@ -28,6 +28,7 @@ public class TaskScheduler {
 			if(StringUtils.isNotEmpty(EClientSocketUtils.id)){
 				IndexController.uploadData(EClientSocketUtils.id);				
 				EClientSocketUtils.disconnect();
+				EClientSocketUtils.id = null;
 			}
 		}
 		
