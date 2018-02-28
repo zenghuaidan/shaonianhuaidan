@@ -128,7 +128,7 @@ public class YosonEWrapper extends BasicEWrapper {
 			csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);
 			String [] lines;
 			while ((lines = csvReader.readNext()) != null)  {
-				Record record = new Record(DateUtils.yyyyMMddHHmmss2().parse(lines[1]), Double.parseDouble(lines[2]), Integer.parseInt(lines[3]));
+				Record record = new Record(DateUtils.yyyyMMddHHmmss2().parse(lines[1]), Double.parseDouble(lines[2]), Integer.parseInt(lines[3]), lines[0]);
 				String status = lines[0];
 				if(status.equals(BID)) {
 					bidList.add(record);

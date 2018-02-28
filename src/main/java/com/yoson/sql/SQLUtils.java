@@ -125,13 +125,13 @@ public class SQLUtils {
 		try {
 			session = getSession();
 			session.beginTransaction();
-			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " rawdata2(date,time,price,size,source) VALUES";
+			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " rawdata2(date,time,price,size,type,source) VALUES";
 			List<String> values = new ArrayList<String>();
 			for (Record rawDataRecord : rawDataRecords) {
 				String dateStr = DateUtils.yyyyMMdd().format(rawDataRecord.getTime());
 				String timeStr = DateUtils.HHmmss().format(rawDataRecord.getTime());
 				values.add("('"+ dateStr + "','" + timeStr + "'," 
-						+ rawDataRecord.getData() + "," + rawDataRecord.getSize() + ",'" + source +"')");
+						+ rawDataRecord.getData() + "," + rawDataRecord.getSize() + ",'" + rawDataRecord.getType() +"','" + source +"')");
 				if(values.size() == 10000) {
 					session.createSQLQuery(sql + String.join(",", values)).executeUpdate();
 					values.clear();
