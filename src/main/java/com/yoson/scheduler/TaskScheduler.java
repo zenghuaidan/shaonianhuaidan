@@ -23,7 +23,7 @@ import com.yoson.tws.YosonEWrapper;
 public class TaskScheduler {
 	public static Long expectNextExecuteTime;
 	public synchronized void doTrade() throws ParseException {
-		if(!EClientSocketUtils.isConnected()) {
+		if(!EClientSocketUtils.isConnected() || StringUtils.isEmpty(EClientSocketUtils.id)) {
 			return;
 		}
 		long start = System.nanoTime();
@@ -62,6 +62,7 @@ public class TaskScheduler {
 
 						//trigger auto backtest, only the live have stop then can do the BT
 						IndexController.runBTWithLiveData(EClientSocketUtils.contract.getSymbol() + "_" + EClientSocketUtils.id);
+						EClientSocketUtils.id = null;
 					}					
 				}
 				return;
