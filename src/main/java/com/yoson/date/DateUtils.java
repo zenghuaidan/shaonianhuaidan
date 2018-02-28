@@ -43,7 +43,7 @@ public class DateUtils {
     } 
 	
 	public static boolean isValidateTime(Date when, String startTimeStr, String endTimeStr) {
-		return isValidateTime(when, startTimeStr, endTimeStr, 0);
+		return isValidateTime(when, startTimeStr, endTimeStr, 2);
 	}
 	
 	public static boolean isValidateTime(Date when, String startTimeStr, String endTimeStr, int bufferInMinutes) {
