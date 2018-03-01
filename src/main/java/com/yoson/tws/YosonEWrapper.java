@@ -201,6 +201,7 @@ public class YosonEWrapper extends BasicEWrapper {
 		String folder = FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), (tickerId + 1) + "_" + contract.m_secType + "_" + contract.m_symbol + "_" + contract.m_currency + "_" + contract.m_exchange);
 		if(!new File(folder).exists()) {
 			new File(folder).mkdir();
+			BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "time.txt"), contract.startTime + "," + contract.endTime, true);
 		}
 		String path = getPath(folder);
 		switch (field) {

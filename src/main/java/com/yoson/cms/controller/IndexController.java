@@ -139,8 +139,6 @@ public class IndexController {
 					    	if(!((_startTime.equals(_endTime) || _startTime.before(_endTime)) && contract.startTime.split(" ")[0].equals(contract.endTime.split(" ")[0]))) {
 					    		throw new Exception("Invalidate time");
 					    	}
-					    	String folder = FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), i + "_" + contract.m_secType + "_" + contract.m_symbol + "_" + contract.m_currency + "_" + contract.m_exchange);
-					    	BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "time.txt"), contract.startTime + "," + contract.endTime, true);
 					    } catch (Exception e) {
 					    	contract.startTime = startTime;
 					    	contract.endTime = endTime;
@@ -171,7 +169,7 @@ public class IndexController {
 					
 					// start new market data
 					for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
-						EClientSocketUtils.socket.reqMktData(i, EClientSocketUtils.contracts.get(i), null, false, new Vector<TagValue>());						
+						EClientSocketUtils.socket.reqMktData(i, EClientSocketUtils.contracts.get(i), null, false, new Vector<TagValue>());											
 					}
 					
 					EClientSocketUtils.socket.reqCurrentTime();
