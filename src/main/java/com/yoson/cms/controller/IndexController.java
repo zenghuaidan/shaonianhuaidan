@@ -44,6 +44,9 @@ import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.ib.client.Contract;
 import com.yoson.callback.StatusCallBack;
@@ -276,11 +279,37 @@ public class IndexController  implements StatusCallBack {
 		Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
-		String json = gson.toJson(EClientSocketUtils.strategies);			
 		
+		String json = gson.toJson(EClientSocketUtils.strategies);			
+		JsonElement jsonTree = gson.toJsonTree(EClientSocketUtils.strategies);
+		List<String> headers = new ArrayList<String>();
+		StringBuilder items = new StringBuilder();
+		for(JsonElement strategiesJson : jsonTree.getAsJsonArray()) {
+			JsonObject asJsonObject = strategiesJson.getAsJsonObject();			
+			for(String key : asJsonObject.keySet()) {
+				boolean isMainUIParam = "mainUIParam".equals(key);
+				if(!headers.contains(key) && !isMainUIParam) {
+					headers.add(key);
+				}
+				JsonElement itemJson = asJsonObject.get(key);
+				if(itemJson.isJsonObject()) {
+					JsonObject mainUIParamJson = itemJson.getAsJsonObject();
+					for(String key2 : mainUIParamJson.keySet()) {
+						if(!headers.contains(key2)) {
+							headers.add(key2);
+						}
+						items.append(mainUIParamJson.get(key2).getAsString() + ",");
+					}					
+				} else if(!isMainUIParam) {
+					items.append(itemJson.getAsString() + ",");
+				}
+			}
+			items.append(System.lineSeparator());
+		}
+		String result = String.join(",", headers) + System.lineSeparator() + items;
 		response.setContentType("APPLICATION/OCTET-STREAM");  
-		response.setHeader("Content-Disposition","attachment; filename=saveTemplate"+DateUtils.yyyyMMddHHmmss2().format(new Date()) + ".txt");
-		IOUtils.write(json, response.getOutputStream());
+		response.setHeader("Content-Disposition","attachment; filename=saveTemplate"+DateUtils.yyyyMMddHHmmss2().format(new Date()) + ".csv");
+		IOUtils.write(result, response.getOutputStream());
 		response.flushBuffer();	
 	}
 	
@@ -289,9 +318,38 @@ public class IndexController  implements StatusCallBack {
 	public boolean loadTemplate(MultipartFile template, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		try {
 			String ext = template == null ? "" : template.getOriginalFilename().substring(template.getOriginalFilename().lastIndexOf('.')).toLowerCase();
-			if(ext.equals(".txt")) {
+			if(ext.equals(".csv")) {
+				
+				List<String> readLines = IOUtils.readLines(template.getInputStream());
+				String [] headers = null;
+				boolean first = true;
+				JsonArray jsonArray = new JsonArray();
+				List<String> strategyNames = new ArrayList<String>();
+				for(String line : readLines) {
+					if(first) {
+						first = false;
+						headers = line.split(",");
+						continue;
+					}
+					String[] values = line.split(",");
+					String starategyName = values[0];
+					if(strategyNames.contains(starategyName)) {
+						continue;
+					}
+					strategyNames.add(starategyName);
+					JsonObject jsonObject1 = new JsonObject();
+					jsonObject1.addProperty(headers[0], starategyName);
+					
+					JsonObject jsonObject2 = new JsonObject();
+					for(int i = 1; i < values.length; i++) {
+						jsonObject2.addProperty(headers[i], values[i]);
+					}
+					jsonObject1.add("mainUIParam", jsonObject2);
+					jsonArray.add(jsonObject1);
+				}
+				
 				Type type = new TypeToken<ArrayList<Strategy>>() {}.getType();  
-				EClientSocketUtils.strategies = new Gson().fromJson(IOUtils.toString(template.getInputStream()), type);	
+				EClientSocketUtils.strategies = new Gson().fromJson(jsonArray, type);	
 				for (Strategy strategy : EClientSocketUtils.strategies) {
 					strategy.inactive();
 				}
