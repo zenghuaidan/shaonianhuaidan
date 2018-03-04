@@ -500,7 +500,7 @@ function getMarketData() {
 
 function loadTemplate() {
 		var file = $("#templatefm input[type=file]").val();
-		if (file == "" || file.split(".")[file.split(".").length - 1].toLocaleLowerCase() != "txt") {
+		if (file == "" || file.split(".")[file.split(".").length - 1].toLocaleLowerCase() != "csv") {
 			alert("Please select txt file to upload.");
 			return;
 		}
