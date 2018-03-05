@@ -444,7 +444,7 @@
 						<td>&nbsp;&nbsp;</td>
 						<td><input type="button" onclick="deleteAllStrategy();" value="Delete All"/></td>
 						<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-						<td><a href="saveAllStrategy"><input type="button" value="Save As Template"/></a></td>
+						<td><a href="saveAllStrategy"><input type="button" value="Save As CSV"/></a></td>
 						<td>&nbsp;&nbsp;</td>
 						<td>
 							<form id='templatefm' method='post' action='loadTemplate' enctype='multipart/form-data'>
