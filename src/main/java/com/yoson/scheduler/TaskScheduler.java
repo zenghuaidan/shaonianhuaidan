@@ -158,6 +158,7 @@ public class TaskScheduler {
 			for(int orderId : strategy.getOrderTimeMap().keySet()) {
 				//more than 5 second without status return				
 				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && (nowLong - strategy.getOrderTimeMap().get(orderId) > 5000)) {
+					strategy.getOrderTimeMap().remove(orderId);
 					Order order = strategy.getOrderMap().get(orderId);
 					int orderCount = 2;
 					if(strategy.getOrderCountMap().containsKey(orderId)) {
