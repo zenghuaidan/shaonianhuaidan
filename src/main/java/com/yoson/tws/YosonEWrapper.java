@@ -592,6 +592,9 @@ public class YosonEWrapper extends BasicEWrapper {
 				} else if(remaining > 0) {
 					orderLog.append("Warning:" + status + " order with remaining=" + remaining + Global.lineSeparator);
 				}
+				if(!strategy.getOrderStatusTimeMap().containsKey(orderId)) {
+					strategy.getOrderStatusTimeMap().put(orderId, new Date().getTime());
+				}				
 			}
 		}
 		
