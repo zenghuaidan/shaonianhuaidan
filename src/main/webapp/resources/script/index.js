@@ -82,6 +82,8 @@ function doInitTab() {
 		$("#ltoCSV").show();
 		$("#toDatabase").show();
 		$("#toCSV").show();
+		$("#llivetradingdata").show();
+		$("#liveTradingData").show();
 		$("#uploadDataWithChecking").show();
 		$("#uploadDataWithReplace").show();
 		$("#uploadDataWithSkip").show();
@@ -95,6 +97,8 @@ function doInitTab() {
 		$("#ltoCSV").hide();
 		$("#toDatabase").hide();
 		$("#toCSV").hide();
+		$("#llivetradingdata").hide();
+		$("#liveTradingData").hide();
 		$("#uploadDataWithChecking").hide();
 		$("#uploadDataWithReplace").hide();
 		$("#uploadDataWithSkip").hide();

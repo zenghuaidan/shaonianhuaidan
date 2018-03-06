@@ -40,6 +40,7 @@
 						Ignore Lunch Time:<input type="checkbox" name="ignoreLunchTime"/>
 						<label id="ltoDatabase">To Database:</label><input type="checkbox" id="toDatabase" name="toDatabase" checked="checked"/>
 						<label id="ltoCSV">To CSV:</label><input type="checkbox" id="toCSV" name="toCSV" checked="checked"/>
+						<label id="llivetradingdata">Live Trading Data:</label><input type="checkbox" id="liveTradingData" name="liveTradingData" checked="checked"/>
 						CSV Path:<input type="text" name="csvPath"/>
 						<input type="button" id="uploadDataWithChecking" value="Check"/>
 						<input type="button" id="uploadDataWithReplace" value="Upload by replace"/>

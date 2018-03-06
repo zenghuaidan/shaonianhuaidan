@@ -313,10 +313,11 @@ public class IndexController  implements StatusCallBack {
 	public static List<String> uploadStatus = new ArrayList<String>();
 	@ResponseBody
 	@RequestMapping("uploadData")
-	public boolean uploadData(String ignoreLunchTime, String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	public boolean uploadData(String liveTradingData, String ignoreLunchTime, String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		isToCSV = toCSV != null && "on".equals(toCSV.toLowerCase());
 		isToDatabase = toDatabase != null && "on".equals(toDatabase.toLowerCase());
-		isIgnoreLunchTime= ignoreLunchTime != null && "on".equals(ignoreLunchTime.toLowerCase());
+		isIgnoreLunchTime = ignoreLunchTime != null && "on".equals(ignoreLunchTime.toLowerCase());
+		isLiveTradingData = liveTradingData != null && "on".equals(liveTradingData.toLowerCase());
 		String FINISHED = "Finished";
 		boolean success = false;
 		csvDownloadFolder=FilenameUtils.concat(System.getProperty("java.io.tmpdir"),DateUtils.yyyyMMddHHmmss2().format(new Date()));
@@ -389,11 +390,13 @@ public class IndexController  implements StatusCallBack {
 						new File(zipFile).delete();
 						
 						// retrieve the excel files
-						Collection<File> files = FileUtils.listFiles(unzipFolderFile, new SuffixFileFilter(new ArrayList<String>(){{add("xlsm"); add("xls"); add("xlsx");}}), TrueFileFilter.TRUE);
+						Collection<File> files = FileUtils.listFiles(unzipFolderFile, new SuffixFileFilter(new ArrayList<String>(){{add("xlsm"); add("xls"); add("xlsx"); add("csv");}}), TrueFileFilter.TRUE);
 						
 						if(files.size() > 0) {
 							if (isCheck) {
-								check(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, files);
+								if(!isLiveTradingData) {
+									check(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, files);								
+								}
 								
 								// delete the unzip folder, just keep the zip file
 								FileUtils.deleteQuietly(tempFolderFile);
@@ -503,6 +506,7 @@ public class IndexController  implements StatusCallBack {
 	private int previousSheetIndex = 0;
 	private String csvDownloadFolder;
 	private boolean isToCSV;
+	private boolean isLiveTradingData;
 	private boolean isToDatabase;
 	private boolean isIgnoreLunchTime;
 	private void uploadWithTransfer(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files) throws IOException, OpenXML4JException, SAXException {
@@ -710,69 +714,105 @@ public class IndexController  implements StatusCallBack {
 			source = "";
 			sheet="";
 			previousSheetIndex = 0;
-	        new BigExcelReader(file) {  
-	        	@Override  
-	        	protected void outputRow(int sheetIndex, int rowIndex, int curCol, List<String> datas) {
-	        		if(validateSheet && rowIndex == 0 && previousSheetIndex != sheetIndex) {
-	        			wrtingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace);
-	        		}
-	        		previousSheetIndex = sheetIndex;
-	        		if(sheetIndex >= startSheet) {
-    					if(rowIndex == 0) {
-    						tradeMap = new TreeMap<Long, List<Double>>();
-    						askMap = new TreeMap<Long, List<Double>>();
-    						bidMap = new TreeMap<Long, List<Double>>();
-    						sheet = "<font size='3' color='blue'>Sheet" + (sheetIndex + 1) + "</font>";
-    						date = null;
-    						source = "";
-    						try {
-    							source = genSouce((String)datas.get(1));						
-    							date = DateUtils.yyyyMMdd().parse(datas.get(2));
-    						} catch (Exception e) {
-    						}
-    						if (StringUtils.isEmpty(source) || date == null) {
-    							uploadStatus.add("Can not detect the" + (StringUtils.isEmpty(source) ? "" : " <font size='3' color='red'>Source cell(B1)</font> ") + (date == null ? "" : " <font size='3' color='red'>Date cell(C1)</font> ") + " at " + sheet + ", this sheet will be <font size='4' color='red'>skipped</font>");
-    							validateSheet = false;
-    						} else {
-    							uploadStatus.add("Parsing data(" + DateUtils.yyyyMMdd().format(date) + ") for " + sheet + ", the source is " + source + " ...");
-    							validateSheet = true;
-    						}
-    						
-    					} else if(validateSheet && rowIndex >= 3) {
-    						try {
-    							Date tradeDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(1));
-    							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, tradeDate)) {
-    								Double tradePrice = Double.valueOf(datas.get(3).toString());
-    								YosonEWrapper.addLiveData(tradeMap, tradeDate, tradePrice);																									
-    							}
-    						} catch (Exception e) {
-    						}
-    						
-    						try {
-    							Date askDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(6));
-    							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, askDate)) {
-    								Double askPrice = Double.valueOf(datas.get(8).toString());
-    								YosonEWrapper.addLiveData(askMap, askDate, askPrice);									
-    							}
-    						} catch (Exception e) {
-    						}
-    						
-    						try {
-    							Date bidDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(11));
-    							if(org.apache.commons.lang.time.DateUtils.isSameDay(date, bidDate)) {
-    								Double bidPrice = Double.valueOf(datas.get(13).toString());
-    								YosonEWrapper.addLiveData(bidMap, bidDate, bidPrice);									
-    							}
-    						} catch (Exception e) {
-    						}											
-        				}
-	        		}
-	        	}
-        	};
-			if(previousSheetIndex < startSheet) {
-				uploadStatus.add("The excel contains less than " + startSheet + " Sheets, so this file will be <font size='4' color='red'>skipped</font>");
-			} if(validateSheet) { //write last sheet
+			if (isLiveTradingData) {
+				tradeMap = new TreeMap<Long, List<Double>>();
+				askMap = new TreeMap<Long, List<Double>>();
+				bidMap = new TreeMap<Long, List<Double>>();
+				String fileName = FilenameUtils.getBaseName(file.getName());
+				source = fileName.split("_")[0];
+				uploadStatus.add("Parsing file " + name + ", the source is " + source + " ...");
+				
+				FileInputStream fileInputStream = new FileInputStream(file);
+				List<String> readLines = IOUtils.readLines(fileInputStream);
+				fileInputStream.close();
+				for(String line : readLines) {
+					try {
+						String type = line.split(",")[0];
+						Date livedate = DateUtils.yyyyMMddHHmmss2().parse(line.split(",")[1]);
+						date = livedate;
+						double price = Double.valueOf(line.split(",")[2]);
+						switch (type) {
+						case "Bid":							
+							YosonEWrapper.addLiveData(bidMap, livedate, price);									
+							break;
+						case "Ask":							
+							YosonEWrapper.addLiveData(askMap, livedate, price);																		
+							break;
+						case "Trade":							
+							YosonEWrapper.addLiveData(tradeMap, livedate, price);																																		
+							break;
+						}
+					} catch (Exception e) {
+					}											
+				}
 				wrtingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace);
+			} else {
+				new BigExcelReader(file) {  
+					@Override  
+					protected void outputRow(int sheetIndex, int rowIndex, int curCol, List<String> datas) {
+						if(validateSheet && rowIndex == 0 && previousSheetIndex != sheetIndex) {
+							wrtingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace);
+						}
+						previousSheetIndex = sheetIndex;
+						if(sheetIndex >= startSheet) {
+							if(rowIndex == 0) {
+								tradeMap = new TreeMap<Long, List<Double>>();
+								askMap = new TreeMap<Long, List<Double>>();
+								bidMap = new TreeMap<Long, List<Double>>();
+								sheet = "<font size='3' color='blue'>Sheet" + (sheetIndex + 1) + "</font>";
+								date = null;
+								source = "";
+								try {
+									source = genSouce((String)datas.get(1));						
+									date = DateUtils.yyyyMMdd().parse(datas.get(2));
+								} catch (Exception e) {
+								}
+								if (StringUtils.isEmpty(source) || date == null) {
+									uploadStatus.add("Can not detect the" + (StringUtils.isEmpty(source) ? "" : " <font size='3' color='red'>Source cell(B1)</font> ") + (date == null ? "" : " <font size='3' color='red'>Date cell(C1)</font> ") + " at " + sheet + ", this sheet will be <font size='4' color='red'>skipped</font>");
+									validateSheet = false;
+								} else {
+									uploadStatus.add("Parsing data(" + DateUtils.yyyyMMdd().format(date) + ") for " + sheet + ", the source is " + source + " ...");
+									validateSheet = true;
+								}
+								
+							} else if(validateSheet && rowIndex >= 3) {
+								try {
+									Date tradeDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(1));
+									if(org.apache.commons.lang.time.DateUtils.isSameDay(date, tradeDate)) {
+										Double tradePrice = Double.valueOf(datas.get(3).toString());
+										YosonEWrapper.addLiveData(tradeMap, tradeDate, tradePrice);																									
+									}
+								} catch (Exception e) {
+								}
+								
+								try {
+									Date askDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(6));
+									if(org.apache.commons.lang.time.DateUtils.isSameDay(date, askDate)) {
+										Double askPrice = Double.valueOf(datas.get(8).toString());
+										YosonEWrapper.addLiveData(askMap, askDate, askPrice);									
+									}
+								} catch (Exception e) {
+								}
+								
+								try {
+									Date bidDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(11));
+									if(org.apache.commons.lang.time.DateUtils.isSameDay(date, bidDate)) {
+										Double bidPrice = Double.valueOf(datas.get(13).toString());
+										YosonEWrapper.addLiveData(bidMap, bidDate, bidPrice);									
+									}
+								} catch (Exception e) {
+								}											
+							}
+						}
+					}
+				};
+			}
+			if (!isLiveTradingData) {
+				if(previousSheetIndex < startSheet) {
+					uploadStatus.add("The excel contains less than " + startSheet + " Sheets, so this file will be <font size='4' color='red'>skipped</font>");
+				} if(validateSheet) { //write last sheet
+					wrtingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace);
+				}				
 			}
 		}
 	}
@@ -785,7 +825,7 @@ public class IndexController  implements StatusCallBack {
 			String _dataEndTime = DateUtils.yyyyMMdd().format(date) + " " + dataEndTime;
 			List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap);
 			if(isToDatabase) {
-				uploadStatus.add("Writing database for " + sheet + ", the source is " + source + " ...");	
+				uploadStatus.add("Writing database ...");	
 				if(isIgnoreLunchTime) {
 					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _dataEndTime, source, isReplace);
 				} else {
@@ -795,7 +835,7 @@ public class IndexController  implements StatusCallBack {
 			}
 			
 			if(isToCSV) {
-				uploadStatus.add("Writing scheduled data csv for " + sheet + ", the source is " + source + " ...");
+				uploadStatus.add("Writing scheduled data csv ...");
 				CollectionUtils.filter(scheduledDataRecords, new Predicate() {
 					@Override
 					public boolean evaluate(Object o) {
