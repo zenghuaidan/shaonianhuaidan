@@ -134,7 +134,7 @@ public class TaskScheduler {
 						strategy.setPnl(strategy.getPnl() + strategy.getMorningPnl());
 					}
 					
-					log.append(retryOrder(strategy, nowDateTimeLong + ""));
+					log.append(retryCancelOrder(strategy, nowDateTimeLong + ""));
 					
 //					log.append(retryMissingOrder(strategy, nowDateTimeLong + "", now.getTime()));
 				}
@@ -192,7 +192,7 @@ public class TaskScheduler {
 		return log.toString();
 	}
 	
-	public String retryOrder(Strategy strategy, String now) {
+	public String retryCancelOrder(Strategy strategy, String now) {
 		StringBuffer log = new StringBuffer();
 		for(int orderId : strategy.getCancelOrder().keySet()) {
 			if(!strategy.getCancelOrder().get(orderId)) {//pending for retry
