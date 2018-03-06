@@ -20,7 +20,7 @@ import com.yoson.model.MainUIParam;
 import com.yoson.tws.ScheduledDataRecord;
 
 public class SQLUtils {
-	public static String SCHEDULE_DATA_TABLE = "schedule_data";
+	public static String SCHEDULE_DATA_TABLE = "schedule_data2";
 	
 	public static List<String> initScheduleData(MainUIParam mainUIParam) {
 		Session session = null;
