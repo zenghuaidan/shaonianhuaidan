@@ -27,8 +27,15 @@ public class Strategy implements Serializable {
 	private Map<Integer, Integer> orderCountMap;
 	// cancel order for retry
 	private Map<Integer, Boolean> cancelOrder;
-	// action map, key=time, value=action
+	// action map, key=time, value=trade count
 	private Map<Long, Integer> actoinMap;
+	
+	//key=orderId, value=the order time
+	private Map<Integer, Long> orderTimeMap;
+	
+	//key=orderId, value=the order status time
+	private Map<Integer, Long> orderStatusTimeMap;
+	
 	private Date orderTime;
 
 	public String getStrategyName() {
@@ -72,6 +79,8 @@ public class Strategy implements Serializable {
 			this.cancelOrder = new ConcurrentHashMap<Integer, Boolean>();
 			this.orderCountMap = new ConcurrentHashMap<Integer, Integer>();
 			this.actoinMap = new ConcurrentHashMap<Long, Integer>();
+			this.orderTimeMap = new ConcurrentHashMap<Integer, Long>();
+			this.orderStatusTimeMap = new ConcurrentHashMap<Integer, Long>();
 			this.pnl = 0;
 			this.morningPnl = 0;
 			this.tradeCount = 0;
@@ -85,6 +94,8 @@ public class Strategy implements Serializable {
 		this.orderCountMap = null;
 		this.orderTime = null;
 		this.actoinMap = null;
+		this.orderTimeMap = null;
+		this.orderStatusTimeMap = null;
 		this.pnl = 0;
 		this.morningPnl = 0;
 		this.tradeCount = 0;
@@ -176,6 +187,22 @@ public class Strategy implements Serializable {
 
 	public void setMorningPnl(double morningPnl) {
 		this.morningPnl = morningPnl;
+	}
+
+	public Map<Integer, Long> getOrderTimeMap() {
+		return orderTimeMap;
+	}
+
+	public void setOrderTimeMap(Map<Integer, Long> orderTimeMap) {
+		this.orderTimeMap = orderTimeMap;
+	}
+
+	public Map<Integer, Long> getOrderStatusTimeMap() {
+		return orderStatusTimeMap;
+	}
+
+	public void setOrderStatusTimeMap(Map<Integer, Long> orderStatusTimeMap) {
+		this.orderStatusTimeMap = orderStatusTimeMap;
 	}
 	
 }

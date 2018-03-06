@@ -135,6 +135,8 @@ public class TaskScheduler {
 					}
 					
 					log.append(retryOrder(strategy, nowDateTimeLong + ""));
+					
+//					log.append(retryMissingOrder(strategy, nowDateTimeLong + "", now.getTime()));
 				}
 			}			
 			log.append("Calculation finish with " + (System.currentTimeMillis() - startTime) + "(" + start + "-" + System.nanoTime() + ")" + Global.lineSeparator);
@@ -148,6 +150,46 @@ public class TaskScheduler {
 				BackTestCSVWriter.writeText(YosonEWrapper.getLogPath(), log.toString(), true);
 			}
 		}
+	}
+	
+	public String retryMissingOrder(Strategy strategy, String now, long nowLong) {
+		StringBuffer log = new StringBuffer();
+		if(strategy.getOrderTimeMap() != null && strategy.getOrderTimeMap().size() > 0) {
+			for(int orderId : strategy.getOrderTimeMap().keySet()) {
+				//more than 5 second without status return				
+				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && (nowLong - strategy.getOrderTimeMap().get(orderId) > 5000)) {
+					Order order = strategy.getOrderMap().get(orderId);
+					int orderCount = 2;
+					if(strategy.getOrderCountMap().containsKey(orderId)) {
+						orderCount = strategy.getOrderCountMap().get(orderId) + 1;
+					}
+					Order newOrder = new Order();
+					newOrder.m_account = EClientSocketUtils.connectionInfo.getAccount();
+					newOrder.m_tif = EClientSocketUtils.contract.getTif();
+					newOrder.m_action = order.m_action;
+					newOrder.m_totalQuantity = 1;
+					if (orderCount > 10) {
+						newOrder.m_orderType = Global.MKT;
+					} else {
+						newOrder.m_orderType = Global.LMT;
+						newOrder.m_auxPrice = 0;
+						double lmtPrice = YosonEWrapper.trade + ((order.m_action.equals(Global.BUY) ? 1 : -1 ) * strategy.getMainUIParam().getUnit() * strategy.getMainUIParam().getOrderTicker());
+						newOrder.m_lmtPrice = Math.round(lmtPrice * 100) / 100D;
+					}
+					int newOrderId = YosonEWrapper.increaseOrderId();
+					EClientSocketUtils.placeOrder(newOrderId, newOrder);
+					
+					strategy.getOrderMap().put(newOrderId, newOrder);
+					strategy.getOrderTimeMap().put(newOrderId, new Date().getTime());
+					strategy.getOrderCountMap().put(newOrderId, orderCount);
+					strategy.setOrderTime(new Date());
+					strategy.getCancelOrder().replace(orderId, true);						
+					log.append("Retry For Missing Order(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:1"+ Global.lineSeparator);					
+				}
+			}
+		}
+			
+		return log.toString();
 	}
 	
 	public String retryOrder(Strategy strategy, String now) {
@@ -176,6 +218,7 @@ public class TaskScheduler {
 				EClientSocketUtils.placeOrder(newOrderId, newOrder);
 				
 				strategy.getOrderMap().put(newOrderId, newOrder);
+				strategy.getOrderTimeMap().put(newOrderId, new Date().getTime());
 				strategy.getOrderCountMap().put(newOrderId, orderCount);
 				strategy.setOrderTime(new Date());
 				strategy.getCancelOrder().replace(orderId, true);						
@@ -205,6 +248,7 @@ public class TaskScheduler {
 		
 		strategy.setTradeCount(strategy.getTradeCount() + totalQuantity);
 		strategy.getOrderMap().put(newOrderId, newOrder);
+		strategy.getOrderTimeMap().put(newOrderId, new Date().getTime());
 		strategy.setOrderTime(new Date());
 		EClientSocketUtils.placeOrder(newOrderId, newOrder);
 		return "Limit Order(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + totalQuantity + Global.lineSeparator;
