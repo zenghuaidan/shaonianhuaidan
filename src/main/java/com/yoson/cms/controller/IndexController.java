@@ -165,13 +165,16 @@ public class IndexController {
 					EClientSocketUtils.contracts = contracts;
 					YosonEWrapper.priceMap = new ConcurrentHashMap<String, Double>();
 					EClientSocketUtils.id = DateUtils.yyyyMMddHHmmss2().format(new Date());
-					EClientSocketUtils.initAndReturnLiveDataFolder();
+					String folder = EClientSocketUtils.initAndReturnLiveDataFolder();
 					
 					// start new market data
+					StringBuilder log = new StringBuilder();
 					for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
-						EClientSocketUtils.socket.reqMktData(i, EClientSocketUtils.contracts.get(i), null, false, new Vector<TagValue>());											
+						EClientSocketUtils.socket.reqMktData(i, EClientSocketUtils.contracts.get(i), null, false, new Vector<TagValue>());	
+						log.append((i + 1) + ":" + EClientSocketUtils.contracts.get(i).startTime + "," + EClientSocketUtils.contracts.get(i).endTime + System.lineSeparator());
 					}
 					
+					BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "log.txt"), log.toString(), true);
 					EClientSocketUtils.socket.reqCurrentTime();
 					return "Success";
 				}								
