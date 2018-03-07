@@ -136,7 +136,10 @@ public class TaskScheduler {
 					
 					log.append(retryCancelOrder(strategy, nowDateTimeLong + ""));
 					
-//					log.append(retryMissingOrder(strategy, nowDateTimeLong + "", now.getTime()));
+					if(EClientSocketUtils.connectionInfo.isPaperTrading()) {
+						log.append(retryMissingOrder(strategy, nowDateTimeLong + "", now.getTime()));
+						
+					}
 				}
 			}			
 			log.append("Calculation finish with " + (System.currentTimeMillis() - startTime) + "(" + start + "-" + System.nanoTime() + ")" + Global.lineSeparator);

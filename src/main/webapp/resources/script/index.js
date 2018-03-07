@@ -95,6 +95,7 @@ function defaultConnectClick() {
 	$("[name='port']").val("7496");
 	$("[name='clientId']").val("1");
 	$("[name='account']").val("U8979091");
+	$("[name='isPaperTrading']").prop('checked', true);
 }
 function searchClick() {
 	if(!confirm("Are you sure to start a new search, the previous search will be stopped.")) {
@@ -139,6 +140,7 @@ function connectClick() {
 	var port = $.trim($("[name='port']").val());
 	var clientId = $.trim($("[name='clientId']").val());
 	var account = $.trim($("[name='account']").val());
+	var paperTrading = $("[name='isPaperTrading']").is(":checked");
 	if(host == "" || port == "" || clientId == "" || account == "") {
 		alert("Please input all the connection infomation");
 		return;
@@ -150,7 +152,8 @@ function connectClick() {
 	    	"host" : host,
 	    	"port" : port,
 	    	"clientId" : clientId,
-	    	"account" : account
+	    	"account" : account,
+	    	"paperTrading" : paperTrading
 	    }),
 	    contentType:"application/json;charset=utf-8",
 	    success: function(data) {

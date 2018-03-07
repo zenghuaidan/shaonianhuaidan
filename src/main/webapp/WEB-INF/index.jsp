@@ -352,6 +352,13 @@
 				      <td>Account</td>
 				      <td><input name="account" value="${connectionInfo.account}" type="text"/></td>
 				   </tr>
+				   <tr>
+				      <td>PaperTrading?</td>
+				      <td>
+				      	<input name="isPaperTrading" type="checkbox" ${connectionInfo.paperTrading ? 'checked' : ''} />
+				      	<font color="red">Only select this checkbox during paper trading!!!!</font>
+			      	  </td>
+				   </tr>
    	   			   <tr>
 				      <td></td>
 				      <td>
