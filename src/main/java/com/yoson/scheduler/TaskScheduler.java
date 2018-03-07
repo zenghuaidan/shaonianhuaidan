@@ -7,8 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.ib.client.Contract;
 import com.yoson.cms.controller.IndexController;
+import com.yoson.date.DateUtils;
 import com.yoson.tws.EClientSocketUtils;
-import com.yoson.tws.YosonEWrapper;
 
 public class TaskScheduler {
 	public synchronized void doTrade() throws ParseException {
@@ -16,10 +16,11 @@ public class TaskScheduler {
 			return;
 		}
 		Date now = new Date();
-		
+		long nowDateTimeLong = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(now));
 		boolean validateTime = false;
 		for(Contract contract : EClientSocketUtils.contracts) {
-			if(YosonEWrapper.isValidateTime(contract, now)) {
+			Date endTime = DateUtils.yyyyMMddHHmm().parse(contract.getEndTime());
+			if(DateUtils.addSecond(endTime, 1) > nowDateTimeLong) {				
 				validateTime = true;
 				break;
 			}
