@@ -8,6 +8,7 @@ public class ConnectionInfo implements Serializable {
 	private int port;
 	private int clientId;
 	private String account;
+	private boolean paperTrading = true;
 
 	public String getHost() {
 		return host;
@@ -39,6 +40,14 @@ public class ConnectionInfo implements Serializable {
 
 	public void setAccount(String account) {
 		this.account = account;
+	}
+
+	public boolean isPaperTrading() {
+		return paperTrading;
+	}
+
+	public void setPaperTrading(boolean paperTrading) {
+		this.paperTrading = paperTrading;
 	}
 
 }
