@@ -274,6 +274,12 @@ public class IndexController  implements StatusCallBack {
 		return EClientSocketUtils.strategies;
 	}
 	
+	@ResponseBody
+	@RequestMapping(path = "getTradeLog", method = {RequestMethod.GET})
+	public String getTradeLog() {
+		return String.join("<br/>", EClientSocketUtils.tradeLogs == null ? new ArrayList<>() : EClientSocketUtils.tradeLogs);
+	}
+	
 	@RequestMapping("saveAllStrategy")
 	public void saveAllStrategy(HttpServletResponse response, HttpServletRequest request) throws IOException {
 		Gson gson = new GsonBuilder()
