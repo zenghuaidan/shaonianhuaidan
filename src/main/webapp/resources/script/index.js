@@ -259,6 +259,15 @@ function updateOrderTab() {
 	    error: function() {
 	    }
 	});
+	$.ajax({
+	    type: "GET",
+	    url: "getTradeLog",
+	    success: function(data) {
+	    	$("#tradeLog").html(data);
+	    },
+	    error: function() {
+	    }
+	});
 }
 
 

@@ -188,7 +188,9 @@ public class TaskScheduler {
 					strategy.getOrderCountMap().put(newOrderId, orderCount);
 					strategy.setOrderTime(new Date());
 					strategy.getCancelOrder().replace(orderId, true);						
-					log.append("Retry For Missing Order(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:1"+ Global.lineSeparator);					
+					String tradeLog = "Retry For Missing Order(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:1"+ Global.lineSeparator;
+					EClientSocketUtils.tradeLogs.add(tradeLog);
+					log.append(tradeLog);					
 				}
 			}
 		}
@@ -226,7 +228,9 @@ public class TaskScheduler {
 				strategy.getOrderCountMap().put(newOrderId, orderCount);
 				strategy.setOrderTime(new Date());
 				strategy.getCancelOrder().replace(orderId, true);						
-				log.append("Retry For(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:1"+ Global.lineSeparator);
+				String tradeLog = "Retry For(" + orderId + "), " + (orderCount > 10 ? "Market Order" : "Limit Order") + "(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:1"+ Global.lineSeparator;
+				EClientSocketUtils.tradeLogs.add(tradeLog);
+				log.append(tradeLog);
 			}
 		}				
 		return log.toString();
@@ -255,6 +259,8 @@ public class TaskScheduler {
 		strategy.getOrderTimeMap().put(newOrderId, new Date().getTime());
 		strategy.setOrderTime(new Date());
 		EClientSocketUtils.placeOrder(newOrderId, newOrder);
-		return "Limit Order(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + totalQuantity + Global.lineSeparator;
+		String tradeLog = "Limit Order(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + totalQuantity + Global.lineSeparator;
+		EClientSocketUtils.tradeLogs.add(tradeLog);
+		return tradeLog;
 	}
 }

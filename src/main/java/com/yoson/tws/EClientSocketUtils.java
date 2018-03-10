@@ -23,7 +23,7 @@ public class EClientSocketUtils {
 	public static List<Strategy> strategies = new CopyOnWriteArrayList<Strategy>();
 	public static String id;
 	public static String CONTRACT = "contract.txt";
-	
+	public static List<String> tradeLogs;
 	
 	public static boolean connect(ConnectionInfo connectionInfo)
 	{
@@ -92,6 +92,7 @@ public class EClientSocketUtils {
 		YosonEWrapper.initData();
 		EClientSocketUtils.contract = contract;
 		id = DateUtils.yyyyMMddHHmmss2().format(new Date());
+		tradeLogs = new CopyOnWriteArrayList<String>();
 		String dataFolder = initAndReturnLiveDataFolder();
 //		socket.cancelMktData(tickerId);
 		socket.reqMktData(tickerId, contract, null, false, new Vector<TagValue>());

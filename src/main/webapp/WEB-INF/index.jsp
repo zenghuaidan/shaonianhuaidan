@@ -421,6 +421,7 @@
 			<div class="dom">
 				<table id="orderDataTable" border="1" cellspacing="0" cellpadding="0" width="100%">					
 				</table>
+				<div id="tradeLog"></div>
 			</div>
 			<div class="dom">
 				<table id="controlDataTable" border="1" cellspacing="0" cellpadding="0" width="100%">					
