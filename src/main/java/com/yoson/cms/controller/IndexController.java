@@ -149,7 +149,7 @@ public class IndexController {
 					}
 				}
 				if (contracts.size() > 0) {
-					EClientSocketUtils.requestDate(now, contracts);
+//					EClientSocketUtils.requestDate(now, contracts);
 					return "Success";
 				}
 				return "Can not parse any contract from the excel, please check your excel data format";

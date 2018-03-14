@@ -55,7 +55,7 @@ function connectClick() {
 	    success: function(data) {
 	    	updateConnectStatus();
 	    	if(!data) {
-	    		alert("Connect failed!!!");
+	    		//alert("Connect failed!!!");
 	    	}
 	    },
 	    error: function() {
