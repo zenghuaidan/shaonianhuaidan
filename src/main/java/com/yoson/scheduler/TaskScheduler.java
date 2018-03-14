@@ -12,24 +12,30 @@ import com.yoson.tws.EClientSocketUtils;
 
 public class TaskScheduler {
 	public synchronized void doTrade() throws ParseException {
-		if(!EClientSocketUtils.isConnected() || EClientSocketUtils.contracts == null || EClientSocketUtils.contracts.size() == 0) {
+		if(EClientSocketUtils.contracts == null || EClientSocketUtils.contracts.size() == 0) {
 			return;
 		}
 		Date now = new Date();
 		long nowDateTimeLong = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(now));
 		boolean validateTime = false;
 		for(Contract contract : EClientSocketUtils.contracts) {
-			Date endTime = DateUtils.yyyyMMddHHmm().parse(contract.getEndTime());
+			Date endTime = DateUtils.yyyyMMddHHmmss().parse(DateUtils.yyyyMMdd().format(now) + " " + contract.getEndTime());
 			if(DateUtils.addSecond(endTime, 1) > nowDateTimeLong) {				
 				validateTime = true;
 				break;
 			}
 		}
 		if(!validateTime) {
-			if(StringUtils.isNotEmpty(EClientSocketUtils.id)){
+			if(EClientSocketUtils.isConnected() && StringUtils.isNotEmpty(EClientSocketUtils.id)) {
 				IndexController.uploadData(EClientSocketUtils.id);				
 				EClientSocketUtils.disconnect();
 				EClientSocketUtils.id = null;
+			}
+		} else {
+			if (!EClientSocketUtils.isConnected())
+				EClientSocketUtils.reconnectUsingPreConnectSetting();
+			if(StringUtils.isEmpty(EClientSocketUtils.id)) {
+				EClientSocketUtils.requestDate(now, EClientSocketUtils.contracts);
 			}
 		}
 		

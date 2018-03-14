@@ -110,11 +110,11 @@
 					   	</tr>
 	   			   		<tr>
 					      <td>Start Time</td>
-					      <td><input class="datetimepicker" name="startTime" value="${startTime}" type="text"/></td>
+					      <td><input class="timepicker" name="startTime" value="${startTime}" type="text"/></td>
 					    </tr>
 		   			   	<tr>
 					      <td>End Time</td>
-					      <td><input class="datetimepicker" name="endTime" value="${endTime}" type="text"/></td>
+					      <td><input class="timepicker" name="endTime" value="${endTime}" type="text"/></td>
 					    </tr>
 					    <tr style="display:none">
 					      <td>Market Data</td>

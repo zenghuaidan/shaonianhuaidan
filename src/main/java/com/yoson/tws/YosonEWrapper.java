@@ -169,7 +169,8 @@ public class YosonEWrapper extends BasicEWrapper {
 	public static boolean isValidateTime(Contract contract, Date when) {
 		if (contract == null)
 			return false;
-		return DateUtils.isValidateTime(when, contract.startTime, contract.endTime);
+		String dateStr = DateUtils.yyyyMMdd().format(when);
+		return DateUtils.isValidateTime(when, dateStr + " " + contract.startTime, dateStr + " " + contract.endTime);
 	}
 	
 	@Override

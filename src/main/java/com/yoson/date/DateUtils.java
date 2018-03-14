@@ -11,6 +11,7 @@ public class DateUtils {
 	public static ThreadLocal<SimpleDateFormat> yyyyMM = new ThreadLocal<SimpleDateFormat>();//yyyyMM
 	public static ThreadLocal<SimpleDateFormat> yyyyMMdd = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd
 	public static ThreadLocal<SimpleDateFormat> HHmmss = new ThreadLocal<SimpleDateFormat>();//HH:mm:ss
+	public static ThreadLocal<SimpleDateFormat> HHmm = new ThreadLocal<SimpleDateFormat>();//HH:mm
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmm = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd HH:mm
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmmss = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd HH:mm:ss
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmmss2 = new ThreadLocal<SimpleDateFormat>();//yyyyMMddHHmmss
@@ -51,18 +52,18 @@ public class DateUtils {
 			if (StringUtils.isEmpty(startTimeStr) && StringUtils.isEmpty(endTimeStr))
 				return false;
 			if(StringUtils.isNotEmpty(startTimeStr) && StringUtils.isNotEmpty(endTimeStr)) {
-				Date start = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmm().parse(startTimeStr), Calendar.MINUTE, bufferInMinutes * -1);
-				Date end = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmm().parse(endTimeStr), Calendar.MINUTE, bufferInMinutes);
+				Date start = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmmss().parse(startTimeStr), Calendar.MINUTE, bufferInMinutes * -1);
+				Date end = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmmss().parse(endTimeStr), Calendar.MINUTE, bufferInMinutes);
 				return start.equals(when) || 
 						end.equals(when) || 
 						start.before(when) && end.after(when);
 			}
 			else if(StringUtils.isNotEmpty(startTimeStr)) {
-				Date start = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmm().parse(startTimeStr), Calendar.MINUTE, bufferInMinutes * -1);
+				Date start = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmmss().parse(startTimeStr), Calendar.MINUTE, bufferInMinutes * -1);
 				return start.before(when);
 			}
 			else {
-				Date end = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmm().parse(endTimeStr), Calendar.MINUTE, bufferInMinutes);
+				Date end = org.apache.commons.lang.time.DateUtils.add(DateUtils.yyyyMMddHHmmss().parse(endTimeStr), Calendar.MINUTE, bufferInMinutes);
 				return end.after(when);
 			}
 		} catch (ParseException e) {
@@ -71,13 +72,13 @@ public class DateUtils {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(isValidateTime(new Date(117, 11,24,9,29,59),"2017-12-24 09:30", "2017-12-24 16:15"));
-		System.out.println(isValidateTime(new Date(117, 11,24,9,30,0),"2017-12-24 09:30", "2017-12-24 16:15"));
-		System.out.println(isValidateTime(new Date(117, 11,24,9,30,1),"2017-12-24 09:30", "2017-12-24 16:15"));
+		System.out.println(isValidateTime(new Date(117, 11,24,9,29,59),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
+		System.out.println(isValidateTime(new Date(117, 11,24,9,30,0),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
+		System.out.println(isValidateTime(new Date(117, 11,24,9,28,0),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
 		System.out.println();
-		System.out.println(isValidateTime(new Date(117, 11,24,16,14,59),"2017-12-24 09:30", "2017-12-24 16:15"));
-		System.out.println(isValidateTime(new Date(117, 11,24,16,15,0),"2017-12-24 09:30", "2017-12-24 16:15"));
-		System.out.println(isValidateTime(new Date(117, 11,24,16,15,1),"2017-12-24 09:30", "2017-12-24 16:15"));
+		System.out.println(isValidateTime(new Date(117, 11,24,16,14,59),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
+		System.out.println(isValidateTime(new Date(117, 11,24,16,15,0),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
+		System.out.println(isValidateTime(new Date(117, 11,24,16,15,1),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
 	}
 	
 	private static final Object lockObj = new Object();
@@ -110,6 +111,16 @@ public class DateUtils {
             }
         }
         return HHmmss.get();
+	}
+	
+	public static SimpleDateFormat HHmm() {
+        SimpleDateFormat sf = HHmm.get();
+        if (sf == null) {
+            synchronized (lockObj) {
+            	HHmm.set(new SimpleDateFormat("HH:mm"));
+            }
+        }
+        return HHmm.get();
 	}
 	
 	public static SimpleDateFormat yyyyMMddHHmm() {

@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.ZipOutputStream;
 
@@ -31,8 +29,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ib.client.Contract;
-import com.ib.client.TagValue;
-import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.csv.ExcelUtil;
 import com.yoson.date.DateUtils;
 import com.yoson.sql.SQLUtils;
@@ -94,19 +90,17 @@ public class IndexController {
 	@ResponseBody
 	@RequestMapping("search")
 	public String search(String startTime, String endTime, String marketData, String fundamentalData, MultipartFile contractTemplate, HttpServletResponse response, HttpServletRequest request) throws IOException {
+		Date now = new Date();	
 		IndexController.startTime = startTime;
 		IndexController.endTime = endTime;
 		IndexController.isMarketData = !StringUtils.isBlank(marketData) && "on".equals(marketData);
 		IndexController.isFundamentalData = !StringUtils.isBlank(fundamentalData) && "on".equals(fundamentalData);
 		
 		try {
-			if(!EClientSocketUtils.isConnected()) {				
-				return "Connect failed, please check your connection";
-			}
-			Date _startTime = DateUtils.yyyyMMddHHmm().parse(startTime);
-			Date _endTime = DateUtils.yyyyMMddHHmm().parse(endTime);
+			Date _startTime = DateUtils.HHmmss().parse(startTime);
+			Date _endTime = DateUtils.HHmmss().parse(endTime);
 			if((_startTime.equals(_endTime) || _startTime.before(_endTime)) && startTime.split(" ")[0].equals(endTime.split(" ")[0])) {// within same day and start time must equal or before end time
-				String tempFolder = FilenameUtils.concat(InitServlet.createUploadFoderAndReturnPath(), DateUtils.yyyyMMddHHmmss2().format(new Date()));
+				String tempFolder = FilenameUtils.concat(InitServlet.createUploadFoderAndReturnPath(), DateUtils.yyyyMMddHHmmss2().format(now));
 				File tempFolderFile = new File(tempFolder);
 				if(tempFolderFile.exists())
 					FileUtils.deleteQuietly(tempFolderFile);
@@ -134,8 +128,8 @@ public class IndexController {
 					    	// if time in excel is not validate, then use the GUI time
 					    	_startTime = (Date)row.get(j++);
 					    	_endTime = (Date)row.get(j++);
-					    	contract.startTime = DateUtils.yyyyMMddHHmm().format(_startTime);
-					    	contract.endTime = DateUtils.yyyyMMddHHmm().format(_endTime);
+					    	contract.startTime = DateUtils.HHmmss().format(_startTime);
+					    	contract.endTime = DateUtils.HHmmss().format(_endTime);
 					    	if(!((_startTime.equals(_endTime) || _startTime.before(_endTime)) && contract.startTime.split(" ")[0].equals(contract.endTime.split(" ")[0]))) {
 					    		throw new Exception("Invalidate time");
 					    	}
@@ -155,29 +149,9 @@ public class IndexController {
 					}
 				}
 				if (contracts.size() > 0) {
-					// stop previous market data if have
-					if (EClientSocketUtils.contracts != null && EClientSocketUtils.contracts.size() > 0) {
-						for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
-							EClientSocketUtils.cancelMktData(i);
-						}
-					}
-					
-					EClientSocketUtils.contracts = contracts;
-					YosonEWrapper.priceMap = new ConcurrentHashMap<String, Double>();
-					EClientSocketUtils.id = DateUtils.yyyyMMddHHmmss2().format(new Date());
-					String folder = EClientSocketUtils.initAndReturnLiveDataFolder();
-					
-					// start new market data
-					StringBuilder log = new StringBuilder();
-					for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
-						EClientSocketUtils.socket.reqMktData(i, EClientSocketUtils.contracts.get(i), null, false, new Vector<TagValue>());	
-						log.append((i + 1) + ":" + EClientSocketUtils.contracts.get(i).startTime + "," + EClientSocketUtils.contracts.get(i).endTime + System.lineSeparator());
-					}
-					
-					BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "log.txt"), log.toString(), true);
-					EClientSocketUtils.socket.reqCurrentTime();
+					EClientSocketUtils.requestDate(now, contracts);
 					return "Success";
-				}								
+				}
 				return "Can not parse any contract from the excel, please check your excel data format";
 			} else {
 				return "The start time should before end time, and they should be the same day";

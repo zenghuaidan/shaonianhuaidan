@@ -1,9 +1,17 @@
 package com.yoson.tws;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.io.FilenameUtils;
 
 import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
+import com.ib.client.TagValue;
+import com.yoson.csv.BackTestCSVWriter;
+import com.yoson.date.DateUtils;
 import com.yoson.web.InitServlet;
 
 public class EClientSocketUtils {
@@ -55,5 +63,31 @@ public class EClientSocketUtils {
 
 	public static String initAndReturnLiveDataFolder() {
 		return InitServlet.createFoderAndReturnPath(InitServlet.createLiveDataFoderAndReturnPath(), id);
+	}
+	
+	public static void requestDate(Date now, List<Contract> contracts) {
+		if(EClientSocketUtils.isConnected()) {							
+			// stop previous market data if have
+			if (EClientSocketUtils.contracts != null && EClientSocketUtils.contracts.size() > 0) {
+				for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
+					EClientSocketUtils.cancelMktData(i);
+				}
+			}
+			
+			EClientSocketUtils.contracts = contracts;
+			YosonEWrapper.priceMap = new ConcurrentHashMap<String, Double>();
+			EClientSocketUtils.id = DateUtils.yyyyMMddHHmmss2().format(now);
+			String folder = EClientSocketUtils.initAndReturnLiveDataFolder();
+			
+			// start new market data
+			StringBuilder log = new StringBuilder();
+			for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
+				EClientSocketUtils.socket.reqMktData(i, EClientSocketUtils.contracts.get(i), null, false, new Vector<TagValue>());	
+				log.append((i + 1) + ":" + EClientSocketUtils.contracts.get(i).startTime + "," + EClientSocketUtils.contracts.get(i).endTime + System.lineSeparator());
+			}
+			
+			BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "log.txt"), log.toString(), true);
+			EClientSocketUtils.socket.reqCurrentTime();
+		}
 	}
 }
