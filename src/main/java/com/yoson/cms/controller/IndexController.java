@@ -99,7 +99,7 @@ public class IndexController {
 		try {
 			Date _startTime = DateUtils.HHmmss().parse(startTime);
 			Date _endTime = DateUtils.HHmmss().parse(endTime);
-			if((_startTime.equals(_endTime) || _startTime.before(_endTime)) && startTime.split(" ")[0].equals(endTime.split(" ")[0])) {// within same day and start time must equal or before end time
+			if(_startTime.equals(_endTime) || _startTime.before(_endTime)) {// within same day and start time must equal or before end time
 				String tempFolder = FilenameUtils.concat(InitServlet.createUploadFoderAndReturnPath(), DateUtils.yyyyMMddHHmmss2().format(now));
 				File tempFolderFile = new File(tempFolder);
 				if(tempFolderFile.exists())
@@ -130,7 +130,7 @@ public class IndexController {
 					    	_endTime = (Date)row.get(j++);
 					    	contract.startTime = DateUtils.HHmmss().format(_startTime);
 					    	contract.endTime = DateUtils.HHmmss().format(_endTime);
-					    	if(!((_startTime.equals(_endTime) || _startTime.before(_endTime)) && contract.startTime.split(" ")[0].equals(contract.endTime.split(" ")[0]))) {
+					    	if(!(_startTime.equals(_endTime) || _startTime.before(_endTime))) {
 					    		throw new Exception("Invalidate time");
 					    	}
 					    } catch (Exception e) {

@@ -88,6 +88,8 @@ public class EClientSocketUtils {
 			
 			BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "log.txt"), log.toString(), true);
 			EClientSocketUtils.socket.reqCurrentTime();
+		} else {
+			EClientSocketUtils.contracts = contracts;
 		}
 	}
 }
