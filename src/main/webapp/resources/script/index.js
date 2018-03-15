@@ -37,8 +37,8 @@ function connectClick() {
 	var host = $.trim($("[name='host']").val());
 	var port = $.trim($("[name='port']").val());
 	var clientId = $.trim($("[name='clientId']").val());
-	var account = $.trim($("[name='account']").val());
-	if(host == "" || port == "" || clientId == "" || account == "") {
+	var account = "";//$.trim($("[name='account']").val());
+	if(host == "" || port == "" || clientId == "") {
 		alert("Please input all the connection infomation");
 		return;
 	}
