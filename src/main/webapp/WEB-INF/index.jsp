@@ -49,7 +49,7 @@
 				      <td>
 				      	<input name="defaultConnect" onclick="defaultConnectClick();" value="Default Connection" type="button"/>
 				      	<input name="connect" onclick="connectClick();" value="Connect" type="button"/>
-				      	<input name="disconnect" onclick="disconnectClick();" value="Disconnect" type="button"/>				      	
+				      	<!--input name="disconnect" onclick="disconnectClick();" value="Disconnect" type="button"/-->				      	
 				      	<label name="status">Offline</label>
 				      </td>
 				   </tr>

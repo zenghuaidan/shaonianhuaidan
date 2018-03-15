@@ -43,6 +43,7 @@ public class EClientSocketUtils {
 	public static boolean disconnect()
 	{
 		try {
+			cancelData(contracts);
 			if(socket != null) {
 				if(socket.isConnected())
 					socket.eDisconnect();
