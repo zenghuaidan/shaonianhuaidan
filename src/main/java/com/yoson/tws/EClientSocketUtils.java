@@ -6,6 +6,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
@@ -85,7 +86,9 @@ public class EClientSocketUtils {
 	}
 	
 	public static void requestData(Date now) {
-		if(EClientSocketUtils.isConnected()) {													
+		if (!EClientSocketUtils.isConnected())
+			EClientSocketUtils.reconnectUsingPreConnectSetting();		
+		if(EClientSocketUtils.isConnected() && StringUtils.isEmpty(EClientSocketUtils.id)) {													
 			YosonEWrapper.priceMap = new ConcurrentHashMap<String, Double>();
 			EClientSocketUtils.id = DateUtils.yyyyMMddHHmmss2().format(now);
 			String folder = EClientSocketUtils.initAndReturnLiveDataFolder();

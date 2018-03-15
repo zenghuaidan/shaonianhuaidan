@@ -30,12 +30,8 @@ public class TaskScheduler {
 				IndexController.uploadData(EClientSocketUtils.id);				
 				EClientSocketUtils.disconnect();
 			}
-		} else {
-			if (!EClientSocketUtils.isConnected())
-				EClientSocketUtils.reconnectUsingPreConnectSetting();
-			if(StringUtils.isEmpty(EClientSocketUtils.id)) {
-				EClientSocketUtils.requestData(now);
-			}
+		} else {			
+			EClientSocketUtils.requestData(now);
 		}
 		
 	}
