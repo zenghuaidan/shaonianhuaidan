@@ -35,7 +35,7 @@ public class TaskScheduler {
 			if (!EClientSocketUtils.isConnected())
 				EClientSocketUtils.reconnectUsingPreConnectSetting();
 			if(StringUtils.isEmpty(EClientSocketUtils.id)) {
-				EClientSocketUtils.requestDate(now, EClientSocketUtils.contracts);
+				EClientSocketUtils.requestData(now);
 			}
 		}
 		

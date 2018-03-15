@@ -23,16 +23,21 @@ public class EClientSocketUtils {
 	public static boolean connect(ConnectionInfo connectionInfo)
 	{
 		EClientSocketUtils.connectionInfo = connectionInfo;
-		if (!isConnected()) {
+//		if (!isConnected()) {
+//			socket = new EClientSocket(new YosonEWrapper());
+//			socket.eConnect(connectionInfo.getHost(), connectionInfo.getPort(), connectionInfo.getClientId());
+//		}
+//		return isConnected();
+		return true;
+	}	
+	
+	public static boolean reconnectUsingPreConnectSetting()
+	{		
+		if (!isConnected() && connectionInfo != null) {
 			socket = new EClientSocket(new YosonEWrapper());
 			socket.eConnect(connectionInfo.getHost(), connectionInfo.getPort(), connectionInfo.getClientId());
 		}
 		return isConnected();
-	}	
-	
-	public static boolean reconnectUsingPreConnectSetting()
-	{
-		return connect(connectionInfo);
 	}
 	
 	public static boolean disconnect()
@@ -65,7 +70,7 @@ public class EClientSocketUtils {
 		return InitServlet.createFoderAndReturnPath(InitServlet.createLiveDataFoderAndReturnPath(), id);
 	}
 	
-	public static void requestDate(Date now, List<Contract> contracts) {
+	public static void cancelData(List<Contract> contracts) {
 		if(EClientSocketUtils.isConnected()) {							
 			// stop previous market data if have
 			if (EClientSocketUtils.contracts != null && EClientSocketUtils.contracts.size() > 0) {
@@ -73,8 +78,13 @@ public class EClientSocketUtils {
 					EClientSocketUtils.cancelMktData(i);
 				}
 			}
-			
-			EClientSocketUtils.contracts = contracts;
+		}
+		EClientSocketUtils.id = null;
+		EClientSocketUtils.contracts = contracts;
+	}
+	
+	public static void requestData(Date now) {
+		if(EClientSocketUtils.isConnected()) {													
 			YosonEWrapper.priceMap = new ConcurrentHashMap<String, Double>();
 			EClientSocketUtils.id = DateUtils.yyyyMMddHHmmss2().format(now);
 			String folder = EClientSocketUtils.initAndReturnLiveDataFolder();
@@ -88,8 +98,6 @@ public class EClientSocketUtils {
 			
 			BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "log.txt"), log.toString(), true);
 			EClientSocketUtils.socket.reqCurrentTime();
-		} else {
-			EClientSocketUtils.contracts = contracts;
 		}
 	}
 }
