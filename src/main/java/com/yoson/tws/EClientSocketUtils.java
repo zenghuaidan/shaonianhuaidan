@@ -23,7 +23,14 @@ public class EClientSocketUtils {
 	
 	public static boolean connect(ConnectionInfo connectionInfo)
 	{
-		EClientSocketUtils.connectionInfo = connectionInfo;
+		if(EClientSocketUtils.connectionInfo == null 
+				|| !EClientSocketUtils.connectionInfo.getHost().equals(connectionInfo.getHost())
+				|| EClientSocketUtils.connectionInfo.getPort() != connectionInfo.getPort()
+				|| EClientSocketUtils.connectionInfo.getClientId() != connectionInfo.getClientId()
+			) {			
+			EClientSocketUtils.disconnect();
+			EClientSocketUtils.connectionInfo = connectionInfo;
+		}
 //		if (!isConnected()) {
 //			socket = new EClientSocket(new YosonEWrapper());
 //			socket.eConnect(connectionInfo.getHost(), connectionInfo.getPort(), connectionInfo.getClientId());

@@ -40,10 +40,10 @@
 				      <td>Client ID</td>
 				      <td><input name="clientId" value="${connectionInfo.clientId}" type="text"/></td>
 				   </tr>
-   	   			   <tr>
+   	   			   <!--tr>
 				      <td>Account</td>
 				      <td><input name="account" value="${connectionInfo.account}" type="text"/></td>
-				   </tr>
+				   </tr-->
    	   			   <tr>
 				      <td></td>
 				      <td>
