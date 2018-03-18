@@ -13,6 +13,7 @@ import com.yoson.tws.EClientSocketUtils;
 public class TaskScheduler {
 	public synchronized void doTrade() throws ParseException {
 		if(EClientSocketUtils.contracts == null || EClientSocketUtils.contracts.size() == 0) {
+			EClientSocketUtils.contracts = IndexController.initContracts();
 			return;
 		}
 		Date now = new Date();

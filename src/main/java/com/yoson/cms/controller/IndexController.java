@@ -1,6 +1,8 @@
 package com.yoson.cms.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.ParseException;
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.ZipOutputStream;
 
@@ -16,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
@@ -51,22 +55,14 @@ public class IndexController {
 
 	@RequestMapping("/")
 	public String index(Model model) {		
-		model.addAttribute("connectionInfo", EClientSocketUtils.connectionInfo == null ? getDefaultConnectionInfo() : EClientSocketUtils.connectionInfo);		
+		model.addAttribute("connectionInfo", EClientSocketUtils.connectionInfo == null ? ConnectionInfo.getDefaultConnectionInfo() : EClientSocketUtils.connectionInfo);		
 		model.addAttribute("contracts", EClientSocketUtils.contracts == null ? new ArrayList<Contract>() : EClientSocketUtils.contracts);		
 		model.addAttribute("startTime", startTime);
 		model.addAttribute("endTime", endTime);
 		model.addAttribute("isMarketData", isMarketData);
 		model.addAttribute("isFundamentalData", isFundamentalData);
+		model.addAttribute("timeZones", TimeZone.getAvailableIDs());
 		return "index";
-	}
-	
-	public ConnectionInfo getDefaultConnectionInfo() {
-		ConnectionInfo connectionInfo = new ConnectionInfo();
-		connectionInfo.setHost("127.0.0.1");
-		connectionInfo.setPort(7496);
-		connectionInfo.setClientId(Integer.parseInt(InitServlet.getVersionIndex()));
-		connectionInfo.setAccount("U8979091");
-		return connectionInfo;
 	}
 	
 	@ResponseBody
@@ -88,6 +84,12 @@ public class IndexController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("getNowTime")
+	public String getNowTime() {
+		return DateUtils.yyyyMMddHHmmss().format(new Date());
+	}
+	
+	@ResponseBody
 	@RequestMapping("search")
 	public String search(String startTime, String endTime, String marketData, String fundamentalData, MultipartFile contractTemplate, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		Date now = new Date();	
@@ -100,7 +102,7 @@ public class IndexController {
 			Date _startTime = DateUtils.HHmmss().parse(startTime);
 			Date _endTime = DateUtils.HHmmss().parse(endTime);
 			if(_startTime.equals(_endTime) || _startTime.before(_endTime)) {// within same day and start time must equal or before end time
-				String tempFolder = FilenameUtils.concat(InitServlet.createUploadFoderAndReturnPath(), DateUtils.yyyyMMddHHmmss2().format(now));
+				String tempFolder = FilenameUtils.concat(InitServlet.createUploadFoderAndReturnPath(), "default");
 				File tempFolderFile = new File(tempFolder);
 				if(tempFolderFile.exists())
 					FileUtils.deleteQuietly(tempFolderFile);
@@ -108,46 +110,10 @@ public class IndexController {
 				
 				String file = FilenameUtils.concat(tempFolder, contractTemplate.getOriginalFilename());
 				FileUtils.copyInputStreamToFile(contractTemplate.getInputStream(), new File(file));
-				ArrayList<ArrayList<ArrayList<Object>>> list = ExcelUtil.readExcel(new File(file));
-				
-				List<Contract> contracts = new CopyOnWriteArrayList<Contract>();
-				if(list.size() > 0) {
-					ArrayList<ArrayList<Object>> sheet = list.get(0);
-					for(int i = 1; i <= sheet.size() - 1; i++) {
-						ArrayList<Object> row = sheet.get(i);
-						Contract contract = new Contract();
-						int j = 0;
-						contract.m_secType = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
-						contract.m_symbol = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
-						contract.m_currency = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
-					    contract.m_exchange = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
-					    contract.m_localSymbol = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
-					    contract.m_expiry = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
-					    contract.tif = "IOC";
-					    try {
-					    	// if time in excel is not validate, then use the GUI time
-					    	_startTime = (Date)row.get(j++);
-					    	_endTime = (Date)row.get(j++);
-					    	contract.startTime = DateUtils.HHmmss().format(_startTime);
-					    	contract.endTime = DateUtils.HHmmss().format(_endTime);
-					    	if(!(_startTime.equals(_endTime) || _startTime.before(_endTime))) {
-					    		throw new Exception("Invalidate time");
-					    	}
-					    } catch (Exception e) {
-					    	contract.startTime = startTime;
-					    	contract.endTime = endTime;
-						}					    
-					    contract.tif = "IOC";
-					    if (!StringUtils.isBlank(contract.m_secType) 
-					    		&& !StringUtils.isBlank(contract.m_symbol) 
-					    		&& !StringUtils.isBlank(contract.m_currency) 
-					    		&& !StringUtils.isBlank(contract.m_exchange)
-					    		&& !StringUtils.isBlank(contract.startTime)
-					    		&& !StringUtils.isBlank(contract.endTime)) {
-					    	contracts.add(contract);
-					    }
-					}
-				}
+				FileOutputStream output = new FileOutputStream(new File(FilenameUtils.concat(tempFolder, "time.txt")));
+				IOUtils.write(startTime + "," + endTime, output);
+				output.close();
+				List<Contract> contracts = initContracts();
 				if (contracts.size() > 0) {
 					EClientSocketUtils.cancelData(contracts);
 					return "Success";
@@ -159,6 +125,84 @@ public class IndexController {
 		} catch (ParseException e) {
 			return "Please input valdate time!";
 		}
+	}
+
+	public static List<Contract> initContracts() {
+		List<Contract> contracts = new CopyOnWriteArrayList<Contract>();
+		String tempFolder = FilenameUtils.concat(InitServlet.createUploadFoderAndReturnPath(), "default");
+		File tempFolderFile = new File(tempFolder);
+		String file = "";
+		String startTime = null;
+		String endTime = null;
+		if(tempFolderFile.exists() && tempFolderFile.isDirectory()) {
+			Collection<File> listFiles = FileUtils.listFiles(tempFolderFile, TrueFileFilter.TRUE, TrueFileFilter.TRUE);
+			for (File file2 : listFiles) {
+				file = file2.getAbsolutePath();
+				break;
+			}
+			File timeFile = new File(FilenameUtils.concat(tempFolder, "time.txt"));
+			if(timeFile.exists()) {
+				FileInputStream input = null;
+				try {
+					input = new FileInputStream(timeFile);
+					String timeStr = IOUtils.toString(input);
+					startTime = timeStr.split(",")[0];
+					endTime = timeStr.split(",")[1];
+				} catch (Exception e) {
+					// TODO: handle exception
+				} finally {
+					try {
+						input.close();
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+				}
+			}
+		}
+		if(StringUtils.isEmpty(file) || StringUtils.isEmpty(startTime) || StringUtils.isEmpty(endTime)) return contracts;
+		
+		Date _startTime;
+		Date _endTime;
+		ArrayList<ArrayList<ArrayList<Object>>> list = ExcelUtil.readExcel(new File(file));
+		
+		if(list.size() > 0) {
+			ArrayList<ArrayList<Object>> sheet = list.get(0);
+			for(int i = 1; i <= sheet.size() - 1; i++) {
+				ArrayList<Object> row = sheet.get(i);
+				Contract contract = new Contract();
+				int j = 0;
+				contract.m_secType = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+				contract.m_symbol = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+				contract.m_currency = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+			    contract.m_exchange = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+			    contract.m_localSymbol = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+			    contract.m_expiry = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+			    contract.tif = "IOC";
+			    try {
+			    	// if time in excel is not validate, then use the GUI time
+			    	_startTime = (Date)row.get(j++);
+			    	_endTime = (Date)row.get(j++);
+			    	contract.startTime = DateUtils.HHmmss().format(_startTime);
+			    	contract.endTime = DateUtils.HHmmss().format(_endTime);
+			    	if(!(_startTime.equals(_endTime) || _startTime.before(_endTime))) {
+			    		throw new Exception("Invalidate time");
+			    	}
+			    } catch (Exception e) {
+			    	contract.startTime = startTime;
+			    	contract.endTime = endTime;
+				}					    
+			    contract.tif = "IOC";
+			    if (!StringUtils.isBlank(contract.m_secType) 
+			    		&& !StringUtils.isBlank(contract.m_symbol) 
+			    		&& !StringUtils.isBlank(contract.m_currency) 
+			    		&& !StringUtils.isBlank(contract.m_exchange)
+			    		&& !StringUtils.isBlank(contract.startTime)
+			    		&& !StringUtils.isBlank(contract.endTime)) {
+			    	contracts.add(contract);
+			    }
+			}
+		}
+		return contracts;
 	}
 	
 	@ResponseBody

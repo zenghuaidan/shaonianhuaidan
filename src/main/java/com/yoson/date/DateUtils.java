@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,6 +17,17 @@ public class DateUtils {
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmmss = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd HH:mm:ss
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmmss2 = new ThreadLocal<SimpleDateFormat>();//yyyyMMddHHmmss
 	
+	
+	public static void reset() {
+		yyyyMM = new ThreadLocal<SimpleDateFormat>();//yyyyMM
+		yyyyMMdd = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd
+		HHmmss = new ThreadLocal<SimpleDateFormat>();//HH:mm:ss
+		HHmm = new ThreadLocal<SimpleDateFormat>();//HH:mm
+		yyyyMMddHHmm = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd HH:mm
+		yyyyMMddHHmmss = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd HH:mm:ss
+		yyyyMMddHHmmss2 = new ThreadLocal<SimpleDateFormat>();//yyyyMMddHHmmss
+		
+	}
 	
 	public static String dateDiff(long diff) {     
         long nd = 1000 * 24 * 60 * 60;     
@@ -72,6 +84,11 @@ public class DateUtils {
 	}
 	
 	public static void main(String[] args) {
+		TimeZone.setDefault(TimeZone.getTimeZone("GMT+9"));
+		Date now = new Date();
+		System.out.println(yyyyMMddHHmmss().format(now));
+		
+		
 		System.out.println(isValidateTime(new Date(117, 11,24,9,29,59),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
 		System.out.println(isValidateTime(new Date(117, 11,24,9,30,0),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
 		System.out.println(isValidateTime(new Date(117, 11,24,9,28,0),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));

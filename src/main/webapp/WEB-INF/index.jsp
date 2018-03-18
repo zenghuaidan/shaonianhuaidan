@@ -45,10 +45,20 @@
 				      <td><input name="account" value="${connectionInfo.account}" type="text"/></td>
 				   </tr-->
    	   			   <tr>
+				      <td>TimeZone</td>
+				      <td>
+			      		<select name="timeZone">
+			      			<c:forEach items="${timeZones}" var="timeZone" varStatus="i">
+			      				<option value="${timeZone}" ${timeZone eq connectionInfo.timeZone ? 'selected' : ''}>${timeZone}</option>
+			      			</c:forEach>
+			      		</select><font color="red"><lable id="nowTime"></lable></font>
+				      </td>
+				   </tr>
+   	   			   <tr>
 				      <td></td>
 				      <td>
 				      	<input name="defaultConnect" onclick="defaultConnectClick();" value="Default Connection" type="button"/>
-				      	<input name="connect" onclick="connectClick();" value="Connect" type="button"/>
+				      	<input name="connect" onclick="connectClick();" value="Update" type="button"/>
 				      	<!--input name="disconnect" onclick="disconnectClick();" value="Disconnect" type="button"/-->				      	
 				      	<label name="status">Offline</label>
 				      </td>

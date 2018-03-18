@@ -38,6 +38,7 @@ function connectClick() {
 	var port = $.trim($("[name='port']").val());
 	var clientId = $.trim($("[name='clientId']").val());
 	var account = "";//$.trim($("[name='account']").val());
+	var timeZone = $.trim($("[name='timeZone']").val());
 	if(host == "" || port == "" || clientId == "") {
 		alert("Please input all the connection infomation");
 		return;
@@ -49,13 +50,16 @@ function connectClick() {
 	    	"host" : host,
 	    	"port" : port,
 	    	"clientId" : clientId,
-	    	"account" : account
+	    	"account" : account,
+	    	"timeZone" : timeZone
 	    }),
 	    contentType:"application/json;charset=utf-8",
 	    success: function(data) {
 	    	updateConnectStatus();
 	    	if(!data) {
 	    		//alert("Connect failed!!!");
+	    	} else {
+	    		alert("Update success!!!");
 	    	}
 	    },
 	    error: function() {
@@ -78,6 +82,18 @@ function disconnectClick() {
 	    	} else {
 	    		alert("Disconnect success!!!");
 	    	}
+	    },
+	    error: function() {
+	    }
+	});
+}
+
+function updateTime() {
+	$.ajax({
+	    type: "GET",
+	    url: "getNowTime",
+	    success: function(data) {
+	    	$("#nowTime").text(data);
 	    },
 	    error: function() {
 	    }
@@ -168,4 +184,5 @@ $(function() {
 	});
 	$("#contractSelect").change();
 	updateConnectStatus();
+	setInterval(updateTime, 1000);
 });

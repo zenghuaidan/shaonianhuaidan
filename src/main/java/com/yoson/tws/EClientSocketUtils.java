@@ -1,11 +1,15 @@
 package com.yoson.tws;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.ib.client.Contract;
@@ -27,9 +31,26 @@ public class EClientSocketUtils {
 				|| !EClientSocketUtils.connectionInfo.getHost().equals(connectionInfo.getHost())
 				|| EClientSocketUtils.connectionInfo.getPort() != connectionInfo.getPort()
 				|| EClientSocketUtils.connectionInfo.getClientId() != connectionInfo.getClientId()
+				|| EClientSocketUtils.connectionInfo.getTimeZone() != connectionInfo.getTimeZone()
 			) {			
 			EClientSocketUtils.disconnect();
 			EClientSocketUtils.connectionInfo = connectionInfo;
+			List<String> lines = new ArrayList<String>();
+			lines.add(connectionInfo.getHost());
+			lines.add(connectionInfo.getPort() + "");
+			lines.add(connectionInfo.getClientId() +"");
+			lines.add(connectionInfo.getTimeZone());
+			FileOutputStream output = null;
+			try {
+				output = new FileOutputStream(new File(FilenameUtils.concat(InitServlet.createUploadFoderAndReturnPath(), "connect.txt")));
+				IOUtils.writeLines(lines, System.lineSeparator(), output);				
+			}catch (Exception e) {
+			} finally {
+				try {
+					output.close();
+				} catch (Exception e2) {
+				}
+			}
 		}
 //		if (!isConnected()) {
 //			socket = new EClientSocket(new YosonEWrapper());
@@ -41,9 +62,12 @@ public class EClientSocketUtils {
 	
 	public static boolean reconnectUsingPreConnectSetting()
 	{		
-		if (!isConnected() && connectionInfo != null) {
+		if (!isConnected()) {
+			if (connectionInfo == null) {
+				connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+			}
 			socket = new EClientSocket(new YosonEWrapper());
-			socket.eConnect(connectionInfo.getHost(), connectionInfo.getPort(), connectionInfo.getClientId());
+			socket.eConnect(connectionInfo.getHost(), connectionInfo.getPort(), connectionInfo.getClientId());				
 		}
 		return isConnected();
 	}
