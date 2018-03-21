@@ -121,7 +121,7 @@ public class EClientSocketUtils {
 			EClientSocketUtils.reconnectUsingPreConnectSetting();		
 		if(EClientSocketUtils.isConnected() && StringUtils.isEmpty(EClientSocketUtils.id)) {													
 			YosonEWrapper.priceMap = new ConcurrentHashMap<String, Double>();
-			EClientSocketUtils.id = DateUtils.yyyyMMddHHmmss2().format(now);
+			EClientSocketUtils.id = DateUtils.yyyyMMdd().format(now);
 			String folder = EClientSocketUtils.initAndReturnLiveDataFolder();
 			
 			// start new market data
@@ -131,7 +131,7 @@ public class EClientSocketUtils {
 				log.append((i + 1) + ":" + EClientSocketUtils.contracts.get(i).startTime + "," + EClientSocketUtils.contracts.get(i).endTime + System.lineSeparator());
 			}
 			
-			BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "log.txt"), log.toString(), true);
+			BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "log.txt"), log.toString(), false);
 			EClientSocketUtils.socket.reqCurrentTime();
 		}
 	}
