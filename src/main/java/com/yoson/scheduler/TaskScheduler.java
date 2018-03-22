@@ -159,8 +159,8 @@ public class TaskScheduler {
 		StringBuffer log = new StringBuffer();
 		if(strategy.getOrderTimeMap() != null && strategy.getOrderTimeMap().size() > 0) {
 			for(int orderId : strategy.getOrderTimeMap().keySet()) {
-				//more than 5 second without status return				
-				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && (nowLong - strategy.getOrderTimeMap().get(orderId) > 5000)) {
+				//more than 30 second without status return				
+				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && (nowLong - strategy.getOrderTimeMap().get(orderId) > (30 * 1000))) {
 					strategy.getOrderTimeMap().remove(orderId);
 					Order order = strategy.getOrderMap().get(orderId);
 					int orderCount = 2;
