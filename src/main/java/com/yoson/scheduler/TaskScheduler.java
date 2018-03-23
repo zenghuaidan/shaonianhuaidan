@@ -22,6 +22,7 @@ import com.yoson.tws.YosonEWrapper;
 
 public class TaskScheduler {
 	public static Long expectNextExecuteTime;
+	public static boolean needReqAllOpenOrders = false;
 	public synchronized void doTrade() throws ParseException {
 		if(!EClientSocketUtils.isConnected() || StringUtils.isEmpty(EClientSocketUtils.id)) {
 			return;
@@ -74,6 +75,7 @@ public class TaskScheduler {
 			expectNextExecuteTime = DateUtils.addSecond(now, 1);
 			long lastSecond = DateUtils.addSecond(now, -1);
 			Map<String, List<List<ScheduleData>>> scheduleDataMap = new HashMap<String, List<List<ScheduleData>>>();
+			needReqAllOpenOrders = false;
 			for (Strategy strategy : EClientSocketUtils.strategies) {
 				if (strategy.isActive()) {
 					String key = strategy.getMainUIParam().getAskDataField() + "," +
@@ -140,7 +142,11 @@ public class TaskScheduler {
 						log.append(retryMissingOrder(strategy, nowDateTimeLong + "", now.getTime()));						
 					}
 				}
-			}			
+			}
+			if (needReqAllOpenOrders) {
+				log.append("Need do request open orders for missing checking" + Global.lineSeparator);
+				EClientSocketUtils.reqAllOpenOrders();
+			}
 			log.append("Calculation finish with " + (System.currentTimeMillis() - startTime) + "(" + start + "-" + System.nanoTime() + ")" + Global.lineSeparator);
 		} catch (Exception e) {
 			log.append("Sytem Exception:" + e.toString() + ">" + e.getMessage()  + Global.lineSeparator);
@@ -156,8 +162,7 @@ public class TaskScheduler {
 	
 	public String retryMissingOrder(Strategy strategy, String now, long nowLong) {
 		StringBuffer log = new StringBuffer();
-		if(strategy.getOrderTimeMap() != null && strategy.getOrderTimeMap().size() > 0) {
-			boolean needReqAllOpenOrders = false;
+		if(strategy.getOrderTimeMap() != null && strategy.getOrderTimeMap().size() > 0) {			
 			for(int orderId : strategy.getOrderTimeMap().keySet()) {
 				// more than 40 seconds without status return, then check open order to see if missing				
 				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && (nowLong - strategy.getOrderTimeMap().get(orderId) > (40 * 1000))) {
@@ -197,9 +202,7 @@ public class TaskScheduler {
 					EClientSocketUtils.tradeLogs.add(tradeLog);
 					log.append(tradeLog);					
 				}
-			}
-			if (needReqAllOpenOrders)
-				EClientSocketUtils.reqAllOpenOrders();
+			}			
 		}
 			
 		return log.toString();
