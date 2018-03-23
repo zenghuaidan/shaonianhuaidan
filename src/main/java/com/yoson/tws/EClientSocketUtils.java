@@ -42,6 +42,9 @@ public class EClientSocketUtils {
 	public static void placeOrder(int id, Order order) {
 		socket.placeOrder(id, contract, order);
 		socket.reqIds(1);
+	}
+	
+	public static void reqAllOpenOrders() {		
 		socket.reqAllOpenOrders();
 	}
 	
