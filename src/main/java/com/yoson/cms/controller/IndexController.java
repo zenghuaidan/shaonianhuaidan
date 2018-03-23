@@ -258,22 +258,22 @@ public class IndexController {
 		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
 		String downloadFolder = FilenameUtils.concat(dataFolder, id);
 		
-		Collection<File> files = FileUtils.listFilesAndDirs(new File(downloadFolder), FalseFileFilter.FALSE, TrueFileFilter.TRUE);
-		for(File file : files) {
-			String contractDataPath = file.getAbsolutePath();
-			if (!file.isDirectory() || !new File(YosonEWrapper.getPath(contractDataPath)).exists()) continue;
-			String rawDataFilePath = FilenameUtils.concat(contractDataPath, "rawData.csv");
-			String scheduledDataFilePath = FilenameUtils.concat(contractDataPath, "scheduledData.csv");
-			List<Record> tradeList = new ArrayList<Record>();
-			List<Record> askList = new ArrayList<Record>();
-			List<Record> bidList = new ArrayList<Record>();
-			YosonEWrapper.getRecordList(contractDataPath, tradeList, askList, bidList);
-			String instrumentName = id.split("_")[0];
-			RawDataCSVWriter.WriteCSV(rawDataFilePath, instrumentName, tradeList, askList, bidList);
-			
-			List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(contractDataPath);
-			ScheduledDataCSVWriter.WriteCSV(scheduledDataFilePath, instrumentName, scheduledDataRecords);			
-		}
+//		Collection<File> files = FileUtils.listFilesAndDirs(new File(downloadFolder), FalseFileFilter.FALSE, TrueFileFilter.TRUE);
+//		for(File file : files) {
+//			String contractDataPath = file.getAbsolutePath();
+//			if (!file.isDirectory() || !new File(YosonEWrapper.getPath(contractDataPath)).exists()) continue;
+//			String rawDataFilePath = FilenameUtils.concat(contractDataPath, "rawData.csv");
+//			String scheduledDataFilePath = FilenameUtils.concat(contractDataPath, "scheduledData.csv");
+//			List<Record> tradeList = new ArrayList<Record>();
+//			List<Record> askList = new ArrayList<Record>();
+//			List<Record> bidList = new ArrayList<Record>();
+//			YosonEWrapper.getRecordList(contractDataPath, tradeList, askList, bidList);
+//			String instrumentName = id.split("_")[0];
+//			RawDataCSVWriter.WriteCSV(rawDataFilePath, instrumentName, tradeList, askList, bidList);
+//			
+//			List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(contractDataPath);
+//			ScheduledDataCSVWriter.WriteCSV(scheduledDataFilePath, instrumentName, scheduledDataRecords);			
+//		}
 		
 		return downloadFolder;
 	}
