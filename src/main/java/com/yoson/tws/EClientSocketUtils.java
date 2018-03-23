@@ -42,6 +42,7 @@ public class EClientSocketUtils {
 	public static void placeOrder(int id, Order order) {
 		socket.placeOrder(id, contract, order);
 		socket.reqIds(1);
+		socket.reqAllOpenOrders();
 	}
 	
 	public static boolean reconnectUsingPreConnectSetting()

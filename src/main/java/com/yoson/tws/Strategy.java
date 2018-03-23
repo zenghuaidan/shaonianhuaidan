@@ -3,7 +3,9 @@ package com.yoson.tws;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
@@ -35,6 +37,8 @@ public class Strategy implements Serializable {
 	
 	//key=orderId, value=the order status time
 	private Map<Integer, Long> orderStatusTimeMap;
+	
+	private Set<Integer> openOrders;
 	
 	private Date orderTime;
 
@@ -81,6 +85,7 @@ public class Strategy implements Serializable {
 			this.actoinMap = new ConcurrentHashMap<Long, Integer>();
 			this.orderTimeMap = new ConcurrentHashMap<Integer, Long>();
 			this.orderStatusTimeMap = new ConcurrentHashMap<Integer, Long>();
+			this.openOrders = new CopyOnWriteArraySet<Integer>();
 			this.pnl = 0;
 			this.morningPnl = 0;
 			this.tradeCount = 0;
@@ -96,6 +101,7 @@ public class Strategy implements Serializable {
 		this.actoinMap = null;
 		this.orderTimeMap = null;
 		this.orderStatusTimeMap = null;
+		this.openOrders = null;
 		this.pnl = 0;
 		this.morningPnl = 0;
 		this.tradeCount = 0;
@@ -203,6 +209,14 @@ public class Strategy implements Serializable {
 
 	public void setOrderStatusTimeMap(Map<Integer, Long> orderStatusTimeMap) {
 		this.orderStatusTimeMap = orderStatusTimeMap;
+	}
+
+	public Set<Integer> getOpenOrders() {
+		return openOrders;
+	}
+
+	public void setOpenOrders(Set<Integer> openOrders) {
+		this.openOrders = openOrders;
 	}
 	
 }
