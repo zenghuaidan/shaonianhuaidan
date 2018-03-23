@@ -157,9 +157,15 @@ public class TaskScheduler {
 	public String retryMissingOrder(Strategy strategy, String now, long nowLong) {
 		StringBuffer log = new StringBuffer();
 		if(strategy.getOrderTimeMap() != null && strategy.getOrderTimeMap().size() > 0) {
+			boolean needReqAllOpenOrders = false;
 			for(int orderId : strategy.getOrderTimeMap().keySet()) {
-				//more than 30 second without status return				
-				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && !strategy.getOpenOrders().contains(orderId) && (nowLong - strategy.getOrderTimeMap().get(orderId) > (30 * 1000))) {
+				// more than 50 seconds without status return, then check open order to see if missing				
+				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && (nowLong - strategy.getOrderTimeMap().get(orderId) > (50 * 1000))) {
+					needReqAllOpenOrders = true;
+				}
+
+				// more than 60 seconds without status return, and can not find in open order, then it is a missing order
+				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && !strategy.getOpenOrders().contains(orderId) && (nowLong - strategy.getOrderTimeMap().get(orderId) > (60 * 1000))) {
 					strategy.getOrderTimeMap().remove(orderId);
 					Order order = strategy.getOrderMap().get(orderId);
 					int orderCount = 2;
@@ -192,6 +198,8 @@ public class TaskScheduler {
 					log.append(tradeLog);					
 				}
 			}
+			if (needReqAllOpenOrders)
+				EClientSocketUtils.reqAllOpenOrders();
 		}
 			
 		return log.toString();
