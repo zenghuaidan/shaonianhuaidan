@@ -20,6 +20,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.Gson;
 import com.ib.client.Contract;
+import com.ib.client.Order;
+import com.ib.client.OrderState;
 import com.opencsv.CSVReader;
 import com.yoson.cms.controller.Global;
 import com.yoson.csv.BackTestCSVWriter;
@@ -79,6 +81,10 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	public static String getOrderStatusLogPath() {
 		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "orderStatus.txt");
+	}
+	
+	public static String getOpenOrderLogPath() {
+		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "openOrder.txt");
 	}
 	
 	private static String getPath(String type) {
@@ -613,7 +619,20 @@ public class YosonEWrapper extends BasicEWrapper {
 				+ ", clientId:" + clientId
 				+ ", whyHeld:" + ", endTime:" + System.nanoTime() + Global.lineSeparator;
 		
-		BackTestCSVWriter.writeText(getOrderStatusLogPath(), log + orderLog.toString() + Global.lineSeparator, true);		
+		BackTestCSVWriter.writeText(getOrderStatusLogPath(), log + orderLog.toString(), true);		
+	}
+	
+	@Override
+	public void openOrder( int orderId, Contract contract, Order order, OrderState orderState) {
+		long startTime = System.nanoTime();
+		String time = DateUtils.yyyyMMddHHmmss2().format(new Date()) +"(" + startTime + ")";
+		String log = time + "=>orderId:" + orderId + Global.lineSeparator;		
+		for (Strategy strategy : EClientSocketUtils.strategies) {
+			if(strategy.getOrderMap().containsKey(orderId)) {
+				strategy.getOpenOrders().add(orderId);
+			}
+		}
+		BackTestCSVWriter.writeText(getOpenOrderLogPath(), log, true);
 	}
 	
 	@Override
