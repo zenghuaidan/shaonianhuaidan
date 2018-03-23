@@ -159,8 +159,8 @@ public class TaskScheduler {
 		if(strategy.getOrderTimeMap() != null && strategy.getOrderTimeMap().size() > 0) {
 			boolean needReqAllOpenOrders = false;
 			for(int orderId : strategy.getOrderTimeMap().keySet()) {
-				// more than 50 seconds without status return, then check open order to see if missing				
-				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && (nowLong - strategy.getOrderTimeMap().get(orderId) > (50 * 1000))) {
+				// more than 40 seconds without status return, then check open order to see if missing				
+				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && (nowLong - strategy.getOrderTimeMap().get(orderId) > (40 * 1000))) {
 					needReqAllOpenOrders = true;
 				}
 
