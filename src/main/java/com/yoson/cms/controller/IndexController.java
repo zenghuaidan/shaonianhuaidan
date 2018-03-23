@@ -1094,17 +1094,17 @@ public class IndexController  implements StatusCallBack {
 	public static String genLiveResult(String id) throws ParseException {
 		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
 		String downloadFolder = FilenameUtils.concat(dataFolder, id);
-		String rawDataFilePath = FilenameUtils.concat(downloadFolder, id + "_rawData.csv");
-		String scheduledDataFilePath = FilenameUtils.concat(downloadFolder, id + "_scheduledData.csv");
-		List<Record> tradeList = new ArrayList<Record>();
-		List<Record> askList = new ArrayList<Record>();
-		List<Record> bidList = new ArrayList<Record>();
-		YosonEWrapper.getRecordList(downloadFolder, tradeList, askList, bidList);
-		String instrumentName = id.split("_")[0];
-		RawDataCSVWriter.WriteCSV(rawDataFilePath, instrumentName, tradeList, askList, bidList);
+//		String rawDataFilePath = FilenameUtils.concat(downloadFolder, id + "_rawData.csv");
+//		String scheduledDataFilePath = FilenameUtils.concat(downloadFolder, id + "_scheduledData.csv");
+//		List<Record> tradeList = new ArrayList<Record>();
+//		List<Record> askList = new ArrayList<Record>();
+//		List<Record> bidList = new ArrayList<Record>();
+//		YosonEWrapper.getRecordList(downloadFolder, tradeList, askList, bidList);
+//		String instrumentName = id.split("_")[0];
+//		RawDataCSVWriter.WriteCSV(rawDataFilePath, instrumentName, tradeList, askList, bidList);
 		
 		List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(downloadFolder);
-		ScheduledDataCSVWriter.WriteCSV(scheduledDataFilePath, instrumentName, scheduledDataRecords);
+//		ScheduledDataCSVWriter.WriteCSV(scheduledDataFilePath, instrumentName, scheduledDataRecords);
 		
 		YosonEWrapper.genTradingDayPerSecondDetails(downloadFolder, scheduledDataRecords);
 		
