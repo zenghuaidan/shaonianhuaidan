@@ -108,7 +108,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	public static synchronized  int increaseOrderId() {
 		if (currentOrderId < 0) return currentOrderId;
-		currentOrderId++;
+		currentOrderId = currentOrderId + 10;
 		return currentOrderId;			
 	}
 	
