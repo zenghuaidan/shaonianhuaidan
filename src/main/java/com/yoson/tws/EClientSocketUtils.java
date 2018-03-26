@@ -75,11 +75,10 @@ public class EClientSocketUtils {
 	
 	public static Date currentDateTime = null;
 	public static int currentTickerId = -1;
-	public static boolean requesting = false;
 	public static boolean running = false;
 	public static boolean uploading = false;
 	public static int requestSecs = 100;
-	public static int identify = 999;
+	public static int identify = 1000;
 	public static String id = null;
 	public static void requestData(List<Contract> contracts) {
 		EClientSocketUtils.contracts = contracts;
@@ -163,7 +162,6 @@ public class EClientSocketUtils {
 		cancelHistoricalData();
 		currentTickerId = -1;
 		currentDateTime = null;
-		requesting = false;
 		running = false;
 	}
 	
