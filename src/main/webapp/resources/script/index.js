@@ -96,6 +96,18 @@ function updateTime() {
 	});
 }
 
+function getStatus() {
+	$.ajax({
+	    type: "GET",
+	    url: "getStatus",
+	    success: function(data) {
+	    	$("#status").text(data);
+	    },
+	    error: function() {
+	    }
+	});
+}
+
 function updateConnectStatus() {
 	$.ajax({
 	    type: "GET",

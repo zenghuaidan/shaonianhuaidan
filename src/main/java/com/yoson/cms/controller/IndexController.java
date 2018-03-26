@@ -37,6 +37,7 @@ public class IndexController {
 	public static String endDate;
 	public static String startTime;
 	public static String endTime;
+	public static String status = "";
 
 	@RequestMapping("/")
 	public String index(Model model) {		
@@ -77,6 +78,12 @@ public class IndexController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("getStatus")
+	public String getStatus() {		
+		return status;
+	}
+	
+	@ResponseBody
 	@RequestMapping("search")
 	public String search(String startDate, String endDate, String startTime, String endTime, String marketData, String fundamentalData, MultipartFile contractTemplate, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		IndexController.startTime = startTime;
@@ -88,6 +95,7 @@ public class IndexController {
 			return "Connect failed, please check your connection first";
 		}		
 		try {
+			status = "";
 			Date _startTime = DateUtils.HHmmss().parse(startTime);
 			Date _endTime = DateUtils.HHmmss().parse(endTime);
 			Date _startDate = DateUtils.yyyyMMdd().parse(startDate);
