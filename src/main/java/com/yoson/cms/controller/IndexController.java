@@ -93,7 +93,10 @@ public class IndexController {
 		
 		if(!EClientSocketUtils.isConnected()){
 			return "Connect failed, please check your connection first";
-		}		
+		}
+		if(EClientSocketUtils.uploading){
+			return "Data is uploading to database, please re-try after data have been uploaded";
+		}
 		try {
 			status = "";
 			Date _startTime = DateUtils.HHmmss().parse(startTime);

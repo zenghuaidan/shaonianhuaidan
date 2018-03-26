@@ -78,24 +78,26 @@ public class EClientSocketUtils {
 	public static int currentTickerId = -1;
 	public static boolean requesting = false;
 	public static boolean running = false;
+	public static boolean uploading = false;
 	public static int requestSecs = 100;
 	public static int identify = 999;
+	public static String id = null;
 	public static void requestData(List<Contract> contracts) {
 		EClientSocketUtils.contracts = contracts;
-		reset();
-		String historicalDataLogPath = YosonEWrapper.getHistoricalDataLogPath();
-		File file = new File(historicalDataLogPath);
-		if (file.exists()) file.delete();			
+		reset();			
 		running = true;		
+		id = DateUtils.yyyyMMddHHmmss().format(new Date());
 	}
 	
 	public static void upload() {
+		if(!uploading)
+			uploading = true;
 		String historicalDataLogPath = YosonEWrapper.getHistoricalDataLogPath();
 		File file = new File(historicalDataLogPath);
-		Map<String, Map<String, ScheduledDataRecord>> map = new HashMap<String, Map<String, ScheduledDataRecord>>();
 		if (file.exists()) {
 			FileReader input = null;
 			try {
+				Map<String, Map<String, ScheduledDataRecord>> map = new HashMap<String, Map<String, ScheduledDataRecord>>();
 				input = new FileReader(file);
 				List<String> readLines = IOUtils.readLines(input);
 				for(String line : readLines) {
@@ -155,6 +157,7 @@ public class EClientSocketUtils {
 				}
 			}
 		}
+		uploading = false;
 	}
 	
 	public static void reset() {

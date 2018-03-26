@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>  
  <groupId>com.yoson.cms</groupId>
   <artifactId>yoson</artifactId>
-  <version>DataDownloader</version>
+  <version>HDownloader</version>
   <packaging>war</packaging>
   
   <name>cms Maven Webapp</name>
@@ -309,11 +309,11 @@
 		        <version>2.2</version>
 		        <configuration>		        
 		        	<contextReloadable>true</contextReloadable>
-		        	<finalName>DataDownloader</finalName>		        	
-		          	<url>http://146.196.52.71:8083/manager/text</url>
+		        	<finalName>HDownloader</finalName>		        	
+		          	<url>http://146.196.52.71:8081/manager/text</url>
 		          	<username>tomcat</username>
 		          	<password>yoson^123</password>
-		          	<path>/DataDownloader</path>		          			          			          
+		          	<path>/HDownloader</path>		          			          			          
 		        </configuration>
 	      	</plugin>
       
