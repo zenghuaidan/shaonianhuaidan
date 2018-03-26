@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
 import com.ib.client.TagValue;
+import com.yoson.cms.controller.IndexController;
 import com.yoson.date.DateUtils;
 import com.yoson.sql.SQLUtils;
 
@@ -175,8 +176,10 @@ public class EClientSocketUtils {
 						currentTickerId++;
 						if (EClientSocketUtils.contracts.size() == currentTickerId) {
 							// stop
-							reset();
+							IndexController.status = "Uploading data to database....";
 							upload();
+							reset();
+							IndexController.status = "Download historical data completed!";
 						} else {
 							contract = EClientSocketUtils.contracts.get(currentTickerId);
 							currentDateTime = null;
