@@ -86,6 +86,9 @@ public class IndexController {
 		IndexController.startDate = startDate;
 		IndexController.endDate = endDate;
 		
+		if(EClientSocketUtils.isConnected()){
+			return "Connect failed, please check your connection first";
+		}		
 		try {
 			Date _startTime = DateUtils.HHmmss().parse(startTime);
 			Date _endTime = DateUtils.HHmmss().parse(endTime);
@@ -99,69 +102,32 @@ public class IndexController {
 					FileUtils.deleteQuietly(tempFolderFile);
 				tempFolderFile.mkdirs();
 				
-				String file = FilenameUtils.concat(tempFolder, contractTemplate.getOriginalFilename());
-				FileUtils.copyInputStreamToFile(contractTemplate.getInputStream(), new File(file));
-				FileOutputStream output = new FileOutputStream(new File(FilenameUtils.concat(tempFolder, "time.txt")));
-				IOUtils.write(startDate + "," + endDate + System.lineSeparator(), output);
-				IOUtils.write(startTime + "," + endTime + System.lineSeparator(), output);
-				output.close();
-				List<Contract> contracts = initContracts(folderName);
+				File file = new File(FilenameUtils.concat(tempFolder, contractTemplate.getOriginalFilename()));
+				FileUtils.copyInputStreamToFile(contractTemplate.getInputStream(), file);				
+				List<Contract> contracts = initContracts(file, startDate, endDate, startTime, endTime);
 				if (contracts.size() > 0) {
 					EClientSocketUtils.requestData(contracts);
 					return "Success";
 				}
 				return "Can not parse any contract from the excel, please check your excel data format";
 			} else {
-				return "The start time should before end time, and they should be the same day";
+				return "The start date should before end date, and the start time should before end time";
 			}
 		} catch (ParseException e) {
 			return "Please input valdate time!";
 		}
 	}
 
-	public static List<Contract> initContracts(String folderName) {
-		List<Contract> contracts = new CopyOnWriteArrayList<Contract>();
-		String tempFolder = FilenameUtils.concat(InitServlet.createUploadFoderAndReturnPath(), folderName);
-		File tempFolderFile = new File(tempFolder);
-		String file = "";
-		String startDate = null;
-		String endDate = null;
-		String startTime = null;
-		String endTime = null;
-		if(tempFolderFile.exists() && tempFolderFile.isDirectory()) {
-			Collection<File> listFiles = FileUtils.listFiles(tempFolderFile, TrueFileFilter.TRUE, TrueFileFilter.TRUE);
-			for (File file2 : listFiles) {
-				file = file2.getAbsolutePath();
-				break;
-			}
-			File timeFile = new File(FilenameUtils.concat(tempFolder, "time.txt"));
-			if(timeFile.exists()) {
-				FileInputStream input = null;
-				try {
-					input = new FileInputStream(timeFile);
-					List<String> times = IOUtils.readLines(input);
-					startDate = times.get(0).split(",")[0];
-					endDate = times.get(0).split(",")[1];
-					startTime = times.get(1).split(",")[0];
-					endTime = times.get(1).split(",")[1];
-				} catch (Exception e) {
-					// TODO: handle exception
-				} finally {
-					try {
-						input.close();
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
-				}
-			}
-		}
-		if(StringUtils.isEmpty(file) || StringUtils.isEmpty(startTime) || StringUtils.isEmpty(endTime)) return contracts;
+	public static List<Contract> initContracts(File file, String startDate, String endDate, String startTime, String endTime) {
+		List<Contract> contracts = new CopyOnWriteArrayList<Contract>();		
+		
+		if(StringUtils.isEmpty(startDate) || StringUtils.isEmpty(endDate) || StringUtils.isEmpty(startTime) || StringUtils.isEmpty(endTime)) return contracts;
 		
 		Date _startDate;
 		Date _endDate;
 		Date _startTime;
 		Date _endTime;
-		ArrayList<ArrayList<ArrayList<Object>>> list = ExcelUtil.readExcel(new File(file));
+		ArrayList<ArrayList<ArrayList<Object>>> list = ExcelUtil.readExcel(file);
 		
 		if(list.size() > 0) {
 			ArrayList<ArrayList<Object>> sheet = list.get(0);
@@ -177,7 +143,7 @@ public class IndexController {
 			    contract.m_expiry = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
 			    contract.tif = "IOC";
 			    try {
-			    	// if time in excel is not validate, then use the GUI time
+			    	// if date in excel is not validate, then use the GUI date
 			    	_startDate = (Date)row.get(j++);
 			    	_endDate = (Date)row.get(j++);
 			    	contract.startDate = DateUtils.yyyyMMdd().format(_startDate);

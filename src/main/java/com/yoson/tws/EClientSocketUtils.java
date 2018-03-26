@@ -21,24 +21,24 @@ public class EClientSocketUtils {
 			if (isConnected())
 				EClientSocketUtils.disconnect();
 			EClientSocketUtils.connectionInfo = connectionInfo;
+			reset();
 		}
 		if (!isConnected() && EClientSocketUtils.connectionInfo != null) {
 			socket = new EClientSocket(new YosonEWrapper());
 			socket.eConnect(connectionInfo.getHost(), connectionInfo.getPort(), connectionInfo.getClientId());
 		}
 		return isConnected();
-	}	
+	}
 	
-	public static boolean reconnectUsingPreConnectSetting()
-	{		
-		if (!isConnected()) {
-			connect(EClientSocketUtils.connectionInfo);				
-		}
-		return isConnected();
+	public static void reset() {
+		cancelHistoricalData();
+		currentTickerId = 1;
+		requesting = false;
 	}
 	
 	public static boolean disconnect()
 	{
+		reset();
 		try {
 			if(socket != null) {
 				if(socket.isConnected())
@@ -57,20 +57,17 @@ public class EClientSocketUtils {
 		return socket != null && socket.isConnected();
 	}
 	
-	public static void cancelHistoricalData(int tickerId)
+	public static void cancelHistoricalData()
 	{
 		if(socket != null)
-			socket.cancelHistoricalData(tickerId);
+			socket.cancelHistoricalData(currentTickerId);
 	}
 	
-	public static void requestData(List<Contract> contracts) {					
-		// stop previous market data if have
-		if (EClientSocketUtils.contracts != null && EClientSocketUtils.contracts.size() > 0) {
-			for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
-				EClientSocketUtils.cancelHistoricalData(i);
-			}
-		}
+	public static int currentTickerId = 1;
+	public static boolean requesting = false;
+	public static void requestData(List<Contract> contracts) {
 		EClientSocketUtils.contracts = contracts;
-		// TODO				
+		reset();
+		requesting = true;
 	}
 }

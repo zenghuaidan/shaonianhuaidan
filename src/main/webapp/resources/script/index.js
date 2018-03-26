@@ -6,7 +6,7 @@ function defaultConnectClick() {
 	$("[name='account']").val("U8979091");
 }
 
-function searchClick() {
+function searchClick() {	
 	var file = $("#contractTemplatefm input[type=file]").val();
 	var ext = file.split(".")[file.split(".").length - 1].toLocaleLowerCase();
 	if (file == "" || (ext != "xls" && ext != "xlsx")) {

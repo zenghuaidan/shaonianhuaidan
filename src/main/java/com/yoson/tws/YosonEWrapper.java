@@ -8,4 +8,9 @@ public class YosonEWrapper extends BasicEWrapper {
 		
 	}
 	
+	@Override
+	public void connectionClosed() {
+		EClientSocketUtils.reset();
+	}
+	
 }
