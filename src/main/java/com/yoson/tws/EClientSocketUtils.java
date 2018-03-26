@@ -34,6 +34,7 @@ public class EClientSocketUtils {
 		cancelHistoricalData();
 		currentTickerId = 1;
 		requesting = false;
+		running = false;
 	}
 	
 	public static boolean disconnect()
@@ -63,11 +64,18 @@ public class EClientSocketUtils {
 			socket.cancelHistoricalData(currentTickerId);
 	}
 	
-	public static int currentTickerId = 1;
+	public static String currentDateTime = null;
+	public static int currentTickerId = -1;
 	public static boolean requesting = false;
+	public static boolean running = false;
 	public static void requestData(List<Contract> contracts) {
 		EClientSocketUtils.contracts = contracts;
 		reset();
-		requesting = true;
+		running = true;
 	}
+	
+	public static void next() {
+		if (currentTickerId == -1) currentTickerId = 0;
+		
+	} 
 }

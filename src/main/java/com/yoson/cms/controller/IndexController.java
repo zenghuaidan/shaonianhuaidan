@@ -1,12 +1,10 @@
 package com.yoson.cms.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -17,8 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,7 +71,9 @@ public class IndexController {
 	@ResponseBody
 	@RequestMapping("getNowTime")
 	public String getNowTime() {
-		return DateUtils.yyyyMMddHHmmss().format(new Date());
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		sf.setTimeZone(TimeZone.getTimeZone(EClientSocketUtils.connectionInfo == null ? ConnectionInfo.getDefaultConnectionInfo().getTimeZone() : EClientSocketUtils.connectionInfo.getTimeZone()));
+		return sf.format(new Date());
 	}
 	
 	@ResponseBody
