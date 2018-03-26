@@ -108,6 +108,11 @@ function getStatus() {
 	});
 }
 
+function shceduleFunction() {
+	updateTime();
+	getStatus();
+}
+
 function updateConnectStatus() {
 	$.ajax({
 	    type: "GET",
@@ -143,5 +148,5 @@ $(function() {
 	});
 	$("#contractSelect").change();
 	updateConnectStatus();
-	setInterval(updateTime, 1000);
+	setInterval(shceduleFunction, 1000);
 });
