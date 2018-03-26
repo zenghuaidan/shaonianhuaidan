@@ -58,8 +58,8 @@
 				      <td></td>
 				      <td>
 				      	<input name="defaultConnect" onclick="defaultConnectClick();" value="Default Connection" type="button"/>
-				      	<input name="connect" onclick="connectClick();" value="Update" type="button"/>
-				      	<!--input name="disconnect" onclick="disconnectClick();" value="Disconnect" type="button"/-->				      	
+				      	<input name="connect" onclick="connectClick();" value="Connect" type="button"/>
+				      	<input name="disconnect" onclick="disconnectClick();" value="Disconnect" type="button"/>				      	
 				      	<label name="status">Offline</label>
 				      </td>
 				   </tr>
@@ -118,6 +118,14 @@
 					      <td>Contracts</td>
 					      <td><input type="file" name="contractTemplate" accept="text/txt" value="Select Template"/></td>
 					   	</tr>
+					   	<tr>
+					      <td>Start Date</td>
+					      <td><input class="datepicker" name="startDate" value="${startDate}" type="text"/></td>
+					    </tr>
+		   			   	<tr>
+					      <td>End Date</td>
+					      <td><input class="datepicker" name="endDate" value="${endDate}" type="text"/></td>
+					    </tr>
 	   			   		<tr>
 					      <td>Start Time</td>
 					      <td><input class="timepicker" name="startTime" value="${startTime}" type="text"/></td>

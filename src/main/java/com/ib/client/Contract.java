@@ -24,6 +24,8 @@ public class Contract implements Cloneable {
     public String m_secIdType;        // CUSIP;SEDOL;ISIN;RIC
     public String m_secId;
     
+    public String startDate;
+	public String endDate;
 	public String startTime;
 	public String endTime;
 	public String tif;
@@ -176,6 +178,22 @@ public class Contract implements Cloneable {
 	}
 	public void setExpirary(String expirary) {
 		this.m_expiry = expirary;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
 	}
 
 	public String getStartTime() {
