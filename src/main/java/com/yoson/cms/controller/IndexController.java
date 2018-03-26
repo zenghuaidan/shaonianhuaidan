@@ -84,7 +84,7 @@ public class IndexController {
 		IndexController.startDate = startDate;
 		IndexController.endDate = endDate;
 		
-		if(EClientSocketUtils.isConnected()){
+		if(!EClientSocketUtils.isConnected()){
 			return "Connect failed, please check your connection first";
 		}		
 		try {

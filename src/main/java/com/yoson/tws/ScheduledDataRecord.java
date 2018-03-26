@@ -2,6 +2,7 @@ package com.yoson.tws;
 
 public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 	private String time;
+	private double bidopen;
 	private double bidavg;
 	private double bidlast;
 	private double bidmax;
@@ -9,6 +10,7 @@ public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 	private double bidTotal;
 	private int bidCount;
 	
+	private double askopen;
 	private double askavg;
 	private double asklast;
 	private double askmax;
@@ -16,6 +18,7 @@ public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 	private double askTotal;
 	private int askCount;
 	
+	private double tradeopen;
 	private double tradeavg;
 	private double tradelast;
 	private double trademax;
@@ -208,5 +211,28 @@ public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 		this.tradeCount = tradeCount;
 	}
 
+	public double getBidopen() {
+		return bidopen;
+	}
+
+	public void setBidopen(double bidopen) {
+		this.bidopen = bidopen;
+	}
+
+	public double getAskopen() {
+		return askopen;
+	}
+
+	public void setAskopen(double askopen) {
+		this.askopen = askopen;
+	}
+
+	public double getTradeopen() {
+		return tradeopen;
+	}
+
+	public void setTradeopen(double tradeopen) {
+		this.tradeopen = tradeopen;
+	}
 	  
 }

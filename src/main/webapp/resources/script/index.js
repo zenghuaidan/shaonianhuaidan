@@ -3,7 +3,7 @@ function defaultConnectClick() {
 	$("[name='host']").val("127.0.0.1");
 	$("[name='port']").val("7496");
 	$("[name='clientId']").val("1");
-	$("[name='account']").val("U8979091");
+	//$("[name='account']").val("U8979091");
 }
 
 function searchClick() {	
@@ -11,10 +11,6 @@ function searchClick() {
 	var ext = file.split(".")[file.split(".").length - 1].toLocaleLowerCase();
 	if (file == "" || (ext != "xls" && ext != "xlsx")) {
 		alert("Please select xls or xlsx file to upload.");
-		return;
-	}
-	if(!$("#fundamentalData").is(":checked") && !$("#marketData").is(":checked")) {
-		alert("Please select download Market Data or Fundamental Data.");
 		return;
 	}	
 	if(!confirm("Are you sure to start a new search, the previous search will be stopped.")) {
@@ -59,7 +55,7 @@ function connectClick() {
 	    	if(!data) {
 	    		//alert("Connect failed!!!");
 	    	} else {
-	    		alert("Update success!!!");
+	    		alert("Connect success!!!");
 	    	}
 	    },
 	    error: function() {
@@ -128,7 +124,6 @@ $(function() {
 		 timepicker:true,			 
 		 format:'Y-m-d H:i'
 	});
-	renderLiveDataFileList();
 	
 	$("#contractSelect").change(function() {
 		$("tr.contract").hide();

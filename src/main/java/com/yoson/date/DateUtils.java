@@ -17,6 +17,7 @@ public class DateUtils {
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmm = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd HH:mm
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmmss = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd HH:mm:ss
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmmss2 = new ThreadLocal<SimpleDateFormat>();//yyyyMMddHHmmss
+	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmmss3 = new ThreadLocal<SimpleDateFormat>();//yyyyMMdd  HH:mm:ss
 	
 	
 	public static void reset() {
@@ -97,7 +98,6 @@ public class DateUtils {
 		System.out.println(isValidateTime(new Date(117, 11,24,16,14,59),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
 		System.out.println(isValidateTime(new Date(117, 11,24,16,15,0),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
 		System.out.println(isValidateTime(new Date(117, 11,24,16,15,1),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
-		
 	}
 	
 	private static final Object lockObj = new Object();
@@ -181,6 +181,16 @@ public class DateUtils {
         }
         return yyyyMMddHHmmss2.get();
 	}	
+	
+	public static SimpleDateFormat yyyyMMddHHmmss3() {
+        SimpleDateFormat sf = yyyyMMddHHmmss3.get();
+        if (sf == null) {
+            synchronized (lockObj) {
+            	yyyyMMddHHmmss3.set(new SimpleDateFormat("yyyyMMdd  HH:mm:ss"));
+            }
+        }
+        return yyyyMMddHHmmss3.get();
+	}
 	
 	public static String getDateStr(String dateTimeStr) {
 		return dateTimeStr.substring(0, 4) + "-" + dateTimeStr.substring(4, 6) + "-" + dateTimeStr.substring(6, 8);

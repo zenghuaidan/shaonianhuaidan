@@ -1,14 +1,6 @@
 package com.yoson.tws;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.Serializable;
-import java.util.List;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-
-import com.yoson.web.InitServlet;
 
 public class ConnectionInfo implements Serializable {
 	private static final long serialVersionUID = 1L;

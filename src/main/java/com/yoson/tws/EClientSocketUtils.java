@@ -1,14 +1,21 @@
 package com.yoson.tws;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
+
+import org.apache.commons.io.IOUtils;
 
 import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
 import com.ib.client.TagValue;
 import com.yoson.date.DateUtils;
+import com.yoson.sql.SQLUtils;
 
 public class EClientSocketUtils {
 	public static EClientSocket socket;
@@ -58,8 +65,12 @@ public class EClientSocketUtils {
 	
 	public static void cancelHistoricalData()
 	{
-		if(socket != null)
-			socket.cancelHistoricalData(currentTickerId);
+		int gap = identify;
+		if(socket != null) {
+			socket.cancelHistoricalData(currentTickerId * identify);
+			socket.cancelHistoricalData(currentTickerId * identify + 1);
+			socket.cancelHistoricalData(currentTickerId * identify + 2);
+		}
 	}
 	
 	public static Date currentDateTime = null;
@@ -67,11 +78,82 @@ public class EClientSocketUtils {
 	public static boolean requesting = false;
 	public static boolean running = false;
 	public static int requestSecs = 100;
+	public static int identify = 999;
 	public static void requestData(List<Contract> contracts) {
 		EClientSocketUtils.contracts = contracts;
 		reset();
-		running = true;
-		next();
+		String historicalDataLogPath = YosonEWrapper.getHistoricalDataLogPath();
+		File file = new File(historicalDataLogPath);
+		if (file.exists()) file.delete();			
+		running = true;		
+	}
+	
+	public static void upload() {
+		String historicalDataLogPath = YosonEWrapper.getHistoricalDataLogPath();
+		File file = new File(historicalDataLogPath);
+		Map<String, Map<String, ScheduledDataRecord>> map = new HashMap<String, Map<String, ScheduledDataRecord>>();
+		if (file.exists()) {
+			FileReader input = null;
+			try {
+				input = new FileReader(file);
+				List<String> readLines = IOUtils.readLines(input);
+				for(String line : readLines) {
+					int i = 0;
+					String source = line.split(",")[i++];
+					String type = line.split(",")[i++];
+					String time = line.split(",")[i++];
+					double open = Double.parseDouble(line.split(",")[i++]);
+					double last = Double.parseDouble(line.split(",")[i++]);
+					double min  = Double.parseDouble(line.split(",")[i++]);
+					double max = Double.parseDouble(line.split(",")[i++]);
+					double avg = Double.parseDouble(line.split(",")[i++]);
+					ScheduledDataRecord scheduledDataRecord = new ScheduledDataRecord(time);					
+					Map<String, ScheduledDataRecord> map2 = new HashMap<String, ScheduledDataRecord>();
+					if (map.containsKey(source)) {
+						map2 = map.get(source);
+					} else {
+						map.put(source, map2);
+					}
+					if (map2.containsKey(time)) {
+						scheduledDataRecord = map2.get(time);
+					} else {
+						map2.put(time, scheduledDataRecord);
+					}
+					switch (type) {
+						case "0":
+							scheduledDataRecord.setBidopen(open);
+							scheduledDataRecord.setBidlast(last);
+							scheduledDataRecord.setBidmin(min);
+							scheduledDataRecord.setBidmax(max);
+							scheduledDataRecord.setBidavg(avg);
+							break;
+						case "1":
+							scheduledDataRecord.setAskopen(open);
+							scheduledDataRecord.setAsklast(last);
+							scheduledDataRecord.setAskmin(min);
+							scheduledDataRecord.setAskmax(max);
+							scheduledDataRecord.setAskavg(avg);
+							break;
+						case "2":
+							scheduledDataRecord.setTradeopen(open);
+							scheduledDataRecord.setTradelast(last);
+							scheduledDataRecord.setTrademin(min);
+							scheduledDataRecord.setTrademax(max);
+							scheduledDataRecord.setTradeavg(avg);
+							break;
+					}
+				}
+				for(String source : map.keySet()) {
+					SQLUtils.saveScheduledDataRecord(map.get(source), source, true);
+				}
+			} catch (Exception e) {
+			} finally {
+				try {
+					input.close();
+				} catch (Exception e2) {
+				}
+			}
+		}
 	}
 	
 	public static void reset() {
@@ -94,6 +176,7 @@ public class EClientSocketUtils {
 						if (EClientSocketUtils.contracts.size() == currentTickerId) {
 							// stop
 							reset();
+							upload();
 						} else {
 							contract = EClientSocketUtils.contracts.get(currentTickerId);
 							currentDateTime = null;
@@ -105,12 +188,15 @@ public class EClientSocketUtils {
 					}
 				}
 				if (currentDateTime == null) {
-					currentDateTime = DateUtils.yyyyMMddHHmmss().parse(contract.startDate + " " + contract.startTime);									
+					currentDateTime = DateUtils.yyyyMMddHHmmss().parse(contract.startDate + " " + contract.startTime);
+					currentDateTime = DateUtils.addSecond(currentDateTime, requestSecs);
 				}
-				int hours = TimeZone.getTimeZone("Hongkong").getRawOffset() / (3600 * 1000) - TimeZone.getTimeZone(connectionInfo.getTimeZone()).getRawOffset() / (3600 * 1000);
+				int hours = (TimeZone.getTimeZone("Hongkong").getRawOffset() / (3600 * 1000)) - (TimeZone.getTimeZone(connectionInfo.getTimeZone()).getRawOffset() / (3600 * 1000));
 				currentDateTime = DateUtils.addSecond(currentDateTime, hours * 3600);
-				String endDateTime = DateUtils.yyyyMMdd2().format(currentDateTime) + " " + DateUtils.HHmmss().format(currentDateTime) + " HKT";
-				socket.reqHistoricalData(currentTickerId, contract, endDateTime, "100 S", "1 secs", "BID", 0, 1, new Vector<TagValue>());
+				String endDateTime = DateUtils.yyyyMMdd2().format(currentDateTime) + " " + DateUtils.HHmmss().format(currentDateTime) + " HKT";				
+				socket.reqHistoricalData(currentTickerId * identify, contract, endDateTime, "100 S", "1 secs", "BID", 0, 1, new Vector<TagValue>());
+				socket.reqHistoricalData(currentTickerId * identify + 1, contract, endDateTime, "100 S", "1 secs", "ASK", 0, 1, new Vector<TagValue>());
+				socket.reqHistoricalData(currentTickerId * identify + 2, contract, endDateTime, "100 S", "1 secs", "TRADES", 0, 1, new Vector<TagValue>());
 			}
 		} catch (Exception e) {
 			reset();
