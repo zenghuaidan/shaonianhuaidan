@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DateUtils {
 	public static ThreadLocal<SimpleDateFormat> yyyyMM = new ThreadLocal<SimpleDateFormat>();//yyyyMM
 	public static ThreadLocal<SimpleDateFormat> yyyyMMdd = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd
+	public static ThreadLocal<SimpleDateFormat> yyyyMMdd2 = new ThreadLocal<SimpleDateFormat>();//yyyyMMdd
 	public static ThreadLocal<SimpleDateFormat> HHmmss = new ThreadLocal<SimpleDateFormat>();//HH:mm:ss
 	public static ThreadLocal<SimpleDateFormat> HHmm = new ThreadLocal<SimpleDateFormat>();//HH:mm
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmm = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd HH:mm
@@ -96,6 +97,7 @@ public class DateUtils {
 		System.out.println(isValidateTime(new Date(117, 11,24,16,14,59),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
 		System.out.println(isValidateTime(new Date(117, 11,24,16,15,0),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
 		System.out.println(isValidateTime(new Date(117, 11,24,16,15,1),"2017-12-24 09:30:00", "2017-12-24 16:15:00"));
+		
 	}
 	
 	private static final Object lockObj = new Object();
@@ -108,6 +110,16 @@ public class DateUtils {
             }
         }
         return yyyyMM.get();
+	}
+	
+	public static SimpleDateFormat yyyyMMdd2() {
+        SimpleDateFormat sf = yyyyMMdd2.get();
+        if (sf == null) {
+            synchronized (lockObj) {
+            	yyyyMMdd2.set(new SimpleDateFormat("yyyyMMdd"));
+            }
+        }
+        return yyyyMMdd2.get();
 	}
 	
 	public static SimpleDateFormat yyyyMMdd() {
@@ -176,16 +188,12 @@ public class DateUtils {
 	
 	public static String getTimeStr(String dateTimeStr) {
 		return  dateTimeStr.substring(8, 10) + ":" + dateTimeStr.substring(10, 12) + ":" + dateTimeStr.substring(12, 14);		
-	}
+	}	
 	
-	public static Long addSecond(Long current, int second) throws ParseException {
-		return addSecond(DateUtils.yyyyMMddHHmmss2().parse(current + ""), second);	
-	}
-	
-	public static Long addSecond(Date current, int second) throws ParseException {
+	public static Date addSecond(Date current, int second) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(current);
 		calendar.add(Calendar.SECOND, second);
-		return Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));	
+		return calendar.getTime();
 	}
 }
