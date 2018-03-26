@@ -66,7 +66,6 @@ public class EClientSocketUtils {
 	
 	public static void cancelHistoricalData()
 	{
-		int gap = identify;
 		if(socket != null) {
 			socket.cancelHistoricalData(currentTickerId * identify);
 			socket.cancelHistoricalData(currentTickerId * identify + 1);
