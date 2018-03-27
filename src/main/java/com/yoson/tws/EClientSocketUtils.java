@@ -172,7 +172,8 @@ public class EClientSocketUtils {
 				Contract contract = EClientSocketUtils.contracts.get(currentTickerId);
 				if(currentDateTime != null) {
 					String endTimeStr = contract.endDate + " " + contract.endTime;
-					if (DateUtils.yyyyMMddHHmmss().format(currentDateTime).equals(endTimeStr)) {
+					Date endTime = DateUtils.yyyyMMddHHmmss().parse(endTimeStr);
+					if (currentDateTime.after(endTime)) {
 						currentTickerId++;
 						if (EClientSocketUtils.contracts.size() == currentTickerId) {
 							// stop
@@ -186,13 +187,15 @@ public class EClientSocketUtils {
 						}
 					} else {
 						currentDateTime = DateUtils.addSecond(currentDateTime, requestSecs);
-						Date endTime = DateUtils.yyyyMMddHHmmss().parse(endTimeStr);
-						if (currentDateTime.after(endTime)) currentDateTime = endTime;						
+						if (currentDateTime.after(endTime)) currentDateTime = DateUtils.addSecond(endTime, 1);//include the last second			
 					}
 				}
 				if (currentDateTime == null) {
 					currentDateTime = DateUtils.yyyyMMddHHmmss().parse(contract.startDate + " " + contract.startTime);
 					currentDateTime = DateUtils.addSecond(currentDateTime, requestSecs);
+					String endTimeStr = contract.endDate + " " + contract.endTime;
+					Date endTime = DateUtils.yyyyMMddHHmmss().parse(endTimeStr);
+					if (currentDateTime.after(endTime)) currentDateTime = DateUtils.addSecond(endTime, 1);//include the last second
 				}
 				int hours = (TimeZone.getTimeZone("Hongkong").getRawOffset() / (3600 * 1000)) - (TimeZone.getTimeZone(connectionInfo.getTimeZone()).getRawOffset() / (3600 * 1000));
 				currentDateTime = DateUtils.addSecond(currentDateTime, hours * 3600);
