@@ -19,7 +19,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	public void historicalData(int reqId, String date, double open, double high, double low,
             double close, int volume, int count, double WAP, boolean hasGaps) {
 		Contract contract = EClientSocketUtils.contracts.get(reqId / EClientSocketUtils.identify);
-		String source = "TWS_" + contract.m_secType + "_" + contract.m_symbol;
+		String source = contract.m_secType + "_" + contract.m_symbol;
 		int type = reqId % EClientSocketUtils.identify;
 		if (!date.contains("finished")) {
 			try {
@@ -43,7 +43,7 @@ public class YosonEWrapper extends BasicEWrapper {
 					typeStr = "TRADE";
 					break;
 			}
-			IndexController.status = "source=" + contract.m_secType + "_" + contract.m_symbol + ", type=" + typeStr + "," + date;
+			IndexController.status = "source=" + source + ", type=" + typeStr + "," + date;
 		}
 	}
 	
