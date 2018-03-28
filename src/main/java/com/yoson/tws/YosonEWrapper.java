@@ -51,6 +51,10 @@ public class YosonEWrapper extends BasicEWrapper {
 		return FilenameUtils.concat(InitServlet.createLiveDataFoderAndReturnPath(), EClientSocketUtils.id + ".csv");
 	}
 	
+	public static String getHistoricalDataLogPath(String fileName) {
+		return FilenameUtils.concat(InitServlet.createLiveDataFoderAndReturnPath(), fileName + ".csv");
+	}
+	
 	public static void writeText(String filePath, String result, boolean append) {
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(filePath, append);

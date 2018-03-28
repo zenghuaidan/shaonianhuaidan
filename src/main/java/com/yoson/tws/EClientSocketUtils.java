@@ -87,10 +87,11 @@ public class EClientSocketUtils {
 		id = DateUtils.yyyyMMddHHmmss().format(new Date());
 	}
 	
-	public static void upload() {
+	public static void upload(String historicalDataLogPath) {
 		if(!uploading)
 			uploading = true;
-		String historicalDataLogPath = YosonEWrapper.getHistoricalDataLogPath();
+		else
+			return;
 		File file = new File(historicalDataLogPath);
 		if (file.exists()) {
 			FileReader input = null;
@@ -178,7 +179,7 @@ public class EClientSocketUtils {
 						if (EClientSocketUtils.contracts.size() == currentTickerId) {
 							// stop
 							IndexController.status = "Uploading data to database....";
-							upload();
+							upload(YosonEWrapper.getHistoricalDataLogPath());
 							reset();
 							IndexController.status = "Download historical data completed!";
 						} else {

@@ -290,7 +290,7 @@
 			  <configuration>
 			    <scanIntervalSeconds>10</scanIntervalSeconds>
 			    <webApp>
-			      <contextPath>/DataDownloader</contextPath>
+			      <contextPath>/HDownloader</contextPath>
 			    </webApp>
 			    <httpConnector>
 	          		<port>8081</port>
