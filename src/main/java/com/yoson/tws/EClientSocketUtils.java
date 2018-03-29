@@ -83,7 +83,7 @@ public class EClientSocketUtils {
 	public static void requestData(List<Contract> contracts) {
 		EClientSocketUtils.contracts = contracts;
 		reset();			
-		id = DateUtils.yyyyMMddHHmmss().format(new Date());
+		id = DateUtils.yyyyMMddHHmmss2().format(new Date());
 		running = true;		
 	}
 	
