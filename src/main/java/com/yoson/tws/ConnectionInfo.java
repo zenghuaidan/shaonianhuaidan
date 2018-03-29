@@ -54,7 +54,7 @@ public class ConnectionInfo implements Serializable {
 		ConnectionInfo connectionInfo = new ConnectionInfo();
 		connectionInfo.setHost("127.0.0.1");
 		connectionInfo.setPort(7496);
-		connectionInfo.setClientId(15);
+		connectionInfo.setClientId(42);
 		connectionInfo.setAccount("U8979091");
 		connectionInfo.setTimeZone("Hongkong");
 		return connectionInfo;

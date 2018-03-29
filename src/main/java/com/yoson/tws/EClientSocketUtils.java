@@ -83,8 +83,8 @@ public class EClientSocketUtils {
 	public static void requestData(List<Contract> contracts) {
 		EClientSocketUtils.contracts = contracts;
 		reset();			
-		running = true;		
 		id = DateUtils.yyyyMMddHHmmss().format(new Date());
+		running = true;		
 	}
 	
 	public static boolean upload(String historicalDataLogPath) {
