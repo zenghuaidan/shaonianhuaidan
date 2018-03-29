@@ -102,6 +102,14 @@
 					      <td><input class="yearmonthpicker" name="expirary" value="${contract.expirary}" type="text"/></td>
 					   	</tr>
 					   	<tr class="contract contract-${i.count}">
+					      <td>Start Date</td>
+					      <td><input class="datetimepicker" name="startDate" value="${contract.startDate}" type="text"/></td>
+					    </tr>
+		   			   	<tr class="contract contract-${i.count}">
+					      <td>End Date</td>
+					      <td><input class="datetimepicker" name="endDate" value="${contract.endDate}" type="text"/></td>
+					    </tr>
+					   	<tr class="contract contract-${i.count}">
 					      <td>Start Time</td>
 					      <td><input class="datetimepicker" name="startTime" value="${contract.startTime}" type="text"/></td>
 					    </tr>
