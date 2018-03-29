@@ -131,6 +131,54 @@ function updateConnectStatus() {
 	});
 }
 
+
+function renderLiveDataFileList() {
+	$.ajax({
+	    type: "GET",
+	    url: "listLiveData",
+	    contentType:"application/json;charset=utf-8",
+	    success: function(data) {
+	    	var lis = "";
+	    	for(var i = 0; i < data.length; i++) {
+	    		lis += "<a id='" + data[i] + "' href='downloadlive?id=" + data[i] + "'>" + data[i] + "</a>" +
+//	    				"<input onclick='start(\"" + datas[0] + "\")' type='button' value='Start'/>" +
+//	    				"<input onclick='stop(\"" + datas[0] + "\")' type='button' value='Stop'/>" +
+	    				"<input onclick='uploadData(\"" + data[i] + "\")' type='button' value='Upload'/>" + 
+	    				"<input onclick='deleteLiveItem(\"" + data[i] + "\")' type='button' value='Delete'/>" +
+	    				"<br/>"
+	    	}
+	    	$("#livefiles").html(lis);
+	    },
+	    error: function() {
+	    }
+	});
+}
+
+function deleteLiveItem(id) {
+	$.ajax({
+	    type: "GET",
+	    url: "deleteLiveItem?id=" + id,
+	    success: function(data) {
+	    	renderLiveDataFileList();
+	    },
+	    error: function() {
+	    }
+	});
+}
+
+function uploadData(id) {
+	$.ajax({
+	    type: "GET",
+	    url: "uploadData?id=" + id,
+	    success: function(data) {
+	    	alert("Data uploaded!");
+	    },
+	    error: function() {
+	    }
+	});
+	alert("Request submitted!");
+}
+
 $(function() {
 	$('.timepicker').TimePickerAlone();
 	jQuery('.datepicker').datetimepicker({
@@ -147,6 +195,7 @@ $(function() {
 		$("tr.contract-" + $(this).val()).show();
 	});
 	$("#contractSelect").change();
+	renderLiveDataFileList();
 	updateConnectStatus();
 	setInterval(shceduleFunction, 1000);
 });

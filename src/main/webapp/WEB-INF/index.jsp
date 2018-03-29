@@ -149,7 +149,16 @@
 	  				</table>
 				</form>
   				<hr/>
-  				<div id="status" style="color:red"></div>  
+  				<div id="status" style="color:red"></div>
+  				<hr/>
+  				<table>
+  					<tr>
+						<td style="width:10%;">
+							<div id="livefiles">			   
+							</div>
+						</td>
+					</tr>
+				</table>   
             </div>   
 			
 			

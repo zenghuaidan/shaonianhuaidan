@@ -87,11 +87,11 @@ public class EClientSocketUtils {
 		id = DateUtils.yyyyMMddHHmmss().format(new Date());
 	}
 	
-	public static void upload(String historicalDataLogPath) {
+	public static boolean upload(String historicalDataLogPath) {
 		if(!uploading)
 			uploading = true;
 		else
-			return;
+			return false;
 		File file = new File(historicalDataLogPath);
 		if (file.exists()) {
 			FileReader input = null;
@@ -157,6 +157,7 @@ public class EClientSocketUtils {
 			}
 		}
 		uploading = false;
+		return true;
 	}
 	
 	public static void reset() {

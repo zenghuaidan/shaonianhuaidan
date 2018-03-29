@@ -48,11 +48,12 @@ public class YosonEWrapper extends BasicEWrapper {
 	}
 	
 	public static String getHistoricalDataLogPath() {
-		return FilenameUtils.concat(InitServlet.createLiveDataFoderAndReturnPath(), EClientSocketUtils.id + ".csv");
+		return getHistoricalDataLogPath(EClientSocketUtils.id);
 	}
 	
 	public static String getHistoricalDataLogPath(String fileName) {
-		return FilenameUtils.concat(InitServlet.createLiveDataFoderAndReturnPath(), fileName + ".csv");
+		String folder = InitServlet.createFoderAndReturnPath(InitServlet.createLiveDataFoderAndReturnPath(), fileName);
+		return FilenameUtils.concat(folder, "historicalData.csv");
 	}
 	
 	public static void writeText(String filePath, String result, boolean append) {

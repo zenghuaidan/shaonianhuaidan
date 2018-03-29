@@ -1,6 +1,7 @@
 package com.yoson.cms.controller;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +32,9 @@ import com.yoson.csv.ExcelUtil;
 import com.yoson.date.DateUtils;
 import com.yoson.tws.ConnectionInfo;
 import com.yoson.tws.EClientSocketUtils;
+import com.yoson.tws.YosonEWrapper;
 import com.yoson.web.InitServlet;
+import com.yoson.zip.ZipUtils;
 
 @Controller
 public class IndexController {
@@ -81,6 +86,83 @@ public class IndexController {
 	@RequestMapping("getStatus")
 	public String getStatus() {		
 		return status;
+	}
+	
+	@ResponseBody
+	@RequestMapping("listLiveData")
+	public List<String> listLiveData() {
+		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
+		List<String> fileList = new ArrayList<String>();
+		
+		File[] files = new File(dataFolder).listFiles(new FilenameFilter() {
+		    public boolean accept(File dir, String name) {
+		        File f = new File(dir, name);
+		        if (f.isDirectory())
+		            return true;
+		        else
+		            return false;
+		    }
+		});
+		for(File file : files) {
+			fileList.add(file.getName());			
+		}
+		return fileList;
+	}
+	
+	@ResponseBody
+	@RequestMapping("deleteLiveItem")
+	public boolean deleteLiveItem(@RequestParam String id, HttpServletRequest request) throws IOException {
+		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
+		String sourceFolder = FilenameUtils.concat(dataFolder, id);
+		boolean running = EClientSocketUtils.isConnected() && !StringUtils.isBlank(EClientSocketUtils.id) && EClientSocketUtils.id.equals(id); 
+		if (!running) {
+			File file = new File(sourceFolder);
+			if (file.exists()) {
+				FileUtils.forceDelete(file);
+			}			
+			return true;
+		}	
+		return false;
+	}
+ 	
+	@RequestMapping("downloadlive")
+	public void downloadlive(@RequestParam String id, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException {
+		String downloadFolder = genLiveResult(id);
+		execDownload(response, downloadFolder, id);
+	}
+	
+	private void execDownload(HttpServletResponse response, String downloadFolder, String downloadFileName) throws IOException {
+		File downloadFolderFile = new File(downloadFolder);
+		if (downloadFolderFile.exists()) {
+			String zipName = downloadFileName + ".zip";
+			response.setContentType("APPLICATION/OCTET-STREAM");  
+			response.setHeader("Content-Disposition","attachment; filename="+zipName);
+			ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
+			try {
+				File[] files = new File(downloadFolder).listFiles();
+				for(File file : files) {
+					ZipUtils.doCompress(file, out);
+					response.flushBuffer();					
+				}				
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally{
+				out.close();
+			}
+		}
+	}
+
+	public static String genLiveResult(String id) throws ParseException {
+		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
+		String downloadFolder = FilenameUtils.concat(dataFolder, id);
+		
+		return downloadFolder;
+	}
+	
+	@ResponseBody
+	@RequestMapping("uploadData")
+	public boolean uploadData(@RequestParam String id, HttpServletRequest request) throws IOException {
+		return EClientSocketUtils.upload(YosonEWrapper.getHistoricalDataLogPath(id));			
 	}
 	
 	@ResponseBody
