@@ -84,6 +84,8 @@ public class EClientSocketUtils {
 		EClientSocketUtils.contracts = contracts;
 		reset();			
 		id = DateUtils.yyyyMMddHHmmss2().format(new Date());
+		YosonEWrapper.getHistoricalDataLogPath();
+		IndexController.status = "Start getting data....";
 		running = true;		
 	}
 	
