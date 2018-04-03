@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.Gson;
 import com.ib.client.Contract;
+import com.ib.client.ContractDetails;
 import com.ib.client.Order;
 import com.ib.client.OrderState;
 import com.opencsv.CSVReader;
@@ -659,4 +660,46 @@ public class YosonEWrapper extends BasicEWrapper {
 		}
 	}
 
+	@Override
+    public void contractDetails(int reqId, ContractDetails contractDetails) {
+		String log = 				
+				"m_marketName:" + contractDetails.m_marketName
+				+ Global.lineSeparator + "m_minTick:" + contractDetails.m_minTick
+				+ Global.lineSeparator + "m_priceMagnifier:" + contractDetails.m_priceMagnifier
+				+ Global.lineSeparator + "m_orderTypes:" + contractDetails.m_orderTypes
+				+ Global.lineSeparator + "m_validExchanges:" + contractDetails.m_validExchanges
+				+ Global.lineSeparator + "m_underConId:" + contractDetails.m_underConId
+				+ Global.lineSeparator + "m_longName:" + contractDetails.m_longName
+				+ Global.lineSeparator + "m_contractMonth:" + contractDetails.m_contractMonth
+				+ Global.lineSeparator + "m_industry:" + contractDetails.m_industry
+				+ Global.lineSeparator + "m_category:" + contractDetails.m_category
+				+ Global.lineSeparator + "m_subcategory:" + contractDetails.m_subcategory
+				+ Global.lineSeparator + "m_timeZoneId:" + contractDetails.m_timeZoneId
+				+ Global.lineSeparator + "m_tradingHours:" + contractDetails.m_tradingHours
+				+ Global.lineSeparator + "m_liquidHours:" + contractDetails.m_liquidHours
+				+ Global.lineSeparator + "m_evRule:" + contractDetails.m_evRule
+				+ Global.lineSeparator + "m_evMultiplier:" + contractDetails.m_evMultiplier
+				+ Global.lineSeparator + "m_cusip:" + contractDetails.m_cusip
+				+ Global.lineSeparator + "m_ratings:" + contractDetails.m_ratings
+				+ Global.lineSeparator + "m_descAppend:" + contractDetails.m_descAppend
+				+ Global.lineSeparator + "m_bondType:" + contractDetails.m_bondType
+				+ Global.lineSeparator + "m_couponType:" + contractDetails.m_couponType
+				+ Global.lineSeparator + "m_callable:" + contractDetails.m_callable
+				+ Global.lineSeparator + "m_putable:" + contractDetails.m_putable
+				+ Global.lineSeparator + "m_coupon:" + contractDetails.m_coupon
+				+ Global.lineSeparator + "m_convertible:" + contractDetails.m_convertible
+				+ Global.lineSeparator + "m_maturity:" + contractDetails.m_maturity
+				+ Global.lineSeparator + "m_issueDate:" + contractDetails.m_issueDate
+				+ Global.lineSeparator + "m_nextOptionDate:" + contractDetails.m_nextOptionDate
+				+ Global.lineSeparator + "m_nextOptionType:" + contractDetails.m_nextOptionType
+				+ Global.lineSeparator + "m_nextOptionPartial:" + contractDetails.m_nextOptionPartial
+				+ Global.lineSeparator + "m_notes:" + contractDetails.m_notes + Global.lineSeparator;
+		
+		BackTestCSVWriter.writeText(getConnectionPath(), log, true);
+	}
+    
+	@Override
+    public void contractDetailsEnd(int reqId) {
+		
+	}
 }
