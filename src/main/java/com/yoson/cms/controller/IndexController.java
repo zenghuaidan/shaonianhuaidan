@@ -59,8 +59,6 @@ import com.yoson.sql.SQLUtils;
 import com.yoson.task.BackTestTask;
 import com.yoson.tws.ConnectionInfo;
 import com.yoson.tws.EClientSocketUtils;
-import com.yoson.tws.RawDataCSVWriter;
-import com.yoson.tws.Record;
 import com.yoson.tws.ScheduledDataCSVWriter;
 import com.yoson.tws.ScheduledDataRecord;
 import com.yoson.tws.Strategy;
@@ -137,12 +135,12 @@ public class IndexController  implements StatusCallBack {
 			Date startTime = DateUtils.yyyyMMddHHmm().parse(contract.getStartTime());
 			Date endTime = DateUtils.yyyyMMddHHmm().parse(contract.getEndTime());
 			if((startTime.equals(endTime) || startTime.before(endTime)) && contract.getStartTime().split(" ")[0].equals(contract.getEndTime().split(" ")[0])) {				
-				EClientSocketUtils.reqContractDetails(0, contract);
+				EClientSocketUtils.reqContractDetails(contract);
 				Thread.sleep(3000);
 				if (!EClientSocketUtils.validateContract) {
 					return "Your contract have been expired, please check!";
 				} else {
-					boolean success =  EClientSocketUtils.reqMktData(0, contract);
+					boolean success =  EClientSocketUtils.reqMktData(contract);
 					if(success) {
 						return "Success";
 					} else {
