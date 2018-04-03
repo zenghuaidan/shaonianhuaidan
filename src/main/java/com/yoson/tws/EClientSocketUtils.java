@@ -106,6 +106,13 @@ public class EClientSocketUtils {
 		BackTestCSVWriter.writeText(FilenameUtils.concat(dataFolder, CONTRACT), contractGson, false);
 		return true;
 	}
+	
+	public static boolean validateContract = true;
+	public static void reqContractDetails(int tickerId, Contract contract) {
+		if(isConnected()) {
+			socket.reqContractDetails(tickerId, contract);
+		}
+	}
 
 	public static String initAndReturnLiveDataFolder() {
 		return InitServlet.createFoderAndReturnPath(InitServlet.createLiveDataFoderAndReturnPath(), contract.getSymbol() + "_" + id);
