@@ -89,7 +89,7 @@ public class EClientSocketUtils {
 	}
 	
 	public static boolean lunchBTStart = false;
-	public static boolean reqMktData(int tickerId, Contract contract) {
+	public static boolean reqMktData(Contract contract) {
 		if(!isConnected()) {
 			return false;
 		}
@@ -100,7 +100,7 @@ public class EClientSocketUtils {
 		tradeLogs = new CopyOnWriteArrayList<String>();
 		String dataFolder = initAndReturnLiveDataFolder();
 //		socket.cancelMktData(tickerId);
-		socket.reqMktData(tickerId, contract, null, false, new Vector<TagValue>());
+		socket.reqMktData(EClientSocketUtils.connectionInfo.getClientId(), contract, null, false, new Vector<TagValue>());
 		socket.reqCurrentTime();
 		String contractGson = new Gson().toJson(EClientSocketUtils.contract);
 		BackTestCSVWriter.writeText(FilenameUtils.concat(dataFolder, CONTRACT), contractGson, false);
@@ -108,9 +108,9 @@ public class EClientSocketUtils {
 	}
 	
 	public static boolean validateContract = true;
-	public static void reqContractDetails(int tickerId, Contract contract) {
+	public static void reqContractDetails(Contract contract) {
 		if(isConnected()) {
-			socket.reqContractDetails(tickerId, contract);
+			socket.reqContractDetails(EClientSocketUtils.connectionInfo.getClientId(), contract);
 		}
 	}
 
