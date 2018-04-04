@@ -129,23 +129,30 @@ public class IndexController  implements StatusCallBack {
 	}
 	
 	@ResponseBody
+	@RequestMapping("reqContractDetails")
+	public boolean reqContractDetails(@RequestBody Contract contract) {
+		EClientSocketUtils.reqContractDetails(contract);
+		return true;
+	}
+	
+	@ResponseBody
+	@RequestMapping("isValidContract")
+	public boolean isValidContract() {
+		return true;
+	}
+	
+	@ResponseBody
 	@RequestMapping("search")
 	public String search(@RequestBody Contract contract) {
 		try {
 			Date startTime = DateUtils.yyyyMMddHHmm().parse(contract.getStartTime());
 			Date endTime = DateUtils.yyyyMMddHHmm().parse(contract.getEndTime());
 			if((startTime.equals(endTime) || startTime.before(endTime)) && contract.getStartTime().split(" ")[0].equals(contract.getEndTime().split(" ")[0])) {				
-				EClientSocketUtils.reqContractDetails(contract);
-				Thread.sleep(3000);
-				if (!EClientSocketUtils.validateContract) {
-					return "Your contract have been expired, please check!";
+				boolean success =  EClientSocketUtils.reqMktData(contract);
+				if(success) {
+					return "Success";
 				} else {
-					boolean success =  EClientSocketUtils.reqMktData(contract);
-					if(success) {
-						return "Success";
-					} else {
-						return "Connect failed, please check your connection";
-					}					
+					return "Connect failed, please check your connection";
 				}
 			} else {
 				return "The start time should before end time, and they should be the same day";
