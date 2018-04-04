@@ -414,7 +414,7 @@
 						      <td><input type="button" onclick="contractKM1Click();" style="width:100%" value="KM1"/></td>
 						      <td><input type="button" onclick="contractNK1Click();" style="width:100%" value="NK1"/></td>
 						      <td><input type="button" onclick="contractHSIClick();" style="width:100%" value="HSI"/></td>
-						      <td><input type="button" onclick="searchClick();" style="width:100%" value="Search" /></td>
+						      <td><input type="button" id="searchBtn" onclick="searchClick();" style="width:100%" value="Search" /></td>
 				   	  		</tr>
 				   	  	</table>
 				   	  </td>

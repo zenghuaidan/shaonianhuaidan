@@ -97,10 +97,8 @@ function defaultConnectClick() {
 	$("[name='account']").val("U8979091");
 	$("[name='isPaperTrading']").prop('checked', true);
 }
-function searchClick() {
-	if(!confirm("Are you sure to start a new search, the previous search will be stopped.")) {
-		return;
-	}
+
+function getContract() {
 	var secType = $.trim($("[name='secType']").val());
 	var symbol = $.trim($("[name='symbol']").val());
 	var currency = $.trim($("[name='currency']").val());
@@ -110,31 +108,74 @@ function searchClick() {
 	var startTime = $.trim($("[name='startTime']").val());
 	var endTime = $.trim($("[name='endTime']").val());
 	var tif = $.trim($("[name='tif']").val());
+	return JSON.stringify({
+    	"secType" : secType,
+    	"symbol" : symbol,
+    	"currency" : currency,
+    	"exchange" : exchange,
+    	"localSymbol" : localSymbol,
+    	"expirary" : expirary,
+    	"startTime" : startTime,
+    	"endTime" : endTime,
+    	"tif" : tif
+    }); 
+}
+
+function searchClick() {
+	if(!confirm("Are you sure to start a new search, the previous search will be stopped.")) {
+		return;
+	}
+	$("#searchBtn").attr("disabled", true);
+	$.ajax({
+	    type: "POST",
+	    url: "reqContractDetails",
+	    data: getContract(),
+	    contentType:"application/json;charset=utf-8",
+	    success: function(data) {
+	    	setTimeout(isValidContract(), 2000)
+	    },
+	    error: function() {		        
+	    }
+	});	
+}
+
+function isValidContract() {
+	$.ajax({
+	    type: "GET",
+	    url: "isValidContract",
+	    success: function(data) {
+	    	if(data) {
+	    		dosearch();
+	    	} else {
+	    		$("#searchBtn").attr("disabled", false);
+	    		alert("Your contract have been expirary, please active and retry.");
+	    	}
+	    },
+	    error: function() {
+	    	$("#searchBtn").attr("disabled", false);
+	    }
+	});
+}
+
+function dosearch() {
 	$.ajax({
 	    type: "POST",
 	    url: "search",
-	    data: JSON.stringify({
-	    	"secType" : secType,
-	    	"symbol" : symbol,
-	    	"currency" : currency,
-	    	"exchange" : exchange,
-	    	"localSymbol" : localSymbol,
-	    	"expirary" : expirary,
-	    	"startTime" : startTime,
-	    	"endTime" : endTime,
-	    	"tif" : tif
-	    }),
+	    data: getContract(),
 	    contentType:"application/json;charset=utf-8",
 	    success: function(data) {
 	    	if(data == "Success") {
 	    		renderLiveDataFileList();
 	    	}
+	    	$("#searchBtn").attr("disabled", false);
 	    	alert(data);
 	    },
-	    error: function() {		        
+	    error: function() {		      
+	    	$("#searchBtn").attr("disabled", false);
 	    }
 	});
 }
+
 function connectClick() {
 	var host = $.trim($("[name='host']").val());
 	var port = $.trim($("[name='port']").val());
