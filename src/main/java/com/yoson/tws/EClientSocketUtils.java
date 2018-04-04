@@ -116,6 +116,7 @@ public class EClientSocketUtils {
 		EClientSocketUtils.contracts = contracts;
 	}
 	
+	public static int identity = 2000;
 	public static void requestData(Date now) {
 		if (!EClientSocketUtils.isConnected())
 			EClientSocketUtils.reconnectUsingPreConnectSetting();		
@@ -127,7 +128,7 @@ public class EClientSocketUtils {
 			// start new market data
 			StringBuilder log = new StringBuilder();
 			for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
-				EClientSocketUtils.socket.reqMktData(i, EClientSocketUtils.contracts.get(i), null, false, new Vector<TagValue>());	
+				EClientSocketUtils.socket.reqMktData(i + identity, EClientSocketUtils.contracts.get(i), null, false, new Vector<TagValue>());	
 				log.append((i + 1) + ":" + EClientSocketUtils.contracts.get(i).startTime + "," + EClientSocketUtils.contracts.get(i).endTime + System.lineSeparator());
 			}
 			

@@ -175,6 +175,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	@Override
 	public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
+		tickerId = tickerId - EClientSocketUtils.identity;
 		Date now = new Date();
 		if(EClientSocketUtils.contracts == null || EClientSocketUtils.contracts.size() < (tickerId + 1) || !isValidateTime(EClientSocketUtils.contracts.get(tickerId), now))
 			return;
@@ -194,6 +195,7 @@ public class YosonEWrapper extends BasicEWrapper {
 	
 	@Override
 	public void tickSize(int tickerId, int field, int size) {
+		tickerId = tickerId - EClientSocketUtils.identity;
 		Date now = new Date();
 		if(EClientSocketUtils.contracts == null || EClientSocketUtils.contracts.size() < (tickerId + 1) || !isValidateTime(EClientSocketUtils.contracts.get(tickerId), now))
 			return;
