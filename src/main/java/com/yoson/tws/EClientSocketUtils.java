@@ -107,8 +107,10 @@ public class EClientSocketUtils {
 		return true;
 	}
 	
+	public static boolean validateContract = true;
 	public static void reqContractDetails(Contract contract) {
 		if(isConnected()) {
+			EClientSocketUtils.contract = contract;
 			socket.reqContractDetails(EClientSocketUtils.connectionInfo.getClientId(), contract);
 		}
 	}
