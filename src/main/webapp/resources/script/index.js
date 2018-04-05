@@ -132,7 +132,7 @@ function searchClick() {
 	    data: getContract(),
 	    contentType:"application/json;charset=utf-8",
 	    success: function(data) {
-	    	setTimeout(isValidContract(), 2000)
+	    	setTimeout(isValidContract, 2000)
 	    },
 	    error: function() {		        
 	    }
