@@ -711,7 +711,8 @@ public class YosonEWrapper extends BasicEWrapper {
 				&& contractMonth.equals(EClientSocketUtils.contract.m_expiry) 
 				&& lastDate.indexOf(now) >= 0);
 		
-		BackTestCSVWriter.writeText(getConnectionPath(), log, true);
+//		BackTestCSVWriter.writeText(getConnectionPath(), log, true);
+		System.out.println(log);
 	}
     
 	@Override
