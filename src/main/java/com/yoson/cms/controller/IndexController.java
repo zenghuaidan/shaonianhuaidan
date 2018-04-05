@@ -138,7 +138,7 @@ public class IndexController  implements StatusCallBack {
 	@ResponseBody
 	@RequestMapping("isValidContract")
 	public boolean isValidContract() {
-		return true;
+		return EClientSocketUtils.validateContract;
 	}
 	
 	@ResponseBody
