@@ -148,7 +148,7 @@ function isValidContract() {
 	    		dosearch();
 	    	} else {
 	    		$("#searchBtn").attr("disabled", false);
-	    		alert("Your contract have been expirary, please active and retry.");
+	    		alert("Today is the last trading date of the contract month, please use a new contact month instead.");
 	    	}
 	    },
 	    error: function() {
