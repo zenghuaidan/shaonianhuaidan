@@ -313,11 +313,11 @@ public class IndexController  implements StatusCallBack {
 	public static List<String> uploadStatus = new ArrayList<String>();
 	@ResponseBody
 	@RequestMapping("uploadData")
-	public boolean uploadData(String liveTradingData, String ignoreLunchTime, String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	public boolean uploadData(String dataType, String ignoreLunchTime, String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		isToCSV = toCSV != null && "on".equals(toCSV.toLowerCase());
 		isToDatabase = toDatabase != null && "on".equals(toDatabase.toLowerCase());
 		isIgnoreLunchTime = ignoreLunchTime != null && "on".equals(ignoreLunchTime.toLowerCase());
-		isLiveTradingData = liveTradingData != null && "on".equals(liveTradingData.toLowerCase());
+		uploadDataType = dataType;
 		String FINISHED = "Finished";
 		boolean success = false;
 		csvDownloadFolder=FilenameUtils.concat(System.getProperty("java.io.tmpdir"),DateUtils.yyyyMMddHHmmss2().format(new Date()));
@@ -394,7 +394,7 @@ public class IndexController  implements StatusCallBack {
 						
 						if(files.size() > 0) {
 							if (isCheck) {
-								if(!isLiveTradingData) {
+								if(uploadDataType.equals("1")) {
 									check(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, files);								
 								}
 								
@@ -506,9 +506,9 @@ public class IndexController  implements StatusCallBack {
 	private int previousSheetIndex = 0;
 	private String csvDownloadFolder;
 	private boolean isToCSV;
-	private boolean isLiveTradingData;
 	private boolean isToDatabase;
 	private boolean isIgnoreLunchTime;
+	private String uploadDataType;
 	private void uploadWithTransfer(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files) throws IOException, OpenXML4JException, SAXException {
 		for(File file : files) {
 			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
@@ -701,7 +701,7 @@ public class IndexController  implements StatusCallBack {
 		return "";
 	}
 	
-	private void uploadWithAction(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException {
+	private void uploadWithAction(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException, ParseException {
 		for(File file : files) {
 			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
 			uploadStatus.add("Retriving data from " + name + " ...");
@@ -714,7 +714,43 @@ public class IndexController  implements StatusCallBack {
 			source = "";
 			sheet="";
 			previousSheetIndex = 0;
-			if (isLiveTradingData) {
+			if (uploadDataType.equals("3")) {				
+				String fileName = FilenameUtils.getBaseName(file.getName());
+				source = fileName.split("_")[0];
+				uploadStatus.add("Parsing file " + name + ", the source is " + source + " ...");
+				
+				FileInputStream fileInputStream = new FileInputStream(file);
+				List<String> readLines = IOUtils.readLines(fileInputStream);
+				fileInputStream.close();
+				List<ScheduledDataRecord> scheduledDataRecords = new ArrayList<ScheduledDataRecord>();
+				for(int i = 3; i <= readLines.size() - 1; i++) {
+					ScheduledDataRecord scheduledDataRecord = new ScheduledDataRecord();
+					String line = readLines.get(i);
+					try {						
+						Date date = DateUtils.yyyyMMddHHmmss().parse(line.split(",")[0]);
+						String time = DateUtils.yyyyMMddHHmmss2().format(date); 
+						scheduledDataRecord.setTime(time);
+						scheduledDataRecord.setTradeavg(Double.parseDouble(line.split(",")[1]));
+						scheduledDataRecord.setTradelast(Double.parseDouble(line.split(",")[2]));
+						scheduledDataRecord.setTrademax(Double.parseDouble(line.split(",")[3]));
+						scheduledDataRecord.setTrademin(Double.parseDouble(line.split(",")[4]));
+						
+						scheduledDataRecord.setAskavg(Double.parseDouble(line.split(",")[6]));
+						scheduledDataRecord.setAsklast(Double.parseDouble(line.split(",")[7]));
+						scheduledDataRecord.setAskmax(Double.parseDouble(line.split(",")[8]));
+						scheduledDataRecord.setAskmin(Double.parseDouble(line.split(",")[9]));
+						
+						scheduledDataRecord.setBidavg(Double.parseDouble(line.split(",")[11]));
+						scheduledDataRecord.setBidlast(Double.parseDouble(line.split(",")[12]));
+						scheduledDataRecord.setBidmax(Double.parseDouble(line.split(",")[13]));
+						scheduledDataRecord.setBidmin(Double.parseDouble(line.split(",")[14]));
+						
+						scheduledDataRecords.add(scheduledDataRecord);
+					} catch (Exception e) {
+					}											
+				}
+				writingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace, scheduledDataRecords);
+			} else if (uploadDataType.equals("2")) {
 				tradeMap = new TreeMap<Long, List<Double>>();
 				askMap = new TreeMap<Long, List<Double>>();
 				bidMap = new TreeMap<Long, List<Double>>();
@@ -745,13 +781,16 @@ public class IndexController  implements StatusCallBack {
 					} catch (Exception e) {
 					}											
 				}
-				wrtingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace);
-			} else {
+				writingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace, YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap));
+			} else if (uploadDataType.equals("1")) {
 				new BigExcelReader(file) {  
 					@Override  
 					protected void outputRow(int sheetIndex, int rowIndex, int curCol, List<String> datas) {
 						if(validateSheet && rowIndex == 0 && previousSheetIndex != sheetIndex) {
-							wrtingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace);
+							try {
+								writingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace, YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap));
+							} catch (Exception e) {
+							}
 						}
 						previousSheetIndex = sheetIndex;
 						if(sheetIndex >= startSheet) {
@@ -807,23 +846,22 @@ public class IndexController  implements StatusCallBack {
 					}
 				};
 			}
-			if (!isLiveTradingData) {
+			if (uploadDataType.equals("1")) {
 				if(previousSheetIndex < startSheet) {
 					uploadStatus.add("The excel contains less than " + startSheet + " Sheets, so this file will be <font size='4' color='red'>skipped</font>");
 				} if(validateSheet) { //write last sheet
-					wrtingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace);
+					writingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace, YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap));
 				}				
 			}
 		}
 	}
 	
-	private void wrtingDatabase(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, boolean isReplace) {
+	private void writingDatabase(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, boolean isReplace, List<ScheduledDataRecord> scheduledDataRecords) {
 		try {
 			String _dataStartTime = DateUtils.yyyyMMdd().format(date) + " " + dataStartTime; 
 			String _lunchStartTime = DateUtils.yyyyMMdd().format(date) + " " + lunchStartTime; 
 			String _lunchEndTime = DateUtils.yyyyMMdd().format(date) + " " + lunchEndTime;
 			String _dataEndTime = DateUtils.yyyyMMdd().format(date) + " " + dataEndTime;
-			List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap);
 			if(isToDatabase) {
 				uploadStatus.add("Writing database ...");	
 				if(isIgnoreLunchTime) {
