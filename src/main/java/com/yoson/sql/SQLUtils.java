@@ -64,12 +64,12 @@ public class SQLUtils {
 		}
 	}
 	
-	public static int checkScheduledDataExisting(String from, String to, String source) {
+	public static int checkScheduledDataExisting(String from, String to, String source, String ticker) {
 		Session session = null;		
 		try {
 			session = getSession();
 //			String sql = "select distinct CONCAT_WS(' ',date,time) as sdata from schedule_data where source = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "') order by date asc, time asc";
-			String sql = "select count(*) as totalCount from schedule_data where ticker = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "')";
+			String sql = "select count(*) as totalCount from schedule_data where ticker = '" + ticker + "' and source = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "')";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("totalCount", IntegerType.INSTANCE);
 			return (Integer)sqlQuery.uniqueResult();			
 		} catch (Exception e) {
@@ -101,7 +101,7 @@ public class SQLUtils {
 		}
 	}
 	
-	public static void saveScheduledDataRecord(List<ScheduledDataRecord> scheduledDataRecords, String dataStartTime, String dataEndTime, String source, boolean isReplace) {
+	public static void saveScheduledDataRecord(List<ScheduledDataRecord> scheduledDataRecords, String dataStartTime, String dataEndTime, String source, String ticker, boolean isReplace) {
 		Session session = null;
 		try {
 			session = getSession();
@@ -113,11 +113,11 @@ public class SQLUtils {
 					String dateTimeStr = scheduledDataRecord.getTime();
 					String dateStr = DateUtils.getDateStr(dateTimeStr);
 					String timeStr = DateUtils.getTimeStr(dateTimeStr);
-					values.add("('"+ source +"','" + dateStr + "','" + timeStr + "'," 
+					values.add("('"+ ticker +"','" + dateStr + "','" + timeStr + "'," 
 							+ scheduledDataRecord.getBidavg() + "," + scheduledDataRecord.getBidlast() + "," + scheduledDataRecord.getBidmax() + "," + scheduledDataRecord.getBidmin() + ","
 							+ scheduledDataRecord.getAskavg() + "," + scheduledDataRecord.getAsklast() + "," + scheduledDataRecord.getAskmax() + "," + scheduledDataRecord.getAskmin() + ","
 							+ scheduledDataRecord.getTradeavg() + "," + scheduledDataRecord.getTradelast() + "," + scheduledDataRecord.getTrademax() + "," + scheduledDataRecord.getTrademin() + ","
-							+ "'BBG_" + source +"')");
+							+ "'" + source +"')");
 					if(values.size() == 10000) {
 						session.createSQLQuery(sql + String.join(",", values)).executeUpdate();
 						values.clear();

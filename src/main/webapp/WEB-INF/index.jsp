@@ -35,6 +35,8 @@
 						Lunch Time From:<input type="text" name="lunchStartTime" class="timepicker"/>
 						Lunch Time To:<input type="text" name="lunchEndTime" class="timepicker"/>
 						End:<input type="text" name="dataEndTime" class="timepicker"/>
+						<label name="source">Source:</label><input type="text" name="source"/>
+						<label name="ticker">Ticker:</label><input type="text" name="ticker"/>
 						<input type="file" name="liveData" accept="text/txt" value="Select File"/>
 						<br/>
 						Ignore Lunch Time:<input type="checkbox" name="ignoreLunchTime"/>

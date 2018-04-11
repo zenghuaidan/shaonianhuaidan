@@ -313,13 +313,18 @@ public class IndexController  implements StatusCallBack {
 	public static List<String> uploadStatus = new ArrayList<String>();
 	@ResponseBody
 	@RequestMapping("uploadData")
-	public boolean uploadData(String dataType, String ignoreLunchTime, String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	public boolean uploadData(String source, String ticker, String dataType, String ignoreLunchTime, String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
+		String FINISHED = "Finished";
+		boolean success = false;
+		if(uploadStatus.size() > 0 && uploadStatus.get(uploadStatus.size() - 1).indexOf(FINISHED) < 0) {
+			return success;
+		}
 		isToCSV = toCSV != null && "on".equals(toCSV.toLowerCase());
 		isToDatabase = toDatabase != null && "on".equals(toDatabase.toLowerCase());
 		isIgnoreLunchTime = ignoreLunchTime != null && "on".equals(ignoreLunchTime.toLowerCase());
 		uploadDataType = dataType;
-		String FINISHED = "Finished";
-		boolean success = false;
+		uploadSource = source;
+		uploadTicker = ticker;
 		csvDownloadFolder=FilenameUtils.concat(System.getProperty("java.io.tmpdir"),DateUtils.yyyyMMddHHmmss2().format(new Date()));
 		new File(csvDownloadFolder).mkdirs();
 		try{
@@ -328,9 +333,6 @@ public class IndexController  implements StatusCallBack {
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-		}
-		if(uploadStatus.size() > 0 && uploadStatus.get(uploadStatus.size() - 1).indexOf(FINISHED) < 0) {
-			return success;
 		}
 		boolean isCheck = "check".equals(uploadAction);
 		uploadStatus = new ArrayList<String>();
@@ -444,33 +446,23 @@ public class IndexController  implements StatusCallBack {
 	        	@Override  
 	        	protected void outputRow(int sheetIndex, int rowIndex, int curCol, List<String> datas) {  
 	        			if(sheetIndex >= startSheet && rowIndex == 0) {
-	        				boolean validateSource = false;
 	        				boolean validateDate = false;
-	        				String source = null;
 	        				String dateStr = null;
-	        				Date date = null;
-	        				if(datas.size() > 1 && !StringUtils.isEmpty(datas.get(1))) {
-	        					source = genSouce((String)datas.get(1));						
-	        					validateSource = true;
-	        				}
 	        				try {
 	        					dateStr = datas.get(2);
-	        					date = DateUtils.yyyyMMdd().parse(dateStr);	        					
+	        					DateUtils.yyyyMMdd().parse(dateStr);	        					
 	        					validateDate = true;
 	        				} catch (Exception e) {
 	        					validateDate = false;
 							}
 	        				String sheet = "<font size='3' color='red'>Sheet" + (sheetIndex + 1) + "</font>";
-	        				if (validateDate && validateSource) {
-//						if(!org.apache.commons.lang.time.DateUtils.isSameDay(date, DateUtils.yyyyMMddHHmm().parse(dataStartTime))) {
-//							uploadStatus.add("The data(" + DateUtils.yyyyMMdd().format(date) + ") at " + sheet + " is NOT within you selected period(" + dataStartTime +"-" + dataEndTime + "), this sheet may be <font size='4' color='red'>skipped</font>");
-//						} else {
+	        				if (validateDate) {
 	        					String _dataStartTime = dateStr + " " + dataStartTime; 
 	        					String _lunchStartTime = dateStr + " " + lunchStartTime; 
 	        					String _lunchEndTime = dateStr + " " + lunchEndTime;
 	        					String _dataEndTime = dateStr + " " + dataEndTime;
-	        					int totalCount1 = SQLUtils.checkScheduledDataExisting(_dataStartTime, _lunchStartTime, source);	
-	        					int totalCount2 = SQLUtils.checkScheduledDataExisting(_lunchEndTime, _dataEndTime, source);
+	        					int totalCount1 = SQLUtils.checkScheduledDataExisting(_dataStartTime, _lunchStartTime, uploadSource, uploadTicker);	
+	        					int totalCount2 = SQLUtils.checkScheduledDataExisting(_lunchEndTime, _dataEndTime, uploadSource, uploadTicker);
 	        					if (totalCount1 == 0 && totalCount2 == 0 ) {
 	        						// no data in db
 	        						uploadStatus.add("Not exists data within period(" + _dataStartTime +" to " + _dataEndTime + ") in database. The data(" + dateStr + ") at " + sheet + " will be <font size='4' color='blue'>uploaded</font>");
@@ -478,9 +470,8 @@ public class IndexController  implements StatusCallBack {
 	        						// exists data in db
 	        						uploadStatus.add("Exists data within period(" + _dataStartTime +"-" + _dataEndTime + ") in database. The database data may be <font size='4' color='red'>replaced</font> with the data(" + dateStr + ") at " + sheet);
 	        					}															
-//						}
 	        				} else {
-	        					uploadStatus.add("Can not detect the" + (validateSource ? "" : " <font size='3' color='red'>Source cell(B1)</font> ") + (validateDate ? "" : " <font size='3' color='red'>Date cell(C1)</font> ") + " at " + sheet + ", this sheet will be <font size='4' color='red'>skipped</font>");
+	        					uploadStatus.add("Can not detect the <font size='3' color='red'>Date cell(C1)</font> at " + sheet + ", this sheet will be <font size='4' color='red'>skipped</font>");
 	        				}
 	        			}
 	        	}  
@@ -488,12 +479,12 @@ public class IndexController  implements StatusCallBack {
 		}
 	}
 
-	private String genSouce(String source) {
-		if (StringUtils.isEmpty(source))
-			return source;
-		String[] sources = source.split(" ");
-		return sources[0];
-	}
+//	private String genSouce(String source) {
+//		if (StringUtils.isEmpty(source))
+//			return source;
+//		String[] sources = source.split(" ");
+//		return sources[0];
+//	}
 
 	private static int startSheet = 2;
 	private static Map<Long, List<Double>> tradeMap = null;
@@ -501,7 +492,7 @@ public class IndexController  implements StatusCallBack {
 	private static Map<Long, List<Double>> bidMap = null;
 	private static boolean validateSheet = false;
 	private static Date date = null;
-	private static String source = "";
+//	private static String source = "";
 	private static String sheet="";
 	private int previousSheetIndex = 0;
 	private String csvDownloadFolder;
@@ -509,6 +500,8 @@ public class IndexController  implements StatusCallBack {
 	private boolean isToDatabase;
 	private boolean isIgnoreLunchTime;
 	private String uploadDataType;
+	private String uploadSource;
+	private String uploadTicker;
 	private void uploadWithTransfer(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files) throws IOException, OpenXML4JException, SAXException {
 		for(File file : files) {
 			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
@@ -711,13 +704,13 @@ public class IndexController  implements StatusCallBack {
 			bidMap = null;
 			validateSheet = false;
 			date = null;
-			source = "";
+//			source = "";
 			sheet="";
 			previousSheetIndex = 0;
 			if (uploadDataType.equals("3")) {				
 				String fileName = FilenameUtils.getBaseName(file.getName());
-				source = fileName.split("_")[0];
-				uploadStatus.add("Parsing file " + name + ", the source is " + source + " ...");
+//				source = fileName.split("_")[0];
+				uploadStatus.add("Parsing file " + name);
 				
 				FileInputStream fileInputStream = new FileInputStream(file);
 				List<String> readLines = IOUtils.readLines(fileInputStream);
@@ -727,7 +720,7 @@ public class IndexController  implements StatusCallBack {
 					ScheduledDataRecord scheduledDataRecord = new ScheduledDataRecord();
 					String line = readLines.get(i);
 					try {						
-						Date date = DateUtils.yyyyMMddHHmmss().parse(line.split(",")[0]);
+						date = DateUtils.yyyyMMddHHmmss().parse(line.split(",")[0]);
 						String time = DateUtils.yyyyMMddHHmmss2().format(date); 
 						scheduledDataRecord.setTime(time);
 						scheduledDataRecord.setTradeavg(Double.parseDouble(line.split(",")[1]));
@@ -755,8 +748,8 @@ public class IndexController  implements StatusCallBack {
 				askMap = new TreeMap<Long, List<Double>>();
 				bidMap = new TreeMap<Long, List<Double>>();
 				String fileName = FilenameUtils.getBaseName(file.getName());
-				source = fileName.split("_")[0];
-				uploadStatus.add("Parsing file " + name + ", the source is " + source + " ...");
+//				source = fileName.split("_")[0];
+				uploadStatus.add("Parsing file " + name);
 				
 				FileInputStream fileInputStream = new FileInputStream(file);
 				List<String> readLines = IOUtils.readLines(fileInputStream);
@@ -800,17 +793,17 @@ public class IndexController  implements StatusCallBack {
 								bidMap = new TreeMap<Long, List<Double>>();
 								sheet = "<font size='3' color='blue'>Sheet" + (sheetIndex + 1) + "</font>";
 								date = null;
-								source = "";
+//								source = "";
 								try {
-									source = genSouce((String)datas.get(1));						
+//									source = genSouce((String)datas.get(1));						
 									date = DateUtils.yyyyMMdd().parse(datas.get(2));
 								} catch (Exception e) {
 								}
-								if (StringUtils.isEmpty(source) || date == null) {
-									uploadStatus.add("Can not detect the" + (StringUtils.isEmpty(source) ? "" : " <font size='3' color='red'>Source cell(B1)</font> ") + (date == null ? "" : " <font size='3' color='red'>Date cell(C1)</font> ") + " at " + sheet + ", this sheet will be <font size='4' color='red'>skipped</font>");
+								if (date == null) {
+									uploadStatus.add("Can not detect the <font size='3' color='red'>Date cell(C1)</font> at " + sheet + ", this sheet will be <font size='4' color='red'>skipped</font>");
 									validateSheet = false;
 								} else {
-									uploadStatus.add("Parsing data(" + DateUtils.yyyyMMdd().format(date) + ") for " + sheet + ", the source is " + source + " ...");
+									uploadStatus.add("Parsing data(" + DateUtils.yyyyMMdd().format(date) + ") for " + sheet);
 									validateSheet = true;
 								}
 								
@@ -865,10 +858,10 @@ public class IndexController  implements StatusCallBack {
 			if(isToDatabase) {
 				uploadStatus.add("Writing database ...");	
 				if(isIgnoreLunchTime) {
-					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _dataEndTime, source, isReplace);
+					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _dataEndTime, uploadSource, uploadTicker, isReplace);
 				} else {
-					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _lunchStartTime, source, isReplace);
-					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _lunchEndTime, _dataEndTime, source, isReplace);
+					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _dataStartTime, _lunchStartTime, uploadSource, uploadTicker, isReplace);
+					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, _lunchEndTime, _dataEndTime, uploadSource, uploadTicker, isReplace);
 				}
 			}
 			
@@ -890,8 +883,8 @@ public class IndexController  implements StatusCallBack {
 						return false;
 					}
 				});
-				String scheduledDataFilePath = FilenameUtils.concat(csvDownloadFolder, source + "_" + DateUtils.yyyyMMdd().format(date) + "_scheduledData.csv");
-				ScheduledDataCSVWriter.WriteCSV(scheduledDataFilePath, source, scheduledDataRecords);
+				String scheduledDataFilePath = FilenameUtils.concat(csvDownloadFolder, uploadSource + "_" + DateUtils.yyyyMMdd().format(date) + "_scheduledData.csv");
+				ScheduledDataCSVWriter.WriteCSV(scheduledDataFilePath, uploadSource, scheduledDataRecords);
 			}
 		} catch (Exception e) {
 		}

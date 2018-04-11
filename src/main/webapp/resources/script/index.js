@@ -4,6 +4,12 @@ function uploadData(action) {
 		alert("Please select zip file to upload.");
 		return;
 	}	
+	
+	if(action != 'transfer' && ($.trim($("input[name='source']").val()) == '' || $.trim($("input[name='ticker']").val()) == '')) {
+		alert("Please input both source and ticker.");
+		return;
+	}
+ 	
 	$("[name='uploadAction']").val(action);
 	var options = {
         success: function (data) {        	        
@@ -84,6 +90,10 @@ function doInitTab() {
 		$("#toCSV").show();
 		$("label[name='dataType']").show();
 		$("input[name='dataType']").show();
+		$("label[name='source']").show();
+		$("label[name='ticker']").show();
+		$("input[name='source']").show();
+		$("input[name='ticker']").show();
 		$("#uploadDataWithChecking").show();
 		$("#uploadDataWithReplace").show();
 		$("#uploadDataWithSkip").show();
@@ -99,6 +109,10 @@ function doInitTab() {
 		$("#toCSV").hide();
 		$("label[name='dataType']").hide();
 		$("input[name='dataType']").hide();
+		$("label[name='source']").hide();
+		$("label[name='ticker']").hide();
+		$("input[name='source']").hide();
+		$("input[name='ticker']").hide();
 		$("#uploadDataWithChecking").hide();
 		$("#uploadDataWithReplace").hide();
 		$("#uploadDataWithSkip").hide();
