@@ -56,21 +56,21 @@ public class YosonEWrapper extends BasicEWrapper {
 		return getPath("");
 	} 
 	
-	private static String bidPath() {
-		return getPath(BID);
-	} 
-	private static String askPath() {
-		return getPath(ASK);
-	}
-	private static String tradePath() {
-		return getPath(TRADE);
-	}
-	private static String volumePath() {
-		return getPath(VOLUME);
-	}
-	private static String closePath() {
-		return getPath(CLOSE);
-	}
+//	private static String bidPath() {
+//		return getPath(BID);
+//	} 
+//	private static String askPath() {
+//		return getPath(ASK);
+//	}
+//	private static String tradePath() {
+//		return getPath(TRADE);
+//	}
+//	private static String volumePath() {
+//		return getPath(VOLUME);
+//	}
+//	private static String closePath() {
+//		return getPath(CLOSE);
+//	}
 	
 	public static String getConnectionPath() {
 		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "connection.txt");
@@ -456,7 +456,7 @@ public class YosonEWrapper extends BasicEWrapper {
 			break;
 		case 9:
 			close = price;
-			BackTestCSVWriter.writeText(closePath(), DateUtils.yyyyMMddHHmmss2().format(now) + "," + close + Global.lineSeparator, true);
+//			BackTestCSVWriter.writeText(closePath(), DateUtils.yyyyMMddHHmmss2().format(now) + "," + close + Global.lineSeparator, true);
 			break;
 		}
 
@@ -475,24 +475,24 @@ public class YosonEWrapper extends BasicEWrapper {
 			addLiveData(scheduledDataRecords, now, bid, BID);
 			String liveResult = time + "," + bid + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(livePath(), BID + "," + liveResult, true);
-			BackTestCSVWriter.writeText(bidPath(), liveResult, true);
+//			BackTestCSVWriter.writeText(bidPath(), liveResult, true);
 			break;
 		case 3:
 			askSize = size;
 			addLiveData(scheduledDataRecords, now, ask, ASK);
 			String askResult = time + "," + ask + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(livePath(), ASK + "," + askResult, true);
-			BackTestCSVWriter.writeText(askPath(), askResult, true);
+//			BackTestCSVWriter.writeText(askPath(), askResult, true);
 			break;
 		case 5:
 			tradeSize = size;
 			addLiveData(scheduledDataRecords, now, trade, TRADE);
 			String tradeResult = time + "," + trade + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(livePath(), TRADE + "," + tradeResult, true);
-			BackTestCSVWriter.writeText(tradePath(), tradeResult, true);
+//			BackTestCSVWriter.writeText(tradePath(), tradeResult, true);
 			break;
 		case 8:
-			BackTestCSVWriter.writeText(volumePath(), time + "," + size + Global.lineSeparator, true);
+//			BackTestCSVWriter.writeText(volumePath(), time + "," + size + Global.lineSeparator, true);
 			break;
 		}
 	}
