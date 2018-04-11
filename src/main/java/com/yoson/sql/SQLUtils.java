@@ -64,12 +64,12 @@ public class SQLUtils {
 		}
 	}
 	
-	public static int checkScheduledDataExisting(String from, String to, String source, String ticker) {
+	public static int checkScheduledDataExisting(String dateStr, String source, String ticker) {
 		Session session = null;		
 		try {
 			session = getSession();
 //			String sql = "select distinct CONCAT_WS(' ',date,time) as sdata from schedule_data where source = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "') order by date asc, time asc";
-			String sql = "select count(*) as totalCount from " + SCHEDULE_DATA_TABLE + " where ticker = '" + ticker + "' and source = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "')";
+			String sql = "select count(1) as totalCount from " + SCHEDULE_DATA_TABLE + " where ticker = '" + ticker + "' and source = '" + source + "' and date = '" + dateStr + "'";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("totalCount", IntegerType.INSTANCE);
 			return (Integer)sqlQuery.uniqueResult();			
 		} catch (Exception e) {

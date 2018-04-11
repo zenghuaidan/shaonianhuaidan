@@ -461,9 +461,9 @@ public class IndexController  implements StatusCallBack {
 	        					String _lunchStartTime = dateStr + " " + lunchStartTime; 
 	        					String _lunchEndTime = dateStr + " " + lunchEndTime;
 	        					String _dataEndTime = dateStr + " " + dataEndTime;
-	        					int totalCount1 = SQLUtils.checkScheduledDataExisting(_dataStartTime, _lunchStartTime, uploadSource, uploadTicker);	
-	        					int totalCount2 = SQLUtils.checkScheduledDataExisting(_lunchEndTime, _dataEndTime, uploadSource, uploadTicker);
-	        					if (totalCount1 == 0 && totalCount2 == 0 ) {
+	        					int totalCount = SQLUtils.checkScheduledDataExisting(dateStr, uploadSource, uploadTicker);	
+//	        					int totalCount2 = SQLUtils.checkScheduledDataExisting(_lunchEndTime, _dataEndTime, uploadSource, uploadTicker);
+	        					if (totalCount == 0) {
 	        						// no data in db
 	        						uploadStatus.add("Not exists data within period(" + _dataStartTime +" to " + _dataEndTime + ") in database. The data(" + dateStr + ") at " + sheet + " will be <font size='4' color='blue'>uploaded</font>");
 	        					} else {
