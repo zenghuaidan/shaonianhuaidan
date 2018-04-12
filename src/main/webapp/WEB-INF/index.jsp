@@ -317,6 +317,13 @@
 				</table>  
             </div>  
             <div class="dom">  
+   				<div style="text-align:center;color:blue">************Important Notice************</div>
+				<div style="text-align:center;color:blue">Below operation may have the chance to cause TWS open position issue</div>
+				<div style="text-align:center;color:red">1. Input a Contract End time on Connection Tab is before Market End Time of any your strategy</div>
+				<div style="text-align:center;color:red">2. Add or Delete strategy during Market Time</div>
+				<div style="text-align:center;color:red">3. Active/Inactive strategy during Market Time</div>
+				<div style="text-align:center;color:red">4. Upload strategy through CSV during Market Time</div>
+				<div style="text-align:center;color:blue">Suggestion: Please do the Add/Delete/Active/Inactive/Upload strategy before Market Time or within Lunch Time</div>
   				<table>
 				   <tr>
 				      <td>Host</td>

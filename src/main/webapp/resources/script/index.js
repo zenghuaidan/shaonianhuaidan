@@ -54,8 +54,8 @@ function contractHHIClick() {
 	$("[name='localsymbol']").val("");
 	$("[name='expirary']").val(yyyymm());
 	$("[name='tif']").val("IOC");
-	$("[name='startTime']").val(yyyymmdd() + " 09:30");
-	$("[name='endTime']").val(yyyymmdd() + " 14:00");
+	$("[name='startTime']").val(yyyymmdd() + " 09:15");
+	$("[name='endTime']").val(yyyymmdd() + " 16:15");
 }
 function contractKM1Click() {
 	$("[name='secType']").val("FUT");
@@ -87,8 +87,8 @@ function contractHSIClick() {
 	$("[name='localsymbol']").val("");
 	$("[name='expirary']").val(yyyymm());
 	$("[name='tif']").val("IOC");
-	$("[name='startTime']").val(yyyymmdd() + " 09:30");
-	$("[name='endTime']").val(yyyymmdd() + " 14:00");
+	$("[name='startTime']").val(yyyymmdd() + " 09:15");
+	$("[name='endTime']").val(yyyymmdd() + " 16:15");
 }
 function defaultConnectClick() {
 	$("[name='host']").val("127.0.0.1");
