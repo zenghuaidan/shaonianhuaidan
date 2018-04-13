@@ -342,6 +342,14 @@
 				<div style="text-align:center;color:red">3. Active/Inactive strategy during Market Time</div>
 				<div style="text-align:center;color:red">4. Upload strategy through CSV during Market Time</div>
 				<div style="text-align:center;color:blue">Suggestion: Please do the Add/Delete/Active/Inactive/Upload strategy before Market Time or within Lunch Time</div>
+				<br/>
+				<div style="text-align:center;color:red">************Please read and accept below when you want to do Live Trading************</div>
+				<div style="text-align:center;color:blue">Please follow the normal trading flow which you have fully tested during Paper Trading.</div>
+				<div style="text-align:center;color:blue">The system won't forbid you to do any complicate flow/operation, but you need to first fully test that flow/operation are working and within your expectation on Paper Trading.</div>
+				<div style="text-align:center;color:blue">Please just use the buttons/functions which you have already test/use on Paper Trading before, </div>
+				<div style="text-align:center;color:blue">once you use those buttons/functions, it means you have accept and notice that those buttons/functions are fully tested and passed by you.</div>
+				<div style="text-align:center;color:blue">And more, once you are doing the live trading, it means you have accept and trust the system, and the programmer won't response for the final Live Trading result.</div>
+				<div style="text-align:center;color:red">But programmer will take responsibility to fix any problem occur/found during Paper Trading.</div>
   				<table>
 				   <tr>
 				      <td>Host</td>
