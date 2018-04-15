@@ -341,6 +341,7 @@
 				<div style="text-align:center;color:red">2. Add or Delete strategy during Market Time</div>
 				<div style="text-align:center;color:red">3. Active/Inactive strategy during Market Time</div>
 				<div style="text-align:center;color:red">4. Upload strategy through CSV during Market Time</div>
+				<div style="text-align:center;color:red">5. TWS disconnect our system connection unexpectedly, we have build the logic to reconnect to TWS, but this part logic have never been tested, since we did not encounter this case before</div>
 				<div style="text-align:center;color:blue">Suggestion: Please do the Add/Delete/Active/Inactive/Upload strategy before Market Time or within Lunch Time</div>
 				<br/>
 				<div style="text-align:center;color:red">************Please read and accept below when you want to do Live Trading************</div>
