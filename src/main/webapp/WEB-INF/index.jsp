@@ -73,6 +73,22 @@
 										   </tr>
 							   	  		</table>
 							   		</td>
+							   		<td>
+							   	  		<table>
+										   <tr>
+										      <td>Open</td>
+										   </tr>
+										   <tr>
+										      <td><input name="tradeDataField" ${ mainUIParam.tradeDataField eq "tradeopen" ? "checked" : "" } value="tradeopen" type="radio"/></td>
+										   </tr>
+										   <tr>
+										      <td><input name="askDataField" ${ mainUIParam.askDataField eq "askopen" ? "checked" : "" } value="askopen" type="radio"/></td>
+										   </tr>
+										   <tr>
+										      <td><input name="bidDataField" ${ mainUIParam.bidDataField eq "bidopen" ? "checked" : "" } value="bidopen" type="radio"/></td>
+										   </tr>
+							   	  		</table>
+							   	  	</td>
 							   	  	<td>
 							   	  		<table>
 										   <tr>
