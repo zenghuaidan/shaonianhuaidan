@@ -374,7 +374,7 @@ function getMainUIParam() {
 	   "lunchLastNumberOfMinutesClearPosition":$.trim($("[name='lunchLastNumberOfMinutesClearPosition']").val()),
 	   "source":$.trim($("[name='source']").val()) == '' ? $.trim($("[name='ticker']").val()) : $.trim($("[name='source']").val()),
 	   "ticker":$.trim($("[name='ticker']").val()),
-	   "fromSource":$.trim($("[name='ticker']").val()) == '' ? true : false,
+	   "fromSource":$.trim($("[name='ticker']").val()) == '',
 	   "cpTimerTo":$.trim($("[name='cpTimerTo']").val()),
 	   "cpTimerLiteral":$.trim($("[name='cpTimerLiteral']").val()),
 	   "cpBufferTo":$.trim($("[name='cpBufferTo']").val()),
