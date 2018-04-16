@@ -62,6 +62,7 @@ public class IndexController  implements StatusCallBack {
 	public String index(Model model) {
 		model.addAttribute("mainUIParam", BackTestTask.running || IndexController.mainUIParam != null ? IndexController.mainUIParam : MainUIParam.getMainUIParam());
 		model.addAttribute("sources", SQLUtils.getSources());
+		model.addAttribute("tickers", SQLUtils.getTickers());
 		model.addAttribute("connectionInfo", EClientSocketUtils.connectionInfo == null ? getDefaultConnectionInfo() : EClientSocketUtils.connectionInfo);
 		model.addAttribute("contract", EClientSocketUtils.contract == null ? getDefaultContract() : EClientSocketUtils.contract);
 		model.addAttribute("strategies", EClientSocketUtils.strategies);
@@ -743,6 +744,12 @@ public class IndexController  implements StatusCallBack {
 	@RequestMapping(path = "getStartDateBySource", method = {RequestMethod.GET})
 	public String getStartDateBySource(@RequestParam String source) {
 		return SQLUtils.getStartDateBySource(source);
+	}
+	
+	@ResponseBody
+	@RequestMapping(path = "getStartDateByTicker", method = {RequestMethod.GET})
+	public String getStartDateByTicker(@RequestParam String ticker) {
+		return SQLUtils.getStartDateByTicker(ticker);
 	}
 	
 	@ResponseBody
