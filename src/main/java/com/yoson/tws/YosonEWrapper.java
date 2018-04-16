@@ -292,12 +292,14 @@ public class YosonEWrapper extends BasicEWrapper {
 		ScheduledDataRecord scheduledDataRecord = new ScheduledDataRecord();
 		scheduledDataRecord.setTime(time+"");
 		if(trades != null) {
+			scheduledDataRecord.setTradeopen(trades != null && trades.size() > 0 ? trades.get(0) : 0);
 			scheduledDataRecord.setTradeavg(avgList(trades));
 			scheduledDataRecord.setTradelast(trades.get(trades.size() - 1));
 			scheduledDataRecord.setTrademin(Collections.min(trades));
 			scheduledDataRecord.setTrademax(Collections.max(trades));				
 		}
 		if(asks != null) {
+			scheduledDataRecord.setAskopen(asks != null && asks.size() > 0 ? asks.get(0) : 0);
 			scheduledDataRecord.setAskavg(avgList(asks));
 			scheduledDataRecord.setAsklast(asks.get(asks.size() - 1));
 			scheduledDataRecord.setAskmin(Collections.min(asks));
@@ -305,6 +307,7 @@ public class YosonEWrapper extends BasicEWrapper {
 		}
 		
 		if (bids != null) {
+			scheduledDataRecord.setBidopen(bids != null && bids.size() > 0 ? bids.get(0) : 0);
 			scheduledDataRecord.setBidavg(avgList(bids));
 			scheduledDataRecord.setBidlast(bids.get(bids.size() - 1));
 			scheduledDataRecord.setBidmin(Collections.min(bids));
@@ -500,6 +503,17 @@ public class YosonEWrapper extends BasicEWrapper {
 		if (scheduleData == null) {
 			scheduleData = new ScheduledDataRecord();
 			scheduleData.setTime(dateTimeStr);
+			switch (type) {
+				case TRADE:
+					scheduleData.setTradeopen(value);
+					break;
+				case ASK:
+					scheduleData.setAskopen(value);;					
+					break;
+				case BID:
+					scheduleData.setBidopen(value);					
+					break;
+			}
 			list.add(scheduleData);
 		}
 		switch (type) {

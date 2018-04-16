@@ -106,7 +106,7 @@ public class SQLUtils {
 		try {
 			session = getSession();
 			session.beginTransaction();
-			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ")  + SCHEDULE_DATA_TABLE + "(ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source) VALUES";
+			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ")  + SCHEDULE_DATA_TABLE + "(ticker,date,time,bidopen,bidavg,bidlast,bidmax,bidmin,askopen,askavg,asklast,askmax,askmin,tradeopen,tradeavg,tradelast,trademax,trademin,source) VALUES";
 			List<String> values = new ArrayList<String>();
 			for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
 				if(DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(scheduledDataRecord.getTime()), dataStartTime, dataEndTime)) {
@@ -114,9 +114,9 @@ public class SQLUtils {
 					String dateStr = DateUtils.getDateStr(dateTimeStr);
 					String timeStr = DateUtils.getTimeStr(dateTimeStr);
 					values.add("('"+ ticker +"','" + dateStr + "','" + timeStr + "'," 
-							+ scheduledDataRecord.getBidavg() + "," + scheduledDataRecord.getBidlast() + "," + scheduledDataRecord.getBidmax() + "," + scheduledDataRecord.getBidmin() + ","
-							+ scheduledDataRecord.getAskavg() + "," + scheduledDataRecord.getAsklast() + "," + scheduledDataRecord.getAskmax() + "," + scheduledDataRecord.getAskmin() + ","
-							+ scheduledDataRecord.getTradeavg() + "," + scheduledDataRecord.getTradelast() + "," + scheduledDataRecord.getTrademax() + "," + scheduledDataRecord.getTrademin() + ","
+							+ scheduledDataRecord.getBidopen() + "," + scheduledDataRecord.getBidavg() + "," + scheduledDataRecord.getBidlast() + "," + scheduledDataRecord.getBidmax() + "," + scheduledDataRecord.getBidmin() + ","
+							+ scheduledDataRecord.getAskopen() + "," + scheduledDataRecord.getAskavg() + "," + scheduledDataRecord.getAsklast() + "," + scheduledDataRecord.getAskmax() + "," + scheduledDataRecord.getAskmin() + ","
+							+ scheduledDataRecord.getTradeopen() + "," + scheduledDataRecord.getTradeavg() + "," + scheduledDataRecord.getTradelast() + "," + scheduledDataRecord.getTrademax() + "," + scheduledDataRecord.getTrademin() + ","
 							+ "'" + source +"')");
 					if(values.size() == 10000) {
 						session.createSQLQuery(sql + String.join(",", values)).executeUpdate();
