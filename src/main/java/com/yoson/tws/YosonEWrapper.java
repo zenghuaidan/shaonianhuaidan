@@ -99,6 +99,17 @@ public class YosonEWrapper extends BasicEWrapper {
 		if (scheduleData == null) {
 			scheduleData = new ScheduledDataRecord();
 			scheduleData.setTime(dateTimeStr);
+			switch (type) {
+				case TRADE:
+					scheduleData.setTradeopen(value);
+					break;
+				case ASK:
+					scheduleData.setAskopen(value);;					
+					break;
+				case BID:
+					scheduleData.setBidopen(value);					
+					break;
+			}
 			list.add(scheduleData);
 		}
 		switch (type) {
