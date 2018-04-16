@@ -24,6 +24,8 @@ public class MainUIParam extends TestSet {
 	private boolean ignoreLunchTime;
 	@Expose
 	private String source;
+	private String ticker;
+	private boolean fromSource;
 	private String version;
 	private String nForPnl;
 
@@ -79,6 +81,22 @@ public class MainUIParam extends TestSet {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public String getTicker() {
+		return ticker;
+	}
+
+	public void setTicker(String ticker) {
+		this.ticker = ticker;
+	}
+
+	public boolean isFromSource() {
+		return fromSource;
+	}
+
+	public void setFromSource(boolean fromSource) {
+		this.fromSource = fromSource;
 	}
 
 	public String getVersion() {
