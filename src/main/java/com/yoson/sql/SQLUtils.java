@@ -25,14 +25,14 @@ public class SQLUtils {
 	public static List<String> initScheduleData(MainUIParam mainUIParam) {
 		Session session = null;
 		List<BrokenDate> datePeriods = mainUIParam.getBrokenDateList();
-		String source = mainUIParam.getSource(); 
 		String askDataField = mainUIParam.getAskDataField(); 
 		String bidDataField = mainUIParam.getBidDataField(); 
 		String tradeDataField = mainUIParam.getTradeDataField();
 		try {
 			session = getSession();
-			String sql = "select CONCAT_WS(',',date,time, " + askDataField + ", " + bidDataField + ", " + tradeDataField + ") as sdata from schedule_data2 where source = '" + source + "'";
-
+			String sql = "select CONCAT_WS(',',date,time, " + askDataField + ", " + bidDataField + ", " + tradeDataField + ") as sdata from schedule_data2 " 
+			+ (mainUIParam.isFromSource() ? (" where source = '" + mainUIParam.getSource() + "'") : (" where ticker = '" + mainUIParam.getTicker() + "'"));
+			
 			if (datePeriods != null && datePeriods.size() > 0) {
 				List<String> datePeriodCriteria = new ArrayList<String>();
 				for (BrokenDate datePeriod : datePeriods) {
@@ -108,11 +108,47 @@ public class SQLUtils {
 		}
 	}
 	
+	public static List<String> getTickers() {
+		Session session = null;		
+		try {
+			session = getSession();
+			String sql = "select distinct ticker from schedule_data2 order by ticker asc";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return sqlQuery.list();			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<String>();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
 	public static String getStartDateBySource(String source) {
 		Session session = null;		
 		try {
 			session = getSession();
 			String sql = "select min(date) from schedule_data2 where source = '" + source + "'";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return DateUtils.yyyyMMdd().format((Date)sqlQuery.uniqueResult());			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "2014-01-01";
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static String getStartDateByTicker(String ticker) {
+		Session session = null;		
+		try {
+			session = getSession();
+			String sql = "select min(date) from schedule_data2 where ticker = '" + ticker + "'";
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
 			return DateUtils.yyyyMMdd().format((Date)sqlQuery.uniqueResult());			
 		} catch (Exception e) {

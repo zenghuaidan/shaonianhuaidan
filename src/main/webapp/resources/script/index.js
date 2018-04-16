@@ -372,7 +372,9 @@ function getMainUIParam() {
 	   "otherCostPerTrade":$.trim($("[name='otherCostPerTrade']").val()),
 	   "lastNumberOfMinutesClearPosition":$.trim($("[name='lastNumberOfMinutesClearPosition']").val()),
 	   "lunchLastNumberOfMinutesClearPosition":$.trim($("[name='lunchLastNumberOfMinutesClearPosition']").val()),
-	   "source":$.trim($("[name='source']").val()),
+	   "source":$.trim($("[name='source']").val()) == '' ? $.trim($("[name='ticker']").val()) : $.trim($("[name='source']").val()),
+	   "ticker":$.trim($("[name='ticker']").val()),
+	   "fromSource":$.trim($("[name='ticker']").val()) == '' ? true : false,
 	   "cpTimerTo":$.trim($("[name='cpTimerTo']").val()),
 	   "cpTimerLiteral":$.trim($("[name='cpTimerLiteral']").val()),
 	   "cpBufferTo":$.trim($("[name='cpBufferTo']").val()),
@@ -407,6 +409,10 @@ function getMainUIParam() {
 
 function runClick() {
 	var paramData = getMainUIParam();
+	if(paramData.source == '' && paramData.ticker == '') {
+		alert("Please select a source or a ticker!");
+		return;
+	}
 	$.ajax({
 	    type: "POST",
 	    url: "",
@@ -424,6 +430,10 @@ function runClick() {
 
 function runWithLiveTradingDataClick() {
 	var paramData = getMainUIParam();
+	if(paramData.source == '' && paramData.ticker == '') {
+		alert("Please select a source or a ticker!");
+		return;
+	}
 	$.ajax({
 	    type: "POST",
 	    url: "runWithLiveTradingDataClick",
@@ -795,6 +805,19 @@ function sourceChange() {
 	$.ajax({
 	    type: "GET",
 	    url: "getStartDateBySource?source=" + source,
+	    success: function(data) {
+	    	$("#dateFrom").val(data);
+	    },
+	    error: function() {
+	    }
+	});
+}
+
+function tickerChange() {
+	var ticker = $.trim($("[name='ticker']").val());
+	$.ajax({
+	    type: "GET",
+	    url: "getStartDateByTicker?ticker=" + ticker,
 	    success: function(data) {
 	    	$("#dateFrom").val(data);
 	    },

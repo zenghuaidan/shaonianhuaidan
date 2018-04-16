@@ -48,8 +48,22 @@
 							      <td>Source</td>
 							      <td>
 							         <select name="source" onchange="sourceChange();">
+							         	 <option value="">-----Please Select-----</option>
 								         <c:forEach items="${sources}" var="source" varStatus="i">
 								            <option ${source eq mainUIParam.source ? "selected" : ""}>${source}</option>
+								         </c:forEach>
+							         </select>	         
+							      </td>
+							      <td></td>
+							      <td></td>
+							   </tr>
+							   <tr>
+							      <td>Ticker</td>
+							      <td>
+							         <select name="ticker" onchange="tickerChange();">
+							         	<option value="">-----Please Select-----</option>
+								         <c:forEach items="${tickers}" var="ticker" varStatus="i">
+								            <option ${ticker eq mainUIParam.ticker ? "selected" : ""}>${ticker}</option>
 								         </c:forEach>
 							         </select>	         
 							      </td>
