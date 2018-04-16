@@ -2,6 +2,7 @@ package com.yoson.tws;
 
 public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 	private String time;
+	private double bidopen;
 	private double bidavg;
 	private double bidlast;
 	private double bidmax;
@@ -9,6 +10,7 @@ public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 	private double bidTotal;
 	private int bidCount;
 	
+	private double askopen;
 	private double askavg;
 	private double asklast;
 	private double askmax;
@@ -16,6 +18,7 @@ public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 	private double askTotal;
 	private int askCount;
 	
+	private double tradeopen;
 	private double tradeavg;
 	private double tradelast;
 	private double trademax;
@@ -34,16 +37,19 @@ public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 	
 	public ScheduledDataRecord(String time, ScheduledDataRecord record, ScheduledDataRecord lastSecondRecord) {
 		this.time = time;
+		this.bidopen = lastSecondRecord != null && record.bidopen == 0 ? lastSecondRecord.getBidopen() : record.bidopen;
 		this.bidavg = lastSecondRecord != null && record.bidavg == 0 ? lastSecondRecord.getBidavg() : record.bidavg;
 		this.bidlast = lastSecondRecord != null && record.bidlast == 0 ? lastSecondRecord.getBidlast() : record.bidlast;
 		this.bidmin = lastSecondRecord != null && record.bidmin == 0 ? lastSecondRecord.getBidmin() : record.bidmin;
 		this.bidmax = lastSecondRecord != null && record.bidmax == 0 ? lastSecondRecord.getBidmax() : record.bidmax;
 		
+		this.askopen = lastSecondRecord != null && record.askopen == 0 ? lastSecondRecord.getAskopen() : record.askopen;
 		this.askavg = lastSecondRecord != null && record.askavg == 0 ? lastSecondRecord.getAskavg() : record.askavg;
 		this.asklast = lastSecondRecord != null && record.asklast == 0 ? lastSecondRecord.getAsklast() : record.asklast;
 		this.askmin = lastSecondRecord != null && record.askmin == 0 ? lastSecondRecord.getAskmin() : record.askmin;
 		this.askmax = lastSecondRecord != null && record.askmax == 0 ? lastSecondRecord.getAskmax() : record.askmax;
 		
+		this.tradeopen = lastSecondRecord != null && record.tradeopen == 0 ? lastSecondRecord.getTradeopen() : record.tradeopen;
 		this.tradeavg = lastSecondRecord != null && record.tradeavg == 0 ? lastSecondRecord.getTradeavg() : record.tradeavg;
 		this.tradelast = lastSecondRecord != null && record.tradelast == 0 ? lastSecondRecord.getTradelast() : record.tradelast;
 		this.trademin = lastSecondRecord != null && record.trademin == 0 ? lastSecondRecord.getTrademin() : record.trademin;
@@ -208,5 +214,27 @@ public class ScheduledDataRecord implements Comparable<ScheduledDataRecord>{
 		this.tradeCount = tradeCount;
 	}
 
-	  
+	public double getBidopen() {
+		return bidopen;
+	}
+
+	public void setBidopen(double bidopen) {
+		this.bidopen = bidopen;
+	}
+
+	public double getAskopen() {
+		return askopen;
+	}
+
+	public void setAskopen(double askopen) {
+		this.askopen = askopen;
+	}
+
+	public double getTradeopen() {
+		return tradeopen;
+	}
+
+	public void setTradeopen(double tradeopen) {
+		this.tradeopen = tradeopen;
+	}	  
 }
