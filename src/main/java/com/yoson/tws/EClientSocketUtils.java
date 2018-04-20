@@ -24,6 +24,8 @@ public class EClientSocketUtils {
 	public static String id;
 	public static String CONTRACT = "contract.txt";
 	public static List<String> tradeLogs;
+	public static int totalBuy;
+	public static int totalSell;
 	
 	public static boolean connect(ConnectionInfo connectionInfo)
 	{
@@ -98,6 +100,8 @@ public class EClientSocketUtils {
 		EClientSocketUtils.contract = contract;
 		id = DateUtils.yyyyMMddHHmmss2().format(new Date());
 		tradeLogs = new CopyOnWriteArrayList<String>();
+		totalBuy = 0;
+		totalSell = 0;
 		String dataFolder = initAndReturnLiveDataFolder();
 //		socket.cancelMktData(tickerId);
 		socket.reqMktData(EClientSocketUtils.connectionInfo.getClientId(), contract, null, false, new Vector<TagValue>());

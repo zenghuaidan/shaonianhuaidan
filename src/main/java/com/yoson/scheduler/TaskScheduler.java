@@ -259,7 +259,13 @@ public class TaskScheduler {
 		strategy.setOrderTime(new Date());
 		EClientSocketUtils.placeOrder(newOrderId, newOrder);
 		String tradeLog = "Limit Order(" + now + ") : " + strategy.getStrategyName() + ", orderId:" + newOrderId + ", action:" + newOrder.m_action + ", quantity:" + totalQuantity + Global.lineSeparator;
-		EClientSocketUtils.tradeLogs.add(tradeLog);
+		EClientSocketUtils.tradeLogs.add(tradeLog);	
+		increaseSellOrBuy(isBuy);
 		return tradeLog;
+	}
+	
+	public void increaseSellOrBuy(boolean isBuy) {
+		EClientSocketUtils.totalBuy += isBuy ? 1 : 0;
+		EClientSocketUtils.totalSell += isBuy ? 0 : 1;
 	}
 }
