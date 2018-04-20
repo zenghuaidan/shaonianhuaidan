@@ -278,7 +278,9 @@ public class IndexController  implements StatusCallBack {
 	@ResponseBody
 	@RequestMapping(path = "getTradeLog", method = {RequestMethod.GET})
 	public String getTradeLog() {
-		return String.join("<br/>", EClientSocketUtils.tradeLogs == null ? new ArrayList<>() : EClientSocketUtils.tradeLogs);
+		String summary = "Total SELL: " + EClientSocketUtils.totalSell + ", Total BUY: " + EClientSocketUtils.totalBuy + "<br/>";
+		String result = String.join("<br/>", EClientSocketUtils.tradeLogs == null ? new ArrayList<>() : EClientSocketUtils.tradeLogs);
+		return summary + result;
 	}
 	
 	@RequestMapping("saveAllStrategy")
