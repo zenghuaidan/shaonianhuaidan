@@ -9,7 +9,6 @@ import java.util.List;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 
 import com.mysql.jdbc.StringUtils;
@@ -18,9 +17,10 @@ import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.BrokenDate;
 import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
-import com.yoson.tws.ScheduledDataRecord;
 
 public class SQLUtils {
+	
+	public static final String schedule_data = "schedule_data";
     
 	public static List<String> initScheduleData(MainUIParam mainUIParam) {
 		Session session = null;
@@ -30,7 +30,7 @@ public class SQLUtils {
 		String tradeDataField = mainUIParam.getTradeDataField();
 		try {
 			session = getSession();
-			String sql = "select CONCAT_WS(',',date,time, " + askDataField + ", " + bidDataField + ", " + tradeDataField + ") as sdata from schedule_data2 " 
+			String sql = "select CONCAT_WS(',',date,time, " + askDataField + ", " + bidDataField + ", " + tradeDataField + ") as sdata from  " + schedule_data + "  " 
 			+ (mainUIParam.isFromSource() ? (" where source = '" + mainUIParam.getSource() + "'") : (" where ticker = '" + mainUIParam.getTicker() + "'"));
 			
 			if (datePeriods != null && datePeriods.size() > 0) {
@@ -71,30 +71,11 @@ public class SQLUtils {
 		}
 	}
 	
-	public static int checkScheduledDataExisting(String from, String to, String source) {
-		Session session = null;		
-		try {
-			session = getSession();
-//			String sql = "select distinct CONCAT_WS(' ',date,time) as sdata from schedule_data2 where source = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "') order by date asc, time asc";
-			String sql = "select count(*) as totalCount from schedule_data2 where ticker = '" + source + "' and (date >= '" + from + "' and date <= '" + to + "')";
-			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("totalCount", IntegerType.INSTANCE);
-			return (Integer)sqlQuery.uniqueResult();			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return 0;
-		} finally {
-			try {
-				session.close();				
-			} catch (Exception e) {
-			}
-		}
-	}
-	
 	public static List<String> getSources() {
 		Session session = null;		
 		try {
 			session = getSession();
-			String sql = "select distinct source from schedule_data2 order by source asc";
+			String sql = "select distinct source from  " + schedule_data + "  order by source asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
 			return sqlQuery.list();			
 		} catch (Exception e) {
@@ -112,7 +93,7 @@ public class SQLUtils {
 		Session session = null;		
 		try {
 			session = getSession();
-			String sql = "select distinct ticker from schedule_data2 order by ticker asc";
+			String sql = "select distinct ticker from  " + schedule_data + "  order by ticker asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
 			return sqlQuery.list();			
 		} catch (Exception e) {
@@ -130,7 +111,7 @@ public class SQLUtils {
 		Session session = null;		
 		try {
 			session = getSession();
-			String sql = "select min(date) from schedule_data2 where source = '" + source + "'";
+			String sql = "select min(date) from  " + schedule_data + "  where source = '" + source + "'";
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
 			return DateUtils.yyyyMMdd().format((Date)sqlQuery.uniqueResult());			
 		} catch (Exception e) {
@@ -148,7 +129,7 @@ public class SQLUtils {
 		Session session = null;		
 		try {
 			session = getSession();
-			String sql = "select min(date) from schedule_data2 where ticker = '" + ticker + "'";
+			String sql = "select min(date) from  " + schedule_data + "  where ticker = '" + ticker + "'";
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
 			return DateUtils.yyyyMMdd().format((Date)sqlQuery.uniqueResult());			
 		} catch (Exception e) {
@@ -160,64 +141,6 @@ public class SQLUtils {
 			} catch (Exception e) {
 			}
 		}
-	}
-	
-	public static void saveScheduledDataRecord(List<ScheduledDataRecord> scheduledDataRecords, String dataStartTime, String dataEndTime, String source, boolean isReplace) {
-		Session session = null;
-		try {
-			session = getSession();
-			session.beginTransaction();
-			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " schedule_data2(ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source) VALUES";
-			List<String> values = new ArrayList<String>();
-			for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
-				if(DateUtils.isValidateTime(DateUtils.yyyyMMddHHmmss2().parse(scheduledDataRecord.getTime()), dataStartTime, dataEndTime)) {
-					String dateTimeStr = scheduledDataRecord.getTime();
-					String dateStr = DateUtils.getDateStr(dateTimeStr);
-					String timeStr = DateUtils.getTimeStr(dateTimeStr);
-					values.add("('"+ source +"','" + dateStr + "','" + timeStr + "'," 
-							+ scheduledDataRecord.getBidavg() + "," + scheduledDataRecord.getBidlast() + "," + scheduledDataRecord.getBidmax() + "," + scheduledDataRecord.getBidmin() + ","
-							+ scheduledDataRecord.getAskavg() + "," + scheduledDataRecord.getAsklast() + "," + scheduledDataRecord.getAskmax() + "," + scheduledDataRecord.getAskmin() + ","
-							+ scheduledDataRecord.getTradeavg() + "," + scheduledDataRecord.getTradelast() + "," + scheduledDataRecord.getTrademax() + "," + scheduledDataRecord.getTrademin() + ","
-							+ "'BBG_" + source +"')");
-					if(values.size() == 10000) {
-						session.createSQLQuery(sql + String.join(",", values)).executeUpdate();
-						values.clear();
-					}
-				}
-			}
-			if (values.size() > 0) {
-				session.createSQLQuery(sql + String.join(",", values)).executeUpdate();							
-			}
-			session.getTransaction().commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				session.close();				
-			} catch (Exception e) {
-			}
-		}
-	}
-	
-	public static String getScheduledDataRecordByDate(String dateStr) {
-		Session session = null;
-		List<String> values = new ArrayList<String>();
-		values.add("ticker,date,time,bidavg,bidlast,bidmax,bidmin,askavg,asklast,askmax,askmin,tradeavg,tradelast,trademax,trademin,source");
-		try {
-			session = getSession();
-			String sql = "select CONCAT(ticker,',',date,',',time,',',bidavg,',',bidlast,',',bidmax,',',bidmin,',',askavg,',',asklast,',',askmax,',',askmin,',',tradeavg,',',tradelast,',',trademax,',',trademin,',',source) as sdata from schedule_data2 where date='" + dateStr + "'";
-			sql += " order by date asc, time asc";
-			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
-			values.addAll(sqlQuery.list());
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				session.close();				
-			} catch (Exception e) {
-			}
-		}
-		return String.join(System.lineSeparator(), values);
 	}
 	
 	public static String saveTestSetResult(String path, String tableName) {
