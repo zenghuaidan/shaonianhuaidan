@@ -100,7 +100,7 @@ public class BackTestTask implements Runnable {
 		
 		callBack.updateStatus(getStatus("Getting data from database started, this may cost several minutes, pls wait..."));
 		
-		initRawData(SQLUtils.initScheduleData(mainUIParam), mainUIParam);	
+//		initRawData(SQLUtils.initScheduleData(mainUIParam), mainUIParam);	
 		
 		long milliseconds = System.currentTimeMillis() - start;
 		callBack.updateStatus(getStatus("Getting data from database ended, total cost: " + DateUtils.dateDiff(milliseconds)));
@@ -201,7 +201,7 @@ public class BackTestTask implements Runnable {
 		callBack.updateStatus(getStatus("All task done, total time cost: " + DateUtils.dateDiff(milliseconds)));
 		
 //		BackTestCSVWriter.writeCSVResult(mainUIParam);
-		SQLUtils.saveTestSetResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), mainUIParam.getVersion().replaceAll(" ", ""));
+//		SQLUtils.saveTestSetResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), mainUIParam.getVersion().replaceAll(" ", ""));
 		gc();
 	}
 
