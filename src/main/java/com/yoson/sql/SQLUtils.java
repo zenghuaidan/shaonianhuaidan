@@ -25,7 +25,7 @@ public class SQLUtils {
 		try {
 			session = getSession();
 			session.beginTransaction();
-			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " schedule_data2(ticker,date,time,bidopen,bidavg,bidlast,bidmax,bidmin,askopen,askavg,asklast,askmax,askmin,tradeopen,tradeavg,tradelast,trademax,trademin,source) VALUES";
+			String sql = (isReplace ? "REPLACE INTO " : "INSERT IGNORE INTO ") + " schedule_data(ticker,date,time,bidopen,bidavg,bidlast,bidmax,bidmin,askopen,askavg,asklast,askmax,askmin,tradeopen,tradeavg,tradelast,trademax,trademin,source) VALUES";
 			List<String> values = new ArrayList<String>();
 			for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords.values()) {
 				String dateTimeStr = scheduledDataRecord.getTime();
