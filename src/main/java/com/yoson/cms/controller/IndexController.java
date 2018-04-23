@@ -369,13 +369,6 @@ public class IndexController  implements StatusCallBack {
 			return false;
 		}
 		return false;
-	}
-	
-	@RequestMapping("downloadSampleDate")
-	public void downloadSampleDate(String sampleDate, HttpServletResponse response) throws IOException{
-		response.setContentType("application/msexcel");  
-		response.setHeader("Content-Disposition","attachment; filename=" + sampleDate + ".csv");
-		IOUtils.write(SQLUtils.getScheduledDataRecordByDate(sampleDate), response.getOutputStream());
 	}	
 	
 	@ResponseBody
