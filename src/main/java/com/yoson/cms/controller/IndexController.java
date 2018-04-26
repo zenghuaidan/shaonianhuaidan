@@ -310,6 +310,13 @@ public class IndexController  implements StatusCallBack {
 		IOUtils.write(SQLUtils.getScheduledDataRecordByDate(sampleDate), response.getOutputStream());
 	}
 	
+	@RequestMapping("downloadSummary")
+	public void downloadSummary(String ticker, HttpServletResponse response) throws IOException{
+		response.setContentType("application/msexcel");  
+		response.setHeader("Content-Disposition","attachment; filename=" + ticker + "_summary.csv");
+		IOUtils.write(SQLUtils.getSummary(ticker), response.getOutputStream());
+	}
+	
 	public static List<String> uploadStatus = new ArrayList<String>();
 	@ResponseBody
 	@RequestMapping("uploadData")

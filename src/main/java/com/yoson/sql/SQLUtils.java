@@ -3,6 +3,7 @@ package com.yoson.sql;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -91,6 +92,62 @@ public class SQLUtils {
 			sql += " order by date asc, time asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
 			values.addAll(sqlQuery.list());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+		return String.join(System.lineSeparator(), values);
+	}
+	
+	public static String getSummary(String ticker) {
+		Session session = null;
+		List<String> values = new ArrayList<String>();
+		values.add("date,total,start_time,end_time,source,ticker,day_min,day_max,day_amp,previousDay_close,avg trade,last trade,first trade,performance");
+		try {
+			session = getSession();
+			String sql = "SELECT  " +
+			        "CONCAT(date,',', " +
+			        "COUNT(0),',', " +
+			        "MIN(time),',', " +
+			        "MAX(time),',', " +
+			        "source,',', " +
+			        "ticker,',', " +
+			        "MIN(tradelast),',', " +
+			        "MAX(tradelast),',', " +
+			        "(MAX(tradelast) - MIN(tradelast)),',', " +
+			        "tradelast,',', " +
+			        "AVG(tradelast),',', " +
+			        "SUBSTRING_INDEX(GROUP_CONCAT(CAST(tradelast AS CHAR CHARSET UTF8) " +
+			                    "ORDER BY time DESC " +
+			                    "SEPARATOR ','), " +
+			                "',', " +
+			                "1),',', " +
+			        "SUBSTRING_INDEX(GROUP_CONCAT(tradelast " +
+			                    "SEPARATOR ','), " +
+			                "',', " +
+			                "1),',', " +
+			        "(SUBSTRING_INDEX(GROUP_CONCAT(CAST(tradelast AS CHAR CHARSET UTF8) " +
+			                    "ORDER BY time DESC " +
+			                    "SEPARATOR ','), " +
+			                "',', " +
+			                "1) - SUBSTRING_INDEX(GROUP_CONCAT(tradelast " +
+			                    "SEPARATOR ','), " +
+			                "',', " +
+			                "1))) as sdata " +
+			    "FROM " +
+			        "schedule_data " +
+			    "WHERE ticker = '" + ticker + "' " +
+			    "GROUP BY date;";
+			System.out.println(sql);
+			
+			if(!StringUtils.isBlank(ticker)) {
+				SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
+				values.addAll(sqlQuery.list());				
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

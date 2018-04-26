@@ -54,7 +54,9 @@
 					</form>
 					<div id="downloadSampleDateDiv">
 					Download Sample Date:<input type="text" id="downloadSampleDate" name="downloadSampleDate" class="datepicker"/>
-					<input id="downloadSampleDateBtn" type="button" value="Download"/>
+					<input id="downloadSampleDateBtn" type="button" value="Download"/></br>
+					Download Summary:<input type="text" id="downloadSummary" name="downloadSummary"/>
+					<input id="downloadSummaryBtn" type="button" value="Download"/>
 					</div>
 					<div id="uploadStatus"></div>					
 				</div>

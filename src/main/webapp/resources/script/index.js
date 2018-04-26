@@ -58,6 +58,15 @@ function downloadSampleDate(){
 	}
 }
 
+function downloadSummary(){
+	var ticker = $.trim($("#downloadSummary").val());
+	if(ticker == "") {
+		alert("Please input the ticker value for download.")
+	} else {
+		window.open("downloadSummary?ticker=" + ticker);
+	}
+}
+
 var tab = "uploadDataTab";
 function initTab() {
 	var titles = document.getElementById('tab-header').getElementsByTagName('li');  
@@ -134,6 +143,10 @@ function doInitTab() {
 	
 	$("#downloadSampleDateBtn").click(function(){
 		downloadSampleDate();
+	});
+	
+	$("#downloadSummaryBtn").click(function(){
+		downloadSummary();
 	});
 	
 	$('.timepicker').TimePickerAlone();
