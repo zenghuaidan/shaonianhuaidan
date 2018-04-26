@@ -43,7 +43,7 @@
 						<label id="ltoDatabase">To Database:</label><input type="checkbox" id="toDatabase" name="toDatabase" checked="checked"/>
 						<label id="ltoCSV">To CSV:</label><input type="checkbox" id="toCSV" name="toCSV" checked="checked"/>
 						<label name="dataType">Data Format:</label>
-						<input type="radio" name="dataType" value="1" checked="checked"/><label name="dataType">Jeffery Format</label>
+						<input type="radio" name="dataType" value="1" checked="checked"/><label name="dataType">BBG Data Format</label>
 						<input type="radio" value="2" name="dataType" /><label name="dataType">TWS Download Format</label>
 						<input type="radio" value="3" name="dataType" /><label name="dataType">Schedule Data Format</label>
 						CSV Path:<input type="text" name="csvPath"/>
