@@ -138,9 +138,8 @@ public class SQLUtils {
 			                    "SEPARATOR ','), " +
 			                "',', " +
 			                "1))) as sdata " +
-			    "FROM " +
-			        "schedule_data " +
-			    "WHERE ticker = '" + ticker + "' " +
+			    "FROM " + SCHEDULE_DATA_TABLE +
+			    " WHERE ticker = '" + ticker + "' " +
 			    "GROUP BY date;";
 			System.out.println(sql);
 			
@@ -158,6 +157,23 @@ public class SQLUtils {
 		}
 		return String.join(System.lineSeparator(), values);
 	}
-	
+
+	public static List<String> getTickers() {
+		Session session = null;		
+		try {
+			session = getSession();
+			String sql = "select distinct ticker from  " + SCHEDULE_DATA_TABLE + "  order by ticker asc";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return sqlQuery.list();			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<String>();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
 	
 }

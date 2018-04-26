@@ -74,6 +74,7 @@ public class IndexController  implements StatusCallBack {
 	public String index(Model model) {
 		model.addAttribute("mainUIParam", BackTestTask.running || IndexController.mainUIParam != null ? IndexController.mainUIParam : MainUIParam.getMainUIParam());
 		model.addAttribute("sources", new ArrayList<String>());
+		model.addAttribute("tickers", SQLUtils.getTickers());
 		model.addAttribute("connectionInfo", EClientSocketUtils.connectionInfo == null ? getDefaultConnectionInfo() : EClientSocketUtils.connectionInfo);
 		model.addAttribute("contract", EClientSocketUtils.contract == null ? getDefaultContract() : EClientSocketUtils.contract);
 		model.addAttribute("strategies", EClientSocketUtils.strategies);

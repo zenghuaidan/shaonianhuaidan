@@ -61,7 +61,7 @@ function downloadSampleDate(){
 function downloadSummary(){
 	var ticker = $.trim($("#downloadSummary").val());
 	if(ticker == "") {
-		alert("Please input the ticker value for download.")
+		alert("Please select the ticker value for download.")
 	} else {
 		window.open("downloadSummary?ticker=" + ticker);
 	}
