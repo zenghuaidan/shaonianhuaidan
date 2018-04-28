@@ -724,7 +724,8 @@ public class YosonEWrapper extends BasicEWrapper {
 			
 			String lastDate = "";
 			for(String date : contractDetails.m_tradingHours.split(";")) {
-				if(date.indexOf(contractMonth) >= 0) {
+				date = date.toLowerCase();
+				if(date.indexOf(contractMonth) >= 0 && date.indexOf("closed") < 0) {
 					lastDate = date;
 				}
 			}
