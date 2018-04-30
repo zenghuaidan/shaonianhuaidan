@@ -319,5 +319,6 @@
       
   		</plugins>
   	</pluginManagement>
+    <finalName>datamanage</finalName>  
   </build>
 </project>
