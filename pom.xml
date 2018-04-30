@@ -319,5 +319,6 @@
       
   		</plugins>
   	</pluginManagement>
+  	<finalName>idea3</finalName>
   </build>
 </project>
