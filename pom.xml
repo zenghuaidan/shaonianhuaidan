@@ -319,5 +319,6 @@
       
   		</plugins>
   	</pluginManagement>
+  	<finalName>v21</finalName>
   </build>
 </project>
