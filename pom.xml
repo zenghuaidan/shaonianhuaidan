@@ -319,5 +319,6 @@
       
   		</plugins>
   	</pluginManagement>
+  	<finalName>DataDownloader</finalName>
   </build>
 </project>
