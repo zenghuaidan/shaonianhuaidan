@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,8 +56,8 @@ public class IndexController {
 	public String index(Model model) {		
 		model.addAttribute("connectionInfo", EClientSocketUtils.connectionInfo == null ? ConnectionInfo.getDefaultConnectionInfo() : EClientSocketUtils.connectionInfo);		
 		model.addAttribute("contracts", EClientSocketUtils.contracts == null ? new ArrayList<Contract>() : EClientSocketUtils.contracts);		
-		model.addAttribute("startTime", startTime);
-		model.addAttribute("endTime", endTime);
+		model.addAttribute("startTime", StringUtils.isBlank(startTime) ? "09:15:00" : startTime);
+		model.addAttribute("endTime", StringUtils.isBlank(endTime) ? "16:15:00" : endTime);
 		model.addAttribute("isMarketData", isMarketData);
 		model.addAttribute("isFundamentalData", isFundamentalData);
 		model.addAttribute("timeZones", TimeZone.getAvailableIDs());
@@ -176,10 +177,12 @@ public class IndexController {
 			    contract.m_localSymbol = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
 			    contract.m_expiry = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
 			    contract.tif = "IOC";
+			    int startTimeIndex = j++;
+			    int endTimeIndex = j++;
 			    try {
 			    	// if time in excel is not validate, then use the GUI time
-			    	_startTime = (Date)row.get(j++);
-			    	_endTime = (Date)row.get(j++);
+			    	_startTime = (Date)row.get(startTimeIndex);
+			    	_endTime = (Date)row.get(endTimeIndex);
 			    	contract.startTime = DateUtils.HHmmss().format(_startTime);
 			    	contract.endTime = DateUtils.HHmmss().format(_endTime);
 			    	if(!(_startTime.equals(_endTime) || _startTime.before(_endTime))) {
@@ -189,6 +192,8 @@ public class IndexController {
 			    	contract.startTime = startTime;
 			    	contract.endTime = endTime;
 				}					    
+			    contract.ticker = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+			    contract.source = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
 			    contract.tif = "IOC";
 			    if (!StringUtils.isBlank(contract.m_secType) 
 			    		&& !StringUtils.isBlank(contract.m_symbol) 
@@ -298,6 +303,23 @@ public class IndexController {
 					if (!file.isDirectory() || !new File(YosonEWrapper.getPath(contractDataPath)).exists()) continue;
 					String name = FilenameUtils.getBaseName(contractDataPath);//1_STK_700_HKD_SEHK
 					String source = name.split("_")[1] + "_" + name.split("_")[2];
+					String ticker = "BBG_" + source;
+					String sourceAndTicker = FilenameUtils.concat(contractDataPath, "SourceAndTicker.txt");
+					File sourceAndTickerFile = new File(sourceAndTicker);
+					if (sourceAndTickerFile.exists()) {
+						InputStream input = null;
+						try {
+							input = new FileInputStream(sourceAndTickerFile);						
+							List<String> readLines = IOUtils.readLines(input);
+							source = readLines.size() > 0 && !StringUtils.isBlank(readLines.get(0)) ? readLines.get(0) : source;
+							ticker = readLines.size() > 1 && !StringUtils.isBlank(readLines.get(1)) ? readLines.get(1) : ticker;							
+						} finally {
+							try{
+								input.close();								
+							} catch (Exception e) {
+							}
+						}
+					}
 					
 					List<Record> tradeList = new ArrayList<Record>();
 					List<Record> askList = new ArrayList<Record>();
@@ -311,7 +333,7 @@ public class IndexController {
 					SQLUtils.saveRawDataRecord(all, source, true);
 					
 					List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(contractDataPath);
-					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, source , true);
+					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, source, ticker, true);
 				} catch (Exception e) {
 				}
 			}
