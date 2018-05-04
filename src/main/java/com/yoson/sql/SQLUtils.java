@@ -20,7 +20,7 @@ public class SQLUtils {
 		}
 	}
 	
-	public static void saveScheduledDataRecord(Map<String, ScheduledDataRecord> scheduledDataRecords, String source, boolean isReplace) {
+	public static void saveScheduledDataRecord(Map<String, ScheduledDataRecord> scheduledDataRecords, String source, String ticker, boolean isReplace) {
 		Session session = null;
 		try {
 			session = getSession();
@@ -35,7 +35,7 @@ public class SQLUtils {
 						+ scheduledDataRecord.getBidopen() + "," + scheduledDataRecord.getBidavg() + "," + scheduledDataRecord.getBidlast() + "," + scheduledDataRecord.getBidmax() + "," + scheduledDataRecord.getBidmin() + ","
 						+ scheduledDataRecord.getAskopen() + "," + scheduledDataRecord.getAskavg() + "," + scheduledDataRecord.getAsklast() + "," + scheduledDataRecord.getAskmax() + "," + scheduledDataRecord.getAskmin() + ","
 						+ scheduledDataRecord.getTradeopen() + "," + scheduledDataRecord.getTradeavg() + "," + scheduledDataRecord.getTradelast() + "," + scheduledDataRecord.getTrademax() + "," + scheduledDataRecord.getTrademin() + ","
-						+ "'TWS_" + source +"')");
+						+ "'" + ticker +"')");
 				if(values.size() == 10000) {
 					session.createSQLQuery(sql + String.join(",", values)).executeUpdate();
 					values.clear();

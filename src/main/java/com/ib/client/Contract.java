@@ -28,6 +28,8 @@ public class Contract implements Cloneable {
 	public String endDate;
 	public String startTime;
 	public String endTime;
+	public String source;
+	public String ticker;
 	public String tif;
 	
 	public String ID() {
@@ -218,6 +220,22 @@ public class Contract implements Cloneable {
 
 	public void setTif(String tif) {
 		this.tif = tif;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getTicker() {
+		return ticker;
+	}
+
+	public void setTicker(String ticker) {
+		this.ticker = ticker;
 	}
 	
 }

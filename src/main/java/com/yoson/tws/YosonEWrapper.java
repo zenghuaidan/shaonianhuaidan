@@ -26,7 +26,7 @@ public class YosonEWrapper extends BasicEWrapper {
 				int hours = (TimeZone.getTimeZone("Hongkong").getRawOffset() / (3600 * 1000)) - (TimeZone.getTimeZone(EClientSocketUtils.connectionInfo.getTimeZone()).getRawOffset() / (3600 * 1000));
 				Date current = DateUtils.yyyyMMddHHmmss3().parse(date);
 				current = DateUtils.addSecond(current, hours * 3600 * -1);
-				String log = source + "," + type + "," + DateUtils.yyyyMMddHHmmss().format(current) + "," + open + "," + close + "," + low + "," + high + "," + WAP + System.lineSeparator();
+				String log = source + "," + type + "," + DateUtils.yyyyMMddHHmmss().format(current) + "," + open + "," + close + "," + low + "," + high + "," + WAP + "," + contract.source + "," + contract.ticker + System.lineSeparator();
 				writeText(getHistoricalDataLogPath(), log, true);	
 			} catch (Exception e) {
 			}

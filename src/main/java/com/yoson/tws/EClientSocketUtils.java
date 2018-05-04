@@ -2,6 +2,7 @@ package com.yoson.tws;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,8 @@ import java.util.TimeZone;
 import java.util.Vector;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.mapping.Array;
 
 import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
@@ -101,6 +104,7 @@ public class EClientSocketUtils {
 				Map<String, Map<String, ScheduledDataRecord>> map = new HashMap<String, Map<String, ScheduledDataRecord>>();
 				input = new FileReader(file);
 				List<String> readLines = IOUtils.readLines(input);
+				Map<String, List<String>> sourceAndTicker = new HashMap<String, List<String>>();
 				for(String line : readLines) {
 					int i = 0;
 					String source = line.split(",")[i++];
@@ -111,6 +115,22 @@ public class EClientSocketUtils {
 					double min  = Double.parseDouble(line.split(",")[i++]);
 					double max = Double.parseDouble(line.split(",")[i++]);
 					double avg = Double.parseDouble(line.split(",")[i++]);
+					
+					String sourceValue = source;
+					String tickerValue = "TWS_" + source;
+					try {
+						String _sourceValue = line.split(",")[i++];
+						String _tickerValue = line.split(",")[i++];						
+						sourceValue = StringUtils.isBlank(_sourceValue) ? sourceValue : _sourceValue;
+						tickerValue = StringUtils.isBlank(_tickerValue) ? tickerValue : _tickerValue;
+					} catch (Exception e) {
+					}
+					
+					if (!sourceAndTicker.containsKey(source)) {
+						List<String> sourceAndTickerValue = new ArrayList<String>();
+						sourceAndTickerValue.add(sourceValue);
+						sourceAndTickerValue.add(tickerValue);
+					}
 					ScheduledDataRecord scheduledDataRecord = new ScheduledDataRecord(time);					
 					Map<String, ScheduledDataRecord> map2 = new HashMap<String, ScheduledDataRecord>();
 					if (map.containsKey(source)) {
@@ -148,7 +168,7 @@ public class EClientSocketUtils {
 					}
 				}
 				for(String source : map.keySet()) {
-					SQLUtils.saveScheduledDataRecord(map.get(source), source, true);
+					SQLUtils.saveScheduledDataRecord(map.get(source), sourceAndTicker.get(source).get(0), sourceAndTicker.get(source).get(1), true);
 				}
 			} catch (Exception e) {
 			} finally {

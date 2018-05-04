@@ -48,10 +48,10 @@ public class IndexController {
 	public String index(Model model) {		
 		model.addAttribute("connectionInfo", EClientSocketUtils.connectionInfo == null ? ConnectionInfo.getDefaultConnectionInfo() : EClientSocketUtils.connectionInfo);		
 		model.addAttribute("contracts", EClientSocketUtils.contracts == null ? new ArrayList<Contract>() : EClientSocketUtils.contracts);		
-		model.addAttribute("startDate", startDate);
-		model.addAttribute("endDate", endDate);
-		model.addAttribute("startTime", startTime);
-		model.addAttribute("endTime", endTime);		
+		model.addAttribute("startDate", StringUtils.isBlank(startDate) ? DateUtils.yyyyMMdd().format(new Date()) : startDate);
+		model.addAttribute("endDate", StringUtils.isBlank(endDate) ? DateUtils.yyyyMMdd().format(new Date()) : endDate);
+		model.addAttribute("startTime", StringUtils.isBlank(startTime) ? "09:15:00" : startTime);
+		model.addAttribute("endTime", StringUtils.isBlank(endTime) ? "16:15:00" : endTime);		
 		model.addAttribute("timeZones", TimeZone.getAvailableIDs());				
 		return "index";
 	}
@@ -233,10 +233,13 @@ public class IndexController {
 			    contract.m_localSymbol = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
 			    contract.m_expiry = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
 			    contract.tif = "IOC";
+			    int startDateIndex = j++;
+			    int endDateIndex = j++;
+
 			    try {
 			    	// if date in excel is not validate, then use the GUI date
-			    	_startDate = (Date)row.get(j++);
-			    	_endDate = (Date)row.get(j++);
+			    	_startDate = (Date)row.get(startDateIndex);
+			    	_endDate = (Date)row.get(endDateIndex);
 			    	contract.startDate = DateUtils.yyyyMMdd().format(_startDate);
 			    	contract.endDate = DateUtils.yyyyMMdd().format(_endDate);
 			    	if(!(_startDate.equals(_endDate) || _startDate.before(_endDate))) {
@@ -246,10 +249,12 @@ public class IndexController {
 			    	contract.startDate = startDate;
 			    	contract.endDate = endDate;
 				}
+			    int startTimeIndex = j++;
+			    int endTimeIndex = j++;
 			    try {
 			    	// if time in excel is not validate, then use the GUI time
-			    	_startTime = (Date)row.get(j++);
-			    	_endTime = (Date)row.get(j++);
+			    	_startTime = (Date)row.get(startTimeIndex);
+			    	_endTime = (Date)row.get(endTimeIndex);
 			    	contract.startTime = DateUtils.HHmmss().format(_startTime);
 			    	contract.endTime = DateUtils.HHmmss().format(_endTime);
 			    	if(!(_startTime.equals(_endTime) || _startTime.before(_endTime))) {
@@ -258,7 +263,9 @@ public class IndexController {
 			    } catch (Exception e) {
 			    	contract.startTime = startTime;
 			    	contract.endTime = endTime;
-				}					    
+				}		
+			    contract.ticker = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
+			    contract.source = row.size() >= (j + 1) ? row.get(j++).toString().trim() : "";
 			    contract.tif = "IOC";
 			    if (!StringUtils.isBlank(contract.m_secType) 
 			    		&& !StringUtils.isBlank(contract.m_symbol) 
