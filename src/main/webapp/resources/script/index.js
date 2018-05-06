@@ -407,8 +407,6 @@ function getMainUIParam() {
 
 function runClick() {
 	var paramData = getMainUIParam();
-	paramData.fromSource = true;
-	paramData.source = 'LiveData';
 	if(paramData.source == '' && paramData.ticker == '') {
 		alert("Please select a source or a ticker!");
 		return;
@@ -430,6 +428,8 @@ function runClick() {
 
 function runWithLiveTradingDataClick() {
 	var paramData = getMainUIParam();
+	paramData.fromSource = true;
+	paramData.source = 'LiveData';
 	if(paramData.source == '' && paramData.ticker == '') {
 		alert("Please select a source or a ticker!");
 		return;
