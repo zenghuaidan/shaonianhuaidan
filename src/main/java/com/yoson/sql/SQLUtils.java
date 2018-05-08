@@ -31,11 +31,11 @@ public class SQLUtils {
 				String dateTimeStr = scheduledDataRecord.getTime();
 				String dateStr = dateTimeStr.split(" ")[0];
 				String timeStr = dateTimeStr.split(" ")[1];
-				values.add("('"+ source +"','" + dateStr + "','" + timeStr + "'," 
+				values.add("('"+ ticker +"','" + dateStr + "','" + timeStr + "'," 
 						+ scheduledDataRecord.getBidopen() + "," + scheduledDataRecord.getBidavg() + "," + scheduledDataRecord.getBidlast() + "," + scheduledDataRecord.getBidmax() + "," + scheduledDataRecord.getBidmin() + ","
 						+ scheduledDataRecord.getAskopen() + "," + scheduledDataRecord.getAskavg() + "," + scheduledDataRecord.getAsklast() + "," + scheduledDataRecord.getAskmax() + "," + scheduledDataRecord.getAskmin() + ","
 						+ scheduledDataRecord.getTradeopen() + "," + scheduledDataRecord.getTradeavg() + "," + scheduledDataRecord.getTradelast() + "," + scheduledDataRecord.getTrademax() + "," + scheduledDataRecord.getTrademin() + ","
-						+ "'" + ticker +"')");
+						+ "'" + source +"')");
 				if(values.size() == 10000) {
 					session.createSQLQuery(sql + String.join(",", values)).executeUpdate();
 					values.clear();
