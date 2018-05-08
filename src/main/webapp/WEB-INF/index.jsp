@@ -31,10 +31,10 @@
 	          	<div id="html">
 					<form id='uploadDatafm' method='post' action='uploadData' enctype='multipart/form-data' style="margin-top:10px; margin-bottom:10px;">
 						<input type="hidden" name="uploadAction" />
-						Start:<input type="text" name="dataStartTime" class="timepicker"/>
-						Lunch Time From:<input type="text" name="lunchStartTime" class="timepicker"/>
-						Lunch Time To:<input type="text" name="lunchEndTime" class="timepicker"/>
-						End:<input type="text" name="dataEndTime" class="timepicker"/>
+						Start:<input type="text" name="dataStartTime" class="timepicker" value="09:15:00"/>
+						Lunch Time From:<input type="text" name="lunchStartTime" class="timepicker" value="12:00:00"/>
+						Lunch Time To:<input type="text" name="lunchEndTime" class="timepicker" value="13:00:00"/>
+						End:<input type="text" name="dataEndTime" class="timepicker" value="16:15:00"/>
 						<label name="source">Source:</label><input type="text" name="source"/>
 						<label name="ticker">Ticker:</label><input type="text" name="ticker"/>
 						<input type="file" name="liveData" accept="text/txt" value="Select File"/>
