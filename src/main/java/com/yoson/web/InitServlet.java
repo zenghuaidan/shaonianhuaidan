@@ -78,4 +78,12 @@ public class InitServlet extends HttpServlet {
 		}
 		return "";
 	}
+	
+	public static boolean noQuery() {
+		Collection<File> files = FileUtils.listFiles(new File(getWebappsPath()), new SuffixFileFilter(new ArrayList<String>(){{add("noquery");}}), FalseFileFilter.FALSE);
+		for(File file : files) {
+			return true;
+		}
+		return false;
+	}
 }
