@@ -158,7 +158,11 @@ function uploadData(id) {
 	    type: "GET",
 	    url: "uploadData?id=" + id,
 	    success: function(data) {
-	    	alert("Data uploaded!");
+	    	if(data) {
+	    		alert("Data uploaded!");	    		
+	    	} else {
+	    		alert("Request not submitted, please wait for previous request is finished.");
+	    	}
 	    },
 	    error: function() {
 	    }
