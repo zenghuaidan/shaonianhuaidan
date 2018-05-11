@@ -211,8 +211,10 @@ public class BackTestTask implements Runnable {
 					BackTestCSVWriter.writePositivePnlResult(mainUIParam);					
 				}
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName), BackTestTask.allProfitAndLossResults.toString(), true);
-				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.morningProfitAndLossFileName), BackTestTask.allMorningProfitAndLossResults.toString(), true);
-				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.afternoonProfitAndLossFileName), BackTestTask.allAfternoonProfitAndLossResults.toString(), true);
+				if(mainUIParam.isMatrixFile()) {
+					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.morningProfitAndLossFileName), BackTestTask.allMorningProfitAndLossResults.toString(), true);
+					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.afternoonProfitAndLossFileName), BackTestTask.allAfternoonProfitAndLossResults.toString(), true);					
+				}
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader(backTestResult.yearPnlMap.keySet()) : "") + String.join("", BackTestTask.allBTSummaryResults), true);
 				
 				BackTestTask.allBTPnlResults.clear();
@@ -243,9 +245,11 @@ public class BackTestTask implements Runnable {
 				}
 			}			
 		}
-		BackTestCSVWriter.initProfitAndLossResultMap(mainUIParam);
-		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(mainUIParam), true);
-		BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges, mainUIParam), true);
+		if(mainUIParam.isMatrixFile()) {
+			BackTestCSVWriter.initProfitAndLossResultMap(mainUIParam);
+			BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(mainUIParam), true);
+			BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges, mainUIParam), true);			
+		}
 		BackTestCSVWriter.getAccumulatePnlBySpecifyDates(specifyDateRanges, mainUIParam);
 		milliseconds = System.currentTimeMillis() - start;
 		callBack.updateStatus(getStatus("All task done, total time cost: " + DateUtils.dateDiff(milliseconds)));
