@@ -28,6 +28,7 @@ public class MainUIParam extends TestSet {
 	private boolean fromSource;
 	private String version;
 	private String nForPnl;
+	private boolean matrixFile;
 
 	private int tShortTo;
 	private int tShortLiteral;
@@ -340,6 +341,14 @@ public class MainUIParam extends TestSet {
 
 	public void setIgnoreLunchTime(boolean ignoreLunchTime) {
 		this.ignoreLunchTime = ignoreLunchTime;
+	}
+
+	public boolean isMatrixFile() {
+		return matrixFile;
+	}
+
+	public void setMatrixFile(boolean matrixFile) {
+		this.matrixFile = matrixFile;
 	}
 
 	public static final MainUIParam getMainUIParam() {

@@ -388,7 +388,8 @@ function getMainUIParam() {
 	   "orderTicker":$.trim($("[name='orderTicker']").val()),
 	   "includeMorningData":$("[name='includeMorningData']").is(":checked"),
 	   "ignoreLunchTime":$("[name='ignoreLunchTime']").is(":checked"),	
-	   "nForPnl":$("[name='nForPnl']").val()
+	   "nForPnl":$("[name='nForPnl']").val(),
+	   "matrixFile":$("[name='ignoreLunchTime']").is(":checked")
 	};
 }
 
