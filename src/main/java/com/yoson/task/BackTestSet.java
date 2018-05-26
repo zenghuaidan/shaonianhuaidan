@@ -100,7 +100,7 @@ public class BackTestSet {
 				
 				if (perSecondRecord.getPnl() >= mainUIParam.getPnlThreshold()) {
 					String key = StringUtils.join(scheduleDataPerSecond.getDateStr() , "-" , scheduleDataPerSecond.getTimeStr().replaceAll(":", "-") , "#"
-							, testSet.gettShort() , "_" , testSet.gettLong() , "_" , testSet.gettLong2() , "_" , testSet.getHld() , "_"
+							, testSet.gettShort() , "_" , testSet.gettLong() , "_" , testSet.getMas() , "_" , testSet.getMal() , "_" , testSet.getMat() , "_" , testSet.getHld() , "_"
 							, testSet.getStopLoss() , "_" , testSet.getTradeStopLoss() , "_" , testSet.getInstantTradeStoploss() 
 							, "_" , testSet.getItsCounter() , "_" , testSet.getStopGainPercent() , "_" , testSet.getStopGainTrigger());
 					BackTestTask.allPositivePnlResult.put(key, sb.toString());

@@ -186,11 +186,23 @@
 							      <td><input name="tLongTo" value="${mainUIParam.tLongTo}" type="text"/></td>
 							      <td><input name="tLongLiteral" value="${mainUIParam.tLongLiteral}" type="text"/></td>
 							   </tr>
-							   <tr>
-							      <td>T-Long2</td>
-							      <td><input name="tLong2" value="${mainUIParam.tLong2}" type="text"/></td>
-							      <td><input name="tLong2To" value="${mainUIParam.tLong2To}" type="text"/></td>
-							      <td><input name="tLong2Literal" value="${mainUIParam.tLong2Literal}" type="text"/></td>
+   							   <tr>
+							      <td>MA-S</td>
+							      <td><input name="mas" value="${mainUIParam.mas}" type="text"/></td>
+							      <td><input name="masTo" value="${mainUIParam.masTo}" type="text"/></td>
+							      <td><input name="masLiteral" value="${mainUIParam.masLiteral}" type="text"/></td>
+							   </tr>
+   							   <tr>
+							      <td>MA-L</td>
+							      <td><input name="mas" value="${mainUIParam.mal}" type="text"/></td>
+							      <td><input name="masTo" value="${mainUIParam.malTo}" type="text"/></td>
+							      <td><input name="masLiteral" value="${mainUIParam.malLiteral}" type="text"/></td>
+							   </tr>
+   							   <tr>
+							      <td>MA-T</td>
+							      <td><input name="mas" value="${mainUIParam.mat}" type="text"/></td>
+							      <td><input name="masTo" value="${mainUIParam.matTo}" type="text"/></td>
+							      <td><input name="masLiteral" value="${mainUIParam.matLiteral}" type="text"/></td>
 							   </tr>
 							   <tr>
 							      <td>HLD(Without %)</td>
@@ -660,9 +672,21 @@
 								      <td></td>
 								      <td></td>
 								   </tr>
-								   <tr>
-								      <td>T-Long2</td>
-								      <td><input value="${strategy.mainUIParam.tLong2}" type="text"/></td>
+   								   <tr>
+								      <td>MA-S</td>
+								      <td><input value="${strategy.mainUIParam.mas}" type="text"/></td>
+								      <td></td>
+								      <td></td>
+								   </tr>
+   								   <tr>
+								      <td>MA-L</td>
+								      <td><input value="${strategy.mainUIParam.mal}" type="text"/></td>
+								      <td></td>
+								      <td></td>
+								   </tr>
+  								   <tr>
+								      <td>MA-T</td>
+								      <td><input value="${strategy.mainUIParam.mat}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>
