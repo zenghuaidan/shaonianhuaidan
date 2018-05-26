@@ -239,6 +239,9 @@ public class TestSet {
 	public String getKey() {
 		return gettShort() + "_" +
 		gettLong() + "_" +
+		getMas() + "_" +
+		getMal() + "_" +
+		getMat() + "_" +
 		getHld() + "_" +
 		getStopLoss() + "_" +
 		getTradeStopLoss() + "_" +
