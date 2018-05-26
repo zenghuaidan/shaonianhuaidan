@@ -142,12 +142,15 @@ public class BackTestTask implements Runnable {
 		List<TestSet> testSets = new ArrayList<TestSet>();
 		for (int tShort = mainUIParam.gettShort(); tShort<= mainUIParam.gettShortTo() ; tShort = tShort + mainUIParam.gettShortLiteral())
 		for (int tLong = mainUIParam.gettLong(); tLong<= mainUIParam.gettLongTo() ; tLong = tLong + mainUIParam.gettLongLiteral())		
+		for (int mas = mainUIParam.getMas(); mas<= mainUIParam.getMasTo() ; mas = mas + mainUIParam.getMasLiteral())
+		for (int mal = mainUIParam.getMal(); mal<= mainUIParam.getMasTo() ; mas = mas + mainUIParam.getMasLiteral())
+		for (double mat = mainUIParam.getMat(); mat<= mainUIParam.getMatTo() ; mat = mat + mainUIParam.getMatLiteral())
 		for (double stopLoss = mainUIParam.getStopLoss(); stopLoss<= mainUIParam.getStopLossTo(); stopLoss = stopLoss + mainUIParam.getStopLossLiteral())
 		for (double tradeStopLoss = mainUIParam.getTradeStopLoss(); tradeStopLoss<= mainUIParam.getTradeStopLossTo() ; tradeStopLoss = tradeStopLoss + mainUIParam.getTradeStopLossLiteral())
 		for (double hld = mainUIParam.getHld(); hld<= mainUIParam.getHldTo() ; hld = hld + mainUIParam.getHldLiteral())
 		for (double instanTradeStopLoss = mainUIParam.getInstantTradeStoploss(); instanTradeStopLoss<= mainUIParam.getInstantTradeStoplossTo() ; instanTradeStopLoss = instanTradeStopLoss + mainUIParam.getInstantTradeStoplossLiteral())
 		for (double itsCounter = mainUIParam.getItsCounter(); itsCounter<= mainUIParam.getItsCounterTo() ; itsCounter = itsCounter + mainUIParam.getItsCounterLiteral()){		
-			testSets.add(new TestSet(tShort, tLong, hld, stopLoss, tradeStopLoss,
+			testSets.add(new TestSet(tShort, tLong, mas, mal, mat, hld, stopLoss, tradeStopLoss,
 					instanTradeStopLoss, itsCounter, mainUIParam.getUnit(),
 					mainUIParam.getMarketStartTime(), mainUIParam.getLunchStartTimeFrom(), mainUIParam.getLunchStartTimeTo(), 
 					mainUIParam.getMarketCloseTime(), mainUIParam.getCashPerIndexPoint(), mainUIParam.getTradingFee(), 

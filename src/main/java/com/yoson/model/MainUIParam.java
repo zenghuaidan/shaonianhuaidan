@@ -34,6 +34,12 @@ public class MainUIParam extends TestSet {
 	private int tShortLiteral;
 	private int tLongTo;
 	private int tLongLiteral;
+	private int masTo;
+	private int masLiteral;
+	private int malTo;
+	private int malLiteral;
+	private double matTo;
+	private double matLiteral;
 	private double hldTo;
 	private double hldLiteral;
 	private double stopLossTo;
@@ -141,6 +147,54 @@ public class MainUIParam extends TestSet {
 
 	public void settLongLiteral(int tLongLiteral) {
 		this.tLongLiteral = tLongLiteral;
+	}
+
+	public int getMasTo() {
+		return masTo;
+	}
+
+	public void setMasTo(int masTo) {
+		this.masTo = masTo;
+	}
+
+	public int getMasLiteral() {
+		return masLiteral;
+	}
+
+	public void setMasLiteral(int masLiteral) {
+		this.masLiteral = masLiteral;
+	}
+
+	public int getMalTo() {
+		return malTo;
+	}
+
+	public void setMalTo(int malTo) {
+		this.malTo = malTo;
+	}
+
+	public int getMalLiteral() {
+		return malLiteral;
+	}
+
+	public void setMalLiteral(int malLiteral) {
+		this.malLiteral = malLiteral;
+	}
+
+	public double getMatTo() {
+		return matTo;
+	}
+
+	public void setMatTo(double matTo) {
+		this.matTo = matTo;
+	}
+
+	public double getMatLiteral() {
+		return matLiteral;
+	}
+
+	public void setMatLiteral(double matLiteral) {
+		this.matLiteral = matLiteral;
 	}
 
 	public double getHldTo() {
@@ -365,6 +419,17 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setHldTo(0.001);
 		mainUIParam.setHldLiteral(0.001);
 		
+		mainUIParam.setMas(180);
+		mainUIParam.setMasTo(900);
+		mainUIParam.setMasLiteral(1);
+		
+		mainUIParam.setMal(180);
+		mainUIParam.setMalTo(900);
+		mainUIParam.setMalLiteral(1);
+		
+		mainUIParam.setMat(180);
+		mainUIParam.setMatTo(900);
+		mainUIParam.setMatLiteral(1);
 		
 		mainUIParam.setStopLoss(200);
 		mainUIParam.setStopLossTo(200);

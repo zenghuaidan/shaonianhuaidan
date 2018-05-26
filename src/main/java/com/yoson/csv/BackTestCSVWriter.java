@@ -79,7 +79,7 @@ public class BackTestCSVWriter {
 	}
 	
 	public static String getATradingDayHeader() {
-		return "Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,T Counter,HShort,HLong,LShort,LLong,Gmax,Gmin,GHLD,AVGHLD,Action,Smooth Action,Position,PC,MTM,PnL,No_Trade,Total_PnL,HLDiff\n";
+		return "Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,T Counter,HShort,HLong,LShort,LLong,Gmax,Gmin,GHLD,AVGHLD,MVS1,MVS2,trend 2,Action,Smooth Action,Position,PC,MTM,PnL,No_Trade,Total_PnL,HLDiff\n";
 	}
 	
 	public static String getBTTradeHeader() {
@@ -101,7 +101,7 @@ public class BackTestCSVWriter {
 		}
 		String yearColumnStr = String.join(",", yearColums);
 		yearColumnStr = yearColumnStr.length() > 0 ? (yearColumnStr + ",") : yearColumnStr;
-		return "Test no.,key,version,Source,T-Short,T-Long,HLD,Stoploss,Trade Stop Loss,Instant Trade Stop Loss,Its Counter,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time\n";
+		return "Test no.,key,version,Source,T-Short,T-Long,MA-S,MA-L,MA-T,HLD,Stoploss,Trade Stop Loss,Instant Trade Stop Loss,Its Counter,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time\n";
 	}
 	
 	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult) {
@@ -111,7 +111,10 @@ public class BackTestCSVWriter {
 		.append(mainUIParam.getVersion() + ",")
 		.append(mainUIParam.getSource() + ",")
 		.append(backTestResult.testSet.gettShort() + ",")
-		.append(backTestResult.testSet.gettLong() + ",")	
+		.append(backTestResult.testSet.gettLong() + ",")
+		.append(backTestResult.testSet.getMas() + ",")
+		.append(backTestResult.testSet.getMal() + ",")
+		.append(backTestResult.testSet.getMat() + ",")
 		.append(backTestResult.testSet.getHld() + ",")
 		.append(backTestResult.testSet.getStopLoss() + ",")
 		.append(backTestResult.testSet.getTradeStopLoss() + ",")
@@ -398,6 +401,9 @@ public class BackTestCSVWriter {
 		content.append("Average HL Diff.," + perDayRecord.averageHLDiff + "\n");
 		content.append("T-short," + mainUIParam.gettShort() + "\n");
 		content.append("T-Long," + mainUIParam.gettLong() + "\n");
+		content.append("MA-S," + mainUIParam.getMas() + "\n");
+		content.append("MA-L," + mainUIParam.getMal() + "\n");
+		content.append("MA-T," + mainUIParam.getMat() + "\n");
 		content.append("HLD," + mainUIParam.getHld() + "\n");
 		content.append("Stop Loss," + mainUIParam.getStopLoss() + "\n");
 		content.append("Trade stop loss," + mainUIParam.getTradeStopLoss() + "\n");
@@ -422,6 +428,9 @@ public class BackTestCSVWriter {
 		 content.append(perSecondRecord.getgMin() + ",");
 		 content.append(perSecondRecord.getgHLD() + ",");
 		 content.append(perSecondRecord.getAverageHLD() + ",");
+		 content.append(perSecondRecord.getMvs1() + ",");
+		 content.append(perSecondRecord.getMvs2() + ",");
+		 content.append(perSecondRecord.getTrend2() + ",");
 		 content.append(perSecondRecord.getAction() + ",");
 		 content.append(perSecondRecord.getSmoothAction() + ",");
 		 content.append(perSecondRecord.getPosition() + ",");

@@ -17,6 +17,9 @@ public class PerSecondRecord {
 	private double highLong;
 	private double lowShort;
 	private double lowLong;
+	private double mvs1;
+	private double mvs2;
+	private int trend2;
 	private int action;
 	private int smoothAction;
 	private double position;
@@ -64,6 +67,9 @@ public class PerSecondRecord {
 			initLong(dailyScheduleData, lastSecondRecord, testSet);
 			initHighLowDiffernece();
 			initSumHighLowDiffernece(testSet, dailyPerSecondRecordList);
+			initmvs1(testSet);
+			initmvs2(testSet);
+			inittrend2(testSet);
 			initAction(lastSecondRecord, testSet);
 			initSmoothAction(lastSecondRecord, testSet);
 		}
@@ -246,21 +252,47 @@ public class PerSecondRecord {
 		}
 	}
 	
+	private void initmvs1(TestSet testSet) {
+		if (checkMarketTime == 0 || reference < testSet.getMas() + 1) {
+			this.mvs1 = 0;
+		} else {
+			
+		}
+	}
+	
+	private void initmvs2(TestSet testSet) {
+		if (checkMarketTime == 0 || reference < testSet.getMal() + 1) {
+			this.mvs1 = 0;
+		} else {
+			
+		}		
+	}
+	
+	private void inittrend2(TestSet testSet) {
+		if(mvs1 != 0 && mvs2 != 0) {
+			if(mvs1 - mvs2 >= testSet.getMat()) {
+				this.trend2 = 1;
+			} else if(mvs2 - mvs1 >= testSet.getMat()) {
+				this.trend2 = -1;
+			}
+		}
+	}
+	
 	private void initAction(PerSecondRecord lastSecondRecord, TestSet testSet) {
 		
-		if (checkMarketTime == 0 || !this.isEnoughCounter || this.highLowDiffernece < testSet.getHld() * this.averageHLD)
+		if (checkMarketTime == 0 || !this.isEnoughCounter || trend2 == 0)
 		{
 			this.action = 0; 			
 		}
 		else 
 		{
-			if (lastTrade >= this.highShort && this.highShort == this.highLong)
+			if (lastTrade >= this.highShort && this.highShort == this.highLong && trend2 == 1)
 			{
 				this.action = 1;
 			}
 			else 
 			{
-				if (lastTrade <= this.lowShort && this.lowShort == this.lowLong)
+				if (lastTrade <= this.lowShort && this.lowShort == this.lowLong && trend2 == -1)
 				{
 					this.action = -1;
 				}
@@ -532,6 +564,30 @@ public class PerSecondRecord {
 
 	public void setHighLowDiffernece(double highLowDiffernece) {
 		this.highLowDiffernece = highLowDiffernece;
+	}
+
+	public double getMvs1() {
+		return mvs1;
+	}
+
+	public void setMvs1(double mvs1) {
+		this.mvs1 = mvs1;
+	}
+
+	public double getMvs2() {
+		return mvs2;
+	}
+
+	public void setMvs2(double mvs2) {
+		this.mvs2 = mvs2;
+	}
+
+	public int getTrend2() {
+		return trend2;
+	}
+
+	public void setTrend2(int trend2) {
+		this.trend2 = trend2;
 	}
 
 }
