@@ -346,7 +346,6 @@ function getMainUIParam() {
 	}
 	return {
 	   "tLong":$.trim($("[name='tLong']").val()),
-	   "tLong2":$.trim($("[name='tLong2']").val()),
 	   "tShort":$.trim($("[name='tShort']").val()),
 	   "hld":$.trim($("[name='hld']").val()),
 	   "stopLoss":$.trim($("[name='stopLoss']").val()),
@@ -368,8 +367,8 @@ function getMainUIParam() {
 	   "fromSource":$.trim($("[name='ticker']").val()) == '',
 	   "tLongTo":$.trim($("[name='tLongTo']").val()),
 	   "tLongLiteral":$.trim($("[name='tLongLiteral']").val()),
-	   "tLong2To":$.trim($("[name='tLong2To']").val()),
-	   "tLong2Literal":$.trim($("[name='tLong2Literal']").val()),
+	   "tShortTo":$.trim($("[name='tShortTo']").val()),
+	   "tShortLiteral":$.trim($("[name='tShortLiteral']").val()),
 	   "hldTo":$.trim($("[name='hldTo']").val()),
 	   "hldLiteral":$.trim($("[name='hldLiteral']").val()),
 	   "stopLossTo":$.trim($("[name='stopLossTo']").val()),
