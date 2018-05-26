@@ -257,9 +257,7 @@ function updateControlTab() {
 	    			"<td>Execute</td>" +
 	    			"<td>T-Short</td>" +
 	    			"<td>T-Long</td>" +
-	    			"<td>MA-S</td>" +
-	    			"<td>MA-L</td>" +
-	    			"<td>MA-T</td>" +
+	    			"<td>T-Long2</td>" +
 	    			"<td>HLD(Without %)</td>" +
 	    			"<td>stoploss</td>" +
 	    			"<td>tradestoploss</td>" +
@@ -276,9 +274,7 @@ function updateControlTab() {
 						"<td>" + data[i].active + "</td>" +
 						"<td>" + data[i].mainUIParam.tShort + "</td>" +						
 						"<td>" + data[i].mainUIParam.tLong + "</td>" +
-						"<td>" + data[i].mainUIParam.mas + "</td>" +
-						"<td>" + data[i].mainUIParam.mal + "</td>" +
-						"<td>" + data[i].mainUIParam.mat + "</td>" +
+						"<td>" + data[i].mainUIParam.tLong2 + "</td>" +
 						"<td>" + data[i].mainUIParam.hld + "</td>" +
 						"<td>" + data[i].mainUIParam.stopLoss + "</td>" +
 						"<td>" + data[i].mainUIParam.tradeStopLoss + "</td>" +
@@ -357,10 +353,8 @@ function getMainUIParam() {
 	}
 	return {
 	   "tLong":$.trim($("[name='tLong']").val()),
+	   "tLong2":$.trim($("[name='tLong2']").val()),
 	   "tShort":$.trim($("[name='tShort']").val()),
-	   "mas":$.trim($("[name='mas']").val()),
-	   "mal":$.trim($("[name='mal']").val()),
-	   "mat":$.trim($("[name='mat']").val()),
 	   "hld":$.trim($("[name='hld']").val()),
 	   "stopLoss":$.trim($("[name='stopLoss']").val()),
 	   "tradeStopLoss":$.trim($("[name='tradeStopLoss']").val()),
@@ -383,12 +377,8 @@ function getMainUIParam() {
 	   "fromSource":$.trim($("[name='ticker']").val()) == '',
 	   "tLongTo":$.trim($("[name='tLongTo']").val()),
 	   "tLongLiteral":$.trim($("[name='tLongLiteral']").val()),
-	   "masTo":$.trim($("[name='masTo']").val()),
-	   "masLiteral":$.trim($("[name='masLiteral']").val()),
-	   "malTo":$.trim($("[name='malTo']").val()),
-	   "malLiteral":$.trim($("[name='malLiteral']").val()),
-	   "matTo":$.trim($("[name='matTo']").val()),
-	   "matLiteral":$.trim($("[name='matLiteral']").val()),
+	   "tLong2To":$.trim($("[name='tLong2To']").val()),
+	   "tLong2Literal":$.trim($("[name='tLong2Literal']").val()),
 	   "hldTo":$.trim($("[name='hldTo']").val()),
 	   "hldLiteral":$.trim($("[name='hldLiteral']").val()),
 	   "stopLossTo":$.trim($("[name='stopLossTo']").val()),

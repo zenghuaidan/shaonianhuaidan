@@ -142,9 +142,7 @@ public class BackTestTask implements Runnable {
 		List<TestSet> testSets = new ArrayList<TestSet>();
 		for (int tShort = mainUIParam.gettShort(); tShort<= mainUIParam.gettShortTo() ; tShort = tShort + mainUIParam.gettShortLiteral())
 		for (int tLong = mainUIParam.gettLong(); tLong<= mainUIParam.gettLongTo() ; tLong = tLong + mainUIParam.gettLongLiteral())
-		for (int mas = mainUIParam.getMas(); mas<= mainUIParam.getMasTo() ; mas = mas + mainUIParam.getMasLiteral())
-		for (int mal = mainUIParam.getMal(); mal<= mainUIParam.getMasTo() ; mas = mas + mainUIParam.getMasLiteral())
-		for (double mat = mainUIParam.getMat(); mat<= mainUIParam.getMatTo() ; mat = mat + mainUIParam.getMatLiteral())
+		for (int tLong2 = mainUIParam.gettLong2(); tLong2<= mainUIParam.gettLong2To() ; tLong2 = tLong2 + mainUIParam.gettLong2Literal())
 		for (double stopLoss = mainUIParam.getStopLoss(); stopLoss<= mainUIParam.getStopLossTo(); stopLoss = stopLoss + mainUIParam.getStopLossLiteral())
 		for (double tradeStopLoss = mainUIParam.getTradeStopLoss(); tradeStopLoss<= mainUIParam.getTradeStopLossTo() ; tradeStopLoss = tradeStopLoss + mainUIParam.getTradeStopLossLiteral())
 		for (double hld = mainUIParam.getHld(); hld<= mainUIParam.getHldTo() ; hld = hld + mainUIParam.getHldLiteral())
@@ -152,7 +150,7 @@ public class BackTestTask implements Runnable {
 		for (double itsCounter = mainUIParam.getItsCounter(); itsCounter<= mainUIParam.getItsCounterTo() ; itsCounter = itsCounter + mainUIParam.getItsCounterLiteral())
 		for (double stopGainPercent = mainUIParam.getStopGainPercent(); stopGainPercent<= mainUIParam.getStopGainPercentTo() ; stopGainPercent = stopGainPercent + mainUIParam.getStopGainPercentLiteral())
 		for (double stopGainTrigger = mainUIParam.getStopGainTrigger(); stopGainTrigger<= mainUIParam.getStopGainTriggerTo() ; stopGainTrigger = stopGainTrigger + mainUIParam.getStopGainTriggerLiteral()) {
-			testSets.add(new TestSet(tShort, tLong, mas, mal, mat, hld, stopLoss, tradeStopLoss,
+			testSets.add(new TestSet(tShort, tLong, tLong2, hld, stopLoss, tradeStopLoss,
 					instanTradeStopLoss, itsCounter, stopGainPercent, stopGainTrigger, mainUIParam.getUnit(),
 					mainUIParam.getMarketStartTime(), mainUIParam.getLunchStartTimeFrom(), mainUIParam.getLunchStartTimeTo(), 
 					mainUIParam.getMarketCloseTime(), mainUIParam.getCashPerIndexPoint(), mainUIParam.getTradingFee(), 

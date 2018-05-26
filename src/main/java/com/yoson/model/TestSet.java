@@ -8,11 +8,7 @@ public class TestSet {
 	@Expose
 	private int tLong;
 	@Expose
-	private int mas;
-	@Expose
-	private int mal;
-	@Expose
-	private double mat;
+	private int tLong2;
 	@Expose
 	private double hld;
 	@Expose
@@ -50,16 +46,14 @@ public class TestSet {
 
 	public TestSet() {}
 
-	public TestSet(int tShort, int tLong, int mas, int mal, double mat, double hld, double stopLoss, double tradeStopLoss,
+	public TestSet(int tShort, int tLong, int tLong2, double hld, double stopLoss, double tradeStopLoss,
 			double instantTradeStoploss, double itsCounter, double stopGainPercent, double stopGainTrigger, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
 			int lunchLastNumberOfMinutesClearPosition) {
 		this.tShort = tShort;
 		this.tLong = tLong;
-		this.mas = mas;
-		this.mal = mal;
-		this.mat = mat;
+		this.tLong2 = tLong2;
 		this.hld = hld;
 		this.stopLoss = stopLoss;
 		this.tradeStopLoss = tradeStopLoss;
@@ -95,28 +89,12 @@ public class TestSet {
 		this.tLong = tLong;
 	}
 
-	public int getMas() {
-		return mas;
+	public int gettLong2() {
+		return tLong2;
 	}
 
-	public void setMas(int mas) {
-		this.mas = mas;
-	}
-
-	public int getMal() {
-		return mal;
-	}
-
-	public void setMal(int mal) {
-		this.mal = mal;
-	}
-
-	public double getMat() {
-		return mat;
-	}
-
-	public void setMat(double mat) {
-		this.mat = mat;
+	public void settLong2(int tLong2) {
+		this.tLong2 = tLong2;
 	}
 
 	public double getHld() {
@@ -258,9 +236,7 @@ public class TestSet {
 	public String getKey() {
 		return gettShort() + "_" +
 		gettLong() + "_" +
-		getMas() + "_" +
-		getMal() + "_" +
-		getMat() + "_" +
+		gettLong2() + "_" +
 		getHld() + "_" +
 		getStopLoss() + "_" +
 		getTradeStopLoss() + "_" +

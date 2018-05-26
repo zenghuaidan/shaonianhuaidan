@@ -1,7 +1,10 @@
 package com.yoson.model;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
+
+import com.yoson.date.DateUtils;
 
 public class PerSecondRecord {
 
@@ -15,11 +18,10 @@ public class PerSecondRecord {
 	private int tCounter;
 	private double highShort;
 	private double highLong;
+	private double highLong2;
 	private double lowShort;
 	private double lowLong;
-	private double mvs1;
-	private double mvs2;
-	private int trend2;
+	private double lowLong2;
 	private int action;
 	private int smoothAction;
 	private double position;
@@ -27,12 +29,15 @@ public class PerSecondRecord {
 	private double noTrade;
 	private double tradeCount;
 	private double totalPnl;
+	private double highDiffernece;
+	private double lowDiffernece;
 	private double gMax;
 	private double gMin;
 	private double gHLD;
 	private double averageHLD;
 	private double pc;
 	private double mtm;
+	private double mmtm;
 	private boolean isEnoughCounter;
 	
 //	private static int reachPoint;
@@ -57,28 +62,29 @@ public class PerSecondRecord {
 		
 		this.checkMarketTime = checkMarketTime;
 		this.tCounter = this.checkMarketTime == 1 ? lastSecondRecord.tCounter + 1 : 0;
-		this.isEnoughCounter = this.tCounter > Math.max(testSet.gettShort(), testSet.gettLong());
-//		if ("2017-10-31 09:19:16".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
-//			System.out.println("debug point");
-//		}
+		this.isEnoughCounter = this.tCounter > getMax(testSet.gettShort(), testSet.gettLong(), testSet.gettLong2());
+		if ("2017-10-31 09:19:16".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
+			System.out.println("debug point");
+		}
 		initLastTradeDataList(lastSecondRecord);
 		if (lastSecondRecord.getTotalPnl() > -testSet.getStopLoss() ) {
 			initShort(dailyScheduleData, lastSecondRecord, testSet);
 			initLong(dailyScheduleData, lastSecondRecord, testSet);
-			initmvs1(testSet);
-			initmvs2(testSet);
-			inittrend2(testSet);
+			initLong2(dailyScheduleData, lastSecondRecord, testSet);
+			initHighDiffernece();
+			initLowDifference();
 			initAction(lastSecondRecord, testSet);
 			initSmoothAction(lastSecondRecord, testSet);
 		}
 		initPosition(lastSecondRecord);
 		initPc(lastSecondRecord);
 		initMtm();
+		initMmtm(lastSecondRecord);
 		initPnl(lastSecondRecord);
 		initTradeCount(lastSecondRecord);
 		initTotalPnl(lastSecondRecord);
 	}
-
+	
 	private void initLastTradeDataList(PerSecondRecord lastSecondRecord) {
 //		if (this.checkMarketTime == 1 && !PerSecondRecord.isReachPoint) {
 //			PerSecondRecord.isReachPoint = true;
@@ -158,6 +164,18 @@ public class PerSecondRecord {
 		}			
 	}
 
+	private void initMmtm(PerSecondRecord lastSecondRecord) {
+		if(this.pc == 0){
+			this.mmtm = 0;
+		}else{
+			if(this.mtm>lastSecondRecord.getMmtm()){
+				this.mmtm = this.mtm;
+			} else {
+				this.mmtm = lastSecondRecord.getMmtm();
+			}
+		}	
+	}
+
 	private void initPc(PerSecondRecord lastSecondRecord) {
 		if( (this.position != 0 && lastSecondRecord.getPosition() != 0 && this.position != lastSecondRecord.getPosition()) || (lastSecondRecord.getPosition() == 0 && this.position != 0) ){
 			this.pc = 1;
@@ -201,7 +219,8 @@ public class PerSecondRecord {
 	private void initSmoothAction(PerSecondRecord lastSecondRecord, TestSet testSet) throws ParseException {
 		if (this.checkMarketTime == 0
 				|| !this.isEnoughCounter
-				|| (lastSecondRecord.getPc() <= testSet.getItsCounter() && lastSecondRecord.getMtm() <= -testSet.getTradeStopLoss()*testSet.getInstantTradeStoploss()))
+				|| (lastSecondRecord.getPc() <= testSet.getItsCounter() && lastSecondRecord.getMtm() <= -testSet.getTradeStopLoss()*testSet.getInstantTradeStoploss()) 
+				|| (lastSecondRecord.getMmtm()>=testSet.getStopGainTrigger() && lastSecondRecord.getMtm() < lastSecondRecord.getMmtm()*testSet.getStopGainPercent()) )
 		{
 			this.smoothAction = 0;
 		}
@@ -234,48 +253,22 @@ public class PerSecondRecord {
 			}
 		}
 	}
-
-	private void initmvs1(TestSet testSet) {
-		if (checkMarketTime == 0 || reference < testSet.getMas() + 1) {
-			this.mvs1 = 0;
-		} else {
-			
-		}
-	}
-	
-	private void initmvs2(TestSet testSet) {
-		if (checkMarketTime == 0 || reference < testSet.getMal() + 1) {
-			this.mvs1 = 0;
-		} else {
-			
-		}		
-	}
-	
-	private void inittrend2(TestSet testSet) {
-		if(mvs1 != 0 && mvs2 != 0) {
-			if(mvs1 - mvs2 >= testSet.getMat()) {
-				this.trend2 = 1;
-			} else if(mvs2 - mvs1 >= testSet.getMat()) {
-				this.trend2 = -1;
-			}
-		}
-	}
 	
 	private void initAction(PerSecondRecord lastSecondRecord, TestSet testSet) {
 		
-		if (checkMarketTime == 0 || !this.isEnoughCounter || trend2 == 0)
+		if (checkMarketTime == 0 || !this.isEnoughCounter)
 		{
 			this.action = 0; 			
 		}
 		else 
 		{
-			if (lastTrade >= this.highShort && this.highShort == this.highLong && trend2 == 1)
+			if ((lastTrade >= this.highShort) &&(this.highShort >= this.highLong)&&(this.highLong > this.highLong2) && this.highDiffernece >= testSet.getHld()*lastTrade)
 			{
 				this.action = 1;
 			}
 			else 
 			{
-				if (lastTrade <= this.lowShort && this.lowShort == this.lowLong && trend2 == -1)
+				if ((lastTrade <= this.lowShort) && (this.lowShort <= this.lowLong) && (this.lowLong < this.lowLong2) && this.lowDiffernece >= testSet.getHld()*lastTrade)
 				{
 					this.action = -1;
 				}
@@ -316,7 +309,7 @@ public class PerSecondRecord {
 		if (this.tCounter> testSet.gettLong())
 		{
 			int start = this.tCounter - (testSet.gettLong() + 1);
-			int end = this.tCounter - 1;
+			int end = this.tCounter - testSet.gettShort() - 1;
 			if (start > 0 
 				&& start <= end
 				&& lastSecondRecord.highLong != dailyScheduleData.get(this.reachPoint + start-1).getLastTrade()
@@ -334,6 +327,46 @@ public class PerSecondRecord {
 					this.lowLong = Math.min(this.lowLong, _lastTrade);
 				}				
 			}
+		}
+	}
+	
+	
+	private void initLong2(List<ScheduleData> dailyScheduleData, PerSecondRecord lastSecondRecord, TestSet testSet) {
+		if (this.tCounter> testSet.gettLong2())
+		{
+			int start = this.tCounter - (testSet.gettLong2() + 1);
+			int end = this.tCounter -testSet.gettLong() - 1;
+			if (start > 0 
+				&& start <= end
+				&& lastSecondRecord.highLong2 != dailyScheduleData.get(this.reachPoint + start - 1).getLastTrade()
+				&& lastSecondRecord.lowLong2 != dailyScheduleData.get(this.reachPoint + start - 1).getLastTrade()) {
+				double lastTrade2 = dailyScheduleData.get(this.reachPoint + end).getLastTrade();
+				this.highLong2 = Math.max(lastSecondRecord.highLong2, lastTrade2);
+				this.lowLong2 = Math.min(lastSecondRecord.lowLong2, lastTrade2);
+			} else {
+				this.highLong2 = Double.MIN_VALUE;
+				this.lowLong2 = Double.MAX_VALUE;
+				for (int i = start; i<= end;  i++)
+				{
+					double _lastTrade = dailyScheduleData.get(this.reachPoint + i).getLastTrade();
+					this.highLong2 = Math.max(this.highLong2, _lastTrade);
+					this.lowLong2 = Math.min(this.lowLong2, _lastTrade);
+				}				
+			}
+		}
+	}
+	
+	private void initHighDiffernece() {
+		if (this.isEnoughCounter)
+		{	
+			this.highDiffernece = getMax(this.highShort, this.highLong, this.highLong2) - getMin(this.highShort, this.highLong, this.highLong2);			
+		}
+	}
+	
+	private void initLowDifference() {
+		if (this.isEnoughCounter)
+		{
+			this.lowDiffernece = getMax(this.lowShort, this.lowLong, this.lowLong2) - getMin(this.lowShort, this.lowLong, this.lowLong2);
 		}
 	}
 	
@@ -421,6 +454,14 @@ public class PerSecondRecord {
 		this.highLong = highLong;
 	}
 
+	public double getHighLong2() {
+		return highLong2;
+	}
+
+	public void setHighLong2(double highLong2) {
+		this.highLong2 = highLong2;
+	}
+
 	public double getLowShort() {
 		return lowShort;
 	}
@@ -435,6 +476,14 @@ public class PerSecondRecord {
 
 	public void setLowLong(double lowLong) {
 		this.lowLong = lowLong;
+	}
+
+	public double getLowLong2() {
+		return lowLong2;
+	}
+
+	public void setLowLong2(double lowLong2) {
+		this.lowLong2 = lowLong2;
 	}
 
 	public int getAction() {
@@ -493,6 +542,22 @@ public class PerSecondRecord {
 		this.totalPnl = totalPnl;
 	}
 
+	public double getHighDiffernece() {
+		return highDiffernece;
+	}
+
+	public void setHighDiffernece(double highDiffernece) {
+		this.highDiffernece = highDiffernece;
+	}
+
+	public double getLowDiffernece() {
+		return lowDiffernece;
+	}
+
+	public void setLowDiffernece(double lowDiffernece) {
+		this.lowDiffernece = lowDiffernece;
+	}
+
 	public double getgMax() {
 		return gMax;
 	}
@@ -539,6 +604,14 @@ public class PerSecondRecord {
 
 	public void setMtm(double mtm) {
 		this.mtm = mtm;
+	}
+
+	public double getMmtm() {
+		return mmtm;
+	}
+
+	public void setMmtm(double mmtm) {
+		this.mmtm = mmtm;
 	}
 
 }
