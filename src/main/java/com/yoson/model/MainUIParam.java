@@ -485,7 +485,7 @@ public class MainUIParam extends TestSet {
 			MainUIParam mainUIParam = new MainUIParam();
 			List<String []> params = new ArrayList<String []>();
 			int index = 0;
-			while ((lines = csvReader.readNext()) != null && index <= 22 )  {
+			while ((lines = csvReader.readNext()) != null && index <= 25 )  {
 				params.add(lines);
 				index++;
 			}
@@ -495,7 +495,10 @@ public class MainUIParam extends TestSet {
 			mainUIParam.setAskDataField(params.get(index++)[1]);
 			mainUIParam.setBidDataField(params.get(index++)[1]);
 			mainUIParam.settShort(Integer.parseInt(params.get(index++)[1]));
-			mainUIParam.settLong(Integer.parseInt(params.get(index++)[1]));			
+			mainUIParam.settLong(Integer.parseInt(params.get(index++)[1]));
+			mainUIParam.setMas(Integer.parseInt(params.get(index++)[1]));
+			mainUIParam.setMal(Integer.parseInt(params.get(index++)[1]));
+			mainUIParam.setMat(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setHld(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setStopLoss(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setTradeStopLoss(Double.parseDouble(params.get(index++)[1]));
