@@ -67,8 +67,8 @@ public class PerSecondRecord {
 			initLong(dailyScheduleData, lastSecondRecord, testSet);
 			initHighLowDiffernece();
 			initSumHighLowDiffernece(testSet, dailyPerSecondRecordList);
-			initmvs1(testSet);
-			initmvs2(testSet);
+			initmvs1(dailyPerSecondRecordList, testSet);
+			initmvs2(dailyPerSecondRecordList, testSet);
 			inittrend2(testSet);
 			initAction(lastSecondRecord, testSet);
 			initSmoothAction(lastSecondRecord, testSet);
@@ -252,19 +252,35 @@ public class PerSecondRecord {
 		}
 	}
 	
-	private void initmvs1(TestSet testSet) {
+	private double lastMvs1Sum = 0;
+	private void initmvs1(List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet) {
 		if (checkMarketTime == 0 || reference < testSet.getMas() + 1) {
 			this.mvs1 = 0;
 		} else {
-			
+			if(reference == testSet.getMas() + 1) {
+				for(int i = reference - testSet.getMas(); i < reference; i++) {
+					lastMvs1Sum += dailyPerSecondRecordList.get(i).getLastTrade();
+				}
+			} else {
+				lastMvs1Sum =lastMvs1Sum - dailyPerSecondRecordList.get(reference - testSet.getMas() - 1).getLastTrade() + dailyPerSecondRecordList.get(reference - 1).getLastTrade(); 
+			}
+			this.mvs1 = lastMvs1Sum / testSet.getMas();
 		}
 	}
 	
-	private void initmvs2(TestSet testSet) {
+	private double lastMvs2Sum = 0;
+	private void initmvs2(List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet) {
 		if (checkMarketTime == 0 || reference < testSet.getMal() + 1) {
 			this.mvs1 = 0;
 		} else {
-			
+			if(reference == testSet.getMas() + 1) {
+				for(int i = reference - testSet.getMal(); i < reference; i++) {
+					lastMvs2Sum += dailyPerSecondRecordList.get(i).getLastTrade();
+				}
+			} else {
+				lastMvs2Sum =lastMvs2Sum - dailyPerSecondRecordList.get(reference - testSet.getMal() - 1).getLastTrade() + dailyPerSecondRecordList.get(reference - 1).getLastTrade(); 
+			}
+			this.mvs1 = lastMvs2Sum / testSet.getMas();
 		}		
 	}
 	
