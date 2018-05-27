@@ -420,15 +420,15 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setHldLiteral(0.001);
 		
 		mainUIParam.setMas(180);
-		mainUIParam.setMasTo(900);
+		mainUIParam.setMasTo(180);
 		mainUIParam.setMasLiteral(1);
 		
 		mainUIParam.setMal(180);
-		mainUIParam.setMalTo(900);
+		mainUIParam.setMalTo(180);
 		mainUIParam.setMalLiteral(1);
 		
 		mainUIParam.setMat(180);
-		mainUIParam.setMatTo(900);
+		mainUIParam.setMatTo(180);
 		mainUIParam.setMatLiteral(1);
 		
 		mainUIParam.setStopLoss(200);
