@@ -143,7 +143,7 @@ public class BackTestTask implements Runnable {
 		for (int tShort = mainUIParam.gettShort(); tShort<= mainUIParam.gettShortTo() ; tShort = tShort + mainUIParam.gettShortLiteral())
 		for (int tLong = mainUIParam.gettLong(); tLong<= mainUIParam.gettLongTo() ; tLong = tLong + mainUIParam.gettLongLiteral())		
 		for (int mas = mainUIParam.getMas(); mas<= mainUIParam.getMasTo() ; mas = mas + mainUIParam.getMasLiteral())
-		for (int mal = mainUIParam.getMal(); mal<= mainUIParam.getMasTo() ; mas = mas + mainUIParam.getMasLiteral())
+		for (int mal = mainUIParam.getMal(); mal<= mainUIParam.getMalTo() ; mal = mal + mainUIParam.getMalLiteral())
 		for (double mat = mainUIParam.getMat(); mat<= mainUIParam.getMatTo() ; mat = mat + mainUIParam.getMatLiteral())
 		for (double stopLoss = mainUIParam.getStopLoss(); stopLoss<= mainUIParam.getStopLossTo(); stopLoss = stopLoss + mainUIParam.getStopLossLiteral())
 		for (double tradeStopLoss = mainUIParam.getTradeStopLoss(); tradeStopLoss<= mainUIParam.getTradeStopLossTo() ; tradeStopLoss = tradeStopLoss + mainUIParam.getTradeStopLossLiteral())
@@ -249,8 +249,8 @@ public class BackTestTask implements Runnable {
 			BackTestCSVWriter.initProfitAndLossResultMap(mainUIParam);
 			BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(mainUIParam), true);
 			BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges, mainUIParam), true);			
+			BackTestCSVWriter.getAccumulatePnlBySpecifyDates(specifyDateRanges, mainUIParam);
 		}
-		BackTestCSVWriter.getAccumulatePnlBySpecifyDates(specifyDateRanges, mainUIParam);
 		milliseconds = System.currentTimeMillis() - start;
 		callBack.updateStatus(getStatus("All task done, total time cost: " + DateUtils.dateDiff(milliseconds)));
 		

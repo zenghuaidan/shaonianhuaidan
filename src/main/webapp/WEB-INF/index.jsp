@@ -194,15 +194,15 @@
 							   </tr>
    							   <tr>
 							      <td>MA-L</td>
-							      <td><input name="mas" value="${mainUIParam.mal}" type="text"/></td>
-							      <td><input name="masTo" value="${mainUIParam.malTo}" type="text"/></td>
-							      <td><input name="masLiteral" value="${mainUIParam.malLiteral}" type="text"/></td>
+							      <td><input name="mal" value="${mainUIParam.mal}" type="text"/></td>
+							      <td><input name="malTo" value="${mainUIParam.malTo}" type="text"/></td>
+							      <td><input name="malLiteral" value="${mainUIParam.malLiteral}" type="text"/></td>
 							   </tr>
    							   <tr>
 							      <td>MA-T</td>
-							      <td><input name="mas" value="${mainUIParam.mat}" type="text"/></td>
-							      <td><input name="masTo" value="${mainUIParam.matTo}" type="text"/></td>
-							      <td><input name="masLiteral" value="${mainUIParam.matLiteral}" type="text"/></td>
+							      <td><input name="mat" value="${mainUIParam.mat}" type="text"/></td>
+							      <td><input name="matTo" value="${mainUIParam.matTo}" type="text"/></td>
+							      <td><input name="matLiteral" value="${mainUIParam.matLiteral}" type="text"/></td>
 							   </tr>					   
 							   <tr>
 							      <td>HLD(Without %)</td>

@@ -258,11 +258,12 @@ public class PerSecondRecord {
 			this.mvs1 = 0;
 		} else {
 			if(reference == testSet.getMas() + 1) {
-				for(int i = reference - testSet.getMas(); i < reference; i++) {
+				for(int i = reference - testSet.getMas(); i < reference -1; i++) {
 					lastMvs1Sum += dailyPerSecondRecordList.get(i).getLastTrade();
 				}
-			} else {
-				lastMvs1Sum =lastMvs1Sum - dailyPerSecondRecordList.get(reference - testSet.getMas() - 1).getLastTrade() + dailyPerSecondRecordList.get(reference - 1).getLastTrade(); 
+				lastMvs1Sum += lastTrade;
+			} else if(reference > testSet.getMas() + 1) {
+				lastMvs1Sum =lastMvs1Sum - dailyPerSecondRecordList.get(reference - testSet.getMas() - 1).getLastTrade() + lastTrade; 
 			}
 			this.mvs1 = lastMvs1Sum / testSet.getMas();
 		}
@@ -274,11 +275,12 @@ public class PerSecondRecord {
 			this.mvs1 = 0;
 		} else {
 			if(reference == testSet.getMas() + 1) {
-				for(int i = reference - testSet.getMal(); i < reference; i++) {
+				for(int i = reference - testSet.getMal(); i < reference - 1; i++) {
 					lastMvs2Sum += dailyPerSecondRecordList.get(i).getLastTrade();
 				}
-			} else {
-				lastMvs2Sum =lastMvs2Sum - dailyPerSecondRecordList.get(reference - testSet.getMal() - 1).getLastTrade() + dailyPerSecondRecordList.get(reference - 1).getLastTrade(); 
+				lastMvs2Sum += lastTrade;
+			} else if(reference > testSet.getMas() + 1) {
+				lastMvs2Sum =lastMvs2Sum - dailyPerSecondRecordList.get(reference - testSet.getMal() - 1).getLastTrade() + lastTrade; 
 			}
 			this.mvs1 = lastMvs2Sum / testSet.getMas();
 		}		
