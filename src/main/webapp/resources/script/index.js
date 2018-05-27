@@ -388,7 +388,7 @@ function getMainUIParam() {
 	   "includeMorningData":$("[name='includeMorningData']").is(":checked"),
 	   "ignoreLunchTime":$("[name='ignoreLunchTime']").is(":checked"),	
 	   "nForPnl":$("[name='nForPnl']").val(),
-	   "matrixFile":$("[name='ignoreLunchTime']").is(":checked")
+	   "matrixFile":$("[name='matrixFile']").is(":checked")
 	};
 }
 
