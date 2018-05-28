@@ -259,8 +259,7 @@ function updateControlTab() {
 	    			"<td>T-Long</td>" +
 	    			"<td>MA-S</td>" +
 	    			"<td>MA-L</td>" +
-	    			"<td>MA-T</td>" +
-	    			"<td>HLD(Without %)</td>" +
+	    			"<td>MA-T</td>" +	    			
 	    			"<td>stoploss</td>" +
 	    			"<td>tradestoploss</td>" +
 	    			"<td>Instant trade stoploss</td>" +
@@ -277,7 +276,6 @@ function updateControlTab() {
 						"<td>" + data[i].mainUIParam.mas + "</td>" +
 						"<td>" + data[i].mainUIParam.mal + "</td>" +
 						"<td>" + data[i].mainUIParam.mat + "</td>" +
-						"<td>" + data[i].mainUIParam.hld + "</td>" +
 						"<td>" + data[i].mainUIParam.stopLoss + "</td>" +
 						"<td>" + data[i].mainUIParam.tradeStopLoss + "</td>" +
 						"<td>" + data[i].mainUIParam.instantTradeStoploss + "</td>" +						
@@ -356,7 +354,6 @@ function getMainUIParam() {
 	   "mas":$.trim($("[name='mas']").val()),
 	   "mal":$.trim($("[name='mal']").val()),
 	   "mat":$.trim($("[name='mat']").val()),
-	   "hld":$.trim($("[name='hld']").val()),
 	   "stopLoss":$.trim($("[name='stopLoss']").val()),
 	   "tradeStopLoss":$.trim($("[name='tradeStopLoss']").val()),
 	   "instantTradeStoploss":$.trim($("[name='instantTradeStoploss']").val()),
@@ -383,9 +380,7 @@ function getMainUIParam() {
 	   "malTo":$.trim($("[name='malTo']").val()),
 	   "malLiteral":$.trim($("[name='malLiteral']").val()),
 	   "matTo":$.trim($("[name='matTo']").val()),
-	   "matLiteral":$.trim($("[name='matLiteral']").val()),
-	   "hldTo":$.trim($("[name='hldTo']").val()),
-	   "hldLiteral":$.trim($("[name='hldLiteral']").val()),
+	   "matLiteral":$.trim($("[name='matLiteral']").val()),	   
 	   "stopLossTo":$.trim($("[name='stopLossTo']").val()),
 	   "stopLossLiteral":$.trim($("[name='stopLossLiteral']").val()),
 	   "tradeStopLossTo":$.trim($("[name='tradeStopLossTo']").val()),

@@ -39,9 +39,7 @@ public class MainUIParam extends TestSet {
 	private int malTo;
 	private int malLiteral;
 	private double matTo;
-	private double matLiteral;
-	private double hldTo;
-	private double hldLiteral;
+	private double matLiteral;	
 	private double stopLossTo;
 	private double stopLossLiteral;
 	private double tradeStopLossTo;
@@ -195,22 +193,6 @@ public class MainUIParam extends TestSet {
 
 	public void setMatLiteral(double matLiteral) {
 		this.matLiteral = matLiteral;
-	}
-
-	public double getHldTo() {
-		return hldTo;
-	}
-
-	public void setHldTo(double hldTo) {
-		this.hldTo = hldTo;
-	}
-
-	public double getHldLiteral() {
-		return hldLiteral;
-	}
-
-	public void setHldLiteral(double hldLiteral) {
-		this.hldLiteral = hldLiteral;
 	}
 
 	public double getStopLossTo() {
@@ -415,9 +397,6 @@ public class MainUIParam extends TestSet {
 		mainUIParam.settLongTo(600);
 		mainUIParam.settLongLiteral(600);
 		
-		mainUIParam.setHld(0.001);
-		mainUIParam.setHldTo(0.001);
-		mainUIParam.setHldLiteral(0.001);
 		
 		mainUIParam.setMas(180);
 		mainUIParam.setMasTo(180);
@@ -485,7 +464,7 @@ public class MainUIParam extends TestSet {
 			MainUIParam mainUIParam = new MainUIParam();
 			List<String []> params = new ArrayList<String []>();
 			int index = 0;
-			while ((lines = csvReader.readNext()) != null && index <= 25 )  {
+			while ((lines = csvReader.readNext()) != null && index <= 24 )  {
 				params.add(lines);
 				index++;
 			}
@@ -498,8 +477,7 @@ public class MainUIParam extends TestSet {
 			mainUIParam.settLong(Integer.parseInt(params.get(index++)[1]));
 			mainUIParam.setMas(Integer.parseInt(params.get(index++)[1]));
 			mainUIParam.setMal(Integer.parseInt(params.get(index++)[1]));
-			mainUIParam.setMat(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setHld(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setMat(Double.parseDouble(params.get(index++)[1]));			
 			mainUIParam.setStopLoss(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setTradeStopLoss(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setInstantTradeStoploss(Double.parseDouble(params.get(index++)[1]));

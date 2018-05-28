@@ -74,11 +74,7 @@ public class TradePerSecondDetailsCSVWriter {
 			writer.append("MA-T");
 			writer.append(",");
 			writer.append(mainUIParam.getMat()+"");
-			writer.append("\n");
-			writer.append("HLD");
-			writer.append(",");
-			writer.append(mainUIParam.getHld() + "");
-			writer.append("\n");
+			writer.append("\n");			
 			writer.append("stoploss");
 			writer.append(",");
 			writer.append(mainUIParam.getStopLoss() + "");

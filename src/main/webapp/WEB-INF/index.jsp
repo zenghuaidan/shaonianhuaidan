@@ -203,13 +203,7 @@
 							      <td><input name="mat" value="${mainUIParam.mat}" type="text"/></td>
 							      <td><input name="matTo" value="${mainUIParam.matTo}" type="text"/></td>
 							      <td><input name="matLiteral" value="${mainUIParam.matLiteral}" type="text"/></td>
-							   </tr>					   
-							   <tr>
-							      <td>HLD(Without %)</td>
-							      <td><input name="hld" value="${mainUIParam.hld}" type="text"/></td>
-							      <td><input name="hldTo" value="${mainUIParam.hldTo}" type="text"/></td>
-							      <td><input name="hldLiteral" value="${mainUIParam.hldLiteral}" type="text"/></td>
-							   </tr>
+							   </tr>					   							   
 							   <tr>
 							      <td>stoploss</td>
 							      <td><input name="stopLoss" value="${mainUIParam.stopLoss}" type="text"/></td>
@@ -677,13 +671,7 @@
 								      <td><input value="${strategy.mainUIParam.mat}" type="text"/></td>
 								      <td></td>
 								      <td></td>
-								   </tr>
-								   <tr>
-								      <td>HLD(Without %)</td>
-								      <td><input value="${strategy.mainUIParam.hld}" type="text"/></td>
-								      <td></td>
-								      <td></td>
-								   </tr>
+								   </tr>								   
 								   <tr>
 								      <td>stoploss</td>
 								      <td><input value="${strategy.mainUIParam.stopLoss}" type="text"/></td>

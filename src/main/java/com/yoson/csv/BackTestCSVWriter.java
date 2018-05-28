@@ -101,7 +101,7 @@ public class BackTestCSVWriter {
 		}
 		String yearColumnStr = String.join(",", yearColums);
 		yearColumnStr = yearColumnStr.length() > 0 ? (yearColumnStr + ",") : yearColumnStr;
-		return "Test no.,key,version,Source,T-Short,T-Long,MA-S,MA-L,MA-T,HLD,Stoploss,Trade Stop Loss,Instant Trade Stop Loss,Its Counter,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time\n";
+		return "Test no.,key,version,Source,T-Short,T-Long,MA-S,MA-L,MA-T,Stoploss,Trade Stop Loss,Instant Trade Stop Loss,Its Counter,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time\n";
 	}
 	
 	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult) {
@@ -115,7 +115,6 @@ public class BackTestCSVWriter {
 		.append(backTestResult.testSet.getMas() + ",")
 		.append(backTestResult.testSet.getMal() + ",")
 		.append(backTestResult.testSet.getMat() + ",")
-		.append(backTestResult.testSet.getHld() + ",")
 		.append(backTestResult.testSet.getStopLoss() + ",")
 		.append(backTestResult.testSet.getTradeStopLoss() + ",")
 		.append(backTestResult.testSet.getInstantTradeStoploss() + ",")
@@ -404,7 +403,6 @@ public class BackTestCSVWriter {
 		content.append("MA-S," + mainUIParam.getMas() + "\n");
 		content.append("MA-L," + mainUIParam.getMal() + "\n");
 		content.append("MA-T," + mainUIParam.getMat() + "\n");
-		content.append("HLD," + mainUIParam.getHld() + "\n");
 		content.append("Stop Loss," + mainUIParam.getStopLoss() + "\n");
 		content.append("Trade stop loss," + mainUIParam.getTradeStopLoss() + "\n");
 		content.append("Instant trade stoploss," + mainUIParam.getInstantTradeStoploss() + "\n");

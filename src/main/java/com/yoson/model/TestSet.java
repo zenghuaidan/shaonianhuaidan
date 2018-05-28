@@ -12,9 +12,7 @@ public class TestSet {
 	@Expose
 	private int mal;
 	@Expose
-	private double mat;
-	@Expose
-	private double hld;
+	private double mat;	
 	@Expose
 	private double stopLoss;
 	@Expose
@@ -49,7 +47,7 @@ public class TestSet {
 
 	public TestSet() {}
 
-	public TestSet(int tShort, int tLong, int mas, int mal, double mat, double hld, double stopLoss, double tradeStopLoss,
+	public TestSet(int tShort, int tLong, int mas, int mal, double mat, double stopLoss, double tradeStopLoss,
 			double instantTradeStoploss, double itsCounter, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
@@ -59,7 +57,6 @@ public class TestSet {
 		this.mas = mas;
 		this.mal = mal;
 		this.mat = mat;
-		this.hld = hld;
 		this.stopLoss = stopLoss;
 		this.tradeStopLoss = tradeStopLoss;
 		this.instantTradeStoploss = instantTradeStoploss;
@@ -114,14 +111,6 @@ public class TestSet {
 
 	public void setMat(double mat) {
 		this.mat = mat;
-	}
-
-	public double getHld() {
-		return hld;
-	}
-
-	public void setHld(double hld) {
-		this.hld = hld;
 	}
 
 	public double getStopLoss() {
@@ -242,7 +231,6 @@ public class TestSet {
 		getMas() + "_" +
 		getMal() + "_" +
 		getMat() + "_" +
-		getHld() + "_" +
 		getStopLoss() + "_" +
 		getTradeStopLoss() + "_" +
 		getInstantTradeStoploss() + "_" +
