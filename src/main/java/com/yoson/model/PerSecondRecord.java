@@ -28,10 +28,6 @@ public class PerSecondRecord {
 	private double tradeCount;
 	private double totalPnl;
 	private double highLowDiffernece;
-	private double gMax;
-	private double gMin;
-	private double gHLD;
-	private double averageHLD;
 	private double pc;
 	private double mtm;
 	private boolean isEnoughCounter;
@@ -67,13 +63,12 @@ public class PerSecondRecord {
 			initLong(dailyScheduleData, lastSecondRecord, testSet);
 			initHighLowDiffernece();
 			initSumHighLowDiffernece(testSet, dailyPerSecondRecordList);
-			initmvs1(dailyPerSecondRecordList, testSet);
-			initmvs2(dailyPerSecondRecordList, testSet);
+			initmvs1(dailyPerSecondRecordList, testSet, lastSecondRecord);
+			initmvs2(dailyPerSecondRecordList, testSet, lastSecondRecord);
 			inittrend2(testSet);
 			initAction(lastSecondRecord, testSet);
 			initSmoothAction(lastSecondRecord, testSet);
 		}
-		initAverageHLD(testSet);
 		initPosition(lastSecondRecord);
 		initPc(lastSecondRecord);
 		initMtm();
@@ -246,43 +241,43 @@ public class PerSecondRecord {
 		}
 	}
 	
-	private void initAverageHLD(TestSet testSet) {
-		if (this.lowLong != 0) {
-			this.averageHLD = sumHighLowDiffernece / (testSet.gettLong() + 1);
-		}
-	}
-	
-	private double lastMvs1Sum = 0;
-	private void initmvs1(List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet) {
-		if (checkMarketTime == 0 || reference < testSet.getMas() + 1) {
-			this.mvs1 = 0;
-		} else {
-			if(reference == testSet.getMas() + 1) {
+	private static double lastMvs1Sum = 0;
+	private void initmvs1(List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet, PerSecondRecord lastSecondRecord) {
+		if(reference >= testSet.getMas() + 1 && checkMarketTime == 1) {
+		 	if(lastSecondRecord.getCheckMarketTime() == 0 || lastMvs1Sum == 0) {
+		 		lastMvs1Sum = 0;
 				for(int i = reference - testSet.getMas(); i < reference -1; i++) {
 					lastMvs1Sum += dailyPerSecondRecordList.get(i).getLastTrade();
 				}
 				lastMvs1Sum += lastTrade;
-			} else if(reference > testSet.getMas() + 1) {
-				lastMvs1Sum =lastMvs1Sum - dailyPerSecondRecordList.get(reference - testSet.getMas() - 1).getLastTrade() + lastTrade; 
-			}
+			} else if(lastSecondRecord.getCheckMarketTime() == 1) {
+				lastMvs1Sum = lastMvs1Sum - dailyPerSecondRecordList.get(reference - testSet.getMas() - 1).getLastTrade() + lastTrade; 
+			}	
+		}
+		if (checkMarketTime == 0 || reference < testSet.getMas() + 1) {
+			this.mvs1 = 0;
+		} else {
 			this.mvs1 = lastMvs1Sum / testSet.getMas();
 		}
 	}
 	
-	private double lastMvs2Sum = 0;
-	private void initmvs2(List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet) {
-		if (checkMarketTime == 0 || reference < testSet.getMal() + 1) {
-			this.mvs1 = 0;
-		} else {
-			if(reference == testSet.getMas() + 1) {
+	private static double lastMvs2Sum = 0;
+	private void initmvs2(List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet, PerSecondRecord lastSecondRecord) {
+		if(reference >= testSet.getMal() + 1 && checkMarketTime == 1) {
+			if(lastSecondRecord.getCheckMarketTime() == 0 || lastMvs2Sum == 0) {
+				lastMvs2Sum = 0;
 				for(int i = reference - testSet.getMal(); i < reference - 1; i++) {
 					lastMvs2Sum += dailyPerSecondRecordList.get(i).getLastTrade();
 				}
 				lastMvs2Sum += lastTrade;
-			} else if(reference > testSet.getMas() + 1) {
-				lastMvs2Sum =lastMvs2Sum - dailyPerSecondRecordList.get(reference - testSet.getMal() - 1).getLastTrade() + lastTrade; 
+			} else if(lastSecondRecord.getCheckMarketTime() == 1) {
+				lastMvs2Sum = lastMvs2Sum - dailyPerSecondRecordList.get(reference - testSet.getMal() - 1).getLastTrade() + lastTrade; 
 			}
-			this.mvs1 = lastMvs2Sum / testSet.getMas();
+		}
+		if (checkMarketTime == 0 || reference < testSet.getMal() + 1) {
+			this.mvs2 = 0;
+		} else {
+			this.mvs2 = lastMvs2Sum / testSet.getMal();
 		}		
 	}
 	
@@ -526,38 +521,6 @@ public class PerSecondRecord {
 
 	public void setTotalPnl(double totalPnl) {
 		this.totalPnl = totalPnl;
-	}
-
-	public double getgMax() {
-		return gMax;
-	}
-
-	public void setgMax(double gMax) {
-		this.gMax = gMax;
-	}
-
-	public double getgMin() {
-		return gMin;
-	}
-
-	public void setgMin(double gMin) {
-		this.gMin = gMin;
-	}
-
-	public double getgHLD() {
-		return gHLD;
-	}
-
-	public void setgHLD(double gHLD) {
-		this.gHLD = gHLD;
-	}
-
-	public double getAverageHLD() {
-		return averageHLD;
-	}
-
-	public void setAverageHLD(double averageHLD) {
-		this.averageHLD = averageHLD;
 	}
 
 	public double getPc() {

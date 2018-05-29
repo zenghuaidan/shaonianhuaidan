@@ -79,7 +79,7 @@ public class BackTestCSVWriter {
 	}
 	
 	public static String getATradingDayHeader() {
-		return "Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,T Counter,HShort,HLong,LShort,LLong,Gmax,Gmin,GHLD,AVGHLD,MVS1,MVS2,trend 2,Action,Smooth Action,Position,PC,MTM,PnL,No_Trade,Total_PnL,HLDiff\n";
+		return "Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,T Counter,HShort,HLong,LShort,LLong,MVS1,MVS2,trend 2,Action,Smooth Action,Position,PC,MTM,PnL,No_Trade,Total_PnL,HLDiff\n";
 	}
 	
 	public static String getBTTradeHeader() {
@@ -422,10 +422,6 @@ public class BackTestCSVWriter {
 		 content.append(perSecondRecord.getHighLong() + ",");
 		 content.append(perSecondRecord.getLowShort() + ",");
 		 content.append(perSecondRecord.getLowLong() + ",");
-		 content.append(perSecondRecord.getgMax() + ",");
-		 content.append(perSecondRecord.getgMin() + ",");
-		 content.append(perSecondRecord.getgHLD() + ",");
-		 content.append(perSecondRecord.getAverageHLD() + ",");
 		 content.append(perSecondRecord.getMvs1() + ",");
 		 content.append(perSecondRecord.getMvs2() + ",");
 		 content.append(perSecondRecord.getTrend2() + ",");
