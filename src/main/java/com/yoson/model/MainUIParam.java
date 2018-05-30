@@ -389,41 +389,41 @@ public class MainUIParam extends TestSet {
 
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
-		mainUIParam.settShort(120);
-		mainUIParam.settShortTo(120);
+		mainUIParam.settShort(60);
+		mainUIParam.settShortTo(60);
 		mainUIParam.settShortLiteral(1);
 		
 		mainUIParam.settLong(600);
 		mainUIParam.settLongTo(600);
-		mainUIParam.settLongLiteral(600);
+		mainUIParam.settLongLiteral(1);
 		
 		
-		mainUIParam.setMas(180);
-		mainUIParam.setMasTo(180);
+		mainUIParam.setMas(60);
+		mainUIParam.setMasTo(60);
 		mainUIParam.setMasLiteral(1);
 		
 		mainUIParam.setMal(180);
 		mainUIParam.setMalTo(180);
 		mainUIParam.setMalLiteral(1);
 		
-		mainUIParam.setMat(180);
-		mainUIParam.setMatTo(180);
+		mainUIParam.setMat(6);
+		mainUIParam.setMatTo(6);
 		mainUIParam.setMatLiteral(1);
 		
 		mainUIParam.setStopLoss(200);
 		mainUIParam.setStopLossTo(200);
 		mainUIParam.setStopLossLiteral(200);
 		
-		mainUIParam.setTradeStopLoss(50);
-		mainUIParam.setTradeStopLossTo(50);
+		mainUIParam.setTradeStopLoss(100);
+		mainUIParam.setTradeStopLossTo(100);
 		mainUIParam.setTradeStopLossLiteral(50);
 
 		mainUIParam.setInstantTradeStoploss(0.6);
 		mainUIParam.setInstantTradeStoplossTo(0.6);
 		mainUIParam.setInstantTradeStoplossLiteral(0.6);
 		
-		mainUIParam.setItsCounter(50);
-		mainUIParam.setItsCounterTo(50);
+		mainUIParam.setItsCounter(1200);
+		mainUIParam.setItsCounterTo(1200);
 		mainUIParam.setItsCounterLiteral(50);
 		
 		mainUIParam.setUnit(1);
@@ -451,7 +451,7 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setBidDataField("bidlast");	
 		
 		List<BrokenDate> brokenDateList = new ArrayList<BrokenDate>();
-		brokenDateList.add(new BrokenDate("2014-01-01", DateUtils.yyyyMMdd().format(new Date())));
+		brokenDateList.add(new BrokenDate("2015-01-19", "2015-01-19"));
 		mainUIParam.setBrokenDateList(brokenDateList);
 		
 		return mainUIParam;

@@ -35,8 +35,8 @@ public class BackTestSet {
 		double totalPnl = 0;
 		double mean = BackTestTask.sumOfLastTrade.get(dailyScheduleData.get(0).getDateStr()) / dailyScheduleData.size();
 		double dailyIndexVolTemp = 0;
-		double numberOfTerms = 0;
-		double sumOfHLDifference = 0;
+//		double numberOfTerms = 0;
+//		double sumOfHLDifference = 0;
 		StringBuilder sb = new StringBuilder();
 		long marketStartTime = DateUtils.HHmmss().parse(mainUIParam.getMarketStartTime()).getTime();
 		long lunchStartTimeFrom = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeFrom()).getTime();
@@ -92,9 +92,9 @@ public class BackTestSet {
 	
 			dailyIndexVolTemp += ((perSecondRecord.getLastTrade() - mean) * (perSecondRecord.getLastTrade() - mean));
 			
-			sumOfHLDifference += perSecondRecord.getHighLowDiffernece();
-			
-			numberOfTerms += perSecondRecord.getHighLowDiffernece() != 0 ? 1 : 0;
+//			sumOfHLDifference += perSecondRecord.getHighLowDiffernece();
+//			
+//			numberOfTerms += perSecondRecord.getHighLowDiffernece() != 0 ? 1 : 0;
 			
 			if (mainUIParam.getPnlThreshold() > 0) {
 				if(perSecondRecord.getPc() == 1) {
@@ -124,7 +124,7 @@ public class BackTestSet {
 		perDayRecord.performanceInVol = totalPnl / perDayRecord.dailyIndexVol;
 		perDayRecord.totalPnL = totalPnl;
 		perDayRecord.dailyPerSecondRecordList = dailyPerSecondRecordList;
-		perDayRecord.averageHLDiff = sumOfHLDifference / numberOfTerms;
+//		perDayRecord.averageHLDiff = sumOfHLDifference / numberOfTerms;
 //		System.out.println("initPerDayRecord:" + (System.currentTimeMillis() - start));
 		return perDayRecord;		
 	}
