@@ -241,18 +241,18 @@ public class PerSecondRecord {
 		if(reference >= testSet.getMas() + 1 && checkMarketTime == 1) {
 		 	if(lastSecondRecord.getCheckMarketTime() == 0 || lastMvs1Sum == 0) {
 		 		lastMvs1Sum = 0;
-				for(int i = reference - testSet.getMas(); i < reference -1; i++) {
+				for(int i = reference - testSet.getMas() - 1; i < reference -1; i++) {
 					lastMvs1Sum += dailyPerSecondRecordList.get(i).getLastTrade();
 				}
 				lastMvs1Sum += lastTrade;
 			} else if(lastSecondRecord.getCheckMarketTime() == 1) {
-				lastMvs1Sum = lastMvs1Sum - dailyPerSecondRecordList.get(reference - testSet.getMas() - 1).getLastTrade() + lastTrade; 
+				lastMvs1Sum = lastMvs1Sum - dailyPerSecondRecordList.get(reference - testSet.getMas() - 2).getLastTrade() + lastTrade; 
 			}	
 		}
 		if (checkMarketTime == 0 || reference < testSet.getMas() + 1) {
 			this.mvs1 = 0;
 		} else {
-			this.mvs1 = lastMvs1Sum / testSet.getMas();
+			this.mvs1 = lastMvs1Sum / (testSet.getMas() + 1);
 		}
 	}
 	
@@ -261,18 +261,18 @@ public class PerSecondRecord {
 		if(reference >= testSet.getMal() + 1 && checkMarketTime == 1) {
 			if(lastSecondRecord.getCheckMarketTime() == 0 || lastMvs2Sum == 0) {
 				lastMvs2Sum = 0;
-				for(int i = reference - testSet.getMal(); i < reference - 1; i++) {
+				for(int i = reference - testSet.getMal() - 1; i < reference - 1; i++) {
 					lastMvs2Sum += dailyPerSecondRecordList.get(i).getLastTrade();
 				}
 				lastMvs2Sum += lastTrade;
 			} else if(lastSecondRecord.getCheckMarketTime() == 1) {
-				lastMvs2Sum = lastMvs2Sum - dailyPerSecondRecordList.get(reference - testSet.getMal() - 1).getLastTrade() + lastTrade; 
+				lastMvs2Sum = lastMvs2Sum - dailyPerSecondRecordList.get(reference - testSet.getMal() - 2).getLastTrade() + lastTrade; 
 			}
 		}
 		if (checkMarketTime == 0 || reference < testSet.getMal() + 1) {
 			this.mvs2 = 0;
 		} else {
-			this.mvs2 = lastMvs2Sum / testSet.getMal();
+			this.mvs2 = lastMvs2Sum / (testSet.getMal() + 1);
 		}		
 	}
 	
