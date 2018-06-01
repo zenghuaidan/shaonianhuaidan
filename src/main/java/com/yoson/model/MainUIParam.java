@@ -19,8 +19,6 @@ public class MainUIParam extends TestSet {
 	private String stepPath;
 	private String logPath;
 	@Expose
-	private boolean includeMorningData;
-	@Expose
 	private boolean ignoreLunchTime;
 	@Expose
 	private String source;
@@ -325,14 +323,6 @@ public class MainUIParam extends TestSet {
 
 	public void setOrderTicker(double orderTicker) {
 		this.orderTicker = orderTicker;
-	}
-	
-	public boolean isIncludeMorningData() {
-		return includeMorningData;
-	}
-
-	public void setIncludeMorningData(boolean includeMorningData) {
-		this.includeMorningData = includeMorningData;
 	}
 
 	public boolean isIgnoreLunchTime() {
