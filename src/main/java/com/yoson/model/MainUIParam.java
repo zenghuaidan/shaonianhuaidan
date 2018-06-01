@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
@@ -17,9 +16,7 @@ public class MainUIParam extends TestSet {
 	private String dataRootPath;
 	private String paramPath;
 	private String stepPath;
-	private String logPath;
-	@Expose
-	private boolean includeMorningData;
+	private String logPath;	
 	@Expose
 	private boolean ignoreLunchTime;
 	@Expose
@@ -362,14 +359,6 @@ public class MainUIParam extends TestSet {
 	public void setOrderTicker(double orderTicker) {
 		this.orderTicker = orderTicker;
 	}
-	
-	public boolean isIncludeMorningData() {
-		return includeMorningData;
-	}
-
-	public void setIncludeMorningData(boolean includeMorningData) {
-		this.includeMorningData = includeMorningData;
-	}
 
 	public boolean isIgnoreLunchTime() {
 		return ignoreLunchTime;
@@ -389,21 +378,21 @@ public class MainUIParam extends TestSet {
 
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
-		mainUIParam.settShort(60);
-		mainUIParam.settShortTo(60);
+		mainUIParam.settShort(2);
+		mainUIParam.settShortTo(2);
 		mainUIParam.settShortLiteral(1);
 		
-		mainUIParam.settLong(600);
-		mainUIParam.settLongTo(600);
+		mainUIParam.settLong(2);
+		mainUIParam.settLongTo(2);
 		mainUIParam.settLongLiteral(1);
 		
 		
-		mainUIParam.setMas(60);
-		mainUIParam.setMasTo(60);
+		mainUIParam.setMas(2);
+		mainUIParam.setMasTo(2);
 		mainUIParam.setMasLiteral(1);
 		
-		mainUIParam.setMal(180);
-		mainUIParam.setMalTo(180);
+		mainUIParam.setMal(2);
+		mainUIParam.setMalTo(2);
 		mainUIParam.setMalLiteral(1);
 		
 		mainUIParam.setMat(6);

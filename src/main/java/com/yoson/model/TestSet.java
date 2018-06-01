@@ -44,6 +44,9 @@ public class TestSet {
 	private int lastNumberOfMinutesClearPosition;
 	@Expose
 	private int lunchLastNumberOfMinutesClearPosition;
+	
+	@Expose
+	private boolean includeMorningData;
 
 	public TestSet() {}
 
@@ -51,7 +54,7 @@ public class TestSet {
 			double instantTradeStoploss, double itsCounter, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
-			int lunchLastNumberOfMinutesClearPosition) {
+			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData) {
 		this.tShort = tShort;
 		this.tLong = tLong;
 		this.mas = mas;
@@ -71,6 +74,7 @@ public class TestSet {
 		this.otherCostPerTrade = otherCostPerTrade;
 		this.lastNumberOfMinutesClearPosition = lastNumberOfMinutesClearPosition;
 		this.lunchLastNumberOfMinutesClearPosition = lunchLastNumberOfMinutesClearPosition;
+		this.includeMorningData = includeMorningData;
 	}
 
 	public int gettShort() {
@@ -224,7 +228,15 @@ public class TestSet {
 	public void setLunchLastNumberOfMinutesClearPosition(int lunchLastNumberOfMinutesClearPosition) {
 		this.lunchLastNumberOfMinutesClearPosition = lunchLastNumberOfMinutesClearPosition;
 	}
+	
+	public boolean isIncludeMorningData() {
+		return includeMorningData;
+	}
 
+	public void setIncludeMorningData(boolean includeMorningData) {
+		this.includeMorningData = includeMorningData;
+	}
+	
 	public String getKey() {
 		return gettShort() + "_" +
 		gettLong() + "_" +

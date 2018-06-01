@@ -50,24 +50,22 @@ public class PerSecondRecord {
 		this.reference = lastSecondRecord.getReference() + 1;
 		
 		this.checkMarketTime = checkMarketTime;
-		this.tCounter = this.checkMarketTime == 1 ? lastSecondRecord.tCounter + 1 : 0;
+		this.tCounter = this.checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
 		this.isEnoughCounter = this.tCounter > Math.max(testSet.gettShort(), testSet.gettLong());
-//		if ("2015-01-19 09:18:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
+//		if ("2015-01-19 13:00:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 //			System.out.println("debug point");
 //		}
 		initLastTradeDataList(lastSecondRecord);
-		if (lastSecondRecord.getTotalPnl() > -testSet.getStopLoss() ) {
-//			initShort(dailyScheduleData, lastSecondRecord, testSet);
-//			initLong(dailyScheduleData, lastSecondRecord, testSet);
-			initShort(dailyPerSecondRecordList, lastSecondRecord, testSet);
-			initLong(dailyPerSecondRecordList, lastSecondRecord, testSet);
+//		initShort(dailyScheduleData, lastSecondRecord, testSet);
+//		initLong(dailyScheduleData, lastSecondRecord, testSet);
+		initShort(dailyPerSecondRecordList, lastSecondRecord, testSet);
+		initLong(dailyPerSecondRecordList, lastSecondRecord, testSet);
 //			initHighLowDiffernece();
-			initmvs1(dailyPerSecondRecordList, testSet, lastSecondRecord);
-			initmvs2(dailyPerSecondRecordList, testSet, lastSecondRecord);
-			inittrend2(testSet);
-			initAction(lastSecondRecord, testSet);
-			initSmoothAction(lastSecondRecord, testSet);
-		}
+		initmvs1(dailyPerSecondRecordList, testSet, lastSecondRecord);
+		initmvs2(dailyPerSecondRecordList, testSet, lastSecondRecord);
+		inittrend2(testSet);
+		initAction(lastSecondRecord, testSet);		
+		initSmoothAction(lastSecondRecord, testSet);
 		initPosition(lastSecondRecord);
 		initPc(lastSecondRecord);
 		initMtm();
@@ -196,7 +194,8 @@ public class PerSecondRecord {
 
 
 	private void initSmoothAction(PerSecondRecord lastSecondRecord, TestSet testSet) throws ParseException {
-		if (this.checkMarketTime == 0
+		if (lastSecondRecord.getTotalPnl() <= testSet.getStopLoss()
+			|| this.checkMarketTime == 0
 			|| !this.isEnoughCounter
 			|| (lastSecondRecord.getPc() <= testSet.getItsCounter() && lastSecondRecord.getMtm() <= -testSet.getTradeStopLoss()*testSet.getInstantTradeStoploss()))
 		{
@@ -234,14 +233,13 @@ public class PerSecondRecord {
 	
 	private double mvs1Sum = 0;
 	private void initmvs1(List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet, PerSecondRecord lastSecondRecord) {
-		if(tCounter > testSet.getMas() && checkMarketTime == 1) {
-		 	if(lastSecondRecord.getCheckMarketTime() == 0 || mvs1Sum == 0) {
-		 		mvs1Sum = 0;
+		if(tCounter > testSet.getMas()) {
+		 	if(lastSecondRecord.mvs1Sum == 0) {
 				for(int i = reference - testSet.getMas() - 1; i < reference -1; i++) {
 					mvs1Sum += dailyPerSecondRecordList.get(i).getLastTrade();
 				}
 				mvs1Sum += lastTrade;
-			} else if(lastSecondRecord.getCheckMarketTime() == 1) {
+			} else {
 				mvs1Sum = lastSecondRecord.mvs1Sum - dailyPerSecondRecordList.get(reference - testSet.getMas() - 2).getLastTrade() + lastTrade; 
 			}	
 		}
@@ -254,14 +252,13 @@ public class PerSecondRecord {
 	
 	private double mvs2Sum = 0;
 	private void initmvs2(List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet, PerSecondRecord lastSecondRecord) {
-		if(tCounter > testSet.getMal() && checkMarketTime == 1) {
-			if(lastSecondRecord.getCheckMarketTime() == 0 || mvs2Sum == 0) {
-				mvs2Sum = 0;
+		if(tCounter > testSet.getMal()) {
+			if(lastSecondRecord.mvs2Sum == 0) {
 				for(int i = reference - testSet.getMal() - 1; i < reference - 1; i++) {
 					mvs2Sum += dailyPerSecondRecordList.get(i).getLastTrade();
 				}
 				mvs2Sum += lastTrade;
-			} else if(lastSecondRecord.getCheckMarketTime() == 1) {
+			} else {
 				mvs2Sum = lastSecondRecord.mvs2Sum - dailyPerSecondRecordList.get(reference - testSet.getMal() - 2).getLastTrade() + lastTrade; 
 			}
 		}
