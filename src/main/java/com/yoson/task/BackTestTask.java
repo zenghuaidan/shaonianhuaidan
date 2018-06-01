@@ -107,12 +107,10 @@ public class BackTestTask implements Runnable {
 	
 	public static void initRawData(MainUIParam mainUIParam) throws ParseException {
 		List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(mainUIParam.getDataRootPath());
-		List<List<ScheduleData>> resultDatas = YosonEWrapper.toScheduleDataList(scheduledDataRecords, mainUIParam, Long.parseLong(scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime()));
-		for (List<ScheduleData> resultData : resultDatas) {
-			for (ScheduleData sData : resultData) {
-				initRawData(mainUIParam, sData);
-			}
-		}
+		List<ScheduleData> resultDatas = YosonEWrapper.toScheduleDataList(scheduledDataRecords, mainUIParam, Long.parseLong(scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime()));
+		for (ScheduleData sData : resultDatas) {
+			initRawData(mainUIParam, sData);
+		}		
 	}
 
 	public void runTestSet() throws IOException, ParseException {	

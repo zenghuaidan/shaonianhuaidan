@@ -113,13 +113,13 @@ public class YosonEWrapper extends BasicEWrapper {
 		return currentOrderId;			
 	}
 	
-	public static List<List<ScheduleData>> toScheduleDataList(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam, long lastSecond) throws ParseException {
-		List<List<ScheduleData>> resultDatas = new ArrayList<List<ScheduleData>>();
+	public static List<ScheduleData> toScheduleDataList(List<ScheduledDataRecord> scheduledDataRecords, MainUIParam mainUIParam, long lastSecond) throws ParseException {
+//		List<List<ScheduleData>> resultDatas = new ArrayList<List<ScheduleData>>();
 		List<ScheduleData> allDatas = new ArrayList<ScheduleData>();
-		List<ScheduleData> morningDatas = new ArrayList<ScheduleData>();
-		List<ScheduleData> afternoonDatas = new ArrayList<ScheduleData>();
+//		List<ScheduleData> morningDatas = new ArrayList<ScheduleData>();
+//		List<ScheduleData> afternoonDatas = new ArrayList<ScheduleData>();
 		List<ScheduleData> scheduleDatas = new ArrayList<ScheduleData>();
-		if(scheduledDataRecords == null || scheduledDataRecords.size() == 0) return resultDatas;
+		if(scheduledDataRecords == null || scheduledDataRecords.size() == 0) return allDatas;
 		long start = Long.parseLong(scheduledDataRecords.get(0).getTime());
 		int i = 0;		
 		for(; i < scheduledDataRecords.size(); i++) {
@@ -149,19 +149,21 @@ public class YosonEWrapper extends BasicEWrapper {
 				long time = DateUtils.HHmmss().parse(scheduleData.getTimeStr()).getTime();		
 				boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
 				boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
-				if(isMorning)
-					morningDatas.add(scheduleData);
-				if (isAfternoon)
-					afternoonDatas.add(scheduleData);				
+//				if(isMorning)
+//					morningDatas.add(scheduleData);
+//				if (isAfternoon)
+//					afternoonDatas.add(scheduleData);
+				if(isMorning || isAfternoon)
+					allDatas.add(scheduleData);
 			}
 		}
-		if (mainUIParam.isIgnoreLunchTime()) {
-			resultDatas.add(allDatas);
-		} else {
-			resultDatas.add(morningDatas);
-			resultDatas.add(afternoonDatas);
-		}
-		return resultDatas;
+//		if (mainUIParam.isIgnoreLunchTime()) {
+//			resultDatas.add(allDatas);
+//		} else {
+//			resultDatas.add(morningDatas);
+//			resultDatas.add(afternoonDatas);
+//		}
+		return allDatas;
 	}
 	
 	public static ScheduleData toScheduleData(ScheduledDataRecord scheduledDataRecord, ScheduleData lastSecondScheduleData, MainUIParam mainUIParam, String dateTimeStr) throws ParseException {
@@ -235,40 +237,40 @@ public class YosonEWrapper extends BasicEWrapper {
 	private static void genTradingDayPerSecondDetails(String folderPath, List<ScheduledDataRecord> scheduledDataRecords, String symbol,
 			Strategy strategy) throws ParseException {
 		if(scheduledDataRecords.size() == 0) return;
-		List<List<ScheduleData>> resultDatas = toScheduleDataList(scheduledDataRecords, strategy.getMainUIParam(), Long.parseLong(scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime()));		
+		List<ScheduleData> dailyScheduleData = toScheduleDataList(scheduledDataRecords, strategy.getMainUIParam(), Long.parseLong(scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime()));		
 		
-		List<PerSecondRecord> allDailyPerSecondRecord = new ArrayList<PerSecondRecord>();
-		if(!strategy.getMainUIParam().isIgnoreLunchTime() && strategy.getMainUIParam().isIncludeMorningData()) {
-			List<ScheduleData> dailyScheduleData = new ArrayList<ScheduleData>();
-			dailyScheduleData.addAll(resultDatas.get(0));
-			dailyScheduleData.addAll(resultDatas.get(1));
+//		List<PerSecondRecord> allDailyPerSecondRecord = new ArrayList<PerSecondRecord>();
+//		if(!strategy.getMainUIParam().isIgnoreLunchTime() && strategy.getMainUIParam().isIncludeMorningData()) {
+//			List<ScheduleData> dailyScheduleData = new ArrayList<ScheduleData>();
+//			dailyScheduleData.addAll(resultDatas.get(0));
+//			dailyScheduleData.addAll(resultDatas.get(1));
 			List<PerSecondRecord> dailyPerSecondRecord = new ArrayList<PerSecondRecord>();
 			for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {				
 				int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
 				dailyPerSecondRecord.add(new PerSecondRecord(dailyScheduleData, strategy.getMainUIParam(), 
 						dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime));
 			}
-			allDailyPerSecondRecord.addAll(dailyPerSecondRecord);
-		} else {
-			double morningPnl = 0;
-			for (int index = 0; index < resultDatas.size(); index++) {
-				List<ScheduleData> dailyScheduleData = resultDatas.get(index);
-				List<PerSecondRecord> dailyPerSecondRecord = new ArrayList<PerSecondRecord>();
-				for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {				
-					int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
-					PerSecondRecord perSecondRecord = new PerSecondRecord(dailyScheduleData, strategy.getMainUIParam(), 
-							dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime);
-					if(index == 0) {
-						morningPnl = perSecondRecord.getTotalPnl();
-					} else {
-						perSecondRecord.setTotalPnl(morningPnl + perSecondRecord.getTotalPnl());
-					}
-					dailyPerSecondRecord.add(perSecondRecord);
-				}
-				allDailyPerSecondRecord.addAll(dailyPerSecondRecord);
-			}
-		}		
-		TradePerSecondDetailsCSVWriter.WriteCSV(folderPath, strategy, symbol, allDailyPerSecondRecord);	
+//			allDailyPerSecondRecord.addAll(dailyPerSecondRecord);
+//		} else {
+//			double morningPnl = 0;
+//			for (int index = 0; index < resultDatas.size(); index++) {
+//				List<ScheduleData> dailyScheduleData = resultDatas.get(index);
+//				List<PerSecondRecord> dailyPerSecondRecord = new ArrayList<PerSecondRecord>();
+//				for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {				
+//					int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
+//					PerSecondRecord perSecondRecord = new PerSecondRecord(dailyScheduleData, strategy.getMainUIParam(), 
+//							dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime);
+//					if(index == 0) {
+//						morningPnl = perSecondRecord.getTotalPnl();
+//					} else {
+//						perSecondRecord.setTotalPnl(morningPnl + perSecondRecord.getTotalPnl());
+//					}
+//					dailyPerSecondRecord.add(perSecondRecord);
+//				}
+//				allDailyPerSecondRecord.addAll(dailyPerSecondRecord);
+//			}
+//		}		
+		TradePerSecondDetailsCSVWriter.WriteCSV(folderPath, strategy, symbol, dailyPerSecondRecord);	
 	}
 	
 	public static List<ScheduledDataRecord> extractScheduledDataRecord(String folderPath) throws ParseException {

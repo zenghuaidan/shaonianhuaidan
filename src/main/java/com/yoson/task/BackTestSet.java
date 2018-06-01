@@ -42,31 +42,33 @@ public class BackTestSet {
 		long lunchStartTimeFrom = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeFrom()).getTime();
 		long lunchStartTimeTo = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
 		long marketCloseTime = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
-		double morningPnl = 0;
-		boolean morningPnlAdded = false;
+//		double morningPnl = 0;
+//		boolean morningPnlAdded = false;
 		for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {
 			long time = DateUtils.HHmmss().parse(scheduleDataPerSecond.getTimeStr()).getTime();
 			boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
 			boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
+			boolean isValidateTime = time >= marketStartTime && time <= marketCloseTime;
 			PerSecondRecord perSecondRecord = null;
-			if (mainUIParam.isIgnoreLunchTime()) {
-				boolean isValidateTime = time >= marketStartTime && time <= marketCloseTime;
-				if(!isValidateTime) continue;
+			if (isMorning || isAfternoon || mainUIParam.isIgnoreLunchTime() && isValidateTime) {
 				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()));
 			} else {
-				if(!isMorning && !isAfternoon) continue;
-				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, isMorning || mainUIParam.isIncludeMorningData() ? dailyPerSecondRecordList : afternoonPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()));
-				if(isMorning) {
-					morningPnl = perSecondRecord.getTotalPnl();
-				}
-				if (isAfternoon && !mainUIParam.isIncludeMorningData()) {
-					if (!morningPnlAdded) {
-						perSecondRecord.setTotalPnl(perSecondRecord.getTotalPnl() + morningPnl);
-						morningPnlAdded = true;
-					}
-					afternoonPerSecondRecordList.add(perSecondRecord);				
-				}
-			}
+				continue;
+			} 
+//			else {
+//				if(!isMorning && !isAfternoon) continue;
+//				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()));
+//				if(isMorning) {
+//					morningPnl = perSecondRecord.getTotalPnl();
+//				}
+//				if (isAfternoon && !mainUIParam.isIncludeMorningData()) {
+//					if (!morningPnlAdded) {
+//						perSecondRecord.setTotalPnl(perSecondRecord.getTotalPnl() + morningPnl);
+//						morningPnlAdded = true;
+//					}
+//					afternoonPerSecondRecordList.add(perSecondRecord);				
+//				}
+//			}
 			dailyPerSecondRecordList.add(perSecondRecord);
 			
 			perDayRecord.positiveTrades += perSecondRecord.getPnl() > 0 ? 1 : 0;
