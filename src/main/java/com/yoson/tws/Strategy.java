@@ -20,7 +20,7 @@ public class Strategy implements Serializable {
 	private long activeTime;
 	private int tradeCount;
 	private double pnl;
-	private double morningPnl;
+//	private double morningPnl;
 	@Expose
 	private MainUIParam mainUIParam;
 	// all the orders for this strategy
@@ -87,7 +87,7 @@ public class Strategy implements Serializable {
 			this.orderStatusTimeMap = new ConcurrentHashMap<Integer, Long>();
 			this.openOrders = new CopyOnWriteArraySet<Integer>();
 			this.pnl = 0;
-			this.morningPnl = 0;
+//			this.morningPnl = 0;
 			this.tradeCount = 0;
 		}
 	}
@@ -103,7 +103,7 @@ public class Strategy implements Serializable {
 		this.orderStatusTimeMap = null;
 		this.openOrders = null;
 		this.pnl = 0;
-		this.morningPnl = 0;
+//		this.morningPnl = 0;
 		this.tradeCount = 0;
 	}
 
@@ -187,13 +187,13 @@ public class Strategy implements Serializable {
 		this.actoinMap = actoinMap;
 	}
 
-	public double getMorningPnl() {
-		return morningPnl;
-	}
-
-	public void setMorningPnl(double morningPnl) {
-		this.morningPnl = morningPnl;
-	}
+//	public double getMorningPnl() {
+//		return morningPnl;
+//	}
+//
+//	public void setMorningPnl(double morningPnl) {
+//		this.morningPnl = morningPnl;
+//	}
 
 	public Map<Integer, Long> getOrderTimeMap() {
 		return orderTimeMap;
