@@ -42,7 +42,9 @@ public class TestSet {
 	@Expose
 	private int lastNumberOfMinutesClearPosition;
 	@Expose
-	private int lunchLastNumberOfMinutesClearPosition;
+	private int lunchLastNumberOfMinutesClearPosition;	
+	@Expose
+	private boolean includeMorningData;
 
 	public TestSet() {}
 
@@ -50,7 +52,7 @@ public class TestSet {
 			int actionCounting, double tradeStopLossTrigger, double tradeStopLossTriggerPercent, double absoluteTradeStopLoss, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
-			int lunchLastNumberOfMinutesClearPosition) {
+			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData) {
 		this.cpTimer = cpTimer;
 		this.cpBuffer = cpBuffer;
 		this.cpHitRate = cpHitRate;
@@ -72,6 +74,7 @@ public class TestSet {
 		this.otherCostPerTrade = otherCostPerTrade;
 		this.lastNumberOfMinutesClearPosition = lastNumberOfMinutesClearPosition;
 		this.lunchLastNumberOfMinutesClearPosition = lunchLastNumberOfMinutesClearPosition;
+		this.includeMorningData = includeMorningData;
 	}
 
 	public int getCpTimer() {
@@ -234,6 +237,14 @@ public class TestSet {
 		this.unit = unit;
 	}
 
+	public boolean isIncludeMorningData() {
+		return includeMorningData;
+	}
+
+	public void setIncludeMorningData(boolean includeMorningData) {
+		this.includeMorningData = includeMorningData;
+	}
+	
 	public String getKey() {
 		return getCpTimer()  +  "_" +
 		getCpBuffer() + "_" +

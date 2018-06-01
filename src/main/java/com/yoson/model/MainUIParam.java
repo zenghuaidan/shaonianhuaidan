@@ -17,9 +17,7 @@ public class MainUIParam extends TestSet {
 	private String dataRootPath;
 	private String paramPath;
 	private String stepPath;
-	private String logPath;
-	@Expose
-	private boolean includeMorningData;
+	private String logPath;	
 	@Expose
 	private boolean ignoreLunchTime;
 	@Expose
@@ -379,14 +377,6 @@ public class MainUIParam extends TestSet {
 	public void setOrderTicker(double orderTicker) {
 		this.orderTicker = orderTicker;
 	}
-	
-	public boolean isIncludeMorningData() {
-		return includeMorningData;
-	}
-
-	public void setIncludeMorningData(boolean includeMorningData) {
-		this.includeMorningData = includeMorningData;
-	}
 
 	public boolean isIgnoreLunchTime() {
 		return ignoreLunchTime;
@@ -406,8 +396,8 @@ public class MainUIParam extends TestSet {
 
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
-		mainUIParam.setCpTimer(300);
-		mainUIParam.setCpTimerTo(300);
+		mainUIParam.setCpTimer(3);
+		mainUIParam.setCpTimerTo(3);
 		mainUIParam.setCpTimerLiteral(1);
 		
 		mainUIParam.setCpBuffer(1);
@@ -461,7 +451,7 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setLastNumberOfMinutesClearPosition(2);
 		mainUIParam.setLunchLastNumberOfMinutesClearPosition(2);
 														
-		mainUIParam.setSource("BBG_KM1L");
+		mainUIParam.setSource("BBG_HSI");
 		mainUIParam.setVersion("6");
 		
 		mainUIParam.setOutputChart(false);
@@ -471,7 +461,7 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setBidDataField("bidlast");	
 		
 		List<BrokenDate> brokenDateList = new ArrayList<BrokenDate>();
-		brokenDateList.add(new BrokenDate("2017-01-01", DateUtils.yyyyMMdd().format(new Date())));
+		brokenDateList.add(new BrokenDate("2015-01-19", "2015-01-19"));
 		mainUIParam.setBrokenDateList(brokenDateList);
 		
 		return mainUIParam;

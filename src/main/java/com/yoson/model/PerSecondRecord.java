@@ -36,6 +36,7 @@ public class PerSecondRecord {
 	private double mtm;
 	private double maxMtm;
 	private int pc;
+	private int tCounter;
 	
 	public PerSecondRecord() {
 	}
@@ -57,6 +58,7 @@ public class PerSecondRecord {
 //			System.out.println("debug point");
 //		}
 		this.checkMarketTime = checkMarketTime;
+		this.tCounter = this.checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
 		initCPCounting(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap);
 		initCP(testSet);
 		initCPS(lastSecondRecord, testSet);
@@ -90,9 +92,12 @@ public class PerSecondRecord {
 //				}
 		
 		if(lastTradeCountMap != null) {// this lastTradeCountMap just keep the trade count in cptimer range 
+			if(this.tCounter == 1) { 
+				lastTradeCountMap.clear();
+			}
 			if(lastTradeCountMap.containsKey(this.lastTrade)) lastTradeCountMap.replace(this.lastTrade, lastTradeCountMap.get(this.lastTrade) + 1);
 			else lastTradeCountMap.put(this.lastTrade, 1);			
-			if (this.reference > testSet.getCpTimer()) {
+			if (this.tCounter > testSet.getCpTimer()) {
 				double obsoluteLastTrade = dailyScheduleData.get(this.reference - testSet.getCpTimer() - 1).getLastTrade();
 				if(lastTradeCountMap.containsKey(obsoluteLastTrade)) {//the obsolute trade(previous first one in the list) is not in range again, should do a count down
 					if(lastTradeCountMap.get(obsoluteLastTrade) == 1) lastTradeCountMap.remove(obsoluteLastTrade);
@@ -105,7 +110,7 @@ public class PerSecondRecord {
 				}
 			}
 		} else {			
-			if (this.reference > testSet.getCpTimer()) {
+			if (this.tCounter > testSet.getCpTimer()) {
 				if(this.lastTrade == lastSecondRecord.lastTrade) {
 					this.cpCounting = lastSecondRecord.cpCounting;
 					int index = this.reference - testSet.getCpTimer() - 1;
