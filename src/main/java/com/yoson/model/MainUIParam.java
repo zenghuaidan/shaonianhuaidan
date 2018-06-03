@@ -521,12 +521,15 @@ public class MainUIParam extends TestSet {
 		long lunch_end_time = DateUtils.HHmmss().parse(this.getLunchStartTimeTo()).getTime();
 		long market_close_time = DateUtils.HHmmss().parse(this.getMarketCloseTime()).getTime();
 		
+		if(this.isIgnoreLunchTime())
+			lunch_start_time = lunch_end_time;
+		
 		if (current < (morningStartTime) || current >= market_close_time - lastMinutes)
 		{
 			return 0;
 		} else // Within the trading hours
 		{
-			if (this.isIgnoreLunchTime() || (current < (lunch_start_time - lunchLastMinutes)) || (current >= lunch_end_time)) {
+			if ((current < (lunch_start_time - lunchLastMinutes)) || (current >= lunch_end_time)) {
 				return 1;
 			} else // In exactly lunch time (not in the trading hour)
 			{
