@@ -404,10 +404,10 @@ public class MainUIParam extends TestSet {
 	}
 	
 	public static MainUIParam loadMainUIParamFromCSV(File strategyFile) {
+		MainUIParam mainUIParam = new MainUIParam();
 		try {
 			CSVReader csvReader = new CSVReader(new FileReader(strategyFile), ',', '\n', 0);
 			String [] lines;
-			MainUIParam mainUIParam = new MainUIParam();
 			List<String []> params = new ArrayList<String []>();
 			int index = 0;
 			while ((lines = csvReader.readNext()) != null && index <= 200 )  {
@@ -439,10 +439,9 @@ public class MainUIParam extends TestSet {
 			mainUIParam.setIncludeMorningData(Boolean.parseBoolean(params.get(index++)[1]));
 			mainUIParam.setIgnoreLunchTime(Boolean.parseBoolean(params.get(index++)[1]));
 			csvReader.close();
-			return mainUIParam;
 		} catch (Exception e) {
-			return null;
 		}
+		return mainUIParam;
 	}
 	
 	public int isCheckMarketTime(String timeStr) throws ParseException {
