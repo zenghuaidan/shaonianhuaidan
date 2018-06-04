@@ -127,6 +127,10 @@ public class TradePerSecondDetailsCSVWriter {
 			writer.append(",");
 			writer.append(mainUIParam.isIncludeMorningData() + "");
 			writer.append("\n");
+			writer.append("Ignore Lunch Time");
+			writer.append(",");
+			writer.append(mainUIParam.isIgnoreLunchTime() + "");
+			writer.append("\n");
 			
 	    	writer.append(BackTestCSVWriter.getATradingDayHeader());
 	    }
