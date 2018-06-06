@@ -54,7 +54,7 @@ public class PerSecondRecord {
 		this.lastTrade = scheduleDataPerSecond.getLastTrade();
 		this.reference = lastSecondRecord.getReference() + 1;
 		//2015-01-19  9:41:16
-//		if ("2017-01-02 09:05:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
+//		if ("2015-01-19 11:58:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 //			System.out.println("debug point");
 //		}
 		this.checkMarketTime = checkMarketTime;
@@ -62,9 +62,9 @@ public class PerSecondRecord {
 		initCPCounting(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap);
 		initCP(testSet);
 		initCPS(lastSecondRecord, testSet);
-		initCPAccount(lastSecondRecord);
-		initCPSAverageAndPreviousMaxCPAC(dailyScheduleData, dailyPerSecondRecordList, lastSecondRecord);
-		initCountingAfterCP(lastSecondRecord);
+		initCPAccount(lastSecondRecord, testSet);
+		initCPSAverageAndPreviousMaxCPAC(dailyScheduleData, dailyPerSecondRecordList, lastSecondRecord, testSet);
+		initCountingAfterCP(lastSecondRecord, testSet);
 		initEst(lastSecondRecord, testSet);
 		initOffOn(lastSecondRecord);
 		initAction(lastSecondRecord, testSet);
@@ -139,12 +139,14 @@ public class PerSecondRecord {
 	}
 	
 	public void initCP(TestSet testSet) {
+		if(this.tCounter <= testSet.getCpTimer()) return;
 		if (this.cpCounting != 0 && this.cpCounting >= testSet.getCpHitRate()) {
 			this.cp = this.lastTrade;
 		}
 	}
 	
 	public void initCPS(PerSecondRecord lastSecondRecord, TestSet testSet) {
+		if(this.tCounter <= testSet.getCpTimer()) return;
 		if(this.cp != 0) {
 			this.cps = cp;
 		} else if (lastSecondRecord.getCps() != 0 && Math.abs(this.lastTrade - lastSecondRecord.getCps()) > testSet.getCpSmooth() * testSet.getUnit()) {
@@ -154,7 +156,8 @@ public class PerSecondRecord {
 		}
 	}
 	
-	public void initCPAccount(PerSecondRecord lastSecondRecord) {
+	public void initCPAccount(PerSecondRecord lastSecondRecord, TestSet testSet) {
+		if(this.tCounter <= testSet.getCpTimer()) return;
 		if (lastSecondRecord.getCps() == 0 && this.cps != 0) {
 			this.cpAccount = 1;
 		} else if (lastSecondRecord.getCps() != 0 && this.cps != 0) {
@@ -162,7 +165,8 @@ public class PerSecondRecord {
 		}
 	}
 	
-	public void initCPSAverageAndPreviousMaxCPAC(List<ScheduleData> dailyScheduleData, List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord) {
+	public void initCPSAverageAndPreviousMaxCPAC(List<ScheduleData> dailyScheduleData, List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord, TestSet testSet) {
+		if(this.tCounter <= testSet.getCpTimer()) return;
 		if (this.cpAccount == 0) {
 			this.cpsAverage = lastSecondRecord.getCpsAverage();
 			this.previousMaxCPAC = lastSecondRecord.getPreviousMaxCPAC();
@@ -192,7 +196,8 @@ public class PerSecondRecord {
 		}
 	}
 
-	public void initCountingAfterCP(PerSecondRecord lastSecondRecord) {
+	public void initCountingAfterCP(PerSecondRecord lastSecondRecord, TestSet testSet) {
+		if(this.tCounter <= testSet.getCpTimer()) return;
 		if (this.cps != 0) {
 			this.countingAfterCP = 0;
 		} else if(lastSecondRecord.getCountingAfterCP() != 0) {
@@ -203,8 +208,9 @@ public class PerSecondRecord {
 	}
 	
 	public void initEst(PerSecondRecord lastSecondRecord, TestSet testSet) {
-//		if (this.cpsAverage !=0) {//HSI
-		if (!(this.cpsAverage ==0 || (lastSecondRecord.getCountingAfterCP() == 0 && lastSecondRecord.getEst() == 0))) {//KM1_v3	
+		if(this.tCounter <= testSet.getCpTimer()) return;
+		if (this.cpsAverage !=0) {//HSI
+//		if (!(this.cpsAverage ==0 || (lastSecondRecord.getCountingAfterCP() == 0 && lastSecondRecord.getEst() == 0))) {//KM1_v3	
 			if(this.cpsAverage != lastSecondRecord.getCpsAverage() 
 					&& lastSecondRecord.getCpsAverage() != 0
 					&& this.cpsAverage != 0 && Math.abs(this.cpsAverage - lastSecondRecord.getCpsAverage()) >= testSet.getEstimationBuffer() * testSet.getUnit()) {

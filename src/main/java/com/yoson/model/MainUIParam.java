@@ -395,45 +395,45 @@ public class MainUIParam extends TestSet {
 
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
-		mainUIParam.setCpTimer(3);
-		mainUIParam.setCpTimerTo(3);
+		mainUIParam.setCpTimer(1500);
+		mainUIParam.setCpTimerTo(1500);
 		mainUIParam.setCpTimerLiteral(1);
 		
-		mainUIParam.setCpBuffer(1);
-		mainUIParam.setCpBufferTo(1);
+		mainUIParam.setCpBuffer(6);
+		mainUIParam.setCpBufferTo(6);
 		mainUIParam.setCpBufferLiteral(1);
 		
-		mainUIParam.setCpHitRate(250);
-		mainUIParam.setCpHitRateTo(250);
+		mainUIParam.setCpHitRate(50);
+		mainUIParam.setCpHitRateTo(50);
 		mainUIParam.setCpHitRateLiteral(1);
 		
-		mainUIParam.setCpSmooth(1);
-		mainUIParam.setCpSmoothTo(1);
+		mainUIParam.setCpSmooth(10);
+		mainUIParam.setCpSmoothTo(10);
 		mainUIParam.setCpSmoothLiteral(6);
 		
 		
-		mainUIParam.setEstimationBuffer(2);
-		mainUIParam.setEstimationBufferTo(2);
+		mainUIParam.setEstimationBuffer(20);
+		mainUIParam.setEstimationBufferTo(20);
 		mainUIParam.setEstimationBufferLiteral(1);
 		
-		mainUIParam.setActionTrigger(2);
-		mainUIParam.setActionTriggerTo(2);
+		mainUIParam.setActionTrigger(10);
+		mainUIParam.setActionTriggerTo(10);
 		mainUIParam.setActionTriggerLiteral(1);
 
-		mainUIParam.setActionCounting(10);
-		mainUIParam.setActionCountingTo(10);
+		mainUIParam.setActionCounting(30);
+		mainUIParam.setActionCountingTo(30);
 		mainUIParam.setActionCountingLiteral(1);
 		
-		mainUIParam.setTradeStopLossTrigger(20);
-		mainUIParam.setTradeStopLossTriggerTo(20);
+		mainUIParam.setTradeStopLossTrigger(100);
+		mainUIParam.setTradeStopLossTriggerTo(100);
 		mainUIParam.setTradeStopLossTriggerLiteral(1);
 		
 		mainUIParam.setTradeStopLossTriggerPercent(0.8);
 		mainUIParam.setTradeStopLossTriggerPercentTo(0.8);
 		mainUIParam.setTradeStopLossTriggerPercentLiteral(0.1);
 		
-		mainUIParam.setAbsoluteTradeStopLoss(20);
-		mainUIParam.setAbsoluteTradeStopLossTo(20);
+		mainUIParam.setAbsoluteTradeStopLoss(100);
+		mainUIParam.setAbsoluteTradeStopLossTo(100);
 		mainUIParam.setAbsoluteTradeStopLossLiteral(1);
 		
 		mainUIParam.setOrderTicker(10);
@@ -450,7 +450,7 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setLastNumberOfMinutesClearPosition(2);
 		mainUIParam.setLunchLastNumberOfMinutesClearPosition(2);
 														
-		mainUIParam.setSource("BBG_HSI");
+		mainUIParam.setSource("HSI");
 		mainUIParam.setVersion("6");
 		
 		mainUIParam.setOutputChart(false);
