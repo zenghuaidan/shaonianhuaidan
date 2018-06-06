@@ -120,6 +120,10 @@ public class TestSet {
 	public double getStopLoss() {
 		return stopLoss * unit;
 	}
+	
+	public double getNegativeStopLoss() {
+		return getStopLoss() * -1;
+	}
 
 	public void setStopLoss(double stopLoss) {
 		this.stopLoss = stopLoss;

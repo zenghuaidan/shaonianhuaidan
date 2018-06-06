@@ -194,7 +194,7 @@ public class PerSecondRecord {
 
 
 	private void initSmoothAction(PerSecondRecord lastSecondRecord, TestSet testSet) throws ParseException {
-		if (lastSecondRecord.getTotalPnl() <= testSet.getStopLoss()
+		if (lastSecondRecord.getTotalPnl() <= testSet.getNegativeStopLoss()
 			|| this.checkMarketTime == 0
 			|| !this.isEnoughCounter
 			|| (lastSecondRecord.getPc() <= testSet.getItsCounter() && lastSecondRecord.getMtm() <= -testSet.getTradeStopLoss()*testSet.getInstantTradeStoploss()))
