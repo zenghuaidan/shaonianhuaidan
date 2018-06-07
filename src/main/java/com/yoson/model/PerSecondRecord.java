@@ -309,10 +309,42 @@ public class PerSecondRecord {
 		if (this.tCounter> testSet.gettShort() && checkMarketTime == 1)
 		{
 			this.highShort = lastTrade;
-			this.lowShort = lastTrade;
-			for(int i = reference - testSet.gettShort() - 1; i < reference - 1; i++) {
-				this.highShort = Math.max(this.highShort, dailyPerSecondRecordList.get(i).getLastTrade());
-				this.lowShort = Math.min(this.lowShort, dailyPerSecondRecordList.get(i).getLastTrade());
+			this.lowShort = lastTrade;			
+			int i = reference - testSet.gettShort() - 1;
+			if (i > 0
+				&& lastSecondRecord.highShort != 0
+				&& lastSecondRecord.lowShort != 0
+				&& lastSecondRecord.highShort != dailyPerSecondRecordList.get(i - 1).getLastTrade()
+				&& lastSecondRecord.lowShort != dailyPerSecondRecordList.get(i - 1).getLastTrade()) {
+				this.highShort = Math.max(lastSecondRecord.highShort, this.highShort);
+				this.lowShort = Math.min(lastSecondRecord.lowShort, this.lowShort);
+			} else {
+				for(; i < reference - 1; i++) {
+					this.highShort = Math.max(this.highShort, dailyPerSecondRecordList.get(i).getLastTrade());
+					this.lowShort = Math.min(this.lowShort, dailyPerSecondRecordList.get(i).getLastTrade());
+				}				
+			}
+		}
+	}
+	
+	private void initLong(List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord, TestSet testSet) {
+		if (this.tCounter> testSet.gettLong() && checkMarketTime == 1)
+		{
+			this.highLong = lastTrade;
+			this.lowLong = lastTrade;
+			int i = reference - testSet.gettLong() - 1;
+			if (i > 0
+				&& lastSecondRecord.highLong != 0
+				&& lastSecondRecord.lowLong != 0 
+				&& lastSecondRecord.highLong != dailyPerSecondRecordList.get(i - 1).getLastTrade()
+				&& lastSecondRecord.lowLong != dailyPerSecondRecordList.get(i - 1).getLastTrade()) {
+				this.highLong = Math.max(lastSecondRecord.highLong, this.highLong);
+				this.lowLong = Math.min(lastSecondRecord.lowLong, this.lowLong);
+			} else {
+				for(; i < reference - 1; i++) {
+					this.highLong = Math.max(this.highLong, dailyPerSecondRecordList.get(i).getLastTrade());
+					this.lowLong = Math.min(this.lowLong, dailyPerSecondRecordList.get(i).getLastTrade());
+				}				
 			}
 		}
 	}
@@ -341,18 +373,6 @@ public class PerSecondRecord {
 //			}
 //		}
 //	}
-	
-	private void initLong(List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if (this.tCounter> testSet.gettLong() && checkMarketTime == 1)
-		{
-			this.highLong = lastTrade;
-			this.lowLong = lastTrade;
-			for(int i = reference - testSet.gettLong() - 1; i < reference - 1; i++) {
-				this.highLong = Math.max(this.highLong, dailyPerSecondRecordList.get(i).getLastTrade());
-				this.lowLong = Math.min(this.lowLong, dailyPerSecondRecordList.get(i).getLastTrade());
-			}
-		}
-	}
 	
 //	private void initLong(List<ScheduleData> dailyScheduleData, PerSecondRecord lastSecondRecord, TestSet testSet) {
 //		if (this.tCounter> testSet.gettLong())

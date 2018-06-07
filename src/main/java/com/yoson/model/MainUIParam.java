@@ -378,37 +378,37 @@ public class MainUIParam extends TestSet {
 
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
-		mainUIParam.settShort(2);
-		mainUIParam.settShortTo(2);
+		mainUIParam.settShort(60);
+		mainUIParam.settShortTo(60);
 		mainUIParam.settShortLiteral(1);
 		
-		mainUIParam.settLong(2);
-		mainUIParam.settLongTo(2);
+		mainUIParam.settLong(600);
+		mainUIParam.settLongTo(600);
 		mainUIParam.settLongLiteral(1);
 		
 		
-		mainUIParam.setMas(2);
-		mainUIParam.setMasTo(2);
+		mainUIParam.setMas(60);
+		mainUIParam.setMasTo(60);
 		mainUIParam.setMasLiteral(1);
 		
-		mainUIParam.setMal(2);
-		mainUIParam.setMalTo(2);
+		mainUIParam.setMal(600);
+		mainUIParam.setMalTo(600);
 		mainUIParam.setMalLiteral(1);
 		
-		mainUIParam.setMat(6);
-		mainUIParam.setMatTo(6);
+		mainUIParam.setMat(3);
+		mainUIParam.setMatTo(3);
 		mainUIParam.setMatLiteral(1);
 		
-		mainUIParam.setStopLoss(200);
-		mainUIParam.setStopLossTo(200);
+		mainUIParam.setStopLoss(100);
+		mainUIParam.setStopLossTo(100);
 		mainUIParam.setStopLossLiteral(200);
 		
 		mainUIParam.setTradeStopLoss(100);
 		mainUIParam.setTradeStopLossTo(100);
 		mainUIParam.setTradeStopLossLiteral(50);
 
-		mainUIParam.setInstantTradeStoploss(0.6);
-		mainUIParam.setInstantTradeStoplossTo(0.6);
+		mainUIParam.setInstantTradeStoploss(0.8);
+		mainUIParam.setInstantTradeStoplossTo(0.8);
 		mainUIParam.setInstantTradeStoplossLiteral(0.6);
 		
 		mainUIParam.setItsCounter(1200);
