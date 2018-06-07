@@ -39,7 +39,7 @@ public class PerSecondRecord {
 	public PerSecondRecord() {
 	}
 	
-	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList, ScheduleData scheduleDataPerSecond, int checkMarketTime) throws ParseException {
+	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList, ScheduleData scheduleDataPerSecond, int checkMarketTime,TreeMap<Double, Integer> shortMap, TreeMap<Double, Integer> longMap) throws ParseException {
 		PerSecondRecord lastSecondRecord = dailyPerSecondRecordList.size() == 0 ? new PerSecondRecord() : dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - 1);
 		this.time = scheduleDataPerSecond.getId();
 		this.timeStr = scheduleDataPerSecond.getDateTimeStr();
@@ -54,8 +54,8 @@ public class PerSecondRecord {
 //		if ("2016-07-08 09:29:26".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 //			System.out.println("debug point");
 //		}
-		initShort(dailyPerSecondRecordList, lastSecondRecord, testSet);
-		initLong(dailyPerSecondRecordList, lastSecondRecord, testSet);
+		initShort(shortMap, dailyPerSecondRecordList, lastSecondRecord, testSet);
+		initLong(longMap, dailyPerSecondRecordList, lastSecondRecord, testSet);
 		initHighLowDiffernece();
 		initSumHighLowDiffernece(testSet, dailyPerSecondRecordList);
 		initAction(lastSecondRecord, testSet);
@@ -249,8 +249,7 @@ public class PerSecondRecord {
 		}	
 	}
 	
-	public static TreeMap<Double, Integer> shortMap = new TreeMap<Double, Integer>();
-	private void initShort(List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord, TestSet testSet) {
+	private void initShort(TreeMap<Double, Integer> shortMap, List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord, TestSet testSet) {
 		renewMap(shortMap, dailyPerSecondRecordList, testSet.gettShort());
 		if (this.tCounter > testSet.gettShort() && checkMarketTime == 1){
 			this.highShort = shortMap.lastKey();
@@ -258,8 +257,7 @@ public class PerSecondRecord {
 		}
 	}
 	
-	public static TreeMap<Double, Integer> longMap = new TreeMap<Double, Integer>();
-	private void initLong(List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord, TestSet testSet) {
+	private void initLong(TreeMap<Double, Integer> longMap, List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord, TestSet testSet) {
 		renewMap(longMap, dailyPerSecondRecordList, testSet.gettLong());
 		if (this.tCounter > testSet.gettLong() && checkMarketTime == 1){
 			this.highLong = longMap.lastKey();

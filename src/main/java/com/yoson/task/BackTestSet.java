@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -44,6 +45,8 @@ public class BackTestSet {
 		long marketCloseTime = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
 //		double morningPnl = 0;
 //		boolean morningPnlAdded = false;
+		TreeMap<Double, Integer> longMap = new TreeMap<Double, Integer>();
+		TreeMap<Double, Integer> shortMap = new TreeMap<Double, Integer>();
 		for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {
 			long time = DateUtils.HHmmss().parse(scheduleDataPerSecond.getTimeStr()).getTime();
 			boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
@@ -51,7 +54,7 @@ public class BackTestSet {
 			boolean isValidateTime = time >= marketStartTime && time <= marketCloseTime;
 			PerSecondRecord perSecondRecord = null;
 			if (isMorning || isAfternoon || mainUIParam.isIgnoreLunchTime() && isValidateTime) {
-				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()));
+				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()), shortMap, longMap);
 			} else {
 				continue;
 			} 

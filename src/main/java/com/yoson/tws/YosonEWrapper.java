@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.io.FileUtils;
@@ -245,10 +246,12 @@ public class YosonEWrapper extends BasicEWrapper {
 //			dailyScheduleData.addAll(resultDatas.get(0));
 //			dailyScheduleData.addAll(resultDatas.get(1));
 			List<PerSecondRecord> dailyPerSecondRecord = new ArrayList<PerSecondRecord>();
+			TreeMap<Double, Integer> longMap = new TreeMap<Double, Integer>();
+			TreeMap<Double, Integer> shortMap = new TreeMap<Double, Integer>();
 			for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {				
 				int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleDataPerSecond.getTimeStr());
 				dailyPerSecondRecord.add(new PerSecondRecord(dailyScheduleData, strategy.getMainUIParam(), 
-						dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime));
+						dailyPerSecondRecord, scheduleDataPerSecond, checkMarketTime, shortMap, longMap));
 			}
 //			allDailyPerSecondRecord.addAll(dailyPerSecondRecord);
 //		} else {
