@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -107,11 +108,13 @@ public class TaskScheduler {
 //					}
 					
 					List<PerSecondRecord> perSecondRecords = new ArrayList<PerSecondRecord>();
+					TreeMap<Double, Integer> longMap = new TreeMap<Double, Integer>();
+					TreeMap<Double, Integer> shortMap = new TreeMap<Double, Integer>();
 					for (int i = 0; i < scheduleDatas.size(); i++) {
 						ScheduleData scheduleData = scheduleDatas.get(i);
 						int checkMarketTime = strategy.getMainUIParam().isCheckMarketTime(scheduleData.getTimeStr());
 						PerSecondRecord currentSecondRecord = new PerSecondRecord(scheduleDatas, strategy.getMainUIParam(), 
-								perSecondRecords, scheduleData, checkMarketTime);
+								perSecondRecords, scheduleData, checkMarketTime, shortMap, longMap);
 						perSecondRecords.add(currentSecondRecord);
 						if (i >= 1) {
 							PerSecondRecord lastSecondRecord = perSecondRecords.get(i - 1);			
