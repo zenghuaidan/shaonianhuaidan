@@ -904,6 +904,25 @@ $(function() {
 	startRefresh();
 	//$("[name='source']").change();
 	$("#strategySelect").change();
+	
+	$("input[name='tShort']").blur(function() {
+		$("input[name='mas']").val($(this).val());
+	});
+	$("input[name='tShortTo']").blur(function() {
+		$("input[name='masTo']").val($(this).val());
+	});
+	$("input[name='tShortLiteral']").blur(function() {
+		$("input[name='masLiteral']").val($(this).val());
+	});
+	$("input[name='tLong']").blur(function() {
+		$("input[name='mal']").val($(this).val());
+	});
+	$("input[name='tLongTo']").blur(function() {
+		$("input[name='malTo']").val($(this).val());
+	});
+	$("input[name='tLongLiteral']").blur(function() {
+		$("input[name='malLiteral']").val($(this).val());
+	});
 });
 
 function startRefresh() {
