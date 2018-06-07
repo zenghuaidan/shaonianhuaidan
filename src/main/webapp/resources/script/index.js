@@ -923,6 +923,8 @@ $(function() {
 	$("input[name='tLongLiteral']").blur(function() {
 		$("input[name='malLiteral']").val($(this).val());
 	});
+	$("input[name='mas']").parent().parent().hide();
+	$("input[name='mal']").parent().parent().hide();
 });
 
 function startRefresh() {
