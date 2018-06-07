@@ -2,6 +2,7 @@ package com.yoson.model;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.TreeMap;
 
 public class PerSecondRecord {
 
@@ -33,14 +34,9 @@ public class PerSecondRecord {
 	private double mtm;
 	private boolean isEnoughCounter;
 	
-//	private int reachPoint;
-	
 	private static double sumHighLowDiffernece;
 	
 	public PerSecondRecord() {
-//		lastTradeDataList.set(new ArrayList<Double>());
-//		PerSecondRecord.isReachPoint.set(false);
-//		this.reachPoint.set(0);
 	}
 	
 	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList, ScheduleData scheduleDataPerSecond, int checkMarketTime) throws ParseException {
@@ -58,7 +54,6 @@ public class PerSecondRecord {
 //		if ("2016-07-08 09:29:26".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 //			System.out.println("debug point");
 //		}
-		initLastTradeDataList(lastSecondRecord);
 		initShort(dailyPerSecondRecordList, lastSecondRecord, testSet);
 		initLong(dailyPerSecondRecordList, lastSecondRecord, testSet);
 		initHighLowDiffernece();
@@ -75,24 +70,6 @@ public class PerSecondRecord {
 		initTotalPnl(lastSecondRecord);
 	}
 	
-	private void initLastTradeDataList(PerSecondRecord lastSecondRecord) {
-//		if (this.checkMarketTime == 1 && !PerSecondRecord.isReachPoint) {
-//			PerSecondRecord.isReachPoint = true;
-//			this.reachPoint = this.reference - 1;
-//		} else if(this.checkMarketTime == 0) {
-//			PerSecondRecord.isReachPoint = false;
-//			this.reachPoint = 0;
-//		}	
-		
-//		if(this.checkMarketTime == 0) {
-//			this.reachPoint = 0;
-//		} else if (this.checkMarketTime == 1 && lastSecondRecord.checkMarketTime == 1) {
-//			this.reachPoint = lastSecondRecord.reachPoint;
-//		} else if (this.checkMarketTime == 1 && lastSecondRecord.checkMarketTime == 0) {
-//			this.reachPoint = this.reference - 1;
-//		}
-	}
-
 	private void initTotalPnl(PerSecondRecord lastSecondRecord) {
 		this.totalPnl = lastSecondRecord.getTotalPnl() + this.pnl;
 	}
@@ -272,100 +249,41 @@ public class PerSecondRecord {
 		}	
 	}
 	
+	public static TreeMap<Double, Integer> shortMap = new TreeMap<Double, Integer>();
 	private void initShort(List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if (this.tCounter> testSet.gettShort() && checkMarketTime == 1)
-		{
-			this.highShort = lastTrade;
-			this.lowShort = lastTrade;			
-			int i = reference - testSet.gettShort() - 1;
-			if (i > 0
-				&& lastSecondRecord.highShort != 0
-				&& lastSecondRecord.lowShort != 0
-				&& lastSecondRecord.highShort != dailyPerSecondRecordList.get(i - 1).getLastTrade()
-				&& lastSecondRecord.lowShort != dailyPerSecondRecordList.get(i - 1).getLastTrade()) {
-				this.highShort = Math.max(lastSecondRecord.highShort, this.highShort);
-				this.lowShort = Math.min(lastSecondRecord.lowShort, this.lowShort);
-			} else {
-				for(; i < reference - 1; i++) {
-					this.highShort = Math.max(this.highShort, dailyPerSecondRecordList.get(i).getLastTrade());
-					this.lowShort = Math.min(this.lowShort, dailyPerSecondRecordList.get(i).getLastTrade());
-				}				
-			}
+		renewMap(shortMap, dailyPerSecondRecordList, testSet.gettShort());
+		if (this.tCounter > testSet.gettShort() && checkMarketTime == 1){
+			this.highShort = shortMap.lastKey();
+			this.lowShort = shortMap.firstKey();
 		}
 	}
 	
+	public static TreeMap<Double, Integer> longMap = new TreeMap<Double, Integer>();
 	private void initLong(List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if (this.tCounter> testSet.gettLong() && checkMarketTime == 1)
-		{
-			this.highLong = lastTrade;
-			this.lowLong = lastTrade;
-			int i = reference - testSet.gettLong() - 1;
-			if (i > 0
-				&& lastSecondRecord.highLong != 0
-				&& lastSecondRecord.lowLong != 0 
-				&& lastSecondRecord.highLong != dailyPerSecondRecordList.get(i - 1).getLastTrade()
-				&& lastSecondRecord.lowLong != dailyPerSecondRecordList.get(i - 1).getLastTrade()) {
-				this.highLong = Math.max(lastSecondRecord.highLong, this.highLong);
-				this.lowLong = Math.min(lastSecondRecord.lowLong, this.lowLong);
+		renewMap(longMap, dailyPerSecondRecordList, testSet.gettLong());
+		if (this.tCounter > testSet.gettLong() && checkMarketTime == 1){
+			this.highLong = longMap.lastKey();
+			this.lowLong = longMap.firstKey();
+		}
+	}
+
+	private void renewMap(TreeMap<Double, Integer> map, List<PerSecondRecord> dailyPerSecondRecordList, int base) {
+		if(this.reference == 1) map.clear();
+		if(map.containsKey(lastTrade)) {
+			map.replace(lastTrade, map.get(lastTrade) + 1);
+		} else {
+			map.put(lastTrade, 1);
+		}
+		if(this.reference > base + 1) {
+			int firstIndex = reference - base - 2;
+			double firstTrade = dailyPerSecondRecordList.get(firstIndex).getLastTrade();
+			if (map.get(firstTrade) > 1) {
+				map.replace(firstTrade, map.get(firstTrade) - 1);
 			} else {
-				for(; i < reference - 1; i++) {
-					this.highLong = Math.max(this.highLong, dailyPerSecondRecordList.get(i).getLastTrade());
-					this.lowLong = Math.min(this.lowLong, dailyPerSecondRecordList.get(i).getLastTrade());
-				}				
+				map.remove(firstTrade);
 			}
 		}
 	}
-	
-//	private void initShort(List<ScheduleData> dailyScheduleData, PerSecondRecord lastSecondRecord, TestSet testSet) {
-//		if (this.tCounter> testSet.gettShort())
-//		{
-//			int start = this.tCounter - (testSet.gettShort() + 1);
-//			int end = this.tCounter - 1;
-//			if (start > 0 
-//				&& start <= end
-//				&& lastSecondRecord.highShort != dailyScheduleData.get(this.reachPoint + start - 1).getLastTrade()
-//				&& lastSecondRecord.lowShort != dailyScheduleData.get(this.reachPoint + start - 1).getLastTrade()) {
-//				double lastTrade2 = dailyScheduleData.get(this.reachPoint + end).getLastTrade();
-//				this.highShort = Math.max(lastSecondRecord.highShort, lastTrade2);
-//				this.lowShort = Math.min(lastSecondRecord.lowShort, lastTrade2);
-//			} else {
-//				this.highShort = Double.MIN_VALUE;
-//				this.lowShort = Double.MAX_VALUE;
-//				for (int i = start; i<= end; i++)
-//				{
-//					double _lastTrade = dailyScheduleData.get(this.reachPoint + i).getLastTrade();
-//					this.highShort = Math.max(this.highShort, _lastTrade);
-//					this.lowShort = Math.min(this.lowShort, _lastTrade);
-//				}				
-//			}
-//		}
-//	}	
-	
-//	private void initLong(List<ScheduleData> dailyScheduleData, PerSecondRecord lastSecondRecord, TestSet testSet) {
-//		if (this.tCounter> testSet.gettLong())
-//		{
-//			int start = this.tCounter - (testSet.gettLong() + 1);
-//			int end = this.tCounter - 1;
-//			
-//			if (start > 0 
-//				&& start <= end
-//				&& lastSecondRecord.highLong != dailyScheduleData.get(this.reachPoint + start-1).getLastTrade()
-//				&& lastSecondRecord.lowLong != dailyScheduleData.get(this.reachPoint + start-1).getLastTrade()) {
-//				double lastTrade2 = dailyScheduleData.get(this.reachPoint + end).getLastTrade();
-//				this.highLong = Math.max(lastSecondRecord.highLong, lastTrade2);
-//				this.lowLong = Math.min(lastSecondRecord.lowLong, lastTrade2);
-//			} else {
-//				this.highLong = Double.MIN_VALUE;
-//				this.lowLong = Double.MAX_VALUE;
-//				for (int i = start; i<= end;  i++)
-//				{
-//					double _lastTrade = dailyScheduleData.get(this.reachPoint + i).getLastTrade();
-//					this.highLong = Math.max(this.highLong, _lastTrade);
-//					this.lowLong = Math.min(this.lowLong, _lastTrade);
-//				}				
-//			}
-//		}
-//	}
 	
 	private void initHighLowDiffernece() {
 		if (this.isEnoughCounter)
