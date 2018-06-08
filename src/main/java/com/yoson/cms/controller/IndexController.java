@@ -305,10 +305,25 @@ public class IndexController  implements StatusCallBack {
 	}
 	
 	@RequestMapping("downloadSampleDate")
-	public void downloadSampleDate(String sampleDate, HttpServletResponse response) throws IOException{
+	public void downloadSampleDate(String sampleDate, String ticker, HttpServletResponse response) throws IOException{
 		response.setContentType("application/msexcel");  
 		response.setHeader("Content-Disposition","attachment; filename=" + sampleDate + ".csv");
-		IOUtils.write(SQLUtils.getScheduledDataRecordByDate(sampleDate), response.getOutputStream());
+		IOUtils.write(SQLUtils.getScheduledDataRecordByDate(sampleDate, ticker), response.getOutputStream());
+	}
+	
+	
+	public static boolean deleting = false;
+	@RequestMapping("deleteSampleDate")
+	@ResponseBody
+	public String deleteSampleDate(String sampleDate, String ticker, HttpServletResponse response) throws IOException{
+		if(!deleting) {
+			deleting = true;
+			SQLUtils.deleteScheduledDataRecordByDate(sampleDate, ticker);
+			deleting = false;
+			return "Data with date=" + sampleDate + " and ticker=" + ticker + " have been deleted from database.";
+		} else {
+			return "A deletion is runing, please wait for previous deletion is done!!!";
+		}
 	}
 	
 	@RequestMapping("downloadSummary")

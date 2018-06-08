@@ -51,10 +51,21 @@ function uploadDataWithTransfer() {
 
 function downloadSampleDate(){
 	var sampleDate = $.trim($("#downloadSampleDate").val());
+	var ticker = $.trim($("#tickerForDelete").val());
 	if(sampleDate == "") {
-		alert("Please select sample date for download.")
+		alert("Please select sample date and Ticker for download.");
 	} else {
-		window.open("downloadSampleDate?sampleDate=" + sampleDate);
+		window.open("downloadSampleDate?sampleDate=" + sampleDate + "&ticker=" + ticker);
+	}
+}
+
+function deleteSampleDate(){
+	var sampleDate = $.trim($("#downloadSampleDate").val());
+	var ticker = $.trim($("#tickerForDelete").val());
+	if(sampleDate == "" || ticker == "") {
+		alert("Please select sample date and Ticker for delete.");
+	} else if(confirm("Are you sure for the deletion?")) {
+		window.open("deleteSampleDate?sampleDate=" + sampleDate + "&ticker=" + ticker);
 	}
 }
 
@@ -143,6 +154,10 @@ function doInitTab() {
 	
 	$("#downloadSampleDateBtn").click(function(){
 		downloadSampleDate();
+	});
+	
+	$("#deleteSampleDateBtn").click(function(){
+		deleteSampleDate();
 	});
 	
 	$("#downloadSummaryBtn").click(function(){

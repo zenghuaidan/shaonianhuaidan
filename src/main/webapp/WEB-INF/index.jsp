@@ -53,8 +53,14 @@
 						<input type="button" id="uploadDataWithTransfer" value="Transfer Data"/>
 					</form>
 					<div id="downloadSampleDateDiv">
-					Download Sample Date:<input type="text" id="downloadSampleDate" name="downloadSampleDate" class="datepicker"/>
-					<input id="downloadSampleDateBtn" type="button" value="Download"/></br>
+					Date:<input type="text" id="downloadSampleDate" name="downloadSampleDate" class="datepicker"/>
+					Ticker:<select id="tickerForDelete">
+				         <c:forEach items="${tickers}" var="ticker" varStatus="i">
+				            <option ${ticker}>${ticker}</option>
+				         </c:forEach>
+			         </select>
+					<input id="downloadSampleDateBtn" type="button" value="Download"/>
+					<input id="deleteSampleDateBtn" type="button" value="Delete"/></br>
 					Download Summary:
 					<select id="downloadSummary" name="downloadSummary">
 				         <c:forEach items="${tickers}" var="ticker" varStatus="i">

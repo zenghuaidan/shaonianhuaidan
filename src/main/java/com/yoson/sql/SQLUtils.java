@@ -82,13 +82,13 @@ public class SQLUtils {
 		}
 	}
 	
-	public static String getScheduledDataRecordByDate(String dateStr) {
+	public static String getScheduledDataRecordByDate(String dateStr, String ticker) {
 		Session session = null;
 		List<String> values = new ArrayList<String>();
 		values.add("ticker,date,time,bidopen,bidavg,bidlast,bidmax,bidmin,askopen,askavg,asklast,askmax,askmin,tradeopen,tradeavg,tradelast,trademax,trademin,source");
 		try {
 			session = getSession();
-			String sql = "select CONCAT(ticker,',',date,',',time,',',bidopen,',',bidavg,',',bidlast,',',bidmax,',',bidmin,',',askopen,',',askavg,',',asklast,',',askmax,',',askmin,',',tradeopen,',',tradeavg,',',tradelast,',',trademax,',',trademin,',',source) as sdata from " + SCHEDULE_DATA_TABLE + " where date='" + dateStr + "'";
+			String sql = "select CONCAT(ticker,',',date,',',time,',',bidopen,',',bidavg,',',bidlast,',',bidmax,',',bidmin,',',askopen,',',askavg,',',asklast,',',askmax,',',askmin,',',tradeopen,',',tradeavg,',',tradelast,',',trademax,',',trademin,',',source) as sdata from " + SCHEDULE_DATA_TABLE + " where date='" + dateStr + "' and ticker='" + ticker+ "'";
 			sql += " order by date asc, time asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
 			values.addAll(sqlQuery.list());
@@ -101,6 +101,23 @@ public class SQLUtils {
 			}
 		}
 		return String.join(System.lineSeparator(), values);
+	}
+	
+	public static void deleteScheduledDataRecordByDate(String dateStr, String ticker) {
+		Session session = null;
+		try {
+			session = getSession();
+			String sql = "delete from " + SCHEDULE_DATA_TABLE + " where date='" + dateStr + "' and ticker='" + ticker+ "'";
+			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
+			sqlQuery.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
 	}
 	
 	public static String getSummary(String ticker) {
