@@ -107,9 +107,11 @@ public class SQLUtils {
 		Session session = null;
 		try {
 			session = getSession();
+			session.beginTransaction();
 			String sql = "delete from " + SCHEDULE_DATA_TABLE + " where date='" + dateStr + "' and ticker='" + ticker+ "'";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
 			sqlQuery.executeUpdate();
+			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
