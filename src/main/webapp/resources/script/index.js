@@ -905,7 +905,6 @@ $(function() {
 	//$("[name='source']").change();
 	$("#strategySelect").change();
 	
-	return;
 	$("input[name='tShort']").blur(function() {
 		$("input[name='mas']").val($(this).val());
 	});
