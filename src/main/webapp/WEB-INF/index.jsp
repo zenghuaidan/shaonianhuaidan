@@ -400,7 +400,8 @@
 				      	<input name="disconnect" onclick="disconnectClick();" value="Disconnect" type="button"/>
 				      	<input name="refresh" onclick="startRefresh();" value="Refresh Data" type="button"/>
 				      	<input name="stoprefresh" onclick="stopRefresh();" value="Stop Refresh" type="button"/>
-				      	<label name="status">Offline</label>
+				      	<label name="status">Offline</label> &nbsp;&nbsp;&nbsp; 
+				      	<label id="incomingDataInfo" style="text-align:center"></label>
 				      </td>
 				   </tr>
   				</table>
@@ -453,8 +454,6 @@
 				   	  </td>
 				   </tr>
   				</table>
-  				<hr/>
-  				<div id="incomingDataInfo" style="text-align:center"></div>
   				<hr/>
   				<table>
   					<tr>
