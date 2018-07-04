@@ -101,7 +101,7 @@ public class IndexController {
 	public String getMissingIncomingDataInfo() {
 		if(EClientSocketUtils.contracts == null || EClientSocketUtils.contracts.size() == 0) return "You did not have any contracts.";
 		List<String> list = new ArrayList<String>();
-		for(int i = 0; i < EClientSocketUtils.contracts.size() - 1; i++) {
+		for(int i = 0; i < EClientSocketUtils.contracts.size(); i++) {
 			if(!EClientSocketUtils.hasDataContractList.contains(i)) {
 				Contract contract = EClientSocketUtils.contracts.get(i);
 				list.add(contract.getSecType() + "_" + contract.getSymbol() + "_" + contract.getCurrency() + "_" + contract.getExchange());
