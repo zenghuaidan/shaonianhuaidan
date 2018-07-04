@@ -158,6 +158,12 @@ public class IndexController  implements StatusCallBack {
 	}
 	
 	@ResponseBody
+	@RequestMapping(path = "hasIncomingMarketData", method = {RequestMethod.GET})
+	public boolean hasIncomingMarketData() {
+		return EClientSocketUtils.hasIncomingMarketData;
+	}
+	
+	@ResponseBody
 	@RequestMapping(path = "addStrategy", method = {RequestMethod.POST})
 	public boolean addStrategy(@RequestBody Strategy strategy) {
 		String strategyName = strategy.getStrategyName();

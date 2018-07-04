@@ -454,6 +454,8 @@
 				   </tr>
   				</table>
   				<hr/>
+  				<div id="incomingDataInfo" style="text-align:center"></div>
+  				<hr/>
   				<table>
   					<tr>
 						<td style="width:10%;">
