@@ -26,6 +26,7 @@ public class EClientSocketUtils {
 	public static List<String> tradeLogs;
 	public static int totalBuy;
 	public static int totalSell;
+	public static boolean hasIncomingMarketData = false;
 	
 	public static boolean connect(ConnectionInfo connectionInfo)
 	{
@@ -95,6 +96,7 @@ public class EClientSocketUtils {
 		if(!isConnected()) {
 			return false;
 		}
+		EClientSocketUtils.hasIncomingMarketData = false;
 		lunchBTStart = false;
 		YosonEWrapper.initData();
 		EClientSocketUtils.contract = contract;

@@ -482,6 +482,7 @@ public class YosonEWrapper extends BasicEWrapper {
 		lastTime = now;
 		if(!isValidateTime(now, 2))
 			return;
+		EClientSocketUtils.hasIncomingMarketData = true;
 		String time = DateUtils.yyyyMMddHHmmss2().format(now);
 		switch (field) {
 		case 0:
