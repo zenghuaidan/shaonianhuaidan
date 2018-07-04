@@ -141,6 +141,8 @@
 	  				</table>
 				</form>
   				<hr/>
+  				<div style="text-align:center"><lable id="incomingDataInfo"></lable>&nbsp;&nbsp;<label onclick="showMissing()" style="cursor:pointer;text-decoration:underline">Click to view missing data contracts</label></div>
+  				<hr/>
   				<table>
   					<tr>
 						<td style="width:10%;">

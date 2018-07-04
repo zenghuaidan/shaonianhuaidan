@@ -218,6 +218,9 @@ public class YosonEWrapper extends BasicEWrapper {
 			BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "time.txt"), contract.startTime + "," + contract.endTime, false);
 			BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "SourceAndTicker.txt"), contract.source + Global.lineSeparator + contract.ticker, false);
 		}
+		if(!EClientSocketUtils.hasDataContractList.contains(tickerId)) {
+			EClientSocketUtils.hasDataContractList.add(tickerId);
+		}
 		String path = getPath(folder);
 		switch (field) {
 		case 0:

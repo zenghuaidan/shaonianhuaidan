@@ -89,6 +89,32 @@ public class IndexController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("getIncomingDataInfo")
+	public String getIncomingDataInfo() {
+		int total = EClientSocketUtils.contracts == null ? 0 : EClientSocketUtils.contracts.size();
+		return "Total <label style='color:blue'>" + total + "</label> contracts, <label style='color:red'>" 
+				+ EClientSocketUtils.hasDataContractList.size() + "</label> contracts has market data return.";
+	}
+	
+	@ResponseBody
+	@RequestMapping("getMissingIncomingDataInfo")
+	public String getMissingIncomingDataInfo() {
+		if(EClientSocketUtils.contracts == null || EClientSocketUtils.contracts.size() == 0) return "You did not have any contracts.";
+		List<String> list = new ArrayList<String>();
+		for(int i = 0; i < EClientSocketUtils.contracts.size() - 1; i++) {
+			if(!EClientSocketUtils.hasDataContractList.contains(i)) {
+				Contract contract = EClientSocketUtils.contracts.get(i);
+				list.add(contract.getSecType() + "_" + contract.getSymbol() + "_" + contract.getCurrency() + "_" + contract.getExchange());
+			}
+		}
+		if(list.size() > 0) {
+			return "Below contracts are missing market data:\r\n" + String.join("\r\n", list);
+		} else {		
+			return "All contracts have market data return.";
+		}
+	}
+	
+	@ResponseBody
 	@RequestMapping("search")
 	public String search(String startTime, String endTime, String marketData, String fundamentalData, MultipartFile contractTemplate, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		Date now = new Date();	

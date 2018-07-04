@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -23,6 +24,7 @@ public class EClientSocketUtils {
 	public static EClientSocket socket;
 	public static ConnectionInfo connectionInfo;
 	public static List<Contract> contracts;
+	public static List<Integer> hasDataContractList = new CopyOnWriteArrayList<Integer>();
 	public static String id;	
 	
 	public static boolean connect(ConnectionInfo connectionInfo)
@@ -123,6 +125,7 @@ public class EClientSocketUtils {
 		if(EClientSocketUtils.isConnected() && StringUtils.isEmpty(EClientSocketUtils.id)) {													
 			YosonEWrapper.priceMap = new ConcurrentHashMap<String, Double>();
 			EClientSocketUtils.id = DateUtils.yyyyMMdd().format(now);
+			EClientSocketUtils.hasDataContractList = new CopyOnWriteArrayList<Integer>();
 			String folder = EClientSocketUtils.initAndReturnLiveDataFolder();
 			
 			// start new market data

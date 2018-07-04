@@ -98,6 +98,27 @@ function updateTime() {
 	    error: function() {
 	    }
 	});
+	$.ajax({
+	    type: "GET",
+	    url: "getIncomingDataInfo",
+	    success: function(data) {
+	    	$("#incomingDataInfo").html(data);
+	    },
+	    error: function() {
+	    }
+	});
+}
+
+function showMissing() {
+	$.ajax({
+	    type: "GET",
+	    url: "getMissingIncomingDataInfo",
+	    success: function(data) {
+	    	alert(data);
+	    },
+	    error: function() {
+	    }
+	});
 }
 
 function updateConnectStatus() {
