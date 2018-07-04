@@ -108,7 +108,7 @@ public class IndexController {
 			}
 		}
 		if(list.size() > 0) {
-			return "Below contracts are missing market data:<br/>" + String.join("<br/>", list);
+			return String.join("<br/>", list);
 		} else {		
 			return "All contracts have market data return.";
 		}
