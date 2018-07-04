@@ -114,7 +114,8 @@ function showMissing() {
 	    type: "GET",
 	    url: "getMissingIncomingDataInfo",
 	    success: function(data) {
-	    	alert(data);
+	    	$( "#missiongDataInfo" ).html(data);
+	    	$( "#missiongDataInfo" ).dialog();
 	    },
 	    error: function() {
 	    }
