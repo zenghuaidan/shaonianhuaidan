@@ -861,6 +861,22 @@ function initTab() {
 	}  
 }
 
+function updateIncomingDataInfo() {
+	$.ajax({
+		type: "GET",
+		url: "hasIncomingMarketData",
+		success: function(data) {
+			if(data) {
+				$("#incomingDataInfo").html("<lable style='color:blue'>Market data received.<label>");
+			} else {
+				$("#incomingDataInfo").html("<lable style='color:red'>No Market data!!<label>");
+			}
+		},
+		error: function() {
+		}
+	});
+}
+
 function scheduleTask() {
 	// schedule update here
 	switch(tab) {
@@ -875,7 +891,10 @@ function scheduleTask() {
 			break;
 		case "uploadDataTab" : 
 			uploadStatus();
-			break;			
+			break;
+		case "connectionTab" : 
+			updateIncomingDataInfo();
+			break;
 		default : 
 			break;
 	}
