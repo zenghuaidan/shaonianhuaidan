@@ -5,6 +5,8 @@ package com.ib.client;
 
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
+
 public class Contract implements Cloneable {
 	public int    m_conId;
     public String m_symbol;
@@ -218,6 +220,14 @@ public class Contract implements Cloneable {
 
 	public void setTicker(String ticker) {
 		this.ticker = ticker;
+	}
+	
+	public String getDbSource() {
+		return StringUtils.isBlank(source) ? getSecType() + "_" + getSymbol() : source;
+	}
+
+	public String getDbTicker() {
+		return StringUtils.isBlank(ticker) ? "BBG_" + getDbSource() : ticker;
 	}
 	
 }

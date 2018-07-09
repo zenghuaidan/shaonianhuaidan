@@ -111,6 +111,14 @@
 					      <td>End Time</td>
 					      <td><input class="datetimepicker" name="endTime" value="${contract.endTime}" type="text"/></td>
 					    </tr>
+					    <tr class="contract contract-${i.count}">
+					      <td>Source value in DB</td>
+					      <td><font color="blur">${contract.dbSource}</font></td>
+					    </tr>
+					    <tr class="contract contract-${i.count}">
+					      <td>Ticker value in DB</td>
+					      <td><font color="blur">${contract.dbTicker}</font></td>
+					    </tr>
 	        		</c:forEach>
   				</table>
   				<hr/>
