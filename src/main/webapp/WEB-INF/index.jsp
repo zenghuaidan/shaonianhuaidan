@@ -113,11 +113,11 @@
 					    </tr>
 					    <tr class="contract contract-${i.count}">
 					      <td>Source value in DB</td>
-					      <td><font color="blur">${contract.dbSource}</font></td>
+					      <td><input style="color: blue;font-weight: bold;" disabled="disabled" value="${contract.dbSource}" type="text"/></td>
 					    </tr>
 					    <tr class="contract contract-${i.count}">
 					      <td>Ticker value in DB</td>
-					      <td><font color="blur">${contract.dbTicker}</font></td>
+					      <td><input style="color: blue;font-weight: bold;" disabled="disabled" value="${contract.dbTicker}" type="text"/></td>
 					    </tr>
 	        		</c:forEach>
   				</table>
