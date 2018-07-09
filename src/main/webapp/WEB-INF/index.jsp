@@ -112,12 +112,12 @@
 					      <td><input class="datetimepicker" name="endTime" value="${contract.endTime}" type="text"/></td>
 					    </tr>
 					    <tr class="contract contract-${i.count}">
-					      <td>Source value in DB</td>
-					      <td><input style="color: blue;font-weight: bold;" disabled="disabled" value="${contract.dbSource}" type="text"/></td>
+					      <td>Source</td>
+					      <td><input style="color: blue;font-weight: bold;" disabled="disabled" value="${contract.dbSource}" type="text"/><font color="red">* This value is used as Source value when uploading data to DB, you can change it thot within the excel template</font></td>
 					    </tr>
 					    <tr class="contract contract-${i.count}">
-					      <td>Ticker value in DB</td>
-					      <td><input style="color: blue;font-weight: bold;" disabled="disabled" value="${contract.dbTicker}" type="text"/></td>
+					      <td>Ticker</td>
+					      <td><input style="color: blue;font-weight: bold;" disabled="disabled" value="${contract.dbTicker}" type="text"/><font color="red">* This value is used as Ticker value when uploading data to DB, you can change it thot within the excel template</font></td>
 					    </tr>
 	        		</c:forEach>
   				</table>
