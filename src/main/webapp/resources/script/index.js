@@ -9,8 +9,8 @@ function defaultConnectClick() {
 function searchClick() {
 	var file = $("#contractTemplatefm input[type=file]").val();
 	var ext = file.split(".")[file.split(".").length - 1].toLocaleLowerCase();
-	if (file == "" || (ext != "xls" && ext != "xlsx")) {
-		alert("Please select xls or xlsx file to upload.");
+	if (file == "" || ext != "xlsx") {
+		alert("Please select xlsx file to upload.");
 		return;
 	}
 	if(!$("#fundamentalData").is(":checked") && !$("#marketData").is(":checked")) {

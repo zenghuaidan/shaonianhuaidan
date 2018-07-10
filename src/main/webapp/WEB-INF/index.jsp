@@ -146,7 +146,7 @@
 					    </tr>
 					    <tr>
 					   	  <td><input type="button" onclick="searchClick();" style="width:100%" value="Search" /></td>
-					      <td></td>
+					      <td><a style="color:blue;font-weight:bold;text-decoration:underline" href="../upload/default/Downloader.xlsx">Click to download template file</a></td>
 					    </tr>
 	  				</table>
 				</form>

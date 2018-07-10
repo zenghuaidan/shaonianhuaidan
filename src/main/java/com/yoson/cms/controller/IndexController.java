@@ -133,7 +133,7 @@ public class IndexController {
 					FileUtils.deleteQuietly(tempFolderFile);
 				tempFolderFile.mkdirs();
 				
-				String file = FilenameUtils.concat(tempFolder, contractTemplate.getOriginalFilename());
+				String file = FilenameUtils.concat(tempFolder, "Downloader.xlsx");
 				FileUtils.copyInputStreamToFile(contractTemplate.getInputStream(), new File(file));
 				FileOutputStream output = new FileOutputStream(new File(FilenameUtils.concat(tempFolder, "time.txt")));
 				IOUtils.write(startTime + "," + endTime, output);
@@ -156,16 +156,12 @@ public class IndexController {
 		List<Contract> contracts = new CopyOnWriteArrayList<Contract>();
 		String tempFolder = FilenameUtils.concat(InitServlet.createUploadFoderAndReturnPath(), "default");
 		File tempFolderFile = new File(tempFolder);
-		String file = "";
+		File excelFile = null;
 		String startTime = null;
 		String endTime = null;
 		if(tempFolderFile.exists() && tempFolderFile.isDirectory()) {
-			Collection<File> listFiles = FileUtils.listFiles(tempFolderFile, TrueFileFilter.TRUE, TrueFileFilter.TRUE);
-			for (File file2 : listFiles) {
-				file = file2.getAbsolutePath();
-				break;
-			}
 			File timeFile = new File(FilenameUtils.concat(tempFolder, "time.txt"));
+			excelFile = new File(FilenameUtils.concat(tempFolder, "Downloader.xlsx"));
 			if(timeFile.exists()) {
 				FileInputStream input = null;
 				try {
@@ -184,11 +180,11 @@ public class IndexController {
 				}
 			}
 		}
-		if(StringUtils.isEmpty(file) || StringUtils.isEmpty(startTime) || StringUtils.isEmpty(endTime)) return contracts;
+		if(excelFile == null || !excelFile.exists() || StringUtils.isEmpty(startTime) || StringUtils.isEmpty(endTime)) return contracts;
 		
 		Date _startTime;
 		Date _endTime;
-		ArrayList<ArrayList<ArrayList<Object>>> list = ExcelUtil.readExcel(new File(file));
+		ArrayList<ArrayList<ArrayList<Object>>> list = ExcelUtil.readExcel(excelFile);
 		
 		if(list.size() > 0) {
 			ArrayList<ArrayList<Object>> sheet = list.get(0);
