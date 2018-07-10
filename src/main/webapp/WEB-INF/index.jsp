@@ -81,35 +81,35 @@
 	  				<c:forEach items="${contracts}" var="contract" varStatus="i"> 
 						<tr class="contract contract-${i.count}">
 					      <td>Sec Type</td>
-					      <td><input name="secType" value="${contract.secType}" type="text"/></td>
+					      <td><input name="secType" disabled="disabled" value="${contract.secType}" type="text"/></td>
 					   	</tr>
 					   	<tr class="contract contract-${i.count}">
 					      <td>Symbol</td>
-					      <td><input name="symbol" value="${contract.symbol}" type="text"/></td>
+					      <td><input name="symbol" disabled="disabled" value="${contract.symbol}" type="text"/></td>
 					   	</tr>
 					   	<tr class="contract contract-${i.count}">
 					      <td>Currency</td>
-					      <td><input name="currency" value="${contract.currency}" type="text"/></td>
+					      <td><input name="currency" disabled="disabled" value="${contract.currency}" type="text"/></td>
 					   	</tr>
 					   	<tr class="contract contract-${i.count}">
 					      <td>Exchange</td>
-					      <td><input name="exchange" value="${contract.exchange}" type="text"/></td>
+					      <td><input name="exchange" disabled="disabled" value="${contract.exchange}" type="text"/></td>
 					   	</tr>
 					   	<tr class="contract contract-${i.count}">
 					      <td>Local symbol</td>
-					      <td><input name="localSymbol" value="${contract.localSymbol}" type="text"/></td>
+					      <td><input name="localSymbol" disabled="disabled" value="${contract.localSymbol}" type="text"/></td>
 					   	</tr>
 					   	<tr class="contract contract-${i.count}">
 					      <td>Expirary</td>
-					      <td><input class="yearmonthpicker" name="expirary" value="${contract.expirary}" type="text"/></td>
+					      <td><input class="yearmonthpicker" name="expirary" disabled="disabled" value="${contract.expirary}" type="text"/></td>
 					   	</tr>
 					   	<tr class="contract contract-${i.count}">
 					      <td>Start Time</td>
-					      <td><input class="datetimepicker" name="startTime" value="${contract.startTime}" type="text"/></td>
+					      <td><input class="datetimepicker" name="startTime" disabled="disabled" value="${contract.startTime}" type="text"/></td>
 					    </tr>
 		   			   	<tr class="contract contract-${i.count}">
 					      <td>End Time</td>
-					      <td><input class="datetimepicker" name="endTime" value="${contract.endTime}" type="text"/></td>
+					      <td><input class="datetimepicker" name="endTime" disabled="disabled" value="${contract.endTime}" type="text"/></td>
 					    </tr>
 					    <tr class="contract contract-${i.count}">
 					      <td>Source</td>
