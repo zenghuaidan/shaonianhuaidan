@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.yoson.date.DateUtils;
+
 public class BackTestResult
 {
 	public int totalDays;
@@ -37,6 +39,7 @@ public class BackTestResult
 	public int maxLossingStreakLength;
 	public int maxWinningStreakLength;
 	public Map<Integer, Double> yearPnlMap;
+	public Map<String, Double> monthPnlMap;
 	
 	public List<PerDayRecord> dayRecords;
 
@@ -416,6 +419,7 @@ public class BackTestResult
 	
 	public void calPnLByYear() {
 		yearPnlMap = new TreeMap<Integer, Double>();
+		monthPnlMap = new TreeMap<String, Double>();
 		for (PerDayRecord dayRecord : dayRecords)
 		{
 			int year = dayRecord.getDate().getYear() + 1900;
@@ -424,6 +428,13 @@ public class BackTestResult
 			} else {
 				yearPnlMap.put(year, dayRecord.totalPnL);
 			}
+			
+			String month = DateUtils.yyyyMM().format(dayRecord.getDate());			
+			if (monthPnlMap.containsKey(month)) {
+				monthPnlMap.replace(month, monthPnlMap.get(month) + dayRecord.totalPnL);				
+			} else {
+				monthPnlMap.put(month, dayRecord.totalPnL);
+			}
 		}
-	}
+	}		
 }

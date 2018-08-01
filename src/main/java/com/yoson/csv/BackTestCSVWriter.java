@@ -94,14 +94,19 @@ public class BackTestCSVWriter {
 	
 	public static final String TotalPnl = "Total Pnl of ";
 	
-	public static String getBTSummaryHeader(Set<Integer> years) {
+	public static String getBTSummaryHeader(Set<Integer> years, Set<String> months) {
 		List<String> yearColums = new ArrayList<String>();
 		for (Integer year : years) {
 			yearColums.add(TotalPnl + year);
 		}
 		String yearColumnStr = String.join(",", yearColums);
 		yearColumnStr = yearColumnStr.length() > 0 ? (yearColumnStr + ",") : yearColumnStr;
-		return "Test no.,key,version,Source,T-Short,T-Long,MA-S,MA-L,MA-T,Stoploss,Trade Stop Loss,Instant Trade Stop Loss,Its Counter,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time\n";
+		List<String> monthColums = new ArrayList<String>();
+		for (String month : months) {
+			monthColums.add(TotalPnl + month);
+		}
+		String monthColumStr = String.join(",", monthColums);
+		return "Test no.,key,version,Source,T-Short,T-Long,MA-S,MA-L,MA-T,Stoploss,Trade Stop Loss,Instant Trade Stop Loss,Its Counter,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time," + monthColumStr + "\n";		
 	}
 	
 	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult) {
@@ -158,6 +163,9 @@ public class BackTestCSVWriter {
 		content.append(mainUIParam.getEndStr() + ",");
 		content.append((mainUIParam.isIncludeMorningData() ? "Yes" : "No") + ",");
 		content.append((mainUIParam.isIgnoreLunchTime() ? "Yes" : "No") + ",");
+		for (String month : backTestResult.monthPnlMap.keySet()) {
+			content.append(backTestResult.monthPnlMap.get(month) + ",");		
+		}
 		content.append("\n");
 		return content.toString();
 	}
