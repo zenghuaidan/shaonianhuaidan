@@ -214,7 +214,7 @@ public class BackTestTask implements Runnable {
 					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.morningProfitAndLossFileName), BackTestTask.allMorningProfitAndLossResults.toString(), true);
 					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.afternoonProfitAndLossFileName), BackTestTask.allAfternoonProfitAndLossResults.toString(), true);					
 				}
-				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader(backTestResult.yearPnlMap.keySet()) : "") + String.join("", BackTestTask.allBTSummaryResults), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader(backTestResult.yearPnlMap.keySet(), backTestResult.monthPnlMap.keySet()) : "") + String.join("", BackTestTask.allBTSummaryResults), true);
 				
 				BackTestTask.allBTPnlResults.clear();
 				BackTestTask.allBTTradeResults.clear();
