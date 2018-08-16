@@ -16,6 +16,8 @@ public class PerSecondRecord {
 	
 	private double maxRange;
 	private double minRange;
+	private double _maxRange;
+	private double _minRange;
 	private double range;
 	private double upper;
 	private double lower;
@@ -56,13 +58,13 @@ public class PerSecondRecord {
 //		}
 		this.checkMarketTime = checkMarketTime;
 		this.tCounter = this.checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
-		initMaxRange();
-		initMinRange();
+		initMaxRangeAndMinRange(dailyPerSecondRecordList, testSet);
 		initRange();
 		initUpper();
 		initLower();
-		initStationaryCheck();
-		initStationarySlope();				
+		initCheck();
+		initStationaryCheck(lastSecondRecord, testSet);
+		initStationarySlope(dailyPerSecondRecordList);				
 		initAction(lastSecondRecord, testSet);		
 		initSmoothAction(lastSecondRecord, testSet);
 		initPosition(lastSecondRecord);
@@ -75,60 +77,66 @@ public class PerSecondRecord {
 		initTotalPnl(lastSecondRecord);
 	}
 	
-	public void initMaxRange() {
-		
-	}
-	
-	public void initMinRange() {
-		
+	public void initMaxRangeAndMinRange(List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet) {
+		double begin = dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - testSet.getTimer()).getLastTrade();
+		if(reference > testSet.getTimer() && (begin == _maxRange || begin == _minRange)) {
+			_maxRange = lastTrade;
+			_minRange = lastTrade;
+			for(int i = dailyPerSecondRecordList.size() - testSet.getTimer(); i < dailyPerSecondRecordList.size(); i++) {
+				_maxRange = Math.max(_maxRange, dailyPerSecondRecordList.get(i).getLastTrade());
+				_minRange = Math.max(_minRange, dailyPerSecondRecordList.get(i).getLastTrade());	
+			}			
+		} else {			
+			_maxRange = Math.max(_maxRange, lastTrade);
+			_minRange = Math.max(_minRange, lastTrade);
+		}
+		maxRange = tCounter > testSet.getTimer() ? _maxRange : 0;
+		minRange = tCounter > testSet.getTimer() ? _minRange : 0;
 	}
 	
 	public void initRange() {
-		
+		range = maxRange - minRange;
 	}
 	
 	public void initUpper() {
-		
+		if(minRange != 0) {
+			upper = maxRange - (maxRange - minRange + 1) / 3;
+		}
 	}
 	
 	public void initLower() {
-		
+		if(minRange != 0) {
+			upper = maxRange + (maxRange + minRange + 1) / 3;
+		}
 	}
 	
-	public void initStationaryCheck() {
-		
+	public void initCheck() {
+		if(upper != 0) {
+			if(lastTrade >= upper) check = 1;
+			else if(lastTrade <= lower) check = -1;
+		}
 	}
 	
-	public void initStationarySlope() {
-		
+	public void initStationaryCheck(PerSecondRecord lastSecondRecord, TestSet testSet) {
+		if(tCounter > testSet.getTimer()) {
+			if(lastSecondRecord.getStationaryCheck() == 0 && check == 0 || lastSecondRecord.getCheck() != 0 && check == 0) stationaryCheck = 1;
+			else if(lastSecondRecord.getStationaryCheck() != 0 && check == 0) stationaryCheck = stationaryCheck + 1;
+		}
+	}
+	
+	public void initStationarySlope(List<PerSecondRecord> dailyPerSecondRecordList) {
+		if(!(stationaryCheck == 0 || stationaryCheck == 1)) {
+			stationarySlope = (lastTrade - dailyPerSecondRecordList.get(reference - stationaryCheck).getLastTrade()) / stationaryCheck;
+		}
 	}
 	
 	public void initAction(PerSecondRecord lastSecondRecord, TestSet testSet) {
-	
+		if(lastSecondRecord.getCheck() == 0 && check == 1 && lastSecondRecord.getStationarySlope() < 0 && lastSecondRecord.getStationaryCheck() >= testSet.getAction()) action = 1;
+		else if(lastSecondRecord.getCheck() == 0 && check == -1 && lastSecondRecord.getStationarySlope() > 0 && lastSecondRecord.getStationaryCheck() >= testSet.getAction()) action = -1;
 	}
 	
 	public void initSmoothAction(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if (this.checkMarketTime == 0) {
-			this.smoothAction = 0;
-		} else if (lastSecondRecord.getMtm() < 0 && lastSecondRecord.getMtm() >= -testSet.getAbsoluteTradeStopLoss() * testSet.getUnit() && lastSecondRecord.getSmoothAction() != 0) {
-			this.smoothAction = lastSecondRecord.getSmoothAction();
-		} else if(lastSecondRecord.getSmoothAction() == 1 && this.action == 0 
-				&& (lastSecondRecord.getMaxMtm() >= testSet.getTradeStopLossTrigger() * testSet.getUnit() 
-				&& (this.lastTrade - lastSecondRecord.getPosition()) >= (1 - testSet.getTradeStopLossTriggerPercent())*lastSecondRecord.getMaxMtm()
-				|| lastSecondRecord.getMaxMtm() < testSet.getTradeStopLossTrigger() * testSet.getUnit()
-				&& (this.lastTrade - lastSecondRecord.getPosition()) >= lastSecondRecord.getMaxMtm() - testSet.getAbsoluteTradeStopLoss() * testSet.getUnit())) {
-			this.smoothAction = 1;
-		} else if (lastSecondRecord.getSmoothAction() == -1 && this.action == 0
-				&& (lastSecondRecord.getMaxMtm() >= testSet.getTradeStopLossTrigger() * testSet.getUnit() 
-				&& (lastSecondRecord.getPosition() - this.lastTrade) >= (1 - testSet.getTradeStopLossTriggerPercent())*lastSecondRecord.getMaxMtm()
-				|| lastSecondRecord.getMaxMtm() < testSet.getTradeStopLossTrigger() * testSet.getUnit()
-				&& (lastSecondRecord.getPosition() - this.lastTrade) >= lastSecondRecord.getMaxMtm() - testSet.getAbsoluteTradeStopLoss() * testSet.getUnit())) {
-			this.smoothAction = -1;
-		} else if(lastSecondRecord.getSmoothAction() == 0 && this.action != 0 
-				|| lastSecondRecord.getSmoothAction() == this.action 
-				|| lastSecondRecord.getSmoothAction() != 0 && this.action != 0) {
-			this.smoothAction = this.action;
-		} 
+		
 	}
 	
 	public void initPosition(PerSecondRecord lastSecondRecord) {
