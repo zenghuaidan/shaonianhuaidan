@@ -14,29 +14,26 @@ public class PerSecondRecord {
 	private int checkMarketTime;
 	private int reference;	
 	
-	private int cpCounting;
-	private double cp;
-	private double cps;
-	private int cpAccount;
-	private double cpsAverage;
-	private double cpsToatl;
-	private double previousMaxCPAC;
-	private int countingAfterCP;
-	private double est;
-	private String offOn;
-	private int preAction;
+	private double maxRange;
+	private double minRange;
+	private double range;
+	private double upper;
+	private double lower;
+	private int check;
+	private int stationaryCheck;
+	private double stationarySlope;	
 	private int action;
 	private int smoothAction;
 	private double position;
 	private int posCounting;
+	private double mtm;
+	private double maxMtm;
 	private double pnl;
 	private int tradeCount;
 	private int totalTrade;
 	private double totalPnl;
-	private double mtm;
-	private double maxMtm;
-	private int pc;
 	private int tCounter;
+	private int pc;
 	
 	public PerSecondRecord() {
 	}
@@ -59,208 +56,55 @@ public class PerSecondRecord {
 //		}
 		this.checkMarketTime = checkMarketTime;
 		this.tCounter = this.checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
-		initCPCounting(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap);
-		initCP(testSet);
-		initCPS(lastSecondRecord, testSet);
-		initCPAccount(lastSecondRecord, testSet);
-		initCPSAverageAndPreviousMaxCPAC(dailyScheduleData, dailyPerSecondRecordList, lastSecondRecord, testSet);
-		initCountingAfterCP(lastSecondRecord, testSet);
-		initEst(lastSecondRecord, testSet);
-		initOffOn(lastSecondRecord);
-		initAction(lastSecondRecord, testSet);
-		initPreAction(lastSecondRecord);
+		initMaxRange();
+		initMinRange();
+		initRange();
+		initUpper();
+		initLower();
+		initStationaryCheck();
+		initStationarySlope();				
+		initAction(lastSecondRecord, testSet);		
 		initSmoothAction(lastSecondRecord, testSet);
 		initPosition(lastSecondRecord);
-		initMtm();
 		initPosCounting(lastSecondRecord);
+		initMtm();
 		initMaxMtm(dailyPerSecondRecordList, lastSecondRecord);
 		initPnl(lastSecondRecord);
-		initTotalPnl(lastSecondRecord);
 		initTradeCount(lastSecondRecord);
 		initTotalTrades(lastSecondRecord);
-		initPc(lastSecondRecord);
+		initTotalPnl(lastSecondRecord);
 	}
 	
-	public void initCPCounting(List<ScheduleData> dailyScheduleData, TestSet testSet, PerSecondRecord lastSecondRecord, Map<Double, Integer> lastTradeCountMap) {
-//				if (this.reference > testSet.getCpTimer()) {
-//					for(int i = this.reference - testSet.getCpTimer(); i < this.reference - 1; i++) {
-//						if(dailyScheduleData.get(i).getLastTrade() >= this.lastTrade - testSet.getCpBuffer() && dailyScheduleData.get(i).getLastTrade() <= this.lastTrade + testSet.getCpBuffer()) {
-//							this.cpCounting++;
-//						}
-//					}
-//					this.cpCounting++;
-//				}
-		
-		if(lastTradeCountMap != null) {// this lastTradeCountMap just keep the trade count in cptimer range 
-			if(this.tCounter == 1) { 
-				lastTradeCountMap.clear();
-			}
-			if(lastTradeCountMap.containsKey(this.lastTrade)) lastTradeCountMap.replace(this.lastTrade, lastTradeCountMap.get(this.lastTrade) + 1);
-			else lastTradeCountMap.put(this.lastTrade, 1);			
-			if (this.tCounter > testSet.getCpTimer()) {
-				double obsoluteLastTrade = dailyScheduleData.get(this.reference - testSet.getCpTimer() - 1).getLastTrade();
-				if(lastTradeCountMap.containsKey(obsoluteLastTrade)) {//the obsolute trade(previous first one in the list) is not in range again, should do a count down
-					if(lastTradeCountMap.get(obsoluteLastTrade) == 1) lastTradeCountMap.remove(obsoluteLastTrade);
-					else lastTradeCountMap.replace(obsoluteLastTrade, lastTradeCountMap.get(obsoluteLastTrade) - 1);
-				}
-				for(double trade : lastTradeCountMap.keySet()) {
-					if (isWithinCpBuffer(trade, this.lastTrade, testSet.getCpBuffer() * testSet.getUnit())) {
-						this.cpCounting += lastTradeCountMap.get(trade);
-					}
-				}
-			}
-		} else {			
-			if (this.tCounter > testSet.getCpTimer()) {
-				if(this.lastTrade == lastSecondRecord.lastTrade) {
-					this.cpCounting = lastSecondRecord.cpCounting;
-					int index = this.reference - testSet.getCpTimer() - 1;
-					if(index >= 0 && isWithinCpBuffer(dailyScheduleData.get(index).getLastTrade(), this.lastTrade, testSet.getCpBuffer() * testSet.getUnit())) {
-						this.cpCounting--;
-					}
-				} else {
-					for(int i = this.reference - testSet.getCpTimer(), j = this.reference - 2; i <= j; i++,j--) {
-						if(isWithinCpBuffer(dailyScheduleData.get(i).getLastTrade(), this.lastTrade, testSet.getCpBuffer() * testSet.getUnit())) {
-							this.cpCounting++;
-						}
-						if(i!=j && isWithinCpBuffer(dailyScheduleData.get(j).getLastTrade(), this.lastTrade, testSet.getCpBuffer() * testSet.getUnit())) {
-							this.cpCounting++;
-						}
-					}
-				}
-				this.cpCounting++;
-			}			
-		}
-		
+	public void initMaxRange() {
 		
 	}
 	
-	public boolean isWithinCpBuffer(double lastTrade, double currentLastTrade, double cpBuffer){
-		return lastTrade >= currentLastTrade - cpBuffer && lastTrade <= currentLastTrade + cpBuffer;
+	public void initMinRange() {
+		
 	}
 	
-	public void initCP(TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
-		if (this.cpCounting != 0 && this.cpCounting >= testSet.getCpHitRate()) {
-			this.cp = this.lastTrade;
-		}
+	public void initRange() {
+		
 	}
 	
-	public void initCPS(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
-		if(this.cp != 0) {
-			this.cps = cp;
-		} else if (lastSecondRecord.getCps() != 0 && Math.abs(this.lastTrade - lastSecondRecord.getCps()) > testSet.getCpSmooth() * testSet.getUnit()) {
-			this.cps = 0;
-		} else {
-			this.cps = lastSecondRecord.getCps();
-		}
+	public void initUpper() {
+		
 	}
 	
-	public void initCPAccount(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
-		if (lastSecondRecord.getCps() == 0 && this.cps != 0) {
-			this.cpAccount = 1;
-		} else if (lastSecondRecord.getCps() != 0 && this.cps != 0) {
-			this.cpAccount = lastSecondRecord.getCpAccount() + 1;
-		}
+	public void initLower() {
+		
 	}
 	
-	public void initCPSAverageAndPreviousMaxCPAC(List<ScheduleData> dailyScheduleData, List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
-		if (this.cpAccount == 0) {
-			this.cpsAverage = lastSecondRecord.getCpsAverage();
-			this.previousMaxCPAC = lastSecondRecord.getPreviousMaxCPAC();
-		} else {
-//			this.previousMaxCPAC = this.cpAccount;
-//			double total = this.lastTrade;
-//			int count = 1;
-//			for(int i = this.reference - this.cpAccount; i < this.reference - 1; i++) {
-//				this.previousMaxCPAC = Math.max(this.previousMaxCPAC, dailyPerSecondRecordList.get(i).getCpAccount());
-//				total += dailyScheduleData.get(i).getLastTrade();
-//				count++;
-//			}
-//			this.cpsAverage = total / count;
-			
-			this.previousMaxCPAC = this.cpAccount;
-			if(lastSecondRecord.getCpAccount() != 0 && this.cpAccount == (lastSecondRecord.getCpAccount() + 1)) {
-				this.cpsToatl = lastSecondRecord.getCpsToatl() + this.lastTrade;
-				this.previousMaxCPAC = Math.max(this.previousMaxCPAC, lastSecondRecord.getPreviousMaxCPAC());
-			} else {
-				this.cpsToatl = this.lastTrade;
-				for(int i = this.reference - this.cpAccount; i < this.reference - 1; i++) {
-					this.previousMaxCPAC = Math.max(this.previousMaxCPAC, dailyPerSecondRecordList.get(i).getCpAccount());
-					this.cpsToatl += dailyScheduleData.get(i).getLastTrade();
-				}
-			}
-			this.cpsAverage = this.cpsToatl / this.cpAccount;
-		}
-	}
-
-	public void initCountingAfterCP(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
-		if (this.cps != 0) {
-			this.countingAfterCP = 0;
-		} else if(lastSecondRecord.getCountingAfterCP() != 0) {
-			this.countingAfterCP += lastSecondRecord.getCountingAfterCP() + 1;
-		} else if (lastSecondRecord.getCps() != 0) {
-			this.countingAfterCP = 1;
-		}
+	public void initStationaryCheck() {
+		
 	}
 	
-	public void initEst(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
-		if (this.cpsAverage !=0) {//HSI
-//		if (!(this.cpsAverage ==0 || (lastSecondRecord.getCountingAfterCP() == 0 && lastSecondRecord.getEst() == 0))) {//KM1_v3	
-			if(this.cpsAverage != lastSecondRecord.getCpsAverage() 
-					&& lastSecondRecord.getCpsAverage() != 0
-					&& this.cpsAverage != 0 && Math.abs(this.cpsAverage - lastSecondRecord.getCpsAverage()) >= testSet.getEstimationBuffer() * testSet.getUnit()) {
-				this.est = (lastSecondRecord.getCountingAfterCP() + this.countingAfterCP) * (this.getCpsAverage() - lastSecondRecord.getCpsAverage()) / lastSecondRecord.getCountingAfterCP() + lastSecondRecord.getCpsAverage(); 
-			} else {
-				this.est = lastSecondRecord.getEst();
-			}
-		}
-	}
-	
-	public static String ON = "ON";
-	public static String OFF = "OFF";
-	public void initOffOn(PerSecondRecord lastSecondRecord) {
-		if (this.countingAfterCP == 0) {
-			this.offOn = OFF;
-		} else if (lastSecondRecord.getAction() == 1 || lastSecondRecord.getAction() == -1) {
-			this.offOn = OFF;
-		} else if(lastSecondRecord.getPreviousMaxCPAC() == this.getPreviousMaxCPAC() && lastSecondRecord.getCountingAfterCP() == 0) {
-			this.offOn = ON;
-		} else {
-			this.offOn = lastSecondRecord.getOffOn();
-		}
+	public void initStationarySlope() {
+		
 	}
 	
 	public void initAction(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if(this.est == 0 || this.offOn.equals(OFF)) {
-			this.action = 0;
-		} else if (this.countingAfterCP >= testSet.getActionCounting() 
-				&& (this.lastTrade - this.cpsAverage > testSet.getActionTrigger() * testSet.getUnit()) 
-				&& lastSecondRecord.getPreAction() != 1) {
-			this.action = 1;
-		} else if(this.countingAfterCP >= testSet.getActionCounting() 
-				&& (this.cpsAverage - this.lastTrade) >= testSet.getActionTrigger() * testSet.getUnit()
-				&& lastSecondRecord.getPreAction() != -1) {
-			this.action = -1;
-		}
-	}
 	
-	public void initPreAction(PerSecondRecord lastSecondRecord) {
-		if(this.cps != 0) {
-			this.preAction = 0;
-		} else if (this.action == 0) {
-			this.preAction = lastSecondRecord.getPreAction();
-		} else if (this.action == 1) {
-			this.preAction = 1;
-		} else if(this.action == -1) {
-			this.preAction = -1;
-		} else {
-			this.preAction = lastSecondRecord.getPreAction();
-		}
 	}
 	
 	public void initSmoothAction(PerSecondRecord lastSecondRecord, TestSet testSet) {
@@ -297,16 +141,6 @@ public class PerSecondRecord {
 		}
 	}
 	
-	public void initMtm() {
-		if (this.position == 0) {
-			this.mtm = 0;
-		} else if(this.smoothAction == 1) {
-			this.mtm = this.lastTrade - this.position;
-		} else if (this.smoothAction == -1) {
-			this.mtm = this.position - this.lastTrade;
-		} 
-	}
-	
 	public void initPosCounting(PerSecondRecord lastSecondRecord) {
 		if (this.position == 0) {
 			this.posCounting = 0;
@@ -315,6 +149,16 @@ public class PerSecondRecord {
 		} else {
 			this.posCounting = lastSecondRecord.getPosCounting() + 1;
 		}
+	}
+	
+	public void initMtm() {
+		if (this.position == 0) {
+			this.mtm = 0;
+		} else if(this.smoothAction == 1) {
+			this.mtm = this.lastTrade - this.position;
+		} else if (this.smoothAction == -1) {
+			this.mtm = this.position - this.lastTrade;
+		} 
 	}
 	
 	public void initMaxMtm(List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord) {
@@ -350,18 +194,6 @@ public class PerSecondRecord {
 		}
 	}
 	
-	public void initTotalPnl(PerSecondRecord lastSecondRecord) {
-		this.totalPnl = lastSecondRecord.totalPnl + this.pnl;
-	}
-	
-	public void initTradeCount(PerSecondRecord lastSecondRecord) {
-		this.tradeCount = Math.abs(this.smoothAction - lastSecondRecord.getSmoothAction());		
-	}
-	
-	public void initTotalTrades(PerSecondRecord lastSecondRecord) {
-		this.totalTrade = lastSecondRecord.totalTrade + this.tradeCount; 
-	}
-	
 	private void initPc(PerSecondRecord lastSecondRecord) {
 		if( (this.position != 0 && lastSecondRecord.getPosition() != 0 && this.position != lastSecondRecord.getPosition()) || (lastSecondRecord.getPosition() == 0 && this.position != 0) ){
 			this.pc = 1;
@@ -372,6 +204,18 @@ public class PerSecondRecord {
 				this.pc = 0;
 			}
 		}
+	}
+	
+	public void initTotalPnl(PerSecondRecord lastSecondRecord) {
+		this.totalPnl = lastSecondRecord.totalPnl + this.pnl;
+	}
+	
+	public void initTradeCount(PerSecondRecord lastSecondRecord) {
+		this.tradeCount = Math.abs(this.smoothAction - lastSecondRecord.getSmoothAction());		
+	}
+	
+	public void initTotalTrades(PerSecondRecord lastSecondRecord) {
+		this.totalTrade = lastSecondRecord.totalTrade + this.tradeCount; 
 	}
 	
 	public long getTime() {
@@ -430,100 +274,12 @@ public class PerSecondRecord {
 		this.reference = reference;
 	}
 
-	public int getCpCounting() {
-		return cpCounting;
-	}
-
-	public void setCpCounting(int cpCounting) {
-		this.cpCounting = cpCounting;
-	}
-
-	public double getCp() {
-		return cp;
-	}
-
-	public void setCp(double cp) {
-		this.cp = cp;
-	}
-
-	public double getCps() {
-		return cps;
-	}
-
-	public void setCps(double cps) {
-		this.cps = cps;
-	}
-
-	public int getCpAccount() {
-		return cpAccount;
-	}
-
-	public void setCpAccount(int cpAccount) {
-		this.cpAccount = cpAccount;
-	}
-
-	public double getCpsAverage() {
-		return cpsAverage;
-	}
-
-	public void setCpsAverage(double cpsAverage) {
-		this.cpsAverage = cpsAverage;
-	}
-
-	public double getCpsToatl() {
-		return cpsToatl;
-	}
-
-	public void setCpsToatl(double cpsToatl) {
-		this.cpsToatl = cpsToatl;
-	}
-
-	public double getPreviousMaxCPAC() {
-		return previousMaxCPAC;
-	}
-
-	public void setPreviousMaxCPAC(double previousMaxCPAC) {
-		this.previousMaxCPAC = previousMaxCPAC;
-	}
-
-	public int getCountingAfterCP() {
-		return countingAfterCP;
-	}
-
-	public void setCountingAfterCP(int countingAfterCP) {
-		this.countingAfterCP = countingAfterCP;
-	}
-
-	public double getEst() {
-		return est;
-	}
-
-	public void setEst(double est) {
-		this.est = est;
-	}
-
-	public String getOffOn() {
-		return offOn;
-	}
-
-	public void setOffOn(String offOn) {
-		this.offOn = offOn;
-	}
-
 	public int getAction() {
 		return action;
 	}
 
 	public void setAction(int action) {
 		this.action = action;
-	}
-
-	public int getPreAction() {
-		return preAction;
-	}
-
-	public void setPreAction(int preAction) {
-		this.preAction = preAction;
 	}
 
 	public double getPosition() {
@@ -596,6 +352,78 @@ public class PerSecondRecord {
 
 	public void setTotalTrade(int totalTrade) {
 		this.totalTrade = totalTrade;
+	}
+
+	public double getMaxRange() {
+		return maxRange;
+	}
+
+	public void setMaxRange(double maxRange) {
+		this.maxRange = maxRange;
+	}
+
+	public double getMinRange() {
+		return minRange;
+	}
+
+	public void setMinRange(double minRange) {
+		this.minRange = minRange;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getUpper() {
+		return upper;
+	}
+
+	public void setUpper(double upper) {
+		this.upper = upper;
+	}
+
+	public double getLower() {
+		return lower;
+	}
+
+	public void setLower(double lower) {
+		this.lower = lower;
+	}
+
+	public int getCheck() {
+		return check;
+	}
+
+	public void setCheck(int check) {
+		this.check = check;
+	}
+
+	public int getStationaryCheck() {
+		return stationaryCheck;
+	}
+
+	public void setStationaryCheck(int stationaryCheck) {
+		this.stationaryCheck = stationaryCheck;
+	}
+
+	public double getStationarySlope() {
+		return stationarySlope;
+	}
+
+	public void setStationarySlope(double stationarySlope) {
+		this.stationarySlope = stationarySlope;
+	}
+
+	public int gettCounter() {
+		return tCounter;
+	}
+
+	public void settCounter(int tCounter) {
+		this.tCounter = tCounter;
 	}
 
 	public int getPc() {

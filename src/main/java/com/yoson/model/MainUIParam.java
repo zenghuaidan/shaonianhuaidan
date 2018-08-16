@@ -27,24 +27,12 @@ public class MainUIParam extends TestSet {
 	private String nForPnl;
 	private boolean matrixFile;
 	
-	private int cpTimerTo;
-	private int cpTimerLiteral;
-	private double cpBufferTo;
-	private double cpBufferLiteral;
-	private int cpHitRateTo;
-	private int cpHitRateLiteral;
-	private double cpSmoothTo;
-	private double cpSmoothLiteral;
-	private double estimationBufferTo;
-	private double estimationBufferLiteral;
-	private double actionTriggerTo;
-	private double actionTriggerLiteral;
-	private int actionCountingTo;
-	private int actionCountingLiteral;
-	private double tradeStopLossTriggerTo;
-	private double tradeStopLossTriggerLiteral;
-	private double tradeStopLossTriggerPercentTo;
-	private double tradeStopLossTriggerPercentLiteral;
+	private int timerTo;
+	private int timerLiteral;
+	private double smoothTo;
+	private double smoothLiteral;
+	private double actionTo;
+	private double actionLiteral;	
 	private double absoluteTradeStopLossTo;
 	private double absoluteTradeStopLossLiteral;
 	@Expose
@@ -113,148 +101,52 @@ public class MainUIParam extends TestSet {
 		this.nForPnl = nForPnl;
 	}
 
-	public int getCpTimerTo() {
-		return cpTimerTo;
+	public int getTimerTo() {
+		return timerTo;
 	}
 
-	public void setCpTimerTo(int cpTimerTo) {
-		this.cpTimerTo = cpTimerTo;
+	public void setTimerTo(int timerTo) {
+		this.timerTo = timerTo;
 	}
 
-	public int getCpTimerLiteral() {
-		return cpTimerLiteral;
+	public int getTimerLiteral() {
+		return timerLiteral;
 	}
 
-	public void setCpTimerLiteral(int cpTimerLiteral) {
-		this.cpTimerLiteral = cpTimerLiteral;
+	public void setTimerLiteral(int timerLiteral) {
+		this.timerLiteral = timerLiteral;
 	}
 
-	public double getCpBufferTo() {
-		return cpBufferTo;
+	public double getSmoothTo() {
+		return smoothTo;
 	}
 
-	public void setCpBufferTo(double cpBufferTo) {
-		this.cpBufferTo = cpBufferTo;
+	public void setSmoothTo(double smoothTo) {
+		this.smoothTo = smoothTo;
 	}
 
-	public double getCpBufferLiteral() {
-		return cpBufferLiteral;
+	public double getSmoothLiteral() {
+		return smoothLiteral;
 	}
 
-	public void setCpBufferLiteral(double cpBufferLiteral) {
-		this.cpBufferLiteral = cpBufferLiteral;
+	public void setSmoothLiteral(double smoothLiteral) {
+		this.smoothLiteral = smoothLiteral;
 	}
 
-	public int getCpHitRateTo() {
-		return cpHitRateTo;
+	public double getActionTo() {
+		return actionTo;
 	}
 
-	public void setCpHitRateTo(int cpHitRateTo) {
-		this.cpHitRateTo = cpHitRateTo;
+	public void setActionTo(double actionTo) {
+		this.actionTo = actionTo;
 	}
 
-	public int getCpHitRateLiteral() {
-		return cpHitRateLiteral;
+	public double getActionLiteral() {
+		return actionLiteral;
 	}
 
-	public void setCpHitRateLiteral(int cpHitRateLiteral) {
-		this.cpHitRateLiteral = cpHitRateLiteral;
-	}
-
-	public double getCpSmoothTo() {
-		return cpSmoothTo;
-	}
-
-	public void setCpSmoothTo(double cpSmoothTo) {
-		this.cpSmoothTo = cpSmoothTo;
-	}
-
-	public double getCpSmoothLiteral() {
-		return cpSmoothLiteral;
-	}
-
-	public void setCpSmoothLiteral(double cpSmoothLiteral) {
-		this.cpSmoothLiteral = cpSmoothLiteral;
-	}
-
-	public double getEstimationBufferTo() {
-		return estimationBufferTo;
-	}
-
-	public void setEstimationBufferTo(double estimationBufferTo) {
-		this.estimationBufferTo = estimationBufferTo;
-	}
-
-	public double getEstimationBufferLiteral() {
-		return estimationBufferLiteral;
-	}
-
-	public void setEstimationBufferLiteral(double estimationBufferLiteral) {
-		this.estimationBufferLiteral = estimationBufferLiteral;
-	}
-
-	public double getActionTriggerTo() {
-		return actionTriggerTo;
-	}
-
-	public void setActionTriggerTo(double actionTriggerTo) {
-		this.actionTriggerTo = actionTriggerTo;
-	}
-
-	public double getActionTriggerLiteral() {
-		return actionTriggerLiteral;
-	}
-
-	public void setActionTriggerLiteral(double actionTriggerLiteral) {
-		this.actionTriggerLiteral = actionTriggerLiteral;
-	}
-
-	public int getActionCountingTo() {
-		return actionCountingTo;
-	}
-
-	public void setActionCountingTo(int actionCountingTo) {
-		this.actionCountingTo = actionCountingTo;
-	}
-
-	public int getActionCountingLiteral() {
-		return actionCountingLiteral;
-	}
-
-	public void setActionCountingLiteral(int actionCountingLiteral) {
-		this.actionCountingLiteral = actionCountingLiteral;
-	}
-
-	public double getTradeStopLossTriggerTo() {
-		return tradeStopLossTriggerTo;
-	}
-
-	public void setTradeStopLossTriggerTo(double tradeStopLossTriggerTo) {
-		this.tradeStopLossTriggerTo = tradeStopLossTriggerTo;
-	}
-
-	public double getTradeStopLossTriggerLiteral() {
-		return tradeStopLossTriggerLiteral;
-	}
-
-	public void setTradeStopLossTriggerLiteral(double tradeStopLossTriggerLiteral) {
-		this.tradeStopLossTriggerLiteral = tradeStopLossTriggerLiteral;
-	}
-
-	public double getTradeStopLossTriggerPercentTo() {
-		return tradeStopLossTriggerPercentTo;
-	}
-
-	public void setTradeStopLossTriggerPercentTo(double tradeStopLossTriggerPercentTo) {
-		this.tradeStopLossTriggerPercentTo = tradeStopLossTriggerPercentTo;
-	}
-
-	public double getTradeStopLossTriggerPercentLiteral() {
-		return tradeStopLossTriggerPercentLiteral;
-	}
-
-	public void setTradeStopLossTriggerPercentLiteral(double tradeStopLossTriggerPercentLiteral) {
-		this.tradeStopLossTriggerPercentLiteral = tradeStopLossTriggerPercentLiteral;
+	public void setActionLiteral(double actionLiteral) {
+		this.actionLiteral = actionLiteral;
 	}
 
 	public double getAbsoluteTradeStopLossTo() {
@@ -395,42 +287,17 @@ public class MainUIParam extends TestSet {
 
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
-		mainUIParam.setCpTimer(1500);
-		mainUIParam.setCpTimerTo(1500);
-		mainUIParam.setCpTimerLiteral(1);
+		mainUIParam.setTimer(1800);
+		mainUIParam.setTimerTo(1800);
+		mainUIParam.setTimerLiteral(1);
 		
-		mainUIParam.setCpBuffer(6);
-		mainUIParam.setCpBufferTo(6);
-		mainUIParam.setCpBufferLiteral(1);
+		mainUIParam.setSmooth(10);
+		mainUIParam.setSmoothTo(10);
+		mainUIParam.setSmoothLiteral(1);
 		
-		mainUIParam.setCpHitRate(50);
-		mainUIParam.setCpHitRateTo(50);
-		mainUIParam.setCpHitRateLiteral(1);
-		
-		mainUIParam.setCpSmooth(10);
-		mainUIParam.setCpSmoothTo(10);
-		mainUIParam.setCpSmoothLiteral(6);
-		
-		
-		mainUIParam.setEstimationBuffer(20);
-		mainUIParam.setEstimationBufferTo(20);
-		mainUIParam.setEstimationBufferLiteral(1);
-		
-		mainUIParam.setActionTrigger(10);
-		mainUIParam.setActionTriggerTo(10);
-		mainUIParam.setActionTriggerLiteral(1);
-
-		mainUIParam.setActionCounting(30);
-		mainUIParam.setActionCountingTo(30);
-		mainUIParam.setActionCountingLiteral(1);
-		
-		mainUIParam.setTradeStopLossTrigger(100);
-		mainUIParam.setTradeStopLossTriggerTo(100);
-		mainUIParam.setTradeStopLossTriggerLiteral(1);
-		
-		mainUIParam.setTradeStopLossTriggerPercent(0.8);
-		mainUIParam.setTradeStopLossTriggerPercentTo(0.8);
-		mainUIParam.setTradeStopLossTriggerPercentLiteral(0.1);
+		mainUIParam.setAction(30);
+		mainUIParam.setActionTo(30);
+		mainUIParam.setActionLiteral(1);
 		
 		mainUIParam.setAbsoluteTradeStopLoss(100);
 		mainUIParam.setAbsoluteTradeStopLossTo(100);
@@ -482,15 +349,9 @@ public class MainUIParam extends TestSet {
 			mainUIParam.setTradeDataField(params.get(index++)[1]);
 			mainUIParam.setAskDataField(params.get(index++)[1]);
 			mainUIParam.setBidDataField(params.get(index++)[1]);
-			mainUIParam.setCpTimer(Integer.parseInt(params.get(index++)[1]));
-			mainUIParam.setCpBuffer(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setCpHitRate(Integer.parseInt(params.get(index++)[1]));
-			mainUIParam.setCpSmooth(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setEstimationBuffer(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setActionTrigger(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setActionCounting(Integer.parseInt(params.get(index++)[1]));
-			mainUIParam.setTradeStopLossTrigger(Double.parseDouble(params.get(index++)[1]));
-			mainUIParam.setTradeStopLossTriggerPercent(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setTimer(Integer.parseInt(params.get(index++)[1]));
+			mainUIParam.setSmooth(Double.parseDouble(params.get(index++)[1]));
+			mainUIParam.setAction(Double.parseDouble(params.get(index++)[1]));			
 			mainUIParam.setAbsoluteTradeStopLoss(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setMarketStartTime(params.get(index++)[1]);
 			mainUIParam.setLunchStartTimeFrom(params.get(index++)[1]);

@@ -116,15 +116,9 @@ public class BackTestCSVWriter {
 		.append(backTestResult.testSet.getKey()  +  ",")
 		.append(mainUIParam.getVersion() + ",")
 		.append(mainUIParam.getSource() + ",")
-		.append(backTestResult.testSet.getCpTimer() + ",")
-		.append(backTestResult.testSet.getCpBuffer() + ",")
-		.append(backTestResult.testSet.getCpHitRate() + ",")
-		.append(backTestResult.testSet.getCpSmooth() + ",")
-		.append(backTestResult.testSet.getEstimationBuffer() + ",")
-		.append(backTestResult.testSet.getActionTrigger() + ",")
-		.append(backTestResult.testSet.getActionCounting() + ",")
-		.append(backTestResult.testSet.getTradeStopLossTrigger() + ",")
-		.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + ",")
+		.append(backTestResult.testSet.getTimer() + ",")
+		.append(backTestResult.testSet.getSmooth() + ",")
+		.append(backTestResult.testSet.getAction() + ",")		
 		.append(backTestResult.testSet.getAbsoluteTradeStopLoss() + ",")
 		.append(backTestResult.testSet.getMarketStartTime() + ",")
 		.append(backTestResult.testSet.getLunchStartTimeFrom() + ",")
@@ -408,15 +402,9 @@ public class BackTestCSVWriter {
 		content.append("Index performance," + perDayRecord.indexPerformance + "\n");
 		content.append("Performance in pts," + perDayRecord.performanceInPts + "\n");
 		content.append("Average HL Diff.," + perDayRecord.averageHLDiff + "\n");
-		content.append("CP timer," + mainUIParam.getCpTimer() + "\n");
-		content.append("CP Buffer," + mainUIParam.getCpBuffer() + "\n");
-		content.append("CP Hit Rate," + mainUIParam.getCpHitRate() + "\n");
-		content.append("CP smooth," + mainUIParam.getCpSmooth() + "\n");
-		content.append("estimation buffer," + mainUIParam.getEstimationBuffer() + "\n");
-		content.append("action trigger," + mainUIParam.getActionTrigger() + "\n");
-		content.append("action counting," + mainUIParam.getActionCounting() + "\n");
-		content.append("% trade stoploss trigger," + mainUIParam.getTradeStopLossTrigger() + "\n");
-		content.append("% trade stoploss," + mainUIParam.getTradeStopLossTriggerPercent() + "\n");
+		content.append("timer," + mainUIParam.getTimer() + "\n");
+		content.append("smooth," + mainUIParam.getSmooth() + "\n");
+		content.append("action," + mainUIParam.getAction() + "\n");		
 		content.append("Absolute trade stoploss," + mainUIParam.getAbsoluteTradeStopLoss() + "\n");	 
 		return content.toString();
 	}
@@ -428,16 +416,14 @@ public class BackTestCSVWriter {
 		 content.append(perSecondRecord.getLastTrade() + ",");
 		 content.append(perSecondRecord.getCheckMarketTime() + ",");
 		 content.append(perSecondRecord.getReference() + ",");
-		 content.append(perSecondRecord.getCpCounting() + ",");
-		 content.append(perSecondRecord.getCp() + ",");
-		 content.append(perSecondRecord.getCps() + ",");
-		 content.append(perSecondRecord.getCpsAverage() + ",");
-		 content.append(perSecondRecord.getCpAccount() + ",");
-		 content.append(perSecondRecord.getPreviousMaxCPAC() + ",");
-		 content.append(perSecondRecord.getCountingAfterCP() + ",");
-		 content.append(perSecondRecord.getEst() + ",");
-		 content.append(perSecondRecord.getOffOn() + ",");
-		 content.append(perSecondRecord.getPreAction() + ",");
+		 content.append(perSecondRecord.getMaxRange() + ",");
+		 content.append(perSecondRecord.getMinRange() + ",");
+		 content.append(perSecondRecord.getRange() + ",");
+		 content.append(perSecondRecord.getUpper() + ",");
+		 content.append(perSecondRecord.getLower() + ",");
+		 content.append(perSecondRecord.getCheck() + ",");
+		 content.append(perSecondRecord.getStationaryCheck() + ",");
+		 content.append(perSecondRecord.getStationarySlope() + ",");		 
 		 content.append(perSecondRecord.getAction() + ",");
 		 content.append(perSecondRecord.getSmoothAction() + ",");
 		 content.append(perSecondRecord.getPosition() + ",");

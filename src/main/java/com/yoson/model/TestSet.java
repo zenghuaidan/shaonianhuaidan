@@ -4,23 +4,11 @@ import com.google.gson.annotations.Expose;
 
 public class TestSet {
 	@Expose
-	private int cpTimer;
+	private int timer;	
 	@Expose
-	private double cpBuffer;
+	private double smooth;
 	@Expose
-	private int cpHitRate;
-	@Expose
-	private double cpSmooth;
-	@Expose
-	private double estimationBuffer;
-	@Expose
-	private double actionTrigger;
-	@Expose
-	private int actionCounting;
-	@Expose
-	private double tradeStopLossTrigger;
-	@Expose
-	private double tradeStopLossTriggerPercent;
+	private double action;	
 	@Expose
 	private double absoluteTradeStopLoss;
 	@Expose
@@ -48,20 +36,13 @@ public class TestSet {
 
 	public TestSet() {}
 
-	public TestSet(int cpTimer, double cpBuffer, int cpHitRate, double cpSmooth, double estimationBuffer, double actionTrigger,
-			int actionCounting, double tradeStopLossTrigger, double tradeStopLossTriggerPercent, double absoluteTradeStopLoss, double unit,
+	public TestSet(int timer, double smooth, double action, double absoluteTradeStopLoss, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
 			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData) {
-		this.cpTimer = cpTimer;
-		this.cpBuffer = cpBuffer;
-		this.cpHitRate = cpHitRate;
-		this.cpSmooth = cpSmooth;
-		this.estimationBuffer = estimationBuffer;
-		this.actionTrigger = actionTrigger;
-		this.actionCounting = actionCounting;
-		this.tradeStopLossTrigger = tradeStopLossTrigger;
-		this.tradeStopLossTriggerPercent = tradeStopLossTriggerPercent;
+		this.timer = timer;
+		this.smooth = smooth;
+		this.action = action;		
 		this.absoluteTradeStopLoss = absoluteTradeStopLoss;
 		this.unit = unit;
 		
@@ -77,76 +58,28 @@ public class TestSet {
 		this.includeMorningData = includeMorningData;
 	}
 
-	public int getCpTimer() {
-		return cpTimer;
+	public int getTimer() {
+		return timer;
 	}
 
-	public void setCpTimer(int cpTimer) {
-		this.cpTimer = cpTimer;
+	public void setTimer(int timer) {
+		this.timer = timer;
 	}
 
-	public double getCpBuffer() {
-		return cpBuffer;
+	public double getSmooth() {
+		return smooth;
 	}
 
-	public void setCpBuffer(double cpBuffer) {
-		this.cpBuffer = cpBuffer;
+	public void setSmooth(double smooth) {
+		this.smooth = smooth;
 	}
 
-	public int getCpHitRate() {
-		return cpHitRate;
+	public double getAction() {
+		return action;
 	}
 
-	public void setCpHitRate(int cpHitRate) {
-		this.cpHitRate = cpHitRate;
-	}
-
-	public double getCpSmooth() {
-		return cpSmooth;
-	}
-
-	public void setCpSmooth(double cpSmooth) {
-		this.cpSmooth = cpSmooth;
-	}
-
-	public double getEstimationBuffer() {
-		return estimationBuffer;
-	}
-
-	public void setEstimationBuffer(double estimationBuffer) {
-		this.estimationBuffer = estimationBuffer;
-	}
-
-	public double getActionTrigger() {
-		return actionTrigger;
-	}
-
-	public void setActionTrigger(double actionTrigger) {
-		this.actionTrigger = actionTrigger;
-	}
-
-	public int getActionCounting() {
-		return actionCounting;
-	}
-
-	public void setActionCounting(int actionCounting) {
-		this.actionCounting = actionCounting;
-	}
-
-	public double getTradeStopLossTrigger() {
-		return tradeStopLossTrigger;
-	}
-
-	public void setTradeStopLossTrigger(double tradeStopLossTrigger) {
-		this.tradeStopLossTrigger = tradeStopLossTrigger;
-	}
-
-	public double getTradeStopLossTriggerPercent() {
-		return tradeStopLossTriggerPercent;
-	}
-
-	public void setTradeStopLossTriggerPercent(double tradeStopLossTriggerPercent) {
-		this.tradeStopLossTriggerPercent = tradeStopLossTriggerPercent;
+	public void setAction(double action) {
+		this.action = action;
 	}
 
 	public double getAbsoluteTradeStopLoss() {
@@ -246,15 +179,9 @@ public class TestSet {
 	}
 	
 	public String getKey() {
-		return getCpTimer()  +  "_" +
-		getCpBuffer() + "_" +
-		getCpHitRate() + "_" +
-		getCpSmooth() + "_" +
-		getEstimationBuffer() + "_" +
-		getActionTrigger() + "_" +
-		getActionCounting() + "_" +
-		getTradeStopLossTrigger() + "_" +
-		getTradeStopLossTriggerPercent() + "_" +
+		return getTimer()  +  "_" +
+		getSmooth() + "_" +
+		getAction() + "_" +		
 		getAbsoluteTradeStopLoss();
 	}
 	

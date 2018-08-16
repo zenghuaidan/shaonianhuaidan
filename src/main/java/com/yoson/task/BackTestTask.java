@@ -138,18 +138,11 @@ public class BackTestTask implements Runnable {
 		mainUIParam.setEndStr(sortedDateList.get(sortedDateList.size() - 1));
 		
 		List<TestSet> testSets = new ArrayList<TestSet>();
-		for (int cpTimer = mainUIParam.getCpTimer(); cpTimer<= mainUIParam.getCpTimerTo() ; cpTimer = cpTimer + mainUIParam.getCpTimerLiteral())
-		for (double cpBuffer = mainUIParam.getCpBuffer(); cpBuffer<= mainUIParam.getCpBufferTo() ; cpBuffer = cpBuffer + mainUIParam.getCpBufferLiteral())
-		for (int cpHitRate = mainUIParam.getCpHitRate(); cpHitRate<= mainUIParam.getCpHitRateTo() ; cpHitRate = cpHitRate + mainUIParam.getCpHitRateLiteral())
-		for (double cpSmooth = mainUIParam.getCpSmooth(); cpSmooth<= mainUIParam.getCpSmoothTo(); cpSmooth = cpSmooth + mainUIParam.getCpSmoothLiteral())
-		for (double estimationBuffer = mainUIParam.getEstimationBuffer(); estimationBuffer<= mainUIParam.getEstimationBufferTo() ; estimationBuffer = estimationBuffer + mainUIParam.getEstimationBufferLiteral())
-		for (double actionTrigger = mainUIParam.getActionTrigger(); actionTrigger<= mainUIParam.getActionTriggerTo() ; actionTrigger = actionTrigger + mainUIParam.getActionTriggerLiteral())
-		for (int actionCounting = mainUIParam.getActionCounting(); actionCounting<= mainUIParam.getActionCountingTo() ; actionCounting = actionCounting + mainUIParam.getActionCountingLiteral())
-		for (double tradeStopLossTrigger = mainUIParam.getTradeStopLossTrigger(); tradeStopLossTrigger<= mainUIParam.getTradeStopLossTriggerTo() ; tradeStopLossTrigger = tradeStopLossTrigger + mainUIParam.getTradeStopLossTriggerLiteral())
-		for (double tradeStopLossTriggerPercent = mainUIParam.getTradeStopLossTriggerPercent(); tradeStopLossTriggerPercent<= mainUIParam.getTradeStopLossTriggerPercentTo() ; tradeStopLossTriggerPercent = tradeStopLossTriggerPercent + mainUIParam.getTradeStopLossTriggerPercentLiteral())
+		for (int timer = mainUIParam.getTimer(); timer<= mainUIParam.getTimerTo() ; timer = timer + mainUIParam.getTimerLiteral())
+		for (double smooth = mainUIParam.getSmooth(); smooth<= mainUIParam.getSmoothTo() ; smooth = smooth + mainUIParam.getSmoothLiteral())
+		for (double action = mainUIParam.getAction(); action<= mainUIParam.getActionTo() ; action = action + mainUIParam.getActionLiteral())		
 		for (double absoluteTradeStopLoss = mainUIParam.getAbsoluteTradeStopLoss(); absoluteTradeStopLoss<= mainUIParam.getAbsoluteTradeStopLossTo() ; absoluteTradeStopLoss = absoluteTradeStopLoss + mainUIParam.getAbsoluteTradeStopLossLiteral()) {
-			testSets.add(new TestSet(cpTimer, cpBuffer, cpHitRate, cpSmooth, estimationBuffer, actionTrigger,
-					actionCounting, tradeStopLossTrigger, tradeStopLossTriggerPercent, absoluteTradeStopLoss, mainUIParam.getUnit(),
+			testSets.add(new TestSet(timer, smooth, action, absoluteTradeStopLoss, mainUIParam.getUnit(),
 					mainUIParam.getMarketStartTime(), mainUIParam.getLunchStartTimeFrom(), mainUIParam.getLunchStartTimeTo(), 
 					mainUIParam.getMarketCloseTime(), mainUIParam.getCashPerIndexPoint(), mainUIParam.getTradingFee(), 
 					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition(), mainUIParam.isIncludeMorningData()));
