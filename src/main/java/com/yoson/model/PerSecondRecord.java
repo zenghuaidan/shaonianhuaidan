@@ -68,8 +68,8 @@ public class PerSecondRecord {
 		initAction(lastSecondRecord, testSet);		
 		initSmoothAction(lastSecondRecord, testSet);
 		initPosition(lastSecondRecord);
-		initPosCounting(lastSecondRecord);
 		initMtm();
+		initPosCounting(lastSecondRecord);
 		initMaxMtm(dailyPerSecondRecordList, lastSecondRecord);
 		initPnl(lastSecondRecord);
 		initTradeCount(lastSecondRecord);
