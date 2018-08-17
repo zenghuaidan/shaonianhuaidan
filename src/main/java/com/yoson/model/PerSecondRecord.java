@@ -58,7 +58,7 @@ public class PerSecondRecord {
 //		}
 		this.checkMarketTime = checkMarketTime;
 		this.tCounter = this.checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
-		initMaxRangeAndMinRange(dailyPerSecondRecordList, testSet);
+		initMaxRangeAndMinRange(lastSecondRecord, dailyPerSecondRecordList, testSet);
 		initRange();
 		initUpper();
 		initLower();
@@ -77,18 +77,19 @@ public class PerSecondRecord {
 		initTotalPnl(lastSecondRecord);
 	}
 	
-	public void initMaxRangeAndMinRange(List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet) {
-		double begin = dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - testSet.getTimer()).getLastTrade();
-		if(reference > testSet.getTimer() && (begin == _maxRange || begin == _minRange)) {
-			_maxRange = lastTrade;
-			_minRange = lastTrade;
-			for(int i = dailyPerSecondRecordList.size() - testSet.getTimer(); i < dailyPerSecondRecordList.size(); i++) {
-				_maxRange = Math.max(_maxRange, dailyPerSecondRecordList.get(i).getLastTrade());
-				_minRange = Math.max(_minRange, dailyPerSecondRecordList.get(i).getLastTrade());	
-			}			
-		} else {			
-			_maxRange = Math.max(_maxRange, lastTrade);
-			_minRange = Math.max(_minRange, lastTrade);
+	public void initMaxRangeAndMinRange(PerSecondRecord lastSecondRecord, List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet) {
+		_maxRange = Math.max(lastSecondRecord._maxRange, lastTrade);
+		_minRange = Math.max(lastSecondRecord._minRange, lastTrade);
+		if(reference > testSet.getTimer()) {
+			double begin = dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - testSet.getTimer()).getLastTrade();
+			if((begin == lastSecondRecord._maxRange || begin == lastSecondRecord._minRange)) {
+				_maxRange = lastTrade;
+				_minRange = lastTrade;
+				for(int i = dailyPerSecondRecordList.size() - testSet.getTimer(); i < dailyPerSecondRecordList.size(); i++) {
+					_maxRange = Math.max(_maxRange, dailyPerSecondRecordList.get(i).getLastTrade());
+					_minRange = Math.max(_minRange, dailyPerSecondRecordList.get(i).getLastTrade());	
+				}				
+			}
 		}
 		maxRange = tCounter > testSet.getTimer() ? _maxRange : 0;
 		minRange = tCounter > testSet.getTimer() ? _minRange : 0;
@@ -136,7 +137,10 @@ public class PerSecondRecord {
 	}
 	
 	public void initSmoothAction(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		
+		if(this.checkMarketTime != 0) {
+			if(lastSecondRecord.getAction() == 0 && action != 0) smoothAction = action;
+			else if(lastSecondRecord.getSmoothAction() != 0 && (check == lastSecondRecord.getSmoothAction() || check == 0) && (action == lastSecondRecord.getSmoothAction() || action == 0) && lastSecondRecord.getMtm() >= -1 * testSet.getAbsoluteTradeStopLoss()) smoothAction = lastSecondRecord.getSmoothAction();
+		}
 	}
 	
 	public void initPosition(PerSecondRecord lastSecondRecord) {
