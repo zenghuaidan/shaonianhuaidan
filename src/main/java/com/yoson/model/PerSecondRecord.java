@@ -85,7 +85,7 @@ public class PerSecondRecord {
 			if((begin == lastSecondRecord._maxRange || begin == lastSecondRecord._minRange)) {
 				_maxRange = lastTrade;
 				_minRange = lastTrade;
-				for(int i = dailyPerSecondRecordList.size() - testSet.getTimer(); i < dailyPerSecondRecordList.size(); i++) {
+				for(int i = dailyPerSecondRecordList.size() - testSet.getTimer() + 1; i < dailyPerSecondRecordList.size(); i++) {
 					_maxRange = Math.max(_maxRange, dailyPerSecondRecordList.get(i).getLastTrade());
 					_minRange = Math.min(_minRange, dailyPerSecondRecordList.get(i).getLastTrade());	
 				}				
