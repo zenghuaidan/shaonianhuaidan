@@ -1,8 +1,11 @@
 package com.yoson.model;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import com.yoson.date.DateUtils;
 
 public class PerSecondRecord {
 
@@ -53,9 +56,9 @@ public class PerSecondRecord {
 		this.lastTrade = scheduleDataPerSecond.getLastTrade();
 		this.reference = lastSecondRecord.getReference() + 1;
 		//2015-01-19  9:41:16
-//		if ("2015-01-19 11:58:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
-//			System.out.println("debug point");
-//		}
+		if ("2015-01-19 10:01:50".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
+			System.out.println("debug point");
+		}
 		this.checkMarketTime = checkMarketTime;
 		this.tCounter = this.checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
 		initMaxRangeAndMinRange(lastSecondRecord, dailyPerSecondRecordList, testSet);
@@ -121,7 +124,7 @@ public class PerSecondRecord {
 	public void initStationaryCheck(PerSecondRecord lastSecondRecord, TestSet testSet) {
 		if(tCounter > testSet.getTimer()) {
 			if(lastSecondRecord.getStationaryCheck() == 0 && check == 0 || lastSecondRecord.getCheck() != 0 && check == 0) stationaryCheck = 1;
-			else if(lastSecondRecord.getStationaryCheck() != 0 && check == 0) stationaryCheck = stationaryCheck + 1;
+			else if(lastSecondRecord.getStationaryCheck() != 0 && check == 0) stationaryCheck = lastSecondRecord.getStationaryCheck() + 1;
 		}
 	}
 	

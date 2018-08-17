@@ -28,8 +28,8 @@ public class ExcelUtil {
 	private static DecimalFormat nf = new DecimalFormat("0.00"); 
 	
 	public static void main(String[] args) {
-		ArrayList<ArrayList<ArrayList<Object>>> _list1 = readExcel(new File("C:\\Users\\larry\\Desktop\\mine\\A Trading Day FOR CHECK.xlsx"));
-		ArrayList<ArrayList<ArrayList<Object>>> _list2 = readExcel(new File("C:\\Users\\larry\\Desktop\\mine\\TradeIdea3_reference1.xlsx"));
+		ArrayList<ArrayList<ArrayList<Object>>> _list1 = readExcel(new File("I:\\githome\\shaonianhuaidan\\src\\main\\IDEA6_data\\20180817171151\\A Trading Day FOR CHECK.xlsx"));
+		ArrayList<ArrayList<ArrayList<Object>>> _list2 = readExcel(new File("I:\\githome\\shaonianhuaidan\\src\\main\\IDEA6_data\\20180817171151\\sample.xlsx"));
 //		for(ArrayList<ArrayList<Object>> list : _list) {
 //			for(ArrayList<Object> list2 : list) {
 //				for(Object object : list2) {
@@ -46,10 +46,9 @@ public class ExcelUtil {
 		columnMap.put("max range", columnIndex++);
 		columnMap.put("min range", columnIndex++);
 		columnMap.put("range", columnIndex++);
-		columnMap.put("CPS Av. L", columnIndex++);
 		columnMap.put("upper", columnIndex++);
 		columnMap.put("lower", columnIndex++);
-		columnMap.put("check", columnIndex++);
+		columnMap.put("check", columnIndex++);		
 		columnMap.put("stationary check", columnIndex++);
 		columnMap.put("stationary slope", columnIndex++);
 		columnMap.put("Action", columnIndex++);
@@ -63,10 +62,10 @@ public class ExcelUtil {
 		columnMap.put("Total PnL", columnIndex++);
 		
 		int columnStart1 = 6;
-		int columnStart2 = 10;
+		int columnStart2 = 6;
 		
 		int rowStart1 = 1;
-		int rowEnd1 = 22502;
+		int rowEnd1 = 21603;
 		
 		int rowStart2 = 5;
 		
