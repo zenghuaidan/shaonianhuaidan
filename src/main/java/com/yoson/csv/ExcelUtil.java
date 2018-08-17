@@ -43,18 +43,17 @@ public class ExcelUtil {
 		//Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,CP counting,CP,CPS,CPS Av. L,CP Acc count,Previous Max CPAC,counting after CP,Est.,ON/ OFF,Pre.Action,Action,smooth Action,Position,Pos. counting,MTM,Max. MTM,PnL,No. Trades,Total PnL		
 		int columnIndex = 0;
 		Map<String, Integer> columnMap = new HashMap<String, Integer>();
-		columnMap.put("CP counting", columnIndex++);
-		columnMap.put("CP", columnIndex++);
-		columnMap.put("CPS", columnIndex++);
+		columnMap.put("max range", columnIndex++);
+		columnMap.put("min range", columnIndex++);
+		columnMap.put("range", columnIndex++);
 		columnMap.put("CPS Av. L", columnIndex++);
-		columnMap.put("CP Acc count", columnIndex++);
-		columnMap.put("Previous Max CPAC", columnIndex++);
-		columnMap.put("counting after CP", columnIndex++);
-		columnMap.put("Est.", columnIndex++);
-		columnMap.put("ON/ OFF", columnIndex++);
-		columnMap.put("Pre.Action", columnIndex++);
+		columnMap.put("upper", columnIndex++);
+		columnMap.put("lower", columnIndex++);
+		columnMap.put("check", columnIndex++);
+		columnMap.put("stationary check", columnIndex++);
+		columnMap.put("stationary slope", columnIndex++);
 		columnMap.put("Action", columnIndex++);
-		columnMap.put("smooth Action", columnIndex++);
+		columnMap.put("Smooth Action", columnIndex++);
 		columnMap.put("Position", columnIndex++);
 		columnMap.put("Pos. counting", columnIndex++);
 		columnMap.put("MTM", columnIndex++);

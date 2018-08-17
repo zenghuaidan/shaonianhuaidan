@@ -317,7 +317,7 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setLastNumberOfMinutesClearPosition(2);
 		mainUIParam.setLunchLastNumberOfMinutesClearPosition(2);
 														
-		mainUIParam.setSource("HSI");
+		mainUIParam.setSource("BBG_HSI");
 		mainUIParam.setVersion("6");
 		
 		mainUIParam.setOutputChart(false);

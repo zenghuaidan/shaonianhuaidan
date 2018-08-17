@@ -79,7 +79,7 @@ public class PerSecondRecord {
 	
 	public void initMaxRangeAndMinRange(PerSecondRecord lastSecondRecord, List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet) {
 		_maxRange = Math.max(lastSecondRecord._maxRange, lastTrade);
-		_minRange = Math.max(lastSecondRecord._minRange, lastTrade);
+		_minRange = dailyPerSecondRecordList.size() == 0 ? lastTrade : Math.min(lastSecondRecord._minRange, lastTrade);		
 		if(reference > testSet.getTimer()) {
 			double begin = dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - testSet.getTimer()).getLastTrade();
 			if((begin == lastSecondRecord._maxRange || begin == lastSecondRecord._minRange)) {
@@ -87,7 +87,7 @@ public class PerSecondRecord {
 				_minRange = lastTrade;
 				for(int i = dailyPerSecondRecordList.size() - testSet.getTimer(); i < dailyPerSecondRecordList.size(); i++) {
 					_maxRange = Math.max(_maxRange, dailyPerSecondRecordList.get(i).getLastTrade());
-					_minRange = Math.max(_minRange, dailyPerSecondRecordList.get(i).getLastTrade());	
+					_minRange = Math.min(_minRange, dailyPerSecondRecordList.get(i).getLastTrade());	
 				}				
 			}
 		}
@@ -107,7 +107,7 @@ public class PerSecondRecord {
 	
 	public void initLower() {
 		if(minRange != 0) {
-			upper = maxRange + (maxRange + minRange + 1) / 3;
+			lower = minRange + (maxRange - minRange + 1) / 3;
 		}
 	}
 	

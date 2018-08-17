@@ -79,7 +79,7 @@ public class BackTestCSVWriter {
 	}
 	
 	public static String getATradingDayHeader() {
-		return "Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,CP counting,CP,CPS,CPS Av. L,CP Acc count,Previous Max CPAC,counting after CP,Est.,ON/ OFF,Pre.Action,Action,smooth Action,Position,Pos. counting,MTM,Max. MTM,PnL,No. Trades,Total PnL\n";
+		return "Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,max range,min range,range,upper,lower,check,stationary check,stationary slope,Action,Smooth Action,Position,Pos. counting,MTM,Max. MTM,PnL,No. Trades,Total PnL\n";
 	}
 	
 	public static String getBTTradeHeader() {

@@ -361,7 +361,7 @@ function getMainUIParam() {
 	   "timerLiteral":$.trim($("[name='timerLiteral']").val()),
 	   "smoothTo":$.trim($("[name='smoothTo']").val()),
 	   "smoothLiteral":$.trim($("[name='smoothLiteral']").val()),
-	   "actionTo":$.trim($("[name='ationTo']").val()),
+	   "actionTo":$.trim($("[name='actionTo']").val()),
 	   "actionLiteral":$.trim($("[name='actionLiteral']").val()),	   
 	   "absoluteTradeStopLossTo":$.trim($("[name='absoluteTradeStopLossTo']").val()),
 	   "absoluteTradeStopLossLiteral":$.trim($("[name='absoluteTradeStopLossLiteral']").val()),
