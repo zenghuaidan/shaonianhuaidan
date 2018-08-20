@@ -130,6 +130,7 @@ public class EClientSocketUtils {
 						List<String> sourceAndTickerValue = new ArrayList<String>();
 						sourceAndTickerValue.add(sourceValue);
 						sourceAndTickerValue.add(tickerValue);
+						sourceAndTicker.put(source, sourceAndTickerValue);
 					}
 					ScheduledDataRecord scheduledDataRecord = new ScheduledDataRecord(time);					
 					Map<String, ScheduledDataRecord> map2 = new HashMap<String, ScheduledDataRecord>();
