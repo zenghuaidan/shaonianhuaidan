@@ -78,6 +78,7 @@ public class PerSecondRecord {
 		initTradeCount(lastSecondRecord);
 		initTotalTrades(lastSecondRecord);
 		initTotalPnl(lastSecondRecord);
+		initPc(lastSecondRecord);
 	}
 	
 	public void initMaxRangeAndMinRange(PerSecondRecord lastSecondRecord, List<PerSecondRecord> dailyPerSecondRecordList, TestSet testSet) {
