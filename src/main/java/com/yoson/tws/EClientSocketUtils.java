@@ -116,12 +116,15 @@ public class EClientSocketUtils {
 		}
 		EClientSocketUtils.id = null;
 		EClientSocketUtils.contracts = contracts;
+		EClientSocketUtils.hasDataContractList = new CopyOnWriteArrayList<Integer>();
 	}
 	
 	public static int identity = 2000;
 	public static void requestData(Date now) {
-		if (!EClientSocketUtils.isConnected())
+		if (!EClientSocketUtils.isConnected()) {
+			System.out.println("Try connect to TWS at " + new Date());
 			EClientSocketUtils.reconnectUsingPreConnectSetting();		
+		}
 		if(EClientSocketUtils.isConnected() && StringUtils.isEmpty(EClientSocketUtils.id)) {													
 			YosonEWrapper.priceMap = new ConcurrentHashMap<String, Double>();
 			EClientSocketUtils.id = DateUtils.yyyyMMdd().format(now);
