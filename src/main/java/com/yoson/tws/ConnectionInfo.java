@@ -9,6 +9,7 @@ public class ConnectionInfo implements Serializable {
 	private int clientId;
 	private String account;
 	private boolean paperTrading = true;
+	private boolean cancelAndRetryIfOrderExceedTolerantTime = false;
 
 	public String getHost() {
 		return host;
@@ -48,6 +49,14 @@ public class ConnectionInfo implements Serializable {
 
 	public void setPaperTrading(boolean paperTrading) {
 		this.paperTrading = paperTrading;
+	}
+
+	public boolean isCancelAndRetryIfOrderExceedTolerantTime() {
+		return cancelAndRetryIfOrderExceedTolerantTime;
+	}
+
+	public void setCancelAndRetryIfOrderExceedTolerantTime(boolean cancelAndRetryIfOrderExceedTolerantTime) {
+		this.cancelAndRetryIfOrderExceedTolerantTime = cancelAndRetryIfOrderExceedTolerantTime;
 	}
 
 }
