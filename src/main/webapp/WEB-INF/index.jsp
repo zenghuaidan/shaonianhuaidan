@@ -389,7 +389,14 @@
 				      <td>PaperTrading?</td>
 				      <td>
 				      	<input name="isPaperTrading" type="checkbox" ${connectionInfo.paperTrading ? 'checked' : ''} />
-				      	<font color="red">Only select this checkbox during paper trading!!!!</font>
+				      	<font color="red">Suggest to only select this checkbox during paper trading!!!!</font>
+			      	  </td>
+				   </tr>
+				   <tr>
+				      <td>Cancel And Retry If Order Exceed Tolerant Time?</td>
+				      <td>
+				      	<input name="isCancelAndRetryIfOrderExceedTolerantTime" type="checkbox" ${connectionInfo.cancelAndRetryIfOrderExceedTolerantTime ? 'checked' : ''} />
+				      	<font color="red">This flag only take effective when you have checked above 'PaperTrading?' checkbox </font>
 			      	  </td>
 				   </tr>
    	   			   <tr>
