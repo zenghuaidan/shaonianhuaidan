@@ -96,6 +96,7 @@ function defaultConnectClick() {
 	$("[name='clientId']").val("1");
 	$("[name='account']").val("U8979091");
 	$("[name='isPaperTrading']").prop('checked', true);
+	$("[name='isCancelAndRetryIfOrderExceedTolerantTime']").prop('checked', true);
 }
 
 function getContract() {
@@ -182,6 +183,7 @@ function connectClick() {
 	var clientId = $.trim($("[name='clientId']").val());
 	var account = $.trim($("[name='account']").val());
 	var paperTrading = $("[name='isPaperTrading']").is(":checked");
+	var cancelAndRetryIfOrderExceedTolerantTime = $("[name='isCancelAndRetryIfOrderExceedTolerantTime']").is(":checked");
 	if(host == "" || port == "" || clientId == "" || account == "") {
 		alert("Please input all the connection infomation");
 		return;
@@ -194,7 +196,8 @@ function connectClick() {
 	    	"port" : port,
 	    	"clientId" : clientId,
 	    	"account" : account,
-	    	"paperTrading" : paperTrading
+	    	"paperTrading" : paperTrading,
+	    	"cancelAndRetryIfOrderExceedTolerantTime" : cancelAndRetryIfOrderExceedTolerantTime
 	    }),
 	    contentType:"application/json;charset=utf-8",
 	    success: function(data) {
