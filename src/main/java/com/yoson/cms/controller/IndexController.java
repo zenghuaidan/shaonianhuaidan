@@ -202,8 +202,8 @@ public class IndexController {
 				return "Already have a task in running status, please wait for previous task finish";
 			}
 		} catch (Exception e) {
+			return "No continue log for downloading";			
 		}
-		return "";			
 	}
 	
 	@ResponseBody
