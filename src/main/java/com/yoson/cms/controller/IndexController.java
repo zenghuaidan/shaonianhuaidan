@@ -1,6 +1,8 @@
 package com.yoson.cms.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.ParseException;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ib.client.Contract;
 import com.yoson.csv.ExcelUtil;
 import com.yoson.date.DateUtils;
@@ -160,6 +165,44 @@ public class IndexController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("continueData")
+	public boolean continueData(@RequestParam String id, HttpServletRequest request) {
+		try {
+			if (EClientSocketUtils.isConnected() && !EClientSocketUtils.running && !EClientSocketUtils.uploading) {
+				FileInputStream input = new FileInputStream(new File(YosonEWrapper.getContractPath(id)));
+				String contractJson = IOUtils.toString(input);
+				if(input != null) input.close();
+				List<Contract> contracts = new Gson().fromJson(contractJson, new TypeToken<List<Contract>>(){}.getType());
+				
+//			FileReader fr = new FileReader(new File(YosonEWrapper.getHistoricalDataLogPath(id)));
+//			List<String> readLines = IOUtils.readLines(fr);
+				
+				if(contracts != null && contracts.size() > 0){
+					String status = "";
+					try{
+						input = new FileInputStream(new File(YosonEWrapper.getStatusPath(id)));
+						status = IOUtils.toString(input);
+						if(input != null) input.close();						
+					} catch (Exception e) {
+					}
+					EClientSocketUtils.currentTickerId = -1;
+					EClientSocketUtils.currentDateTime = null;
+					if(!StringUtils.isBlank(status)) {
+						EClientSocketUtils.currentTickerId = Integer.parseInt(status.split(",")[0]);
+						EClientSocketUtils.currentDateTime = DateUtils.yyyyMMddHHmmss().parse(status.split(",")[1]);
+					}
+					EClientSocketUtils.id = id;
+					EClientSocketUtils.running = true;
+					EClientSocketUtils.contracts = contracts;
+					return true;
+				}
+			}
+		} catch (Exception e) {
+		}
+		return false;			
+	}
+	
+	@ResponseBody
 	@RequestMapping("uploadData")
 	public boolean uploadData(@RequestParam String id, HttpServletRequest request) throws IOException {
 		return EClientSocketUtils.upload(YosonEWrapper.getHistoricalDataLogPath(id));			
@@ -197,6 +240,7 @@ public class IndexController {
 				FileUtils.copyInputStreamToFile(contractTemplate.getInputStream(), file);				
 				List<Contract> contracts = initContracts(file, startDate, endDate, startTime, endTime);
 				if (contracts.size() > 0) {
+					YosonEWrapper.writeText(YosonEWrapper.getContractPath(), new Gson().toJson(contracts), true);
 					EClientSocketUtils.requestData(contracts);
 					return "Success";
 				}

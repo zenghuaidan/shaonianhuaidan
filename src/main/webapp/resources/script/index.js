@@ -145,6 +145,7 @@ function renderLiveDataFileList() {
 //	    				"<input onclick='stop(\"" + datas[0] + "\")' type='button' value='Stop'/>" +
 	    				"<input onclick='uploadData(\"" + data[i] + "\")' type='button' value='Upload'/>" + 
 	    				"<input onclick='deleteLiveItem(\"" + data[i] + "\")' type='button' value='Delete'/>" +
+	    				"<input onclick='continueData(\"" + data[i] + "\")' type='button' value='Continue'/>" +
 	    				"<br/>"
 	    	}
 	    	$("#livefiles").html(lis);
@@ -172,6 +173,23 @@ function uploadData(id) {
 	    url: "uploadData?id=" + id,
 	    success: function(data) {
 	    	alert("Data uploaded!");
+	    },
+	    error: function() {
+	    }
+	});
+	alert("Request submitted!");
+}
+
+function continueData(id) {
+	$.ajax({
+	    type: "GET",
+	    url: "continueData?id=" + id,
+	    success: function(data) {
+	    	if(data) {
+	    		alert("Continue to download the data.");
+	    	} else {
+	    		alert("Already have a task in running status, please wait for previous task finish");
+	    	}
 	    },
 	    error: function() {
 	    }
