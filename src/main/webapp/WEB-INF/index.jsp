@@ -393,7 +393,7 @@
 			      	  </td>
 				   </tr>
 				   <tr>
-				      <td>Cancel And Retry If Order Exceed Tolerant Time?</td>
+				      <td>Cancel And Retry If Order Exceed Tolerant Time(5 mins)?</td>
 				      <td>
 				      	<input name="isCancelAndRetryIfOrderExceedTolerantTime" type="checkbox" ${connectionInfo.cancelAndRetryIfOrderExceedTolerantTime ? 'checked' : ''} />
 				      	<font color="red">This flag only take effective when you have checked above 'PaperTrading?' checkbox </font>
