@@ -166,16 +166,16 @@ public class IndexController {
 	
 	@ResponseBody
 	@RequestMapping("continueData")
-	public boolean continueData(@RequestParam String id, HttpServletRequest request) {
+	public String continueData(@RequestParam String id, HttpServletRequest request) {
 		try {
-			if (EClientSocketUtils.isConnected() && !EClientSocketUtils.running && !EClientSocketUtils.uploading) {
+			if(!EClientSocketUtils.isConnected()) return "Connect TWS failed, pls connect first.";
+			if (!EClientSocketUtils.running && !EClientSocketUtils.uploading) {
+				if(new File(YosonEWrapper.getFinishPath(id)).exists()) return "All data have been downloaded, no need to continue.";
+				
 				FileInputStream input = new FileInputStream(new File(YosonEWrapper.getContractPath(id)));
 				String contractJson = IOUtils.toString(input);
 				if(input != null) input.close();
 				List<Contract> contracts = new Gson().fromJson(contractJson, new TypeToken<List<Contract>>(){}.getType());
-				
-//			FileReader fr = new FileReader(new File(YosonEWrapper.getHistoricalDataLogPath(id)));
-//			List<String> readLines = IOUtils.readLines(fr);
 				
 				if(contracts != null && contracts.size() > 0){
 					String status = "";
@@ -194,12 +194,16 @@ public class IndexController {
 					EClientSocketUtils.id = id;
 					EClientSocketUtils.running = true;
 					EClientSocketUtils.contracts = contracts;
-					return true;
+					return "Continue to download the data.";
+				} else {
+					return "No continue log for downloading";
 				}
+			} else {
+				return "Already have a task in running status, please wait for previous task finish";
 			}
 		} catch (Exception e) {
 		}
-		return false;			
+		return "";			
 	}
 	
 	@ResponseBody
@@ -240,7 +244,7 @@ public class IndexController {
 				FileUtils.copyInputStreamToFile(contractTemplate.getInputStream(), file);				
 				List<Contract> contracts = initContracts(file, startDate, endDate, startTime, endTime);
 				if (contracts.size() > 0) {
-					YosonEWrapper.writeText(YosonEWrapper.getContractPath(), new Gson().toJson(contracts), true);
+					YosonEWrapper.writeText(YosonEWrapper.getContractPath(EClientSocketUtils.id), new Gson().toJson(contracts), true);
 					EClientSocketUtils.requestData(contracts);
 					return "Success";
 				}

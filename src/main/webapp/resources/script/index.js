@@ -185,11 +185,7 @@ function continueData(id) {
 	    type: "GET",
 	    url: "continueData?id=" + id,
 	    success: function(data) {
-	    	if(data) {
-	    		alert("Continue to download the data.");
-	    	} else {
-	    		alert("Already have a task in running status, please wait for previous task finish");
-	    	}
+	    	alert(data);
 	    },
 	    error: function() {
 	    }

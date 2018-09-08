@@ -28,7 +28,7 @@ public class YosonEWrapper extends BasicEWrapper {
 				current = DateUtils.addSecond(current, hours * 3600 * -1);
 				String log = source + "," + type + "," + DateUtils.yyyyMMddHHmmss().format(current) + "," + open + "," + close + "," + low + "," + high + "," + WAP + "," + contract.source + "," + contract.ticker + System.lineSeparator();
 				writeText(getHistoricalDataLogPath(), log, true);
-				writeText(getStatusPath(), EClientSocketUtils.currentTickerId + "," + DateUtils.yyyyMMddHHmmss().format(EClientSocketUtils.currentDateTime), false);
+				writeText(getStatusPath(EClientSocketUtils.id), EClientSocketUtils.currentTickerId + "," + DateUtils.yyyyMMddHHmmss().format(EClientSocketUtils.currentDateTime), false);
 			} catch (Exception e) {
 			}
 		} else {
@@ -48,17 +48,14 @@ public class YosonEWrapper extends BasicEWrapper {
 		}
 	}
 	
-	public static String getStatusPath() {
-		return getContractPath(EClientSocketUtils.id);
+	public static String getFinishPath(String fileName) {
+		String folder = InitServlet.createFoderAndReturnPath(InitServlet.createLiveDataFoderAndReturnPath(), fileName);
+		return FilenameUtils.concat(folder, "Finished.txt");
 	}
 	
 	public static String getStatusPath(String fileName) {
 		String folder = InitServlet.createFoderAndReturnPath(InitServlet.createLiveDataFoderAndReturnPath(), fileName);
 		return FilenameUtils.concat(folder, "status.txt");
-	}
-	
-	public static String getContractPath() {
-		return getHistoricalDataLogPath(EClientSocketUtils.id);
 	}
 	
 	public static String getContractPath(String fileName) {

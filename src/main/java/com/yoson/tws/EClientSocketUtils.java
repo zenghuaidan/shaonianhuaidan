@@ -201,6 +201,7 @@ public class EClientSocketUtils {
 					if (currentDateTime.after(endTime)) {
 						currentTickerId++;
 						if (EClientSocketUtils.contracts.size() == currentTickerId) {
+							new File(YosonEWrapper.getFinishPath(EClientSocketUtils.id)).createNewFile();
 							// stop
 							IndexController.status = "Uploading data to database....";
 							upload(YosonEWrapper.getHistoricalDataLogPath());
