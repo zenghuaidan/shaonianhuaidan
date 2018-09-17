@@ -52,7 +52,7 @@ function contractHHIClick() {
 	$("[name='currency']").val("HKD");
 	$("[name='exchange']").val("HKFE");
 	$("[name='localsymbol']").val("");
-	$("[name='expirary']").val(yyyymm());
+	//$("[name='expirary']").val(yyyymm());
 	$("[name='tif']").val("IOC");
 	$("[name='startTime']").val(yyyymmdd() + " 09:15");
 	$("[name='endTime']").val(yyyymmdd() + " 16:15");
@@ -63,7 +63,7 @@ function contractKM1Click() {
 	$("[name='currency']").val("KRW");
 	$("[name='exchange']").val("KSE");
 	$("[name='localsymbol']").val("");
-	$("[name='expirary']").val(yyyymm());
+	//$("[name='expirary']").val(yyyymm());
 	$("[name='tif']").val("MTL");
 	$("[name='startTime']").val(yyyymmdd() + " 08:00");
 	$("[name='endTime']").val(yyyymmdd() + " 14:30");
@@ -74,7 +74,7 @@ function contractNK1Click() {
 	$("[name='currency']").val("JPY");
 	$("[name='exchange']").val("OSE.JPN");
 	$("[name='localsymbol']").val("");
-	$("[name='expirary']").val(yyyymm());
+	//$("[name='expirary']").val(yyyymm());
 	$("[name='tif']").val("IOC");
 	$("[name='startTime']").val(yyyymmdd() + " 08:00");
 	$("[name='endTime']").val(yyyymmdd() + " 14:00");
@@ -85,7 +85,7 @@ function contractHSIClick() {
 	$("[name='currency']").val("HKD");
 	$("[name='exchange']").val("HKFE");
 	$("[name='localsymbol']").val("");
-	$("[name='expirary']").val(yyyymm());
+	//$("[name='expirary']").val(yyyymm());
 	$("[name='tif']").val("IOC");
 	$("[name='startTime']").val(yyyymmdd() + " 09:15");
 	$("[name='endTime']").val(yyyymmdd() + " 16:15");
@@ -771,6 +771,30 @@ function deleteLiveItem(id) {
 	});
 }
 
+function addExpiryDate() {
+	$.ajax({
+	    type: "GET",
+	    url: "addExpiryDate?id=" + $("#expiryDate").val(),
+	    success: function(data) {
+	    	updateExpiryTab();
+	    },
+	    error: function() {
+	    }
+	});
+}
+
+function deleteExpiryDate(id) {
+	$.ajax({
+	    type: "GET",
+	    url: "deleteExpiryDate?id=" + id,
+	    success: function(data) {
+	    	updateExpiryTab();
+	    },
+	    error: function() {
+	    }
+	});
+}
+
 function runBTWithLiveData(id) {
 	$.ajax({
 	    type: "GET",
@@ -853,6 +877,9 @@ function initTab() {
 			if (tab == 'connectionTab') {
 				updateConnectStatus();
 			}
+			if (tab == 'expiryTab') {			
+				updateExpiryTab();
+			}
 			
 		}  
 	}  
@@ -871,6 +898,23 @@ function updateIncomingDataInfo() {
 		},
 		error: function() {
 		}
+	});
+}
+
+function updateExpiryTab() {
+	$.ajax({
+	    type: "GET",
+	    url: "getExpiryDates",
+	    contentType:"application/json;charset=utf-8",
+	    success: function(data) {
+	    	var lis = "";
+	    	for(var i = 0; i < data.length; i++) {
+	    		lis += "<tr><td>" + data[i] + "</td><td><input onclick=\"deleteExpiryDate('" + data[i] + "')\" type=\"button\" value=\"Delete\"/></td></tr>";
+	    	}
+	    	$("#expiryDates").html(lis);
+	    },
+	    error: function() {
+	    }
 	});
 }
 

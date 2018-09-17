@@ -1,5 +1,6 @@
 package com.yoson.tws;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -12,6 +13,7 @@ import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
 import com.ib.client.Order;
 import com.ib.client.TagValue;
+import com.yoson.cms.controller.IndexController;
 import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.DateUtils;
 import com.yoson.web.InitServlet;
@@ -91,6 +93,24 @@ public class EClientSocketUtils {
 			socket.cancelMktData(tickerId);
 	}
 	
+	public static String genExpiry(String startTime) {
+		try {
+			List<String> expiryDates = IndexController.getExpiryDates();
+			String startDate = startTime.split(" ")[0];
+			Date startTimeDate = DateUtils.yyyyMMddHHmm().parse(startTime);
+			if(expiryDates.contains(startDate)) {
+		        Calendar rightNow = Calendar.getInstance();  
+		        rightNow.setTime(startTimeDate);  
+		        rightNow.add(Calendar.MONTH, 1);  		        				
+				return DateUtils.yyyyMM().format(rightNow.getTime());
+			} else {
+				return DateUtils.yyyyMM().format(startTimeDate);
+			}
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	
 	public static boolean lunchBTStart = false;
 	public static boolean reqMktData(Contract contract) {
 		if(!isConnected()) {
@@ -100,6 +120,7 @@ public class EClientSocketUtils {
 		lunchBTStart = false;
 		YosonEWrapper.initData();
 		EClientSocketUtils.contract = contract;
+		EClientSocketUtils.contract.setExpirary(genExpiry(EClientSocketUtils.contract.getStartTime()));
 		id = DateUtils.yyyyMMddHHmmss2().format(new Date());
 		tradeLogs = new CopyOnWriteArrayList<String>();
 		totalBuy = 0;
