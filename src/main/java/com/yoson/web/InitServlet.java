@@ -46,6 +46,10 @@ public class InitServlet extends HttpServlet {
 		return temp.substring(0, temp.substring(0, temp.length() - 1).lastIndexOf("\\"));
 	}
 	
+	public static String createExpiryFoderAndReturnPath() {
+		return createFoderAndReturnPath(getWebappsPath(), "expiryDates");
+	}
+	
 	public static String createUploadFoderAndReturnPath() {
 		return createFoderAndReturnPath(getWebappsPath(), "upload");
 	}
