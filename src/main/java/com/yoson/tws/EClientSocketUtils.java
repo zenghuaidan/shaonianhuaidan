@@ -139,6 +139,7 @@ public class EClientSocketUtils {
 		if(isConnected()) {
 			validateContract = true;
 			EClientSocketUtils.contract = contract;
+			EClientSocketUtils.contract.setExpirary(genExpiry(EClientSocketUtils.contract.getStartTime()));
 			socket.reqContractDetails(EClientSocketUtils.connectionInfo.getClientId(), contract);
 		}
 	}

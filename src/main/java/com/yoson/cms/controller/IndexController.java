@@ -98,6 +98,12 @@ public class IndexController  implements StatusCallBack {
 	}
 	
 	@ResponseBody
+	@RequestMapping("getContract")
+	public Contract getContract() {
+		return EClientSocketUtils.contract == null ? getDefaultContract() : EClientSocketUtils.contract;
+	}
+	
+	@ResponseBody
 	@RequestMapping("test")
 	public MainUIParam test() {
 	  return MainUIParam.getMainUIParam();

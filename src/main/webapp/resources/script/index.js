@@ -166,6 +166,16 @@ function dosearch() {
 	    contentType:"application/json;charset=utf-8",
 	    success: function(data) {
 	    	if(data == "Success") {
+	    		$.ajax({
+	    		    type: "GET",
+	    		    url: "getContract",
+	    		    contentType:"application/json;charset=utf-8",
+	    		    success: function(data) {
+	    		    	$("[name='expirary']").val(data.expirary);
+	    		    },
+	    		    error: function() {	    		    	
+	    		    }
+	    		});
 	    		renderLiveDataFileList();
 	    	}
 	    	$("#searchBtn").attr("disabled", false);
