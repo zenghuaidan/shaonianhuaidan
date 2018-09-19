@@ -91,7 +91,7 @@ public class BackTestTask implements Runnable {
 				mainUIParam.setAskDataField("ask" + dataType.toLowerCase());
 				mainUIParam.setBidDataField("bid" + dataType.toLowerCase());
 								
-				runTestSet(current, startStep);
+				runTestSet(i, startStep);
 				startStep = 0;
 			}
 		} catch(Exception ex) {
