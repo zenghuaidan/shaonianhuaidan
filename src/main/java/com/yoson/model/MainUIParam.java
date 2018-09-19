@@ -18,6 +18,7 @@ public class MainUIParam extends TestSet {
 	private String paramPath;
 	private String stepPath;
 	private String logPath;
+	private String resultPath;
 	@Expose
 	private boolean ignoreLunchTime;
 	@Expose
@@ -61,6 +62,14 @@ public class MainUIParam extends TestSet {
 	private String endStr;
 	public MainUIParam() {}
 	
+	public String getResultPath() {
+		return resultPath;
+	}
+
+	public void setResultPath(String resultPath) {
+		this.resultPath = resultPath;
+	}
+
 	public String getSourcePath() {
 		return sourcePath;
 	}

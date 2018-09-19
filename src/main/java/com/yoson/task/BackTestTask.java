@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
@@ -53,10 +54,46 @@ public class BackTestTask implements Runnable {
 	private StatusCallBack callBack;
 	public static boolean isLiveData = false;
 	
+	public static final String[] dataTypes = new String[]{ "Open", "Avg", "Last", "Max", "Min" };
+	
 	@Override
 	public void run() {
-		try {
-			runTestSet();
+		try {			
+			int current = 1;
+			int startStep = 0;
+			if (!isLiveData) {
+				try {
+					File stepFile = new File(mainUIParam.getStepPath());
+					if(stepFile.exists()) {
+						FileInputStream input = new FileInputStream(stepFile);
+						String step = IOUtils.toString(input);
+						input.close();
+						if(StringUtils.isNotEmpty(step)) {
+							String[] steps = step.split(",");
+							if(steps.length == 3) {
+								startStep = Integer.parseInt(steps[0]);
+								current = Integer.parseInt(steps[2]);
+							}							
+						}
+					}
+				} catch (Exception e) {
+					try {
+						FileUtils.cleanDirectory(new File(mainUIParam.getSourcePath()));			
+					} catch (Exception ex) {
+					}
+				}
+			}
+			for(int i = 1; i <= dataTypes.length; i++) {
+				if(i < current) continue;
+				String dataType = dataTypes[i-1];
+				mainUIParam.setResultPath(FilenameUtils.concat(mainUIParam.getSourcePath(), dataType));
+				mainUIParam.setTradeDataField("trade" + dataType.toLowerCase());
+				mainUIParam.setAskDataField("ask" + dataType.toLowerCase());
+				mainUIParam.setBidDataField("bid" + dataType.toLowerCase());
+								
+				runTestSet(current, startStep);
+				startStep = 0;
+			}
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		} finally {
@@ -65,7 +102,11 @@ public class BackTestTask implements Runnable {
 	}		
 	
 	public BackTestTask(MainUIParam mainUIParam, StatusCallBack callBack) {
-		this.mainUIParam = mainUIParam;
+		this.mainUIParam = mainUIParam;		
+		this.callBack = callBack;
+	}
+
+	private void init() {
 		BackTestTask.allBTSummaryResults = new ArrayList<String>();
 		BackTestTask.allBTPnlResults = new ArrayList<String>();
 		BackTestTask.allBTTradeResults = new ArrayList<String>();
@@ -78,8 +119,6 @@ public class BackTestTask implements Runnable {
 		BackTestTask.marketTimeMap = new HashMap<String, Integer>();
 		BackTestTask.sumOfLastTrade = new HashMap<String, Double>();
 		BackTestTask.allPositivePnlResult = new HashMap<String, String>();
-		
-		this.callBack = callBack;
 	}
 	
 	public static void initRawData(List<String> sdatas, MainUIParam mainUIParam) throws ParseException {
@@ -113,10 +152,11 @@ public class BackTestTask implements Runnable {
 		}		
 	}
 
-	public void runTestSet() throws IOException, ParseException {	
+	public void runTestSet(int current, int startStep) throws IOException, ParseException {	
+		init();
 		long start = System.currentTimeMillis();
 		
-		callBack.updateStatus("The data path on server: " + mainUIParam.getSourcePath() + System.lineSeparator());
+		callBack.updateStatus("The data path on server: " + mainUIParam.getResultPath() + System.lineSeparator());
 		
 		callBack.updateStatus(getStatus("Getting data started, this may cost several minutes, pls wait..."));
 		
@@ -152,28 +192,15 @@ public class BackTestTask implements Runnable {
 					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition(), mainUIParam.isIncludeMorningData()));
 		}
 		BackTestCSVWriter.writeText(mainUIParam.getParamPath(), new Gson().toJson(mainUIParam), false);
-		int startStep = 0;
-		if (!isLiveData) {
-			try {
-				File stepFile = new File(mainUIParam.getStepPath());
-				if(stepFile.exists()) {
-					FileInputStream input = new FileInputStream(stepFile);
-					String step = IOUtils.toString(input);
-					input.close();
-					if(StringUtils.isNotEmpty(step)) {
-						startStep = Integer.parseInt(step.split(",")[0]);
-					}
-				}
-			} catch (Exception e) {
-				try {
-					FileUtils.cleanDirectory(new File(mainUIParam.getSourcePath()));			
-				} catch (Exception ex) {
-				}
-			}
+
+		File resultDirectory = new File(mainUIParam.getResultPath());
+		if(!resultDirectory.exists()) {
+			resultDirectory.mkdir();
 		}
+		
 		boolean first = (startStep == 0);
 		if(first) {
-			FileUtils.cleanDirectory(new File(mainUIParam.getSourcePath()));
+			FileUtils.cleanDirectory(resultDirectory);
 		}
 		for (int index = 1; index <= testSets.size(); index++) {
 			if (index <= startStep)
@@ -196,21 +223,21 @@ public class BackTestTask implements Runnable {
 			
 			if(index == 1 && backTestResult.dayRecords.size() > 0 && !isLiveData) {
 				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(0));
-				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.aTradingDayForCheckFileName), BackTestCSVWriter.getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult, true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.aTradingDayForCheckFileName), BackTestCSVWriter.getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult, true);
 			}	
 			
 			if (index % Global.savePoint == 0 || index == testSets.size()) {
 				if (!isLiveData) {
-					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btPnlFileName), (first ? BackTestCSVWriter.getBTPnlHeader() : "") + String.join("", BackTestTask.allBTPnlResults), true);
-					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btTradeFileName), (first ? BackTestCSVWriter.getBTTradeHeader() : "") + String.join("", BackTestTask.allBTTradeResults), true);
+					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.btPnlFileName), (first ? BackTestCSVWriter.getBTPnlHeader() : "") + String.join("", BackTestTask.allBTPnlResults), true);
+					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.btTradeFileName), (first ? BackTestCSVWriter.getBTTradeHeader() : "") + String.join("", BackTestTask.allBTTradeResults), true);
 					BackTestCSVWriter.writePositivePnlResult(mainUIParam);					
 				}
-				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName), BackTestTask.allProfitAndLossResults.toString(), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.profitAndLossFileName), BackTestTask.allProfitAndLossResults.toString(), true);
 				if(mainUIParam.isMatrixFile()) {
-					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.morningProfitAndLossFileName), BackTestTask.allMorningProfitAndLossResults.toString(), true);
-					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.afternoonProfitAndLossFileName), BackTestTask.allAfternoonProfitAndLossResults.toString(), true);					
+					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.morningProfitAndLossFileName), BackTestTask.allMorningProfitAndLossResults.toString(), true);
+					BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.afternoonProfitAndLossFileName), BackTestTask.allAfternoonProfitAndLossResults.toString(), true);					
 				}
-				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader(backTestResult.yearPnlMap.keySet(), backTestResult.monthPnlMap.keySet()) : "") + String.join("", BackTestTask.allBTSummaryResults), true);
+				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.btSummaryFileName), (first ? BackTestCSVWriter.getBTSummaryHeader(backTestResult.yearPnlMap.keySet(), backTestResult.monthPnlMap.keySet()) : "") + String.join("", BackTestTask.allBTSummaryResults), true);
 				
 				BackTestTask.allBTPnlResults.clear();
 				BackTestTask.allBTTradeResults.clear();
@@ -220,7 +247,7 @@ public class BackTestTask implements Runnable {
 				BackTestTask.allMorningProfitAndLossResults = new StringBuilder();
 				BackTestTask.allAfternoonProfitAndLossResults = new StringBuilder();
 				if (!isLiveData) {
-					BackTestCSVWriter.writeText(mainUIParam.getStepPath(), index + "," + testSets.size(), false);
+					BackTestCSVWriter.writeText(mainUIParam.getStepPath(), index + "," + testSets.size() + "," + current, false);
 				}
 				first = false;
 			}
@@ -242,8 +269,8 @@ public class BackTestTask implements Runnable {
 		}
 		if(mainUIParam.isMatrixFile()) {
 			BackTestCSVWriter.initProfitAndLossResultMap(mainUIParam);
-			BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(mainUIParam), true);
-			BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges, mainUIParam), true);			
+			BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.profitAndLossByDateFileName), BackTestCSVWriter.getBestPnlByDate(mainUIParam), true);
+			BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.profitAndLossByDateRangeFileName), BackTestCSVWriter.getBestPnlBySpecifyDates(specifyDateRanges, mainUIParam), true);			
 			BackTestCSVWriter.getAccumulatePnlBySpecifyDates(specifyDateRanges, mainUIParam);
 		}
 		milliseconds = System.currentTimeMillis() - start;
@@ -251,7 +278,7 @@ public class BackTestTask implements Runnable {
 		
 //		BackTestCSVWriter.writeCSVResult(mainUIParam);
 		if (!isLiveData) {
-			SQLUtils.saveTestSetResult(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.btSummaryFileName), mainUIParam.getVersion().replaceAll(" ", ""));
+			SQLUtils.saveTestSetResult(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.btSummaryFileName), mainUIParam.getVersion().replaceAll(" ", ""));
 		}
 		gc();
 	}
