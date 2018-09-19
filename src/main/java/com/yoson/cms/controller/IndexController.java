@@ -414,7 +414,8 @@ public class IndexController  implements StatusCallBack {
 					FileInputStream input = new FileInputStream(stepFile);
 					String step = IOUtils.toString(input);
 					input.close();
-					if (step.split(",")[0].equals(step.split(",")[1])) {
+					String[] steps = step.split(",");
+					if (steps.length == 2 && steps[0].equals(steps[1]) || steps.length == 3 && steps[0].equals(steps[1]) && Integer.parseInt(steps[2]) >= BackTestTask.dataTypes.length) {
 						status = "(Finished)";
 					} else {
 						status = "(Paused)";

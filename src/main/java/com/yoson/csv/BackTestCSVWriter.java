@@ -58,19 +58,12 @@ public class BackTestCSVWriter {
 	} 
 	
 	public static void writeCSVResult(MainUIParam mainUIParam) throws IOException {
-//		writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), summaryFileName), getSummaryHeader() + String.join("", BackTestTask.allSummaryResults));
-//		writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), btPnlFileName), getBTPnlHeader() + String.join("", BackTestTask.allBTPnlResults));
-//		writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), btTradeFileName), getBTTradeHeader() + String.join("", BackTestTask.allBTTradeResults));
-//		writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), btSummaryFileName), getBTSummaryHeader() + String.join("", BackTestTask.allBTSummaryResults));
-//		writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), aTradingDayForCheckFileName), getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult);
-//		writeCSVResult(FilenameUtils.concat(mainUIParam.getSourcePath(), profitAndLossFileName), getProfitAndLossContent());
-//		writePositivePnlResult(mainUIParam);
 	}
 
 	public static void writePositivePnlResult(MainUIParam mainUIParam) throws IOException {
 		for (String key : BackTestTask.allPositivePnlResult.keySet()) {
 			String[] values = key.split("#");
-			String folder = FilenameUtils.concat(mainUIParam.getSourcePath(), values[1]);
+			String folder = FilenameUtils.concat(mainUIParam.getResultPath(), values[1]);
 			if (!new File(folder).exists()) {
 				FileUtils.forceMkdir(new File(folder));
 			}
@@ -213,7 +206,7 @@ public class BackTestCSVWriter {
 			
 			
 			if (mainUIParam.isOutputChart()) {			
-				new chartWriter(mainUIParam.getSourcePath(), mainUIParam.getUnit(), perDayRecord);					
+				new chartWriter(mainUIParam.getResultPath(), mainUIParam.getUnit(), perDayRecord);					
 			}
 		}
 		BackTestTask.allProfitAndLossResults.append("\n");
@@ -229,7 +222,7 @@ public class BackTestCSVWriter {
 			bestMorningProfitAndLossResultMap = new TreeMap<String, List<Object>>();
 			allProfitAndLossResultMap = new TreeMap<String, List<List<Object>>>();
 			List<String> dates = new ArrayList<String>();
-			File file = new File(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.profitAndLossFileName));
+			File file = new File(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.profitAndLossFileName));
 			CSVReader csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);	
 			String [] lines;
 			boolean first = true;			
@@ -263,7 +256,7 @@ public class BackTestCSVWriter {
 			csvReader.close();	
 			
 			dates = new ArrayList<String>();
-			file = new File(FilenameUtils.concat(mainUIParam.getSourcePath(), BackTestCSVWriter.morningProfitAndLossFileName));
+			file = new File(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.morningProfitAndLossFileName));
 			csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);	
 			first = true;			
 			while ((lines = csvReader.readNext()) != null)  {
@@ -383,7 +376,7 @@ public class BackTestCSVWriter {
 					}					
 					content.append("\n");
 				}				
-				writeText(FilenameUtils.concat(mainUIParam.getSourcePath(), "Back Test Accumulate ProfitAndLoss By Date Range_" + specifyDateRange + ".csv"), content.toString(), true);			
+				writeText(FilenameUtils.concat(mainUIParam.getResultPath(), "Back Test Accumulate ProfitAndLoss By Date Range_" + specifyDateRange + ".csv"), content.toString(), true);			
 			}			
 		}
 		
