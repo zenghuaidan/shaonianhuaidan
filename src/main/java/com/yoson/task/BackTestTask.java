@@ -93,6 +93,8 @@ public class BackTestTask implements Runnable {
 								
 				runTestSet(i, startStep);
 				startStep = 0;
+				if (!BackTestTask.running)
+					break;
 			}
 		} catch(Exception ex) {
 			ex.printStackTrace();
