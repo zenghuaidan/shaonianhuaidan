@@ -33,6 +33,8 @@ public class EClientSocketUtils {
 	public static boolean connect(ConnectionInfo connectionInfo)
 	{
 		EClientSocketUtils.connectionInfo = connectionInfo;
+		EClientSocketUtils.connectionInfo.setPaperTrading(true);
+		EClientSocketUtils.connectionInfo.setCancelAndRetryIfOrderExceedTolerantTime(true);
 		if (!isConnected()) {
 			socket = new EClientSocket(new YosonEWrapper());
 			socket.eConnect(connectionInfo.getHost(), connectionInfo.getPort(), connectionInfo.getClientId());
