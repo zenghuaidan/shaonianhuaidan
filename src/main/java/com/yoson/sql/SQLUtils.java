@@ -30,7 +30,7 @@ public class SQLUtils {
 		String tradeDataField = mainUIParam.getTradeDataField();
 		try {
 			session = getSession();
-			String sql = "select CONCAT_WS(',',date,time, " + askDataField + ", " + bidDataField + ", " + tradeDataField + ") as sdata from  " + schedule_data + "  " 
+			String sql = "select CONCAT_WS(',',date,time, " + askDataField + ", " + bidDataField + ", " + tradeDataField + ", asklast, bidlast, tradelast) as sdata from  " + schedule_data + "  " 
 			+ (mainUIParam.isFromSource() ? (" where source = '" + mainUIParam.getSource() + "'") : (" where ticker = '" + mainUIParam.getTicker() + "'"));
 			
 			if (datePeriods != null && datePeriods.size() > 0) {
