@@ -125,7 +125,7 @@ public class BackTestTask implements Runnable {
 	
 	public static void initRawData(List<String> sdatas, MainUIParam mainUIParam) throws ParseException {
 		for (String sdata : sdatas) {
-			ScheduleData sData = new ScheduleData(sdata.split(",")[0], sdata.split(",")[1], sdata.split(",")[2], sdata.split(",")[3], sdata.split(",")[4]);
+			ScheduleData sData = new ScheduleData(sdata.split(",")[0], sdata.split(",")[1], sdata.split(",")[2], sdata.split(",")[3], sdata.split(",")[4], sdata.split(",")[5], sdata.split(",")[6], sdata.split(",")[7]);
 			initRawData(mainUIParam, sData);
 		}
 	}
