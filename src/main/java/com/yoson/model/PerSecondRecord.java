@@ -11,6 +11,9 @@ public class PerSecondRecord {
 	private double bidPrice;
 	private double askPrice;
 	private double lastTrade;
+	private double actualAskPrice;
+	private double actualBidPrice;
+	private double actualLastTrade;
 	private int checkMarketTime;
 	private int reference;	
 	
@@ -52,6 +55,9 @@ public class PerSecondRecord {
 		this.askPrice = scheduleDataPerSecond.getAskPrice();
 		this.bidPrice = scheduleDataPerSecond.getBidPrice();
 		this.lastTrade = scheduleDataPerSecond.getLastTrade();
+		this.actualAskPrice = scheduleDataPerSecond.getActualAskPrice();
+		this.actualBidPrice = scheduleDataPerSecond.getActualBidPrice();
+		this.actualLastTrade = scheduleDataPerSecond.getActualLastTrade();
 		this.reference = lastSecondRecord.getReference() + 1;
 		//2015-01-19  9:41:16
 //		if ("2015-01-19 11:58:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
@@ -293,7 +299,7 @@ public class PerSecondRecord {
 		} else if(lastSecondRecord.getPosition() != 0 && this.smoothAction == lastSecondRecord.getSmoothAction()) {
 			this.position = lastSecondRecord.getPosition();
 		} else if(this.smoothAction != 0) {
-			this.position = this.lastTrade;
+			this.position = this.actualLastTrade;
 		}
 	}
 	
@@ -301,9 +307,9 @@ public class PerSecondRecord {
 		if (this.position == 0) {
 			this.mtm = 0;
 		} else if(this.smoothAction == 1) {
-			this.mtm = this.lastTrade - this.position;
+			this.mtm = this.actualLastTrade - this.position;
 		} else if (this.smoothAction == -1) {
-			this.mtm = this.position - this.lastTrade;
+			this.mtm = this.position - this.actualLastTrade;
 		} 
 	}
 	
@@ -343,9 +349,9 @@ public class PerSecondRecord {
 			this.pnl = 0;
 		} else if(lastSecondRecord.getSmoothAction() != 0 && this.smoothAction != lastSecondRecord.getSmoothAction()) {
 			if(lastSecondRecord.getSmoothAction() > 0) {
-				this.pnl = this.lastTrade - lastSecondRecord.getPosition();
+				this.pnl = this.actualLastTrade - lastSecondRecord.getPosition();
 			} else if(lastSecondRecord.getSmoothAction() < 0) {
-				this.pnl = lastSecondRecord.getPosition() - this.lastTrade;
+				this.pnl = lastSecondRecord.getPosition() - this.actualLastTrade;
 			}
 		}
 	}
@@ -604,6 +610,30 @@ public class PerSecondRecord {
 
 	public void setPc(int pc) {
 		this.pc = pc;
+	}
+
+	public double getActualAskPrice() {
+		return actualAskPrice;
+	}
+
+	public void setActualAskPrice(double actualAskPrice) {
+		this.actualAskPrice = actualAskPrice;
+	}
+
+	public double getActualBidPrice() {
+		return actualBidPrice;
+	}
+
+	public void setActualBidPrice(double actualBidPrice) {
+		this.actualBidPrice = actualBidPrice;
+	}
+
+	public double getActualLastTrade() {
+		return actualLastTrade;
+	}
+
+	public void setActualLastTrade(double actualLastTrade) {
+		this.actualLastTrade = actualLastTrade;
 	}
 
 }
