@@ -123,8 +123,7 @@ public class EClientSocketUtils {
 	
 	public static String genExpiry(Date now) {
 		try {
-			List<String> expiryDates = SQLUtils.getExpiryDates();
-			if(expiryDates.contains(DateUtils.yyyyMMdd().format(now))) {
+			if(SQLUtils.existExpiryDate(DateUtils.yyyyMMdd().format(now))) {
 		        Calendar rightNow = Calendar.getInstance();  
 		        rightNow.setTime(now);  
 		        rightNow.add(Calendar.MONTH, 1);  		        				
