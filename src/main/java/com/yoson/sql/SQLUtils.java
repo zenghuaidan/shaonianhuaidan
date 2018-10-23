@@ -3,6 +3,7 @@ package com.yoson.sql;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -11,13 +12,69 @@ import com.yoson.tws.Record;
 import com.yoson.tws.ScheduledDataRecord;
 
 public class SQLUtils {
-    
+
+	public static final String expiry_date = "expiry_date";
+	
 	private static Session getSession() {
 		try {
 			SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 			return sessionFactory.openSession();			
 		} catch (Exception e) {
 			return null;
+		}
+	}
+	
+	public static List<String> getExpiryDates() {
+		Session session = null;		
+		try {
+			session = getSession();
+			String sql = "select distinct date from  " + expiry_date + "  order by date desc";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return sqlQuery.list();			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<String>();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static void addExpiryDate(String date) {
+		Session session = null;		
+		try {
+			session = getSession();
+			session.getTransaction().begin();
+			String sql = "insert into " + expiry_date + "(date) values ('" + date + "')";
+			session.createSQLQuery(sql).executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static void deleteExpiryDate(String date) {
+		Session session = null;		
+		try {
+			session = getSession();
+			session.getTransaction().begin();
+			String sql = "delete from  " + expiry_date + " where date ='" + date + "'";
+			session.createSQLQuery(sql).executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
 		}
 	}
 	

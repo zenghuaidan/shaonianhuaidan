@@ -3,6 +3,7 @@ package com.yoson.tws;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -18,6 +19,7 @@ import com.ib.client.EClientSocket;
 import com.ib.client.TagValue;
 import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.DateUtils;
+import com.yoson.sql.SQLUtils;
 import com.yoson.web.InitServlet;
 
 public class EClientSocketUtils {
@@ -119,6 +121,22 @@ public class EClientSocketUtils {
 		EClientSocketUtils.hasDataContractList = new CopyOnWriteArrayList<Integer>();
 	}
 	
+	public static String genExpiry(Date now) {
+		try {
+			List<String> expiryDates = SQLUtils.getExpiryDates();
+			if(expiryDates.contains(DateUtils.yyyyMMdd().format(now))) {
+		        Calendar rightNow = Calendar.getInstance();  
+		        rightNow.setTime(now);  
+		        rightNow.add(Calendar.MONTH, 1);  		        				
+				return DateUtils.yyyyMM().format(rightNow.getTime());
+			} else {
+				return DateUtils.yyyyMM().format(now);
+			}
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	
 	public static int identity = 2000;
 	public static void requestData(Date now) {
 		if (!EClientSocketUtils.isConnected()) {
@@ -133,9 +151,10 @@ public class EClientSocketUtils {
 			
 			// start new market data
 			StringBuilder log = new StringBuilder();
+			String expiry = genExpiry(now);
 			for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
 				Contract contract = EClientSocketUtils.contracts.get(i);
-				contract.m_expiry = DateUtils.yyyyMM().format(now);
+				contract.m_expiry = expiry;
 				EClientSocketUtils.socket.reqMktData(i + identity, contract, null, false, new Vector<TagValue>());	
 				log.append((i + 1) + ":" + contract.startTime + "," + contract.endTime + System.lineSeparator());
 			}
