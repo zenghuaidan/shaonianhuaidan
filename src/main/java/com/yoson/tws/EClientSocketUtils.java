@@ -97,10 +97,9 @@ public class EClientSocketUtils {
 	
 	public static String genExpiry(String startTime) {
 		try {
-			List<String> expiryDates = SQLUtils.getExpiryDates();
 			String startDate = startTime.split(" ")[0];
 			Date startTimeDate = DateUtils.yyyyMMddHHmm().parse(startTime);
-			if(expiryDates.contains(startDate)) {
+			if(SQLUtils.existExpiryDate(startDate)) {
 		        Calendar rightNow = Calendar.getInstance();  
 		        rightNow.setTime(startTimeDate);  
 		        rightNow.add(Calendar.MONTH, 1);  		        				

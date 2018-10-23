@@ -127,6 +127,24 @@ public class SQLUtils {
 		}
 	}
 	
+	public static boolean existExpiryDate(String date) {
+		Session session = null;		
+		try {
+			session = getSession();
+			String sql = "select distinct date from " + expiry_date + " where date ='" + date + "'";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return sqlQuery.list().size() > 0;			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
 	public static void addExpiryDate(String date) {
 		Session session = null;		
 		try {
