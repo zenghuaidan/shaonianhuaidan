@@ -739,6 +739,8 @@ public class IndexController  implements StatusCallBack {
 				List<String> readLines = IOUtils.readLines(fileInputStream);
 				fileInputStream.close();
 				List<ScheduledDataRecord> scheduledDataRecords = new ArrayList<ScheduledDataRecord>();
+				
+				List<String> dates = new ArrayList<String>();
 				for(int i = 3; i <= readLines.size() - 1; i++) {
 					ScheduledDataRecord scheduledDataRecord = new ScheduledDataRecord();
 					String line = readLines.get(i);
@@ -762,6 +764,11 @@ public class IndexController  implements StatusCallBack {
 						scheduledDataRecord.setBidmin(Double.parseDouble(line.split(",")[14]));
 						
 						scheduledDataRecords.add(scheduledDataRecord);
+						String dateStr = DateUtils.yyyyMMdd().format(date);
+						if(!dates.contains(dateStr)) {
+							dates.add(dateStr);
+							SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker);
+						}
 					} catch (Exception e) {
 					}											
 				}
@@ -777,6 +784,7 @@ public class IndexController  implements StatusCallBack {
 				FileInputStream fileInputStream = new FileInputStream(file);
 				List<String> readLines = IOUtils.readLines(fileInputStream);
 				fileInputStream.close();
+				List<String> dates = new ArrayList<String>();
 				for(String line : readLines) {
 					try {
 						String type = line.split(",")[0];
@@ -794,9 +802,15 @@ public class IndexController  implements StatusCallBack {
 							YosonEWrapper.addLiveData(tradeMap, livedate, price);																																		
 							break;
 						}
+						String dateStr = DateUtils.yyyyMMdd().format(date);
+						if(!dates.contains(dateStr)) {
+							dates.add(dateStr);
+							SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker);
+						}
 					} catch (Exception e) {
 					}											
 				}
+				
 				writingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace, YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap));
 			} else if (uploadDataType.equals("1")) {
 				new BigExcelReader(file) {  
@@ -829,7 +843,7 @@ public class IndexController  implements StatusCallBack {
 									uploadStatus.add("Parsing data(" + DateUtils.yyyyMMdd().format(date) + ") for " + sheet);
 									validateSheet = true;
 								}
-								
+								SQLUtils.deleteScheduledDataRecordByDate(DateUtils.yyyyMMdd().format(date), uploadTicker);	
 							} else if(validateSheet && rowIndex >= 3) {
 								try {
 									Date tradeDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(1));

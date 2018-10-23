@@ -45,17 +45,6 @@ public class SQLUtils {
 	}
 	
 	public static void saveScheduledDataRecord(List<ScheduledDataRecord> scheduledDataRecords, String dataStartTime, String dataEndTime, String source, String ticker, boolean isReplace) {
-		if(scheduledDataRecords != null && scheduledDataRecords.size() > 0) {
-			List<String> dates = new ArrayList<String>();
-			for (ScheduledDataRecord scheduledDataRecord : scheduledDataRecords) {
-				String dateTimeStr = scheduledDataRecord.getTime();
-				String dateStr = DateUtils.getDateStr(dateTimeStr);
-				if(!dates.contains(dateStr)) {
-					dates.add(dateStr);
-					deleteScheduledDataRecordByDate(dateStr, ticker);
-				}
-			}
-		}
 		Session session = null;
 		try {
 			session = getSession();
