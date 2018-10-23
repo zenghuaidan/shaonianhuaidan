@@ -134,8 +134,10 @@ public class EClientSocketUtils {
 			// start new market data
 			StringBuilder log = new StringBuilder();
 			for(int i = 0; i <= EClientSocketUtils.contracts.size() - 1; i++) {
-				EClientSocketUtils.socket.reqMktData(i + identity, EClientSocketUtils.contracts.get(i), null, false, new Vector<TagValue>());	
-				log.append((i + 1) + ":" + EClientSocketUtils.contracts.get(i).startTime + "," + EClientSocketUtils.contracts.get(i).endTime + System.lineSeparator());
+				Contract contract = EClientSocketUtils.contracts.get(i);
+				contract.m_expiry = DateUtils.yyyyMM().format(now);
+				EClientSocketUtils.socket.reqMktData(i + identity, contract, null, false, new Vector<TagValue>());	
+				log.append((i + 1) + ":" + contract.startTime + "," + contract.endTime + System.lineSeparator());
 			}
 			
 			BackTestCSVWriter.writeText(FilenameUtils.concat(folder, "log.txt"), log.toString(), false);
