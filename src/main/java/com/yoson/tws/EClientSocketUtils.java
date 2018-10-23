@@ -13,9 +13,9 @@ import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
 import com.ib.client.Order;
 import com.ib.client.TagValue;
-import com.yoson.cms.controller.IndexController;
 import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.DateUtils;
+import com.yoson.sql.SQLUtils;
 import com.yoson.web.InitServlet;
 
 public class EClientSocketUtils {
@@ -97,7 +97,7 @@ public class EClientSocketUtils {
 	
 	public static String genExpiry(String startTime) {
 		try {
-			List<String> expiryDates = IndexController.getExpiryDates();
+			List<String> expiryDates = SQLUtils.getExpiryDates();
 			String startDate = startTime.split(" ")[0];
 			Date startTimeDate = DateUtils.yyyyMMddHHmm().parse(startTime);
 			if(expiryDates.contains(startDate)) {

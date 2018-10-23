@@ -654,58 +654,23 @@ public class IndexController  implements StatusCallBack {
 		return false;
 	}
 	
-	public static List<String> getExpiryDates() {
-		String expiryFoderAndReturnPath = InitServlet.createExpiryFoderAndReturnPath();
-		String result = FilenameUtils.concat(expiryFoderAndReturnPath, "result.txt");
-		File resultFile = new File(result);
-		List<String> list = new ArrayList<String>();
-		if(resultFile.exists()) {
-			try {
-				FileInputStream input = new FileInputStream(resultFile);
-				list = IOUtils.readLines(input);
-				input.close();				
-			} catch (Exception e) {
-			}
-		}
-		return list;
-	}
-	
-	public static void setExpiryDates(List<String> list) {
-		String expiryFoderAndReturnPath = InitServlet.createExpiryFoderAndReturnPath();
-		String result = FilenameUtils.concat(expiryFoderAndReturnPath, "result.txt");
-		File resultFile = new File(result);
-		try {
-			FileOutputStream output = new FileOutputStream(resultFile);
-			IOUtils.writeLines(list, null, output);
-			output.close();			
-		} catch (Exception e) {
-		}
-		
-	}
-	
 	@ResponseBody
 	@RequestMapping("getExpiryDates")
 	public List<String> expiryDates() throws IOException {
-		return getExpiryDates();		
+		return SQLUtils.getExpiryDates();		
 	}
 	
 	@ResponseBody
 	@RequestMapping("addExpiryDate")
 	public boolean addExpiryDate(@RequestParam String id, HttpServletRequest request) throws IOException {
-		List<String> expiryDates = getExpiryDates();
-		if(!expiryDates.contains(id) && !StringUtils.isBlank(id)) {
-			expiryDates.add(id);
-			setExpiryDates(expiryDates);
-		}
+		SQLUtils.addExpiryDate(id);
 		return true;
 	}
 	
 	@ResponseBody
 	@RequestMapping("deleteExpiryDate")
 	public boolean deleteExpiryDate(@RequestParam String id, HttpServletRequest request) throws IOException {
-		List<String> expiryDates = getExpiryDates();
-		expiryDates.remove(id);
-		setExpiryDates(expiryDates);		
+		SQLUtils.deleteExpiryDate(id);		
 		return true;
 	}		
 	
