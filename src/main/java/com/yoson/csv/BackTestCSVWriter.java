@@ -158,7 +158,7 @@ public class BackTestCSVWriter {
 		content.append(mainUIParam.getEndStr() + ",");
 		content.append((mainUIParam.isIncludeMorningData() ? "Yes" : "No") + ",");
 		content.append((mainUIParam.isIgnoreLunchTime() ? "Yes" : "No") + ",");
-		content.append((mainUIParam.getAvgStep() + ","));
+		content.append(mainUIParam.getAvgStep() + ",");
 		for (String month : backTestResult.monthPnlMap.keySet()) {
 			content.append(backTestResult.monthPnlMap.get(month) + ",");		
 		}
