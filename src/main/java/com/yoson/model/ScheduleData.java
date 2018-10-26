@@ -1,7 +1,6 @@
 package com.yoson.model;
 
 import java.text.ParseException;
-import java.util.Date;
 
 import com.yoson.date.DateUtils;
 
@@ -18,26 +17,14 @@ public class ScheduleData {
 	private int askSize;
 	private int bidSize;
 	private int lastTradeSize;
+	private String askDataField;
+	private String bidDataField;
+	private String tradeDataField;
 	
 	public ScheduleData() {
 	}
-
-	public ScheduleData(Date date, double askPrice, int askSize, double bidPrice, int bidSize, double lastTrade, int lastTradeSize, double actualAskPrice, double actualBidPrice, double actualLastTrade) {
-		this.id = date.getTime();
-		this.dateStr = DateUtils.yyyyMMdd().format(date);
-		this.timeStr = DateUtils.HHmmss().format(date);
-		this.askPrice = askPrice;
-		this.bidPrice = bidPrice;
-		this.lastTrade = lastTrade;
-		this.askSize = askSize;
-		this.bidSize = bidSize;
-		this.lastTradeSize = lastTradeSize;
-		this.actualAskPrice = actualAskPrice;
-		this.actualBidPrice = actualBidPrice;
-		this.actualLastTrade = actualLastTrade;
-	}
 	
-	public ScheduleData(String dateStr, String timeStr, String askPrice, String bidPrice, String lastTrade, String actualAskPrice, String actualBidPrice, String actualLastTrade) {
+	public ScheduleData(String dateStr, String timeStr, String askPrice, String bidPrice, String lastTrade, String actualAskPrice, String actualBidPrice, String actualLastTrade, String askDataField, String bidDataField, String tradeDataField) {
 		try {
 			this.id = DateUtils.yyyyMMddHHmmss().parse(dateStr + " " + timeStr).getTime();
 		} catch (ParseException e) {
@@ -51,9 +38,12 @@ public class ScheduleData {
 		this.actualAskPrice = Double.parseDouble(actualAskPrice);
 		this.actualBidPrice = Double.parseDouble(actualBidPrice);
 		this.actualLastTrade = Double.parseDouble(actualLastTrade);
+		this.askDataField = askDataField;
+		this.bidDataField = bidDataField;
+		this.tradeDataField = tradeDataField;
 	}
 	
-	public ScheduleData(String dateStr, String timeStr, Double askPrice, Double bidPrice, Double lastTrade, Double actualAskPrice, Double actualBidPrice, Double actualLastTrade) {
+	public ScheduleData(String dateStr, String timeStr, Double askPrice, Double bidPrice, Double lastTrade, Double actualAskPrice, Double actualBidPrice, Double actualLastTrade, String askDataField, String bidDataField, String tradeDataField) {
 		try {
 			this.id = DateUtils.yyyyMMddHHmmss().parse(dateStr + " " + timeStr).getTime();
 		} catch (ParseException e) {
@@ -67,6 +57,9 @@ public class ScheduleData {
 		this.actualAskPrice = actualAskPrice;
 		this.actualBidPrice = actualBidPrice;
 		this.actualLastTrade = actualLastTrade;
+		this.askDataField = askDataField;
+		this.bidDataField = bidDataField;
+		this.tradeDataField = tradeDataField;
 	}
 
 	public long getId() {
@@ -171,6 +164,30 @@ public class ScheduleData {
 
 	public void setActualLastTrade(double actualLastTrade) {
 		this.actualLastTrade = actualLastTrade;
+	}
+
+	public String getTradeDataField() {
+		return tradeDataField;
+	}
+
+	public void setTradeDataField(String tradeDataField) {
+		this.tradeDataField = tradeDataField;
+	}
+
+	public String getAskDataField() {
+		return askDataField;
+	}
+
+	public void setAskDataField(String askDataField) {
+		this.askDataField = askDataField;
+	}
+
+	public String getBidDataField() {
+		return bidDataField;
+	}
+
+	public void setBidDataField(String bidDataField) {
+		this.bidDataField = bidDataField;
 	}
 	
 }
