@@ -45,6 +45,8 @@ public class TestSet {
 	private int lunchLastNumberOfMinutesClearPosition;	
 	@Expose
 	private boolean includeMorningData;
+	@Expose
+	private int avgStep;
 
 	public TestSet() {}
 
@@ -52,7 +54,7 @@ public class TestSet {
 			int actionCounting, double tradeStopLossTrigger, double tradeStopLossTriggerPercent, double absoluteTradeStopLoss, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
-			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData) {
+			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData, int avgStep) {
 		this.cpTimer = cpTimer;
 		this.cpBuffer = cpBuffer;
 		this.cpHitRate = cpHitRate;
@@ -75,6 +77,7 @@ public class TestSet {
 		this.lastNumberOfMinutesClearPosition = lastNumberOfMinutesClearPosition;
 		this.lunchLastNumberOfMinutesClearPosition = lunchLastNumberOfMinutesClearPosition;
 		this.includeMorningData = includeMorningData;
+		this.avgStep = avgStep;
 	}
 
 	public int getCpTimer() {
@@ -245,6 +248,14 @@ public class TestSet {
 		this.includeMorningData = includeMorningData;
 	}
 	
+	public int getAvgStep() {
+		return avgStep;
+	}
+
+	public void setAvgStep(int avgStep) {
+		this.avgStep = avgStep;
+	}
+
 	public String getKey() {
 		return getCpTimer()  +  "_" +
 		getCpBuffer() + "_" +
