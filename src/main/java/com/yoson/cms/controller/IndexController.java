@@ -415,7 +415,7 @@ public class IndexController  implements StatusCallBack {
 					String step = IOUtils.toString(input);
 					input.close();
 					String[] steps = step.split(",");
-					if (steps.length == 2 && steps[0].equals(steps[1]) || steps.length == 3 && steps[0].equals(steps[1]) && Integer.parseInt(steps[2]) >= BackTestTask.dataTypes.length) {
+					if (steps.length == 2 && steps[0].equals(steps[1]) || steps.length == 3 && steps[0].equals(steps[1]) && Integer.parseInt(steps[2]) >= BackTestTask.getDataTypeList(mainUIParam).size()) {
 						status = "(Finished)";
 					} else {
 						status = "(Paused)";

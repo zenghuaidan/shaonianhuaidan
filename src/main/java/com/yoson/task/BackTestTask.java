@@ -53,11 +53,29 @@ public class BackTestTask implements Runnable {
 	public static Map<String, String> allPositivePnlResult;
 	private StatusCallBack callBack;
 	public static boolean isLiveData = false;
+	private static String[] dataTypes = new String[]{ "Open", "Avg", "Last", "Max", "Min" };
 	
-	public static final String[] dataTypes = new String[]{ "Open", "Avg", "Last", "Max", "Min" };
+	public static List<String> getDataTypeList(MainUIParam mainUIParam) {
+		List<String> dataTypeList = new ArrayList<String>();		
+		
+		Map<String, Boolean> dataTypeMap = new HashMap<String, Boolean>() {
+			{
+				put(dataTypes[0], mainUIParam.isOutputDataOpen());
+				put(dataTypes[1], mainUIParam.isOutputDataAvg());
+				put(dataTypes[2], mainUIParam.isOutputDataLast());
+				put(dataTypes[3], mainUIParam.isOutputDataMax());
+				put(dataTypes[4], mainUIParam.isOutputDataMin());
+			}
+		};
+		for(int i = 0; i < dataTypes.length; i++) {
+			if(dataTypeMap.get(dataTypes[i]))
+				dataTypeList.add(dataTypes[i]);
+		}
+		return dataTypeList;
+	}		
 	
 	@Override
-	public void run() {
+	public void run() {		
 		try {			
 			int current = 1;
 			int startStep = 0;
@@ -83,9 +101,10 @@ public class BackTestTask implements Runnable {
 					}
 				}
 			}
-			for(int i = 1; i <= dataTypes.length; i++) {
+			List<String> dataTypeList = getDataTypeList(mainUIParam);
+			for(int i = 1; i <= dataTypeList.size(); i++) {
 				if(i < current) continue;
-				String dataType = dataTypes[i-1];
+				String dataType = dataTypeList.get(i-1);
 				mainUIParam.setResultPath(FilenameUtils.concat(mainUIParam.getSourcePath(), dataType));
 				mainUIParam.setTradeDataField("trade" + dataType.toLowerCase());
 				mainUIParam.setAskDataField("ask" + dataType.toLowerCase());
