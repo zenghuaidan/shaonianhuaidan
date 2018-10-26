@@ -387,7 +387,12 @@ function getMainUIParam() {
 	   "includeMorningData":$("[name='includeMorningData']").is(":checked"),
 	   "ignoreLunchTime":$("[name='ignoreLunchTime']").is(":checked"),	
 	   "nForPnl":$("[name='nForPnl']").val(),
-	   "matrixFile":$("[name='matrixFile']").is(":checked")
+	   "matrixFile":$("[name='matrixFile']").is(":checked"),
+	   "outputDataOpen":$("[name='outputDataOpen']").is(":checked"),
+	   "outputDataAvg":$("[name='outputDataAvg']").is(":checked"),
+	   "outputDataLast":$("[name='outputDataLast']").is(":checked"),
+	   "outputDataMax":$("[name='outputDataMax']").is(":checked"),
+	   "outputDataMin":$("[name='outputDataMin']").is(":checked")
 	};
 }
 
