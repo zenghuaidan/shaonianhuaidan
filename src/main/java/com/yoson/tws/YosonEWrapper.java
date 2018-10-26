@@ -198,7 +198,10 @@ public class YosonEWrapper extends BasicEWrapper {
 				lastSecondScheduleData != null && lastTrade == 0 ? lastSecondScheduleData.getLastTrade() : lastTrade,
 				lastSecondScheduleData != null && scheduledDataRecord.getAsklast() == 0 ? lastSecondScheduleData.getActualAskPrice() : scheduledDataRecord.getAsklast(), 
 				lastSecondScheduleData != null && scheduledDataRecord.getBidlast() == 0 ? lastSecondScheduleData.getActualBidPrice() : scheduledDataRecord.getBidlast(), 
-				lastSecondScheduleData != null && scheduledDataRecord.getTradelast() == 0 ? lastSecondScheduleData.getActualLastTrade() : scheduledDataRecord.getTradelast());
+				lastSecondScheduleData != null && scheduledDataRecord.getTradelast() == 0 ? lastSecondScheduleData.getActualLastTrade() : scheduledDataRecord.getTradelast(),
+				mainUIParam.getAskDataField(),
+				mainUIParam.getBidDataField(),
+				mainUIParam.getTradeDataField());
 	}
 	
 	public static void genTradingDayPerSecondDetails(String folderPath, List<ScheduledDataRecord> scheduledDataRecords) throws ParseException {
