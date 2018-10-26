@@ -8,6 +8,9 @@ public class PerSecondRecord {
 
 	private long time;
 	private String timeStr;
+	private double bidPriceSum;
+	private double askPriceSum;
+	private double lastTradeSum;
 	private double bidPrice;
 	private double askPrice;
 	private double lastTrade;
@@ -44,6 +47,51 @@ public class PerSecondRecord {
 	public PerSecondRecord() {
 	}
 	
+	public void initAskPriceData(PerSecondRecord lastSecondRecord, TestSet testSet, List<ScheduleData> dailyScheduleData, ScheduleData scheduleDataPerSecond) {
+		if(testSet.getAvgStep() == 0 || !scheduleDataPerSecond.getAskDataField().equals("askavg")) {
+			this.askPrice = scheduleDataPerSecond.getAskPrice();
+		} else {
+			if(this.reference <= testSet.getAvgStep()) {
+				this.askPriceSum = lastSecondRecord.askPriceSum + scheduleDataPerSecond.getAskPrice();							
+			} else {
+				this.askPrice = lastSecondRecord.askPriceSum / testSet.getAvgStep();				
+				
+				int first = this.reference - testSet.getAvgStep() - 1;
+				this.askPriceSum = scheduleDataPerSecond.getAskPrice() + lastSecondRecord.askPriceSum - dailyScheduleData.get(first).getAskPrice();				
+			}
+		}
+	}
+	
+	public void initBidPriceData(PerSecondRecord lastSecondRecord, TestSet testSet, List<ScheduleData> dailyScheduleData, ScheduleData scheduleDataPerSecond) {
+		if(testSet.getAvgStep() == 0 || !scheduleDataPerSecond.getBidDataField().equals("bidavg")) {			
+			this.bidPrice = scheduleDataPerSecond.getBidPrice();
+		} else {
+			if(this.reference <= testSet.getAvgStep()) {
+				this.bidPriceSum = lastSecondRecord.bidPriceSum + scheduleDataPerSecond.getBidPrice();
+			} else {
+				this.bidPrice = lastSecondRecord.bidPriceSum / testSet.getAvgStep();
+				
+				int first = this.reference - testSet.getAvgStep() - 1;
+				this.bidPriceSum = scheduleDataPerSecond.getBidPrice() + lastSecondRecord.bidPriceSum - dailyScheduleData.get(first).getBidPrice();
+			}
+		}
+	}
+	
+	public void initLastTradePriceData(PerSecondRecord lastSecondRecord, TestSet testSet, List<ScheduleData> dailyScheduleData, ScheduleData scheduleDataPerSecond) {
+		if(testSet.getAvgStep() == 0 || !scheduleDataPerSecond.getTradeDataField().equals("tradeavg")) {			
+			this.lastTrade = scheduleDataPerSecond.getLastTrade();			
+		} else {
+			if(this.reference <= testSet.getAvgStep()) {				
+				this.lastTradeSum = lastSecondRecord.lastTradeSum + scheduleDataPerSecond.getLastTrade();				
+			} else {				
+				this.lastTrade = lastSecondRecord.lastTradeSum / testSet.getAvgStep();	
+				
+				int first = this.reference - testSet.getAvgStep() - 1;				
+				this.lastTradeSum = scheduleDataPerSecond.getLastTrade() + lastSecondRecord.lastTradeSum - dailyScheduleData.get(first).getLastTrade();
+			}
+		}
+	}
+	
 	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList, ScheduleData scheduleDataPerSecond, int checkMarketTime) throws ParseException {
 		this(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, checkMarketTime, null);
 	}
@@ -51,14 +99,14 @@ public class PerSecondRecord {
 	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList, ScheduleData scheduleDataPerSecond, int checkMarketTime, Map<Double, Integer> lastTradeCountMap) throws ParseException {
 		PerSecondRecord lastSecondRecord = dailyPerSecondRecordList.size() == 0 ? new PerSecondRecord() : dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - 1);
 		this.time = scheduleDataPerSecond.getId();
-		this.timeStr = scheduleDataPerSecond.getDateTimeStr();
-		this.askPrice = scheduleDataPerSecond.getAskPrice();
-		this.bidPrice = scheduleDataPerSecond.getBidPrice();
-		this.lastTrade = scheduleDataPerSecond.getLastTrade();
+		this.timeStr = scheduleDataPerSecond.getDateTimeStr();				
 		this.actualAskPrice = scheduleDataPerSecond.getActualAskPrice();
 		this.actualBidPrice = scheduleDataPerSecond.getActualBidPrice();
 		this.actualLastTrade = scheduleDataPerSecond.getActualLastTrade();
 		this.reference = lastSecondRecord.getReference() + 1;
+		initAskPriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
+		initBidPriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
+		initLastTradePriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
 		//2015-01-19  9:41:16
 //		if ("2015-01-19 11:58:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 //			System.out.println("debug point");
@@ -394,6 +442,30 @@ public class PerSecondRecord {
 
 	public void setTimeStr(String timeStr) {
 		this.timeStr = timeStr;
+	}	
+
+	public double getBidPriceSum() {
+		return bidPriceSum;
+	}
+
+	public void setBidPriceSum(double bidPriceSum) {
+		this.bidPriceSum = bidPriceSum;
+	}
+
+	public double getAskPriceSum() {
+		return askPriceSum;
+	}
+
+	public void setAskPriceSum(double askPriceSum) {
+		this.askPriceSum = askPriceSum;
+	}
+
+	public double getLastTradeSum() {
+		return lastTradeSum;
+	}
+
+	public void setLastTradeSum(double lastTradeSum) {
+		this.lastTradeSum = lastTradeSum;
 	}
 
 	public double getBidPrice() {
