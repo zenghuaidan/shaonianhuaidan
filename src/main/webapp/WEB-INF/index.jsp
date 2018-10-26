@@ -70,7 +70,69 @@
 							      </td>
 							      <td></td>
 							      <td></td>
-							   </tr>	   
+							   </tr>							   
+   						   	   <tr>
+							   		<td>
+							   	  		<table>
+										   <tr>
+										      <td>&nbsp;</td>
+										   </tr>
+										   <tr>
+										      <td>Output Data</td>
+										   </tr>
+							   	  		</table>
+							   		</td>
+							   		<td>
+							   	  		<table>
+										   <tr>
+										      <td>Open</td>
+										   </tr>
+										   <tr>
+										      <td><input name="outputDataOpen" ${ mainUIParam.outputDataOpen ? "checked" : "" } type="checkbox"/></td>
+										   </tr>										   
+							   	  		</table>
+							   	  	</td>
+							   	  	<td>
+							   	  		<table>
+										   <tr>
+										      <td>Avg</td>
+										   </tr>
+										   <tr>
+										      <td><input name="outputDataAvg" ${ mainUIParam.outputDataAvg ? "checked" : "" } type="checkbox"/></td>
+										   </tr>
+							   	  		</table>
+							   	  	</td>
+							   	  	<td>
+							   	  		<table>
+										   <tr>
+										      <td>Last</td>
+										   </tr>
+										   <tr>
+										      <td><input name="outputDataLast" ${ mainUIParam.outputDataLast ? "checked" : "" } type="checkbox"/></td>
+										   </tr>
+							   	  		</table>
+							   	  	</td>
+							   	  	<td>
+							   	  		<table>
+										   <tr>
+										      <td>Max</td>
+										   </tr>
+										   <tr>
+										      <td><input name="outputDataMax" ${ mainUIParam.outputDataMax ? "checked" : "" } type="checkbox"/></td>
+										   </tr>										   
+							   	  		</table>
+							   	  	</td>
+							   	  	<td>
+							   	  		<table>
+										   <tr>
+										      <td>Min</td>
+										   </tr>
+										   <tr>
+										      <td><input name="outputDataMin" ${ mainUIParam.outputDataMin ? "checked" : "" } type="checkbox"/></td>
+										   </tr>										   
+							   	  		</table>
+							   	  	</td>
+							   </tr>							   							   	   
 						   	   <tr>
 							   		<td>
 							   	  		<table>
