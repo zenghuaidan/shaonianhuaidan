@@ -64,6 +64,12 @@ public class MainUIParam extends TestSet {
 	
 	private String startStr;
 	private String endStr;
+	
+	private boolean outputDataOpen = true;
+	private boolean outputDataAvg = true;
+	private boolean outputDataLast = true;
+	private boolean outputDataMax = true;
+	private boolean outputDataMin = true;
 	public MainUIParam() {}
 	
 	public String getResultPath() {
@@ -400,6 +406,46 @@ public class MainUIParam extends TestSet {
 
 	public void setMatrixFile(boolean matrixFile) {
 		this.matrixFile = matrixFile;
+	}	
+
+	public boolean isOutputDataOpen() {
+		return outputDataOpen;
+	}
+
+	public void setOutputDataOpen(boolean outputDataOpen) {
+		this.outputDataOpen = outputDataOpen;
+	}
+
+	public boolean isOutputDataAvg() {
+		return outputDataAvg;
+	}
+
+	public void setOutputDataAvg(boolean outputDataAvg) {
+		this.outputDataAvg = outputDataAvg;
+	}
+
+	public boolean isOutputDataLast() {
+		return outputDataLast;
+	}
+
+	public void setOutputDataLast(boolean outputDataLast) {
+		this.outputDataLast = outputDataLast;
+	}
+
+	public boolean isOutputDataMax() {
+		return outputDataMax;
+	}
+
+	public void setOutputDataMax(boolean outputDataMax) {
+		this.outputDataMax = outputDataMax;
+	}
+
+	public boolean isOutputDataMin() {
+		return outputDataMin;
+	}
+
+	public void setOutputDataMin(boolean outputDataMin) {
+		this.outputDataMin = outputDataMin;
 	}
 
 	public static final MainUIParam getMainUIParam() {
