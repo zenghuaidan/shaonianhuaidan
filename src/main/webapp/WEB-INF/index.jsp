@@ -343,6 +343,11 @@
 							      <td></td>
 							   </tr>
 							   <tr>
+							      <td>Average Step Size</td>
+							      <td><input name="avgStep" value="${mainUIParam.avgStep}" type="text"/></td>
+							      <td></td>
+							   </tr>
+							   <tr>
 							      <td>Output char</td>
 							      <td><input name="outputChart" type="checkbox" ${mainUIParam.outputChart ? 'checked' : ''} /></td>
 							      <td></td>
@@ -768,6 +773,11 @@
 								   <tr>
 								      <td>Pnl Threshold</td>
 								      <td><input value="${strategy.mainUIParam.pnlThreshold}" type="text"/></td>
+								      <td></td>
+								   </tr>
+								   <tr>
+								      <td>Average Step Size</td>
+								      <td><input value="${strategy.mainUIParam.avgStep}" type="text"/></td>
 								      <td></td>
 								   </tr>
       							   <tr>

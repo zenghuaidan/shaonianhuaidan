@@ -392,7 +392,9 @@ function getMainUIParam() {
 	   "outputDataAvg":$("[name='outputDataAvg']").is(":checked"),
 	   "outputDataLast":$("[name='outputDataLast']").is(":checked"),
 	   "outputDataMax":$("[name='outputDataMax']").is(":checked"),
-	   "outputDataMin":$("[name='outputDataMin']").is(":checked")
+	   "outputDataMin":$("[name='outputDataMin']").is(":checked"),
+	   "pnlThreshold":$.trim($("[name='pnlThreshold']").val()),
+	   "avgStep":$.trim($("[name='avgStep']").val())
 	};
 }
 

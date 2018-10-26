@@ -119,6 +119,10 @@ public class TradePerSecondDetailsCSVWriter {
 			writer.append(",");
 			writer.append(mainUIParam.isIgnoreLunchTime() + "");
 			writer.append("\n");
+			writer.append("Average Step Size");
+			writer.append(",");
+			writer.append(mainUIParam.getAvgStep() + "");
+			writer.append("\n");
 			
 	    	writer.append(BackTestCSVWriter.getATradingDayHeader());
 	    }
