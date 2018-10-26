@@ -355,6 +355,8 @@ public class IndexController {
 					SQLUtils.saveRawDataRecord(all, source, true);
 					
 					List<ScheduledDataRecord> scheduledDataRecords = YosonEWrapper.extractScheduledDataRecord(contractDataPath);
+					String dateStr = DateUtils.yyyyMMdd().format(DateUtils.yyyyMMddHHmmss2().parse(scheduledDataRecords.get(0).getTime()));
+					SQLUtils.deleteScheduledDataRecordByDate(dateStr, ticker);
 					SQLUtils.saveScheduledDataRecord(scheduledDataRecords, source, ticker, true);
 				} catch (Exception e) {
 				}

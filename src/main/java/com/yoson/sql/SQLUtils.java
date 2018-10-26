@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.StringType;
 
 import com.yoson.date.DateUtils;
 import com.yoson.tws.Record;
@@ -67,6 +68,25 @@ public class SQLUtils {
 			session.getTransaction().begin();
 			String sql = "insert into " + expiry_date + "(date) values ('" + date + "')";
 			session.createSQLQuery(sql).executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static void deleteScheduledDataRecordByDate(String dateStr, String ticker) {
+		Session session = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String sql = "delete from schedule_data where date='" + dateStr + "' and ticker='" + ticker+ "'";
+			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
+			sqlQuery.executeUpdate();
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
