@@ -8,9 +8,15 @@ public class PerSecondRecord {
 
 	private long time;
 	private String timeStr;
+	private double bidPriceSum;
+	private double askPriceSum;
+	private double lastTradeSum;
 	private double bidPrice;
 	private double askPrice;
 	private double lastTrade;
+	private double actualAskPrice;
+	private double actualBidPrice;
+	private double actualLastTrade;
 	private int checkMarketTime;
 	private int reference;
 	private int tCounter;
@@ -39,14 +45,62 @@ public class PerSecondRecord {
 	public PerSecondRecord() {
 	}
 	
+	public void initAskPriceData(PerSecondRecord lastSecondRecord, TestSet testSet, List<ScheduleData> dailyScheduleData, ScheduleData scheduleDataPerSecond) {
+		if(testSet.getAvgStep() == 0 || !scheduleDataPerSecond.getAskDataField().equals("askavg")) {
+			this.askPrice = scheduleDataPerSecond.getAskPrice();
+		} else {
+			if(this.reference <= testSet.getAvgStep()) {
+				this.askPriceSum = lastSecondRecord.askPriceSum + scheduleDataPerSecond.getAskPrice();							
+			} else {
+				this.askPrice = lastSecondRecord.askPriceSum / testSet.getAvgStep();				
+				
+				int first = this.reference - testSet.getAvgStep() - 1;
+				this.askPriceSum = scheduleDataPerSecond.getAskPrice() + lastSecondRecord.askPriceSum - dailyScheduleData.get(first).getAskPrice();				
+			}
+		}
+	}
+	
+	public void initBidPriceData(PerSecondRecord lastSecondRecord, TestSet testSet, List<ScheduleData> dailyScheduleData, ScheduleData scheduleDataPerSecond) {
+		if(testSet.getAvgStep() == 0 || !scheduleDataPerSecond.getBidDataField().equals("bidavg")) {			
+			this.bidPrice = scheduleDataPerSecond.getBidPrice();
+		} else {
+			if(this.reference <= testSet.getAvgStep()) {
+				this.bidPriceSum = lastSecondRecord.bidPriceSum + scheduleDataPerSecond.getBidPrice();
+			} else {
+				this.bidPrice = lastSecondRecord.bidPriceSum / testSet.getAvgStep();
+				
+				int first = this.reference - testSet.getAvgStep() - 1;
+				this.bidPriceSum = scheduleDataPerSecond.getBidPrice() + lastSecondRecord.bidPriceSum - dailyScheduleData.get(first).getBidPrice();
+			}
+		}
+	}
+	
+	public void initLastTradePriceData(PerSecondRecord lastSecondRecord, TestSet testSet, List<ScheduleData> dailyScheduleData, ScheduleData scheduleDataPerSecond) {
+		if(testSet.getAvgStep() == 0 || !scheduleDataPerSecond.getTradeDataField().equals("tradeavg")) {			
+			this.lastTrade = scheduleDataPerSecond.getLastTrade();			
+		} else {
+			if(this.reference <= testSet.getAvgStep()) {				
+				this.lastTradeSum = lastSecondRecord.lastTradeSum + scheduleDataPerSecond.getLastTrade();				
+			} else {				
+				this.lastTrade = lastSecondRecord.lastTradeSum / testSet.getAvgStep();	
+				
+				int first = this.reference - testSet.getAvgStep() - 1;				
+				this.lastTradeSum = scheduleDataPerSecond.getLastTrade() + lastSecondRecord.lastTradeSum - dailyScheduleData.get(first).getLastTrade();
+			}
+		}
+	}
+	
 	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList, ScheduleData scheduleDataPerSecond, int checkMarketTime,TreeMap<Double, Integer> shortMap, TreeMap<Double, Integer> longMap) throws ParseException {
 		PerSecondRecord lastSecondRecord = dailyPerSecondRecordList.size() == 0 ? new PerSecondRecord() : dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - 1);
 		this.time = scheduleDataPerSecond.getId();
 		this.timeStr = scheduleDataPerSecond.getDateTimeStr();
-		this.askPrice = scheduleDataPerSecond.getAskPrice();
-		this.bidPrice = scheduleDataPerSecond.getBidPrice();
-		this.lastTrade = scheduleDataPerSecond.getLastTrade();
+		this.actualAskPrice = scheduleDataPerSecond.getActualAskPrice();
+		this.actualBidPrice = scheduleDataPerSecond.getActualBidPrice();
+		this.actualLastTrade = scheduleDataPerSecond.getActualLastTrade();
 		this.reference = lastSecondRecord.getReference() + 1;
+		initAskPriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
+		initBidPriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
+		initLastTradePriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
 		
 		this.checkMarketTime = checkMarketTime;
 		this.tCounter = this.checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
@@ -492,6 +546,54 @@ public class PerSecondRecord {
 
 	public void setHighLowDiffernece(double highLowDiffernece) {
 		this.highLowDiffernece = highLowDiffernece;
+	}
+
+	public double getBidPriceSum() {
+		return bidPriceSum;
+	}
+
+	public void setBidPriceSum(double bidPriceSum) {
+		this.bidPriceSum = bidPriceSum;
+	}
+
+	public double getAskPriceSum() {
+		return askPriceSum;
+	}
+
+	public void setAskPriceSum(double askPriceSum) {
+		this.askPriceSum = askPriceSum;
+	}
+
+	public double getLastTradeSum() {
+		return lastTradeSum;
+	}
+
+	public void setLastTradeSum(double lastTradeSum) {
+		this.lastTradeSum = lastTradeSum;
+	}
+
+	public double getActualAskPrice() {
+		return actualAskPrice;
+	}
+
+	public void setActualAskPrice(double actualAskPrice) {
+		this.actualAskPrice = actualAskPrice;
+	}
+
+	public double getActualBidPrice() {
+		return actualBidPrice;
+	}
+
+	public void setActualBidPrice(double actualBidPrice) {
+		this.actualBidPrice = actualBidPrice;
+	}
+
+	public double getActualLastTrade() {
+		return actualLastTrade;
+	}
+
+	public void setActualLastTrade(double actualLastTrade) {
+		this.actualLastTrade = actualLastTrade;
 	}
 
 }
