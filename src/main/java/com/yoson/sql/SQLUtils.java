@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.StringType;
 
 import com.yoson.tws.ScheduledDataRecord;
 
@@ -17,6 +19,25 @@ public class SQLUtils {
 			return sessionFactory.openSession();			
 		} catch (Exception e) {
 			return null;
+		}
+	}
+	
+	public static void deleteScheduledDataRecordByDate(String dateStr, String ticker) {
+		Session session = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String sql = "delete from schedule_data where date='" + dateStr + "' and ticker='" + ticker+ "'";
+			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
+			sqlQuery.executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
 		}
 	}
 	

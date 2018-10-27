@@ -5,14 +5,15 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.Vector;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.mapping.Array;
 
 import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
@@ -105,6 +106,7 @@ public class EClientSocketUtils {
 				input = new FileReader(file);
 				List<String> readLines = IOUtils.readLines(input);
 				Map<String, List<String>> sourceAndTicker = new HashMap<String, List<String>>();
+				Set<String> dateAndTickers = new HashSet<String>();
 				for(String line : readLines) {
 					int i = 0;
 					String source = line.split(",")[i++];
@@ -118,6 +120,8 @@ public class EClientSocketUtils {
 					
 					String sourceValue = source;
 					String tickerValue = "TWS_" + source;
+					String dateStr = DateUtils.yyyyMMdd().format(DateUtils.yyyyMMddHHmmss2().parse(time));
+					dateAndTickers.add(dateStr + "-" +tickerValue);
 					try {
 						String _sourceValue = line.split(",")[i++];
 						String _tickerValue = line.split(",")[i++];						
@@ -167,6 +171,10 @@ public class EClientSocketUtils {
 							scheduledDataRecord.setTradeavg(avg);
 							break;
 					}
+				}
+				
+				for(String dateAndTicker : dateAndTickers) {
+					SQLUtils.deleteScheduledDataRecordByDate(dateAndTicker.split("-", 2)[0], dateAndTicker.split("-", 2)[1]);
 				}
 				for(String source : map.keySet()) {
 					SQLUtils.saveScheduledDataRecord(map.get(source), sourceAndTicker.get(source).get(0), sourceAndTicker.get(source).get(1), true);
