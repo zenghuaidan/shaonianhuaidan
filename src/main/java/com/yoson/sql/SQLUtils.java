@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -23,6 +24,7 @@ public class SQLUtils {
 	}
 	
 	public static void deleteScheduledDataRecordByDate(String dateStr, String ticker) {
+		if(StringUtils.isEmpty(dateStr) || StringUtils.isEmpty(ticker)) return;
 		Session session = null;
 		try {
 			session = getSession();
