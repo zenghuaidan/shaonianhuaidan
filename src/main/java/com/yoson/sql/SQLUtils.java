@@ -104,6 +104,7 @@ public class SQLUtils {
 	}
 	
 	public static void deleteScheduledDataRecordByDate(String dateStr, String ticker) {
+		if(StringUtils.isBlank(dateStr) || StringUtils.isBlank(ticker)) return;
 		Session session = null;
 		try {
 			session = getSession();
