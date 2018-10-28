@@ -408,12 +408,25 @@ public class IndexController  implements StatusCallBack {
 			try {
 				File stepFile = new File(getStepFilePath(dataFolder, file.getName()));
 				String sourceFolder = FilenameUtils.concat(dataFolder, file.getName());
+				File paramFile = new File(getParamFilePath(dataFolder, file.getName()));
+				
+				
 				if(BackTestTask.running && IndexController.mainUIParam.getSourcePath().equals(sourceFolder)) {
 					status = "(Running)";
 				} else if(stepFile.exists()) {
 					FileInputStream input = new FileInputStream(stepFile);
 					String step = IOUtils.toString(input);
 					input.close();
+					
+					input = new FileInputStream(paramFile);
+					String json = IOUtils.toString(input);
+					input.close();
+					
+					MainUIParam mainUIParam = null;
+					if (StringUtils.isNotEmpty(json)) {
+						mainUIParam = new Gson().fromJson(json, MainUIParam.class);				
+					}
+					
 					String[] steps = step.split(",");
 					if (steps.length == 2 && steps[0].equals(steps[1]) || steps.length == 3 && steps[0].equals(steps[1]) && Integer.parseInt(steps[2]) >= BackTestTask.getDataTypeList(mainUIParam).size()) {
 						status = "(Finished)";

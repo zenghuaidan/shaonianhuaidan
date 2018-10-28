@@ -60,11 +60,11 @@ public class BackTestTask implements Runnable {
 		
 		Map<String, Boolean> dataTypeMap = new HashMap<String, Boolean>() {
 			{
-				put(dataTypes[0], mainUIParam.isOutputDataOpen());
-				put(dataTypes[1], mainUIParam.isOutputDataAvg());
-				put(dataTypes[2], mainUIParam.isOutputDataLast());
-				put(dataTypes[3], mainUIParam.isOutputDataMax());
-				put(dataTypes[4], mainUIParam.isOutputDataMin());
+				put(dataTypes[0], mainUIParam == null ? false : mainUIParam.isOutputDataOpen());
+				put(dataTypes[1], mainUIParam == null ? false : mainUIParam.isOutputDataAvg());
+				put(dataTypes[2], mainUIParam == null ? false : mainUIParam.isOutputDataLast());
+				put(dataTypes[3], mainUIParam == null ? false : mainUIParam.isOutputDataMax());
+				put(dataTypes[4], mainUIParam == null ? false : mainUIParam.isOutputDataMin());
 			}
 		};
 		for(int i = 0; i < dataTypes.length; i++) {
