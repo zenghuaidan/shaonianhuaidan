@@ -130,8 +130,9 @@ public class SQLUtils {
 	public static boolean existExpiryDate(String date) {
 		Session session = null;		
 		try {
+			String firstDayOfThisMonth = DateUtils.yyyyMMdd().format(DateUtils.yyyyMMdd2().parse(DateUtils.yyyyMM().format(DateUtils.yyyyMMdd().parse(date)) + "01"));
 			session = getSession();
-			String sql = "select distinct date from " + expiry_date + " where date ='" + date + "'";
+			String sql = "select distinct date from " + expiry_date + " where date <= '" + date + "' and date >= '" + firstDayOfThisMonth + "'";
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
 			return sqlQuery.list().size() > 0;			
 		} catch (Exception e) {
