@@ -562,6 +562,13 @@
 					<tr><td>Description</td><td>Bid</td><td>Bid Size</td><td>Ask</td><td>Ask Size</td><td>Trade</td><td>Trade Size</td><td>Time</td><td>Change</td></tr>
 					<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 				</table>
+				<br/><br/>
+				<table id="counterTable" border="1" cellspacing="0" cellpadding="0" width="100%">
+					<tr><td>Type</td><td>0s</td><td>1s</td><td>2s</td><td>3s</td><td>4s</td></tr>
+					<tr><td>Trade</td><td></td><td></td><td></td><td></td><td></td></tr>
+					<tr><td>Ask</td><td></td><td></td><td></td><td></td><td></td></tr>
+					<tr><td>Bid</td><td></td><td></td><td></td><td></td><td></td></tr>
+				</table>
 			</div>
 			<div class="dom">
 				<table id="orderDataTable" border="1" cellspacing="0" cellpadding="0" width="100%">					
