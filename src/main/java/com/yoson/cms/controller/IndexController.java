@@ -269,7 +269,8 @@ public class IndexController  implements StatusCallBack {
 	
 	@ResponseBody
 	@RequestMapping(path = "getMarketData", method = {RequestMethod.GET})
-	public String getMarketData() {
+	public String getMarketData() throws ParseException {
+		Date now = new Date();
 		ScheduledDataRecord scheduledDataRecord = YosonEWrapper.scheduledDataRecords == null || YosonEWrapper.scheduledDataRecords.size() == 0 ?
 				new ScheduledDataRecord() :
 				YosonEWrapper.scheduledDataRecords.get(YosonEWrapper.scheduledDataRecords.size() - 1);
@@ -281,9 +282,20 @@ public class IndexController  implements StatusCallBack {
 		Format PCT = new DecimalFormat( "0.0%");
 		
 		String change = YosonEWrapper.close == 0 ? "" : PCT.format( (trade - YosonEWrapper.close) / YosonEWrapper.close);
-		String desc = EClientSocketUtils.contract != null && EClientSocketUtils.isConnected() && YosonEWrapper.isValidateTime(new Date()) ? EClientSocketUtils.contract.getSymbol() : "Waiting for input";
+		String desc = EClientSocketUtils.contract != null && EClientSocketUtils.isConnected() && YosonEWrapper.isValidateTime(now) ? EClientSocketUtils.contract.getSymbol() : "Waiting for input";
 		String time = YosonEWrapper.lastTime == null ? "" : DateUtils.yyyyMMddHHmmss().format(YosonEWrapper.lastTime);
-		return desc + "@" + FMT2.format(bid) + "@" + YosonEWrapper.bidSize + "@" + FMT2.format(ask) + "@" + YosonEWrapper.askSize + "@" + FMT2.format(trade) + "@" + YosonEWrapper.tradeSize + "@" + time + "@" + change;
+		
+		Long nowLong = Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(now));
+		List<String> tradeCounter = new ArrayList<String>();
+		List<String> askCounter = new ArrayList<String>();
+		List<String> bidCounter = new ArrayList<String>();
+		for(int i = 0; i < 5; i++) {
+			String next = DateUtils.addSecond(nowLong, i * -1) + "";
+			tradeCounter.add(EClientSocketUtils.tradeCounter.containsKey(next) ? EClientSocketUtils.tradeCounter.get(next) + "" : "0");
+			askCounter.add(EClientSocketUtils.askCounter.containsKey(next) ? EClientSocketUtils.askCounter.get(next) + "" : "0");
+			bidCounter.add(EClientSocketUtils.bidCounter.containsKey(next) ? EClientSocketUtils.bidCounter.get(next) + "" : "0");
+		}
+		return desc + "@" + FMT2.format(bid) + "@" + YosonEWrapper.bidSize + "@" + FMT2.format(ask) + "@" + YosonEWrapper.askSize + "@" + FMT2.format(trade) + "@" + YosonEWrapper.tradeSize + "@" + time + "@" + change + "@" + String.join(",", tradeCounter) + "@" + String.join(",", askCounter) + "@" + String.join(",", bidCounter);
 	}
 	
 	@ResponseBody
