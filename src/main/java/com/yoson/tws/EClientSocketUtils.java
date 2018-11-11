@@ -3,7 +3,9 @@ package com.yoson.tws;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.io.FilenameUtils;
@@ -23,6 +25,9 @@ public class EClientSocketUtils {
 	public static ConnectionInfo connectionInfo;
 	public static Contract contract;
 	public static List<Strategy> strategies = new CopyOnWriteArrayList<Strategy>();
+	public static Map<String, Integer> tradeCounter = new ConcurrentHashMap<String, Integer>();
+	public static Map<String, Integer> askCounter = new ConcurrentHashMap<String, Integer>();
+	public static Map<String, Integer> bidCounter = new ConcurrentHashMap<String, Integer>();
 	public static String id;
 	public static String CONTRACT = "contract.txt";
 	public static List<String> tradeLogs;
@@ -124,6 +129,9 @@ public class EClientSocketUtils {
 		EClientSocketUtils.contract.setExpirary(genExpiry(EClientSocketUtils.contract.getStartTime()));
 		id = DateUtils.yyyyMMddHHmmss2().format(new Date());
 		tradeLogs = new CopyOnWriteArrayList<String>();
+		tradeCounter = new ConcurrentHashMap<String, Integer>();
+		askCounter = new ConcurrentHashMap<String, Integer>();
+		bidCounter = new ConcurrentHashMap<String, Integer>();
 		totalBuy = 0;
 		totalSell = 0;
 		String dataFolder = initAndReturnLiveDataFolder();

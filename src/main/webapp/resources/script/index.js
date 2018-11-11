@@ -573,8 +573,17 @@ function getMarketData() {
 	    	var datas = data.split("@");
 	    	var tds = $("#marketDataTable").find("tr").eq(1).find("td");
 	    	for(var i = 0; i < datas.length; i++) {
-	    		tds.eq(i).text(datas[i]);
+	    		if((tds.length - 1) >= i)
+	    			tds.eq(i).text(datas[i]);
 	    	}
+	    	for(var i = 1; i <= 3; i++) {
+	    		var data = datas[datas.length - i];
+	    		var counters = data.split(",");
+	    		for(var j = 0; j < counters.length; j++) {
+	    			$("#counterTable").find("tr").eq(i).find("td").eq(j + 1).text(counters[j]);
+		    	}
+	    	}
+	    	
 	    },
 	    error: function() {		        
 	    }
