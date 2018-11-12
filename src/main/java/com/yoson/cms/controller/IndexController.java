@@ -289,7 +289,7 @@ public class IndexController  implements StatusCallBack {
 		List<String> tradeCounter = new ArrayList<String>();
 		List<String> askCounter = new ArrayList<String>();
 		List<String> bidCounter = new ArrayList<String>();
-		for(int i = 0; i < 5; i++) {
+		for(int i = 1; i <= 5; i++) {
 			String next = DateUtils.addSecond(nowLong, i * -1) + "";
 			tradeCounter.add(EClientSocketUtils.tradeCounter.containsKey(next) ? EClientSocketUtils.tradeCounter.get(next) + "" : "0");
 			askCounter.add(EClientSocketUtils.askCounter.containsKey(next) ? EClientSocketUtils.askCounter.get(next) + "" : "0");

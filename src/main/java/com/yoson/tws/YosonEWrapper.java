@@ -494,7 +494,8 @@ public class YosonEWrapper extends BasicEWrapper {
 		case 0:
 			bidSize = size;
 			addLiveData(scheduledDataRecords, now, bid, BID);
-			EClientSocketUtils.bidCounter.put(time, EClientSocketUtils.bidCounter.putIfAbsent(time, 0) + 1);
+			EClientSocketUtils.bidCounter.putIfAbsent(time, 0);
+			EClientSocketUtils.bidCounter.put(time, EClientSocketUtils.bidCounter.get(time) + 1);
 			String bidResult = time + "," + bid + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(livePath(), BID + "," + bidResult, true);
 //			BackTestCSVWriter.writeText(bidPath(), liveResult, true);
@@ -502,7 +503,8 @@ public class YosonEWrapper extends BasicEWrapper {
 		case 3:
 			askSize = size;
 			addLiveData(scheduledDataRecords, now, ask, ASK);
-			EClientSocketUtils.askCounter.put(time, EClientSocketUtils.askCounter.putIfAbsent(time, 0) + 1);
+			EClientSocketUtils.askCounter.putIfAbsent(time, 0);
+			EClientSocketUtils.askCounter.put(time, EClientSocketUtils.askCounter.get(time) + 1);
 			String askResult = time + "," + ask + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(livePath(), ASK + "," + askResult, true);
 //			BackTestCSVWriter.writeText(askPath(), askResult, true);
@@ -510,7 +512,8 @@ public class YosonEWrapper extends BasicEWrapper {
 		case 5:
 			tradeSize = size;
 			addLiveData(scheduledDataRecords, now, trade, TRADE);
-			EClientSocketUtils.tradeCounter.put(time, EClientSocketUtils.tradeCounter.putIfAbsent(time, 0) + 1);
+			EClientSocketUtils.tradeCounter.putIfAbsent(time, 0);
+			EClientSocketUtils.tradeCounter.put(time, EClientSocketUtils.tradeCounter.get(time) + 1);
 			String tradeResult = time + "," + trade + "," + size + Global.lineSeparator;
 			BackTestCSVWriter.writeText(livePath(), TRADE + "," + tradeResult, true);
 //			BackTestCSVWriter.writeText(tradePath(), tradeResult, true);
