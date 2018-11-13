@@ -103,8 +103,8 @@ public class SQLUtils {
 		return String.join(System.lineSeparator(), values);
 	}
 	
-	public static void deleteScheduledDataRecordByDate(String dateStr, String ticker) {
-		if(StringUtils.isBlank(dateStr) || StringUtils.isBlank(ticker)) return;
+	public static void deleteScheduledDataRecordByDate(String dateStr, String ticker, boolean isToDatabase) {
+		if(StringUtils.isBlank(dateStr) || StringUtils.isBlank(ticker) || !isToDatabase) return;
 		Session session = null;
 		try {
 			session = getSession();

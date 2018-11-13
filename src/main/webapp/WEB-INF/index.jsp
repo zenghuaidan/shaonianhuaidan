@@ -46,6 +46,7 @@
 						<input type="radio" name="dataType" value="1" checked="checked"/><label name="dataType">BBG Data Format</label>
 						<input type="radio" value="2" name="dataType" /><label name="dataType">TWS Download Format</label>
 						<input type="radio" value="3" name="dataType" /><label name="dataType">Schedule Data Format</label>
+						<input type="radio" value="4" name="dataType" /><label name="dataType">HKEX Data Format</label>
 						CSV Path:<input type="text" name="csvPath"/>
 						<input type="button" id="uploadDataWithChecking" value="Check"/>
 						<input type="button" id="uploadDataWithReplace" value="Upload by replace"/>

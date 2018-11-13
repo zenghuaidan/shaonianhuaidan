@@ -5,20 +5,27 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 
 
 public class ZipUtils {
 
 	private ZipUtils() {
+		
 	}
 	
-	public static void decompress(String srcPath, String dest) throws Exception {
+	public static void decompress(String srcPath, String dest, boolean deepUnzip) throws Exception {
 		File file = new File(srcPath);
 		if (!file.exists()) {
 			throw new RuntimeException(srcPath + "File not exists");
@@ -51,6 +58,13 @@ public class ZipUtils {
 			}
 		}
 		zf.close();
+		if(deepUnzip) {
+			Collection<File> moreZips = FileUtils.listFiles(new File(dest), new SuffixFileFilter(Arrays.asList(".zip"), IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
+			for(File zip : moreZips) {
+				decompress(zip.getAbsolutePath(), FilenameUtils.concat(FilenameUtils.getFullPath(zip.getAbsolutePath()), FilenameUtils.getBaseName(zip.getAbsolutePath())), deepUnzip);
+			}
+		}
+		
 	}
 
 	public static void doCompress(String srcFile, String zipFile) throws IOException {

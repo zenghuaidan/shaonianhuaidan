@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -318,7 +319,7 @@ public class IndexController  implements StatusCallBack {
 	public String deleteSampleDate(String sampleDate, String ticker, HttpServletResponse response) throws IOException{
 		if(!deleting) {
 			deleting = true;
-			SQLUtils.deleteScheduledDataRecordByDate(sampleDate, ticker);
+			SQLUtils.deleteScheduledDataRecordByDate(sampleDate, ticker, isToDatabase);
 			deleting = false;
 			return "Data with date=" + sampleDate + " and ticker=" + ticker + " have been deleted from database.";
 		} else {
@@ -408,14 +409,14 @@ public class IndexController  implements StatusCallBack {
 						String unzipFolder = FilenameUtils.concat(tempFolder, FilenameUtils.getBaseName(liveData.getOriginalFilename()));
 						File unzipFolderFile = new File(unzipFolder);
 						unzipFolderFile.mkdirs();				
-						ZipUtils.decompress(zipFile, unzipFolder);
+						ZipUtils.decompress(zipFile, unzipFolder, true);
 						uploadStatus.add("Unzip completed");
 						
 						// delete zip file
 						new File(zipFile).delete();
 						
 						// retrieve the excel files
-						Collection<File> files = FileUtils.listFiles(unzipFolderFile, new SuffixFileFilter(new ArrayList<String>(){{add("xlsm"); add("xls"); add("xlsx"); add("csv");}}), TrueFileFilter.TRUE);
+						Collection<File> files = FileUtils.listFiles(unzipFolderFile, new SuffixFileFilter(new ArrayList<String>(){{add("xlsm"); add("xls"); add("xlsx"); add("csv"); add("txt");}}), TrueFileFilter.TRUE);
 						
 						if(files.size() > 0) {
 							if (isCheck) {
@@ -718,6 +719,84 @@ public class IndexController  implements StatusCallBack {
 	}
 	
 	private void uploadWithAction(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException, ParseException {
+		if (uploadDataType.equals("4")) {
+			Map<String, List<String>> datas = new HashMap<String, List<String>>();
+			uploadStatus.add("Start combining data ...");
+			for(File file : files) {
+				if(!file.getAbsolutePath().endsWith("_TR.txt") && !file.getAbsolutePath().endsWith("_BA.txt"))
+					continue;//only parse _TR.txt and _BA.txt file for HKEX data
+				FileInputStream input = null;				
+				try {
+					boolean isBA = file.getAbsolutePath().endsWith("_BA.txt");
+					input = new FileInputStream(file);
+					List<String> lines = IOUtils.readLines(input);
+					for(String line : lines) {
+						boolean isHSI = line.substring(0, 6).trim().equals("HSI");
+						if(!isHSI) continue;
+						String dateTime = line.substring(29, 43);
+						String date = line.substring(29, 37);
+						String strickPrice = line.substring(11, 28);
+						String type = "";
+						String price = "";
+						if(isBA) {							
+							boolean isA = line.substring(43, 44).equals("A");
+							type = isA ? "A" : "B";
+							price = line.substring(44, 61);
+						} else {														
+							price = line.substring(43, 60);
+							type = "T";
+						}
+						datas.putIfAbsent(date, new ArrayList<String>());
+						datas.get(date).add(dateTime + "," + type + "," + price);
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if(input != null) {
+						input.close();						
+					}					
+				}				
+			}
+			List<String> days = new ArrayList<String>();
+			for(String key : datas.keySet()) {
+				days.add(key);
+			}
+			Collections.sort(days);
+			for(String day : days) {				
+				tradeMap = new TreeMap<Long, List<Double>>();
+				askMap = new TreeMap<Long, List<Double>>();
+				bidMap = new TreeMap<Long, List<Double>>();				
+				uploadStatus.add("Uploading for " + day);																
+				for(String line : datas.get(day)) {
+					try {
+						String type = line.split(",")[1];
+						Date livedate = DateUtils.yyyyMMddHHmmss2().parse(line.split(",")[0]);
+						date = livedate;
+						double price = Double.valueOf(line.split(",")[2]);
+						switch (type) {
+						case "B":							
+							YosonEWrapper.addLiveData(bidMap, livedate, price);									
+							break;
+						case "A":							
+							YosonEWrapper.addLiveData(askMap, livedate, price);																		
+							break;
+						case "T":							
+							YosonEWrapper.addLiveData(tradeMap, livedate, price);																																		
+							break;
+						}
+						String dateStr = DateUtils.yyyyMMdd().format(date);
+						SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker, isToDatabase);						
+					} catch (Exception e) {
+					}											
+				}
+				writingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace, YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap));
+				uploadStatus.add("Upload complete for " + day);
+			}
+			uploadStatus.add("All upload complete!!!");
+			return;
+		}
+		
 		for(File file : files) {
 			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
 			uploadStatus.add("Retriving data from " + name + " ...");
@@ -767,7 +846,7 @@ public class IndexController  implements StatusCallBack {
 						String dateStr = DateUtils.yyyyMMdd().format(date);
 						if(!dates.contains(dateStr)) {
 							dates.add(dateStr);
-							SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker);
+							SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker, isToDatabase);
 						}
 					} catch (Exception e) {
 					}											
@@ -805,7 +884,7 @@ public class IndexController  implements StatusCallBack {
 						String dateStr = DateUtils.yyyyMMdd().format(date);
 						if(!dates.contains(dateStr)) {
 							dates.add(dateStr);
-							SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker);
+							SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker, isToDatabase);
 						}
 					} catch (Exception e) {
 					}											
@@ -843,7 +922,7 @@ public class IndexController  implements StatusCallBack {
 									uploadStatus.add("Parsing data(" + DateUtils.yyyyMMdd().format(date) + ") for " + sheet);
 									validateSheet = true;
 								}
-								SQLUtils.deleteScheduledDataRecordByDate(DateUtils.yyyyMMdd().format(date), uploadTicker);	
+								SQLUtils.deleteScheduledDataRecordByDate(DateUtils.yyyyMMdd().format(date), uploadTicker, isToDatabase);	
 							} else if(validateSheet && rowIndex >= 3) {
 								try {
 									Date tradeDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(1));
