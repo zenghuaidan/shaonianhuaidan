@@ -790,6 +790,8 @@ public class IndexController  implements StatusCallBack {
 					} catch (Exception e) {
 					}											
 				}
+				if(tradeMap.size() == 0) uploadStatus.add("<font size='3' color='red'>Warning: Not Trade data for " + day + "</font>");
+				if(askMap.size() == 0 && bidMap.size() == 0) uploadStatus.add("<font size='3' color='red'>Warning: Not BA data for " + day + "</font>");
 				writingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace, YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap));
 				uploadStatus.add("Upload complete for " + day);
 			}
