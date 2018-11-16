@@ -416,6 +416,10 @@ public class MainUIParam extends TestSet {
 
 	public static final MainUIParam getMainUIParam() {
 		MainUIParam mainUIParam = new MainUIParam();
+		mainUIParam.setAvgStep(5);
+		mainUIParam.setAvgStepTo(5);
+		mainUIParam.setAvgStepLiteral(1);
+		
 		mainUIParam.settShort(120);
 		mainUIParam.settShortTo(120);
 		mainUIParam.settShortLiteral(1);
