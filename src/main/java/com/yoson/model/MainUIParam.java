@@ -28,6 +28,8 @@ public class MainUIParam extends TestSet {
 	private String nForPnl;
 	private boolean matrixFile;
 	
+	private int avgStepTo;
+	private int avgStepLiteral;
 	private int timerTo;
 	private int timerLiteral;
 	private double smoothTo;
@@ -114,6 +116,22 @@ public class MainUIParam extends TestSet {
 
 	public void setnForPnl(String nForPnl) {
 		this.nForPnl = nForPnl;
+	}
+
+	public int getAvgStepTo() {
+		return avgStepTo;
+	}
+
+	public void setAvgStepTo(int avgStepTo) {
+		this.avgStepTo = avgStepTo;
+	}
+
+	public int getAvgStepLiteral() {
+		return avgStepLiteral;
+	}
+
+	public void setAvgStepLiteral(int avgStepLiteral) {
+		this.avgStepLiteral = avgStepLiteral;
 	}
 
 	public int getTimerTo() {

@@ -202,11 +202,12 @@ public class BackTestTask implements Runnable {
 		for (int timer = mainUIParam.getTimer(); timer<= mainUIParam.getTimerTo() ; timer = timer + mainUIParam.getTimerLiteral())
 		for (double smooth = mainUIParam.getSmooth(); smooth<= mainUIParam.getSmoothTo() ; smooth = smooth + mainUIParam.getSmoothLiteral())
 		for (double action = mainUIParam.getAction(); action<= mainUIParam.getActionTo() ; action = action + mainUIParam.getActionLiteral())		
-		for (double absoluteTradeStopLoss = mainUIParam.getAbsoluteTradeStopLoss(); absoluteTradeStopLoss<= mainUIParam.getAbsoluteTradeStopLossTo() ; absoluteTradeStopLoss = absoluteTradeStopLoss + mainUIParam.getAbsoluteTradeStopLossLiteral()) {
+		for (double absoluteTradeStopLoss = mainUIParam.getAbsoluteTradeStopLoss(); absoluteTradeStopLoss<= mainUIParam.getAbsoluteTradeStopLossTo() ; absoluteTradeStopLoss = absoluteTradeStopLoss + mainUIParam.getAbsoluteTradeStopLossLiteral()) 
+		for (int avgStep = mainUIParam.getAvgStep(); avgStep<= mainUIParam.getAvgStepTo() ; avgStep = avgStep + mainUIParam.getAvgStepLiteral()) {
 			testSets.add(new TestSet(timer, smooth, action, absoluteTradeStopLoss, mainUIParam.getUnit(),
 					mainUIParam.getMarketStartTime(), mainUIParam.getLunchStartTimeFrom(), mainUIParam.getLunchStartTimeTo(), 
 					mainUIParam.getMarketCloseTime(), mainUIParam.getCashPerIndexPoint(), mainUIParam.getTradingFee(), 
-					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition(), mainUIParam.isIncludeMorningData(), mainUIParam.getAvgStep()));
+					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition(), mainUIParam.isIncludeMorningData(), avgStep));
 		
 		}
 		BackTestCSVWriter.writeText(mainUIParam.getParamPath(), new Gson().toJson(mainUIParam), false);
