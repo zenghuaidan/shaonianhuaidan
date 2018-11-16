@@ -732,7 +732,8 @@ public class IndexController  implements StatusCallBack {
 					List<String> lines = IOUtils.readLines(input);
 					for(String line : lines) {
 						boolean isHSI = line.substring(0, 6).trim().equals("HSI");
-						if(!isHSI) continue;
+						boolean isF = line.substring(6, 7).equals("F");
+						if(!isHSI || !isF) continue;
 						String dateTime = line.substring(29, 43);
 						String date = line.substring(29, 37);
 						String strickPrice = line.substring(11, 28);
