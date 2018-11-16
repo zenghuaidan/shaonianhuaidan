@@ -208,12 +208,13 @@ public class BackTestTask implements Runnable {
 		for (int actionCounting = mainUIParam.getActionCounting(); actionCounting<= mainUIParam.getActionCountingTo() ; actionCounting = actionCounting + mainUIParam.getActionCountingLiteral())
 		for (double tradeStopLossTrigger = mainUIParam.getTradeStopLossTrigger(); tradeStopLossTrigger<= mainUIParam.getTradeStopLossTriggerTo() ; tradeStopLossTrigger = tradeStopLossTrigger + mainUIParam.getTradeStopLossTriggerLiteral())
 		for (double tradeStopLossTriggerPercent = mainUIParam.getTradeStopLossTriggerPercent(); tradeStopLossTriggerPercent<= mainUIParam.getTradeStopLossTriggerPercentTo() ; tradeStopLossTriggerPercent = tradeStopLossTriggerPercent + mainUIParam.getTradeStopLossTriggerPercentLiteral())
-		for (double absoluteTradeStopLoss = mainUIParam.getAbsoluteTradeStopLoss(); absoluteTradeStopLoss<= mainUIParam.getAbsoluteTradeStopLossTo() ; absoluteTradeStopLoss = absoluteTradeStopLoss + mainUIParam.getAbsoluteTradeStopLossLiteral()) {
+		for (double absoluteTradeStopLoss = mainUIParam.getAbsoluteTradeStopLoss(); absoluteTradeStopLoss<= mainUIParam.getAbsoluteTradeStopLossTo() ; absoluteTradeStopLoss = absoluteTradeStopLoss + mainUIParam.getAbsoluteTradeStopLossLiteral()) 
+		for (int avgStep = mainUIParam.getAvgStep(); avgStep<= mainUIParam.getAvgStepTo() ; avgStep = avgStep + mainUIParam.getAvgStepLiteral()) {
 			testSets.add(new TestSet(cpTimer, cpBuffer, cpHitRate, cpSmooth, estimationBuffer, actionTrigger,
 					actionCounting, tradeStopLossTrigger, tradeStopLossTriggerPercent, absoluteTradeStopLoss, mainUIParam.getUnit(),
 					mainUIParam.getMarketStartTime(), mainUIParam.getLunchStartTimeFrom(), mainUIParam.getLunchStartTimeTo(), 
 					mainUIParam.getMarketCloseTime(), mainUIParam.getCashPerIndexPoint(), mainUIParam.getTradingFee(), 
-					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition(), mainUIParam.isIncludeMorningData(), mainUIParam.getAvgStep()));
+					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition(), mainUIParam.isIncludeMorningData(), avgStep));
 		
 		}
 		BackTestCSVWriter.writeText(mainUIParam.getParamPath(), new Gson().toJson(mainUIParam), false);
