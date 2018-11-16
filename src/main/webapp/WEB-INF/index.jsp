@@ -238,6 +238,12 @@
 							      <td>Literal</td>
 							   </tr>
 							   <tr>
+							      <td>Average Step Size</td>
+							      <td><input name="avgStep" value="${mainUIParam.avgStep}" type="text"/></td>
+							      <td><input name="avgStepTo" value="${mainUIParam.avgStepTo}" type="text"/></td>
+							      <td><input name="avgStepLiteral" value="${mainUIParam.avgStepLiteral}" type="text"/></td>
+							   </tr>
+							   <tr>
 							      <td>T-Short</td>
 							      <td><input name="tShort" value="${mainUIParam.tShort}" type="text"/></td>
 							      <td><input name="tShortTo" value="${mainUIParam.tShortTo}" type="text"/></td>
@@ -359,12 +365,7 @@
 							      <td>Pnl Threshold</td>
 							      <td><input name="pnlThreshold" value="${mainUIParam.pnlThreshold}" type="text"/></td>
 							      <td></td>
-							   </tr>
-							   <tr>
-							      <td>Average Step Size</td>
-							      <td><input name="avgStep" value="${mainUIParam.avgStep}" type="text"/></td>
-							      <td></td>
-							   </tr>
+							   </tr>							   
 							   <tr>
 							      <td>Output char</td>
 							      <td><input name="outputChart" type="checkbox" ${mainUIParam.outputChart ? 'checked' : ''} /></td>
@@ -714,8 +715,14 @@
 								      <td>Literal</td>
 								   </tr>
 								   <tr>
+								      <td>Average Step Size</td>
+								      <td><input value="${strategy.mainUIParam.avgStep}" type="text"/></td>
+								      <td></td>
+								      <td></td>
+								   </tr>
+								   <tr>
 								      <td>T-Short</td>
-								      <td><input name="tShort" value="${strategy.mainUIParam.tShort}" type="text"/></td>
+								      <td><input value="${strategy.mainUIParam.tShort}" type="text"/></td>
 								      <td></td>
 								      <td></td>
 								   </tr>
@@ -817,12 +824,7 @@
 								      <td>Pnl Threshold</td>
 								      <td><input value="${strategy.mainUIParam.pnlThreshold}" type="text"/></td>
 								      <td></td>
-								   </tr>
-								   <tr>
-								      <td>Average Step Size</td>
-								      <td><input value="${strategy.mainUIParam.avgStep}" type="text"/></td>
-								      <td></td>
-								   </tr>
+								   </tr>								   
       							   <tr>
 								      <td>Include Morning Data</td>
 								      <td><input type="checkbox" ${strategy.mainUIParam.includeMorningData ? 'checked' : ''} /></td>
