@@ -785,11 +785,11 @@ public class IndexController  implements StatusCallBack {
 							YosonEWrapper.addLiveData(tradeMap, livedate, price);																																		
 							break;
 						}
-						String dateStr = DateUtils.yyyyMMdd().format(date);
-						SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker, isToDatabase);						
 					} catch (Exception e) {
 					}											
 				}
+				String dateStr = DateUtils.yyyyMMdd().format(date);
+				SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker, isToDatabase);						
 				if(tradeMap.size() == 0) uploadStatus.add("<font size='3' color='red'>Warning: Not Trade data for " + day + "</font>");
 				if(askMap.size() == 0 && bidMap.size() == 0) uploadStatus.add("<font size='3' color='red'>Warning: Not BA data for " + day + "</font>");
 				writingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace, YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap));
