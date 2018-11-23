@@ -438,11 +438,14 @@ function runClick() {
 
 function runWithLiveTradingDataClick() {
 	var paramData = getMainUIParam();
-	paramData.fromSource = true;
-	paramData.source = 'LiveData';
-	if(paramData.includeLastMarketDayData && paramData.source == '' && paramData.ticker == '') {
-		alert("Please select a source or a ticker!");
-		return;
+	if(paramData.includeLastMarketDayData) {
+		if(paramData.source == '' && paramData.ticker == '') {
+			alert("Please select a source or a ticker!");
+			return;
+		}		
+	} else {
+		paramData.fromSource = true;
+		paramData.source = 'LiveData';		
 	}
 	$.ajax({
 	    type: "POST",
