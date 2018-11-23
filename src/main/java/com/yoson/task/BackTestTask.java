@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
@@ -172,6 +171,33 @@ public class BackTestTask implements Runnable {
 			initRawData(mainUIParam, sData);
 		}		
 	}
+	
+	public static void applyLastMarketDayData(MainUIParam mainUIParam) throws ParseException {
+		if(!mainUIParam.isIncludeLastMarketDayData()) return;		
+		long lunchStartTimeTo = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
+		long marketCloseTime = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
+		for (int i = BackTestTask.sortedDateList.size() - 1; i >= 0; i--) {
+			String today = BackTestTask.sortedDateList.get(i);
+			String lastMarketDay = getLastMarketDayData(today);
+			List<ScheduleData> resultDatas = BackTestTask.rowData.containsKey(lastMarketDay) ? BackTestTask.rowData.get(lastMarketDay) : SQLUtils.getLastMarketDayScheduleData(mainUIParam, lastMarketDay, true);
+			List<ScheduleData> lastMarketDayData = new ArrayList<ScheduleData>();
+			for(ScheduleData resultData : resultDatas) {
+				long time = DateUtils.HHmmss().parse(resultData.getTimeStr()).getTime();
+				boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
+				if(!isAfternoon) continue;
+				BackTestTask.sumOfLastTrade.put(today, BackTestTask.sumOfLastTrade.get(today) == null ? resultData.getLastTrade() : BackTestTask.sumOfLastTrade.get(today) + resultData.getLastTrade());
+				lastMarketDayData.add(resultData.copyAndSetAsLastMarketDayData());
+			}
+			BackTestTask.rowData.get(today).addAll(0, lastMarketDayData);
+		}	
+	}
+	
+	public static String getLastMarketDayData(String today) {
+		if (BackTestTask.sortedDateList != null && BackTestTask.sortedDateList.indexOf(today) > 0) {
+			return BackTestTask.sortedDateList.get(BackTestTask.sortedDateList.indexOf(today) - 1);
+		}
+		return "";
+	}
 
 	public void runTestSet(int current, int startStep) throws IOException, ParseException {	
 		init();
@@ -194,7 +220,9 @@ public class BackTestTask implements Runnable {
 			callBack.updateStatus(getStatus("No data been selected"));			
 			return;
 		}
+				
 		Collections.sort(BackTestTask.sortedDateList, new DateComparator());
+		applyLastMarketDayData(mainUIParam);
 		mainUIParam.setStartStr(sortedDateList.get(0));
 		mainUIParam.setEndStr(sortedDateList.get(sortedDateList.size() - 1));
 		
@@ -213,7 +241,7 @@ public class BackTestTask implements Runnable {
 					instanTradeStopLoss, itsCounter, mainUIParam.getUnit(),
 					mainUIParam.getMarketStartTime(), mainUIParam.getLunchStartTimeFrom(), mainUIParam.getLunchStartTimeTo(), 
 					mainUIParam.getMarketCloseTime(), mainUIParam.getCashPerIndexPoint(), mainUIParam.getTradingFee(), 
-					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition(), mainUIParam.isIncludeMorningData(), avgStep));
+					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition(), mainUIParam.isIncludeMorningData(), avgStep, mainUIParam.isIncludeLastMarketDayData()));
 		}
 		BackTestCSVWriter.writeText(mainUIParam.getParamPath(), new Gson().toJson(mainUIParam), false);
 
@@ -246,7 +274,7 @@ public class BackTestTask implements Runnable {
 			BackTestTask.allBTSummaryResults.add(BackTestCSVWriter.getBTSummaryContent(index, mainUIParam, backTestResult));
 			
 			if(index == 1 && backTestResult.dayRecords.size() > 0 && !isLiveData) {
-				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(0));
+				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(1));
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.aTradingDayForCheckFileName), BackTestCSVWriter.getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult, true);
 			}	
 			

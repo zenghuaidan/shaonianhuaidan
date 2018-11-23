@@ -49,6 +49,8 @@ public class TestSet {
 	private boolean includeMorningData;
 	@Expose
 	private int avgStep;
+	@Expose
+	private boolean includeLastMarketDayData;
 
 	public TestSet() {}
 
@@ -56,7 +58,7 @@ public class TestSet {
 			double instantTradeStoploss, double itsCounter, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
-			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData, int avgStep) {
+			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData, int avgStep, boolean includeLastMarketDayData) {
 		this.tShort = tShort;
 		this.tLong = tLong;
 		this.mas = mas;
@@ -78,6 +80,7 @@ public class TestSet {
 		this.lunchLastNumberOfMinutesClearPosition = lunchLastNumberOfMinutesClearPosition;
 		this.includeMorningData = includeMorningData;
 		this.avgStep = avgStep;
+		this.includeLastMarketDayData = includeLastMarketDayData;
 	}
 
 	public int gettShort() {
@@ -250,6 +253,14 @@ public class TestSet {
 
 	public void setAvgStep(int avgStep) {
 		this.avgStep = avgStep;
+	}
+
+	public boolean isIncludeLastMarketDayData() {
+		return includeLastMarketDayData;
+	}
+
+	public void setIncludeLastMarketDayData(boolean includeLastMarketDayData) {
+		this.includeLastMarketDayData = includeLastMarketDayData;
 	}
 
 	public String getKey() {

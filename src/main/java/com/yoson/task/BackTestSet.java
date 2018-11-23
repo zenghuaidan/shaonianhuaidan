@@ -23,7 +23,7 @@ public class BackTestSet {
 		long start = System.currentTimeMillis();
 		List<PerSecondRecord> dailyPerSecondRecordList = new ArrayList<PerSecondRecord>();
 		List<PerSecondRecord> afternoonPerSecondRecordList = new ArrayList<PerSecondRecord>();
-		PerDayRecord perDayRecord = new PerDayRecord(new Date(dailyScheduleData.get(0).getId()));
+		PerDayRecord perDayRecord = new PerDayRecord(new Date(dailyScheduleData.get(dailyScheduleData.size() - 1).getId()));
 		
 		perDayRecord.indexPerformance = Math.abs(dailyScheduleData.get(0).getLastTrade() - dailyScheduleData.get(dailyScheduleData.size() - 1).getLastTrade());
 		double sumOfTrade = 0;
@@ -34,7 +34,7 @@ public class BackTestSet {
 		double maxLastTrade = Double.MIN_VALUE;
 		double minLastTrade = Double.MAX_VALUE;
 		double totalPnl = 0;
-		double mean = BackTestTask.sumOfLastTrade.get(dailyScheduleData.get(0).getDateStr()) / dailyScheduleData.size();
+		double mean = BackTestTask.sumOfLastTrade.get(dailyScheduleData.get(dailyScheduleData.size() - 1).getDateStr()) / dailyScheduleData.size();
 		double dailyIndexVolTemp = 0;
 //		double numberOfTerms = 0;
 //		double sumOfHLDifference = 0;

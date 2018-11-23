@@ -420,7 +420,8 @@ function getMainUIParam() {
 	   "pnlThreshold":$.trim($("[name='pnlThreshold']").val()),
 	   "avgStep":$.trim($("[name='avgStep']").val()),
 	   "avgStepTo":$.trim($("[name='avgStepTo']").val()),
-	   "avgStepLiteral":$.trim($("[name='avgStepLiteral']").val())
+	   "avgStepLiteral":$.trim($("[name='avgStepLiteral']").val()),
+	   "includeLastMarketDayData":$("[name='includeLastMarketDayData']").is(":checked")
 	};
 }
 
@@ -449,7 +450,7 @@ function runWithLiveTradingDataClick() {
 	var paramData = getMainUIParam();
 	paramData.fromSource = true;
 	paramData.source = 'LiveData';
-	if(paramData.source == '' && paramData.ticker == '') {
+	if(paramData.includeLastMarketDayData && paramData.source == '' && paramData.ticker == '') {
 		alert("Please select a source or a ticker!");
 		return;
 	}
@@ -469,6 +470,10 @@ function runWithLiveTradingDataClick() {
 
 function addStrategy(_this) {
 	var paramData = getMainUIParam();
+	if(paramData.includeLastMarketDayData && paramData.source == '' && paramData.ticker == '') {
+		alert("Please select a source or a ticker!");
+		return;
+	}
 	$.ajax({
 	    type: "POST",
 	    url: "addStrategy",

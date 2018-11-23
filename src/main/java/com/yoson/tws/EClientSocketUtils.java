@@ -17,6 +17,8 @@ import com.ib.client.Order;
 import com.ib.client.TagValue;
 import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.DateUtils;
+import com.yoson.model.ScheduleData;
+import com.yoson.scheduler.TaskScheduler;
 import com.yoson.sql.SQLUtils;
 import com.yoson.web.InitServlet;
 
@@ -28,6 +30,7 @@ public class EClientSocketUtils {
 	public static Map<String, Integer> tradeCounter = new ConcurrentHashMap<String, Integer>();
 	public static Map<String, Integer> askCounter = new ConcurrentHashMap<String, Integer>();
 	public static Map<String, Integer> bidCounter = new ConcurrentHashMap<String, Integer>();
+	public static Map<String, List<ScheduleData>> lastMarketDayData = new ConcurrentHashMap<String, List<ScheduleData>>();
 	public static String id;
 	public static String CONTRACT = "contract.txt";
 	public static List<String> tradeLogs;
@@ -122,6 +125,7 @@ public class EClientSocketUtils {
 		if(!isConnected()) {
 			return false;
 		}
+		TaskScheduler.initLastMarketDayData();
 		EClientSocketUtils.hasIncomingMarketData = false;
 		lunchBTStart = false;
 		YosonEWrapper.initData();
