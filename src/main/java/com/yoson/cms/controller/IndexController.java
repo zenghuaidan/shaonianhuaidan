@@ -12,6 +12,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,6 +35,7 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.ss.formula.functions.Index;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -718,6 +720,32 @@ public class IndexController  implements StatusCallBack {
 				+ s.getLastTradeSize() + System.lineSeparator();
 		return "";
 	}
+	List<String> expiryDates = Arrays.asList("080130","080228","080328","080429","080529","080627","080730","080828","080929","081030","081127","081230","090129","090226","090330","090429","090527","090629","090730","090828","090929","091029","091127","091230","100128","100225","100330","100429","100528","100629","100729","100830","100929","101028","101129","101230","110128","110225","110330","110428","110530","110629","110728","110830","110929","111028","111129","111229","120130","120228","120329","120427","120530","120628","120730","120830","120927","121030","121129","121228","130130","130227","130327","130429","130530","130627","130730","130829","130927","131030","131128","131230","140129","140227","140328","140429","140529","140627","140730","140828","140929","141030","141127","141230","150129","150226","150330","150429","150528","150629","150730","150828","150929","151029","151127","151230","160128","160226","160330","160428","160530","160629","160728","160830","160929","161028","161129","161229","170126","170227","170330","170427","170529","170629","170728","170830","170928","171030","171129","171228","180130","180227","180328","180427","180530","180628","180730","180830","180927","181030","181129","181228","190328","190627","191230","201230","211230","221229","231228");
+	
+	public String getExpiryDate(String date) throws ParseException {
+		for(String expiryDate : expiryDates) {
+			if(expiryDate.substring(0, 4).equals(date.substring(2, 6))) {
+				if(date.substring(2, 8).compareTo(expiryDate) >= 0) {
+				    Calendar now = Calendar.getInstance();
+					now.setTime(DateUtils.yyyyMMdd2().parse(date));
+					now.add(Calendar.MONTH, 1);
+					return DateUtils.yyyyMMdd2().format(now.getTime()).substring(2, 6);
+				} else {
+					return date.substring(2, 6);
+				}
+			}
+		}
+		return date.substring(2, 6);
+	}
+	
+	public static void main(String[] args) throws ParseException {
+		System.out.println(new IndexController().getExpiryDate("20080105"));
+		System.out.println(new IndexController().getExpiryDate("20080129"));
+		System.out.println(new IndexController().getExpiryDate("20080130"));
+		System.out.println(new IndexController().getExpiryDate("20080201"));
+		System.out.println(new IndexController().getExpiryDate("20080228"));
+		System.out.println(new IndexController().getExpiryDate("20280228"));
+	}
 	
 	private void uploadWithAction(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException, ParseException {
 		if (uploadDataType.equals("4")) {
@@ -733,15 +761,17 @@ public class IndexController  implements StatusCallBack {
 					List<String> lines = IOUtils.readLines(input);
 					for(String line : lines) {
 						boolean isHSI = line.substring(0, 6).trim().equals("HSI");
-						boolean isF = line.substring(6, 7).equals("F");						
+						boolean isF = line.substring(6, 7).equals("F");
+						String expiryMonth = line.substring(7, 10);
+						String dateTime = line.substring(29, 43);
+						String date = line.substring(29, 37);
+						String strickPrice = line.substring(11, 28);
 						if(!isHSI || !isF) continue;
 						if(!isBA) {
 							String type = line.substring(68, 71);
 							if(!Arrays.asList("000", "001", "002").contains(type)) continue;
 						}
-						String dateTime = line.substring(29, 43);
-						String date = line.substring(29, 37);
-						String strickPrice = line.substring(11, 28);
+						if(!expiryMonth.equals(getExpiryDate(date))) continue;
 						String type = "";
 						String price = "";
 						if(isBA) {							
