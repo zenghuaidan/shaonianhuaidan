@@ -20,6 +20,7 @@ public class ScheduleData {
 	private String askDataField;
 	private String bidDataField;
 	private String tradeDataField;
+	private boolean lastMarketDayData;
 	
 	public ScheduleData() {
 	}
@@ -189,5 +190,30 @@ public class ScheduleData {
 	public void setBidDataField(String bidDataField) {
 		this.bidDataField = bidDataField;
 	}
+
+	public boolean isLastMarketDayData() {
+		return lastMarketDayData;
+	}
+
+	public void setLastMarketDayData(boolean lastMarketDayData) {
+		this.lastMarketDayData = lastMarketDayData;
+	}
 	
+	public ScheduleData copyAndSetAsLastMarketDayData() {
+		ScheduleData scheduleData = new ScheduleData();				
+		scheduleData.id = this.id;
+		scheduleData.dateStr = this.dateStr;
+		scheduleData.timeStr = this.timeStr;
+		scheduleData.askPrice = this.askPrice;
+		scheduleData.bidPrice = this.bidPrice;
+		scheduleData.lastTrade = this.lastTrade;
+		scheduleData.actualAskPrice = this.actualAskPrice;
+		scheduleData.actualBidPrice = this.actualBidPrice;
+		scheduleData.actualLastTrade = this.actualLastTrade;
+		scheduleData.askDataField = this.askDataField;
+		scheduleData.bidDataField = this.bidDataField;
+		scheduleData.tradeDataField = this.tradeDataField;		
+		scheduleData.lastMarketDayData = true;
+		return scheduleData;
+	}
 }

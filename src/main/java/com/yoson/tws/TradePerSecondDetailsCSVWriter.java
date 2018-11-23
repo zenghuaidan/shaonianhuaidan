@@ -135,6 +135,10 @@ public class TradePerSecondDetailsCSVWriter {
 			writer.append(",");
 			writer.append(mainUIParam.getAvgStep() + "");
 			writer.append("\n");
+			writer.append("Include Last Market Day Data");
+			writer.append(",");
+			writer.append(mainUIParam.isIncludeLastMarketDayData() + "");
+			writer.append("\n");
 			
 	    	writer.append(BackTestCSVWriter.getATradingDayHeader());
 	    }

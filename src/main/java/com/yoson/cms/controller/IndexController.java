@@ -43,6 +43,7 @@ import com.ib.client.Contract;
 import com.yoson.callback.StatusCallBack;
 import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
+import com.yoson.scheduler.TaskScheduler;
 import com.yoson.sql.SQLUtils;
 import com.yoson.task.BackTestTask;
 import com.yoson.tws.ConnectionInfo;
@@ -191,6 +192,7 @@ public class IndexController  implements StatusCallBack {
 			strategyName += max;
 		strategy.setStrategyName(strategyName);
 		EClientSocketUtils.strategies.add(strategy);
+		TaskScheduler.initLastMarketDayData();
 		return true;
 	}
 	

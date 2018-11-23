@@ -102,8 +102,8 @@ public class PerSecondRecord {
 		initBidPriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
 		initLastTradePriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
 		
-		this.checkMarketTime = checkMarketTime;
-		this.tCounter = this.checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
+		this.checkMarketTime = scheduleDataPerSecond.isLastMarketDayData() ? 0 : checkMarketTime;
+		this.tCounter = checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
 		this.isEnoughCounter = this.tCounter > Math.max(testSet.gettShort(), testSet.gettLong());
 //		if ("2016-07-08 09:29:26".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 //			System.out.println("debug point");
