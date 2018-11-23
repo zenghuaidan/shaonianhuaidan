@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.Format;
@@ -732,8 +733,12 @@ public class IndexController  implements StatusCallBack {
 					List<String> lines = IOUtils.readLines(input);
 					for(String line : lines) {
 						boolean isHSI = line.substring(0, 6).trim().equals("HSI");
-						boolean isF = line.substring(6, 7).equals("F");
+						boolean isF = line.substring(6, 7).equals("F");						
 						if(!isHSI || !isF) continue;
+						if(!isBA) {
+							String type = line.substring(68, 71);
+							if(!Arrays.asList("000", "001", "002").contains(type)) continue;
+						}
 						String dateTime = line.substring(29, 43);
 						String date = line.substring(29, 37);
 						String strickPrice = line.substring(11, 28);
