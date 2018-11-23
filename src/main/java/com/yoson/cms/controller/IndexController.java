@@ -762,7 +762,7 @@ public class IndexController  implements StatusCallBack {
 					for(String line : lines) {
 						boolean isHSI = line.substring(0, 6).trim().equals("HSI");
 						boolean isF = line.substring(6, 7).equals("F");
-						String expiryMonth = line.substring(7, 10);
+						String expiryMonth = line.substring(7, 11);
 						String dateTime = line.substring(29, 43);
 						String date = line.substring(29, 37);
 						String strickPrice = line.substring(11, 28);
