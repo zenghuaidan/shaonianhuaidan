@@ -111,8 +111,8 @@ public class PerSecondRecord {
 //		if ("2015-01-19 11:58:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 //			System.out.println("debug point");
 //		}
-		this.checkMarketTime = checkMarketTime;
-		this.tCounter = this.checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
+		this.checkMarketTime = scheduleDataPerSecond.isLastMarketDayData() ? 0 : checkMarketTime;
+		this.tCounter = checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
 		initCPCounting(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap);
 		initCP(testSet);
 		initCPS(lastSecondRecord, testSet);

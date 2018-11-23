@@ -582,6 +582,7 @@ public class MainUIParam extends TestSet {
 			mainUIParam.setIncludeMorningData(Boolean.parseBoolean(params.get(index++)[1]));
 			mainUIParam.setIgnoreLunchTime(Boolean.parseBoolean(params.get(index++)[1]));
 			mainUIParam.setAvgStep(Integer.parseInt(params.get(index++)[1]));
+			mainUIParam.setIncludeLastMarketDayData(Boolean.parseBoolean(params.get(index++)[1]));
 			csvReader.close();
 		} catch (Exception e) {
 		}

@@ -17,6 +17,7 @@ import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.BrokenDate;
 import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
+import com.yoson.model.ScheduleData;
 
 public class SQLUtils {
 	
@@ -62,6 +63,49 @@ public class SQLUtils {
 			}
 		}
 		return new ArrayList<String>();
+	}
+	
+	public static List<ScheduleData> getLastMarketDayScheduleData(MainUIParam mainUIParam, String lastMarketDay, boolean onlyAfternoonData) {
+		if(StringUtils.isNullOrEmpty(lastMarketDay) || mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getSource()) || !mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getTicker())) return new ArrayList<ScheduleData>();
+		Session session = null;		
+		String askDataField = mainUIParam.getAskDataField(); 
+		String bidDataField = mainUIParam.getBidDataField(); 
+		String tradeDataField = mainUIParam.getTradeDataField();
+		try {
+			session = getSession();
+			String sql = "select CONCAT_WS(',',date,time, " + askDataField + ", " + bidDataField + ", " + tradeDataField + ", asklast, bidlast, tradelast) as sdata from  " + schedule_data + "  " 
+			+ (mainUIParam.isFromSource() ? (" where source = '" + mainUIParam.getSource() + "'") : (" where ticker = '" + mainUIParam.getTicker() + "'"));
+						
+			sql += " and date = '" + lastMarketDay + "' ";
+			
+			if(!StringUtils.isNullOrEmpty(mainUIParam.getMarketStartTime()) 
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getLunchStartTimeFrom()) 
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getLunchStartTimeTo()) 
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getMarketCloseTime())) {
+				if(onlyAfternoonData)
+					sql += " and (time >='" + mainUIParam.getLunchStartTimeTo() + "' and time <= '" + mainUIParam.getMarketCloseTime() + "')";
+				else
+					sql += " and (time >='" + mainUIParam.getMarketStartTime() + "' and time <= '" + mainUIParam.getLunchStartTimeFrom() + "' or time >='" + mainUIParam.getLunchStartTimeTo() + "' and time <= '" + mainUIParam.getMarketCloseTime() + "')";
+			}
+			sql += " order by date asc, time asc";
+			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
+			List<String> sdatas = sqlQuery.list();
+			List<ScheduleData> resultDatas = new ArrayList<ScheduleData>();
+			for (String sdata : sdatas) {
+				ScheduleData sData = new ScheduleData(sdata.split(",")[0], sdata.split(",")[1], sdata.split(",")[2], sdata.split(",")[3], sdata.split(",")[4], sdata.split(",")[5], sdata.split(",")[6], sdata.split(",")[7], mainUIParam.getAskDataField(), mainUIParam.getBidDataField(), mainUIParam.getTradeDataField());
+				sData.setLastMarketDayData(true);
+				resultDatas.add(sData);
+			}
+			return resultDatas;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+		return new ArrayList<ScheduleData>();
 	}
 
 	private static Session getSession() {

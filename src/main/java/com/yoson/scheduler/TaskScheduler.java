@@ -14,14 +14,54 @@ import com.yoson.cms.controller.Global;
 import com.yoson.cms.controller.IndexController;
 import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.DateUtils;
+import com.yoson.model.MainUIParam;
 import com.yoson.model.PerSecondRecord;
 import com.yoson.model.ScheduleData;
+import com.yoson.sql.SQLUtils;
+import com.yoson.task.BackTestTask;
 import com.yoson.tws.EClientSocketUtils;
 import com.yoson.tws.Strategy;
 import com.yoson.tws.YosonEWrapper;
 
 public class TaskScheduler {
-	public static Long expectNextExecuteTime;
+	public static Long expectNextExecuteTime;	
+	
+	public static void initLastMarketDayData() {
+		if(!EClientSocketUtils.isConnected() || StringUtils.isEmpty(EClientSocketUtils.id)) {
+			return;
+		}
+		String today = EClientSocketUtils.contract.startTime.split(" ")[0];
+		for(String key : EClientSocketUtils.lastMarketDayData.keySet()) {
+			if(!key.startsWith(today)) EClientSocketUtils.lastMarketDayData.remove(key);
+		}
+		for (Strategy strategy : EClientSocketUtils.strategies) {
+			if (strategy.getMainUIParam().isIncludeLastMarketDayData()) {
+				getLastMarketDayData(strategy);
+			}
+		}
+	}
+	
+	public static List<ScheduleData> getLastMarketDayData(Strategy strategy) {
+		if(!strategy.getMainUIParam().isIncludeLastMarketDayData()) return new ArrayList<ScheduleData>();
+		String key = getKey(strategy.getMainUIParam());
+		String today = EClientSocketUtils.contract.startTime.split(" ")[0];
+		key = today + "," + key;
+		if(!EClientSocketUtils.lastMarketDayData.containsKey(key)) {
+			EClientSocketUtils.lastMarketDayData.put(key, SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), BackTestTask.getLastMarketDayData(today), true));
+		}
+		return EClientSocketUtils.lastMarketDayData.get(key);	
+	}
+
+	private static String getKey(MainUIParam mainUIParam) {	
+		return mainUIParam.getAskDataField() + "," +
+			 mainUIParam.getBidDataField() + "," +
+			 mainUIParam.getTradeDataField() + "," +
+			 mainUIParam.getMarketStartTime() + "," +
+			 mainUIParam.getLunchStartTimeFrom() + "," +
+			 mainUIParam.getLunchStartTimeTo() + "," +
+			 mainUIParam.getMarketCloseTime();
+	}
+	
 	public synchronized void doTrade() throws ParseException {
 		if(!EClientSocketUtils.isConnected() || StringUtils.isEmpty(EClientSocketUtils.id)) {
 			return;
@@ -76,18 +116,13 @@ public class TaskScheduler {
 			Map<String, List<ScheduleData>> scheduleDataMap = new HashMap<String, List<ScheduleData>>();
 			for (Strategy strategy : EClientSocketUtils.strategies) {
 				if (strategy.isActive()) {
-					String key = strategy.getMainUIParam().getAskDataField() + "," +
-								 strategy.getMainUIParam().getBidDataField() + "," +
-								 strategy.getMainUIParam().getTradeDataField() + "," +
-								 strategy.getMainUIParam().getMarketStartTime() + "," +
-								 strategy.getMainUIParam().getLunchStartTimeFrom() + "," +
-								 strategy.getMainUIParam().getLunchStartTimeTo() + "," +
-								 strategy.getMainUIParam().getMarketCloseTime();
+					String key = getKey(strategy.getMainUIParam());
 					List<ScheduleData> scheduleDatas = null;
 					if(scheduleDataMap.containsKey(key)) {
 						scheduleDatas = scheduleDataMap.get(key);
 					} else {
-						scheduleDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);	
+						scheduleDatas = YosonEWrapper.toScheduleDataList(YosonEWrapper.scheduledDataRecords, strategy.getMainUIParam(), lastSecond);
+						scheduleDatas.addAll(0, getLastMarketDayData(strategy));
 						scheduleDataMap.put(key, scheduleDatas);
 					}
 					
