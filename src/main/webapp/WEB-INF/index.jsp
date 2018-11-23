@@ -361,6 +361,12 @@
 							      <td></td>
 							   </tr>
 							   <tr>
+							      <td>Include Last Market Day Data</td>
+							      <td><input name="includeLastMarketDayData" type="checkbox" ${mainUIParam.includeLastMarketDayData ? 'checked' : ''} /></td>
+							      <td></td>
+							      <td></td>
+							   </tr>							   
+							   <tr>
 							      <td>Ignore Lunch Time</td>
 							      <td><input name="ignoreLunchTime" type="checkbox" ${mainUIParam.ignoreLunchTime ? 'checked' : ''} /></td>
 							      <td></td>
@@ -578,14 +584,10 @@
 							<td style="width:40%;text-align:start;vertical-align:baseline;">
 								<table>
 								   <tr>
-								      <td>Source</td>
-								      <td>
-								         <select>
-									         <c:forEach items="${sources}" var="source" varStatus="i">
-									            <option ${source eq strategy.mainUIParam.source ? "selected" : ""}>${source}</option>
-									         </c:forEach>
-								         </select>	         
-								      </td>
+	   							 	  <c:if test="${strategy.mainUIParam.includeLastMarketDayData}" >
+									  	<c:if test="${strategy.mainUIParam.fromSource}" ><td>Source:</td><td>${strategy.mainUIParam.source}</td></c:if>
+										<c:if test="${not strategy.mainUIParam.fromSource}" ><td>Ticker:</td><td>${strategy.mainUIParam.ticker}</td></c:if>
+									  </c:if>								      								      
 								      <td>
 								      	<input type="button" name="statusBtn" onclick="chageStrategyStatus('${strategy.strategyName}')" value="${strategy.active ? 'Stop' : 'Start'}"/>
 								      	<input type="button" onclick="deleteStrategy('${strategy.strategyName}')" value="Delete"/>
@@ -794,6 +796,11 @@
 								      <td><input type="checkbox" ${strategy.mainUIParam.includeMorningData ? 'checked' : ''} /></td>
 								      <td></td>
 								   </tr>
+								   <tr>
+								      <td>Include Last Market Day Data</td>
+								      <td><input type="checkbox" ${strategy.mainUIParam.includeLastMarketDayData ? 'checked' : ''} /></td>
+								      <td></td>
+								   </tr>								   
 								   <tr>
 								      <td>Ignore Lunch Time</td>
 								      <td><input type="checkbox" ${strategy.mainUIParam.ignoreLunchTime ? 'checked' : ''} /></td>
