@@ -159,7 +159,7 @@ public class SQLUtils {
 			                "',', " +
 			                "1))) as sdata " +
 			    "FROM " + SCHEDULE_DATA_TABLE +
-			    " WHERE ticker = '" + ticker + "' " +
+			    " WHERE tradelast <> 0 and ticker = '" + ticker + "' " +
 			    "GROUP BY date;";
 			System.out.println(sql);
 			
