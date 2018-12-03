@@ -272,7 +272,7 @@ public class BackTestTask implements Runnable {
 			BackTestTask.allBTSummaryResults.add(BackTestCSVWriter.getBTSummaryContent(index, mainUIParam, backTestResult));
 			
 			if(index == 1 && backTestResult.dayRecords.size() > 0 && !isLiveData) {
-				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(0));
+				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(mainUIParam.isIncludeLastMarketDayData() && backTestResult.dayRecords.size() > 1 ? 1 : 0));
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.aTradingDayForCheckFileName), BackTestCSVWriter.getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult, true);
 			}	
 			
