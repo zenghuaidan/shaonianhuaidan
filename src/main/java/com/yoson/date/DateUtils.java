@@ -11,10 +11,12 @@ public class DateUtils {
 	public static ThreadLocal<SimpleDateFormat> yyyyMM = new ThreadLocal<SimpleDateFormat>();//yyyyMM
 	public static ThreadLocal<SimpleDateFormat> yyyyMMdd = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd
 	public static ThreadLocal<SimpleDateFormat> yyyyMMdd2 = new ThreadLocal<SimpleDateFormat>();//yyyyMMdd
+	public static ThreadLocal<SimpleDateFormat> yyyyMMdd3 = new ThreadLocal<SimpleDateFormat>();//MM/dd/yyyy
 	public static ThreadLocal<SimpleDateFormat> HHmmss = new ThreadLocal<SimpleDateFormat>();//HH:mm:ss
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmm = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd HH:mm
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmmss = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd HH:mm:ss
 	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmmss2 = new ThreadLocal<SimpleDateFormat>();//yyyyMMddHHmmss
+	public static ThreadLocal<SimpleDateFormat> yyyyMMddHHmmss3 = new ThreadLocal<SimpleDateFormat>();//MM/dd/yyyy HH:mm:ss
 	
 	
 	public static String dateDiff(long diff) {     
@@ -113,6 +115,16 @@ public class DateUtils {
         return yyyyMMdd2.get();
 	}
 	
+	public static SimpleDateFormat yyyyMMdd3() {
+        SimpleDateFormat sf = yyyyMMdd3.get();
+        if (sf == null) {
+            synchronized (lockObj) {
+            	yyyyMMdd3.set(new SimpleDateFormat("MM/dd/yyyy"));
+            }
+        }
+        return yyyyMMdd3.get();
+	}
+	
 	public static SimpleDateFormat HHmmss() {
         SimpleDateFormat sf = HHmmss.get();
         if (sf == null) {
@@ -152,6 +164,16 @@ public class DateUtils {
         }
         return yyyyMMddHHmmss2.get();
 	}	
+	
+	public static SimpleDateFormat yyyyMMddHHmmss3() {
+        SimpleDateFormat sf = yyyyMMddHHmmss3.get();
+        if (sf == null) {
+            synchronized (lockObj) {
+            	yyyyMMddHHmmss3.set(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss"));
+            }
+        }
+        return yyyyMMddHHmmss3.get();
+	}		
 	
 	public static String getDateStr(String dateTimeStr) {
 		return dateTimeStr.substring(0, 4) + "-" + dateTimeStr.substring(4, 6) + "-" + dateTimeStr.substring(6, 8);

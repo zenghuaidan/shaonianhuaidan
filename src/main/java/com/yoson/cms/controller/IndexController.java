@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.Format;
@@ -35,7 +34,6 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.ss.formula.functions.Index;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -949,9 +947,12 @@ public class IndexController  implements StatusCallBack {
 								date = null;
 //								source = "";
 								try {
-//									source = genSouce((String)datas.get(1));						
 									date = DateUtils.yyyyMMdd().parse(datas.get(2));
 								} catch (Exception e) {
+									try {
+										date = DateUtils.yyyyMMdd3().parse(datas.get(2));
+									} catch (Exception e2) {
+									}
 								}
 								if (date == null) {
 									uploadStatus.add("Can not detect the <font size='3' color='red'>Date cell(C1)</font> at " + sheet + ", this sheet will be <font size='4' color='red'>skipped</font>");
@@ -969,6 +970,15 @@ public class IndexController  implements StatusCallBack {
 										YosonEWrapper.addLiveData(tradeMap, tradeDate, tradePrice);																									
 									}
 								} catch (Exception e) {
+									try {
+										Date tradeDate = DateUtils.yyyyMMddHHmmss3().parse(datas.get(1));
+										if(org.apache.commons.lang.time.DateUtils.isSameDay(date, tradeDate)) {
+											Double tradePrice = Double.valueOf(datas.get(3).toString());
+											YosonEWrapper.addLiveData(tradeMap, tradeDate, tradePrice);																									
+										}
+									} catch (Exception e2) {
+										
+									}
 								}
 								
 								try {
@@ -978,6 +988,14 @@ public class IndexController  implements StatusCallBack {
 										YosonEWrapper.addLiveData(askMap, askDate, askPrice);									
 									}
 								} catch (Exception e) {
+									try {
+										Date askDate = DateUtils.yyyyMMddHHmmss3().parse(datas.get(6));
+										if(org.apache.commons.lang.time.DateUtils.isSameDay(date, askDate)) {
+											Double askPrice = Double.valueOf(datas.get(8).toString());
+											YosonEWrapper.addLiveData(askMap, askDate, askPrice);									
+										}
+									} catch (Exception e2) {
+									}
 								}
 								
 								try {
@@ -987,6 +1005,14 @@ public class IndexController  implements StatusCallBack {
 										YosonEWrapper.addLiveData(bidMap, bidDate, bidPrice);									
 									}
 								} catch (Exception e) {
+									try {
+										Date bidDate = DateUtils.yyyyMMddHHmmss3().parse(datas.get(11));
+										if(org.apache.commons.lang.time.DateUtils.isSameDay(date, bidDate)) {
+											Double bidPrice = Double.valueOf(datas.get(13).toString());
+											YosonEWrapper.addLiveData(bidMap, bidDate, bidPrice);									
+										}
+									} catch (Exception e2) {
+									}	
 								}											
 							}
 						}
