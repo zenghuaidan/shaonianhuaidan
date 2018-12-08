@@ -31,7 +31,12 @@ public class ZipUtils {
 			throw new RuntimeException(srcPath + "File not exists");
 		}
 
-		ZipFile zf = new ZipFile(file);
+		ZipFile zf = null;
+		try {
+			zf = new ZipFile(file);			
+		} catch (Exception e) {
+			throw new Exception(file.getAbsolutePath() + " is not a valid zip file");
+		}
 		Enumeration entries = zf.entries();
 		ZipEntry entry = null;
 		while (entries.hasMoreElements()) {
