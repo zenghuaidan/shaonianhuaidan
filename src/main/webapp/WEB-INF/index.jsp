@@ -31,6 +31,11 @@
 	          	<div id="html">
 					<form id='uploadDatafm' method='post' action='uploadData' enctype='multipart/form-data' style="margin-top:10px; margin-bottom:10px;">
 						<input type="hidden" name="uploadAction" />
+						HKEX Data Start Date:<input type="text" name="startDateStr" class="datepicker" value=""/>
+						HKEX Data End Date:<input type="text" name="endDateStr" class="datepicker" value=""/>
+						<label style="color:red">Leave the 'Start Date' and 'End Date' empty if you don't want to specify the date range</label>   
+						<br/>
+						<br/>
 						Start:<input type="text" name="dataStartTime" class="timepicker" value="09:15:00"/>
 						Lunch Time From:<input type="text" name="lunchStartTime" class="timepicker" value="12:00:00"/>
 						Lunch Time To:<input type="text" name="lunchEndTime" class="timepicker" value="13:00:00"/>
@@ -38,6 +43,7 @@
 						<label name="source">Source:</label><input type="text" name="source"/>
 						<label name="ticker">Ticker:</label><input type="text" name="ticker"/>
 						<input type="file" name="liveData" accept="text/txt" value="Select File"/>
+						<br/>
 						<br/>
 						Ignore Lunch Time:<input type="checkbox" name="ignoreLunchTime"/>
 						<label id="ltoDatabase">To Database:</label><input type="checkbox" id="toDatabase" name="toDatabase" checked="checked"/>
@@ -61,7 +67,7 @@
 				         </c:forEach>
 			         </select>
 					<input id="downloadSampleDateBtn" type="button" value="Download"/>
-					<input id="deleteSampleDateBtn" type="button" value="Delete"/></br>
+					<input id="deleteSampleDateBtn" type="button" value="Delete"/><br/><br/>
 					Download Summary:
 					<select id="downloadSummary" name="downloadSummary">
 				         <c:forEach items="${tickers}" var="ticker" varStatus="i">

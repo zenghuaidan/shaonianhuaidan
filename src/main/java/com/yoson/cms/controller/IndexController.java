@@ -338,11 +338,21 @@ public class IndexController  implements StatusCallBack {
 	public static List<String> uploadStatus = new ArrayList<String>();
 	@ResponseBody
 	@RequestMapping("uploadData")
-	public boolean uploadData(String source, String ticker, String dataType, String ignoreLunchTime, String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	public boolean uploadData(String startDateStr, String endDateStr, String source, String ticker, String dataType, String ignoreLunchTime, String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		String FINISHED = "Finished";
 		boolean success = false;
 		if(uploadStatus.size() > 0 && uploadStatus.get(uploadStatus.size() - 1).indexOf(FINISHED) < 0) {
 			return success;
+		}
+		try{
+			startDate = DateUtils.yyyyMMdd().parse(startDateStr);
+		} catch (Exception e) {
+			startDate = null;
+		}
+		try{
+			endDate = DateUtils.yyyyMMdd().parse(endDateStr);
+		} catch (Exception e) {
+			endDate = null;
 		}
 		isToCSV = toCSV != null && "on".equals(toCSV.toLowerCase());
 		isToDatabase = toDatabase != null && "on".equals(toDatabase.toLowerCase());
@@ -517,6 +527,8 @@ public class IndexController  implements StatusCallBack {
 	private static Map<Long, List<Double>> bidMap = null;
 	private static boolean validateSheet = false;
 	private static Date date = null;
+	private static Date startDate = null;
+	private static Date endDate = null;
 //	private static String source = "";
 	private static String sheet="";
 	private int previousSheetIndex = 0;
@@ -797,7 +809,16 @@ public class IndexController  implements StatusCallBack {
 				days.add(key);
 			}
 			Collections.sort(days);
-			for(String day : days) {				
+			for(String day : days) {		
+			    
+				if(startDate != null || endDate != null) {
+					Date now = DateUtils.yyyyMMdd2().parse(day);
+					if (startDate != null && now.before(startDate) || endDate != null && now.after(endDate)) {
+						uploadStatus.add("Skip for " + day + " as it is not in the date range");
+						continue;	
+					}
+				}
+				
 				tradeMap = new TreeMap<Long, List<Double>>();
 				askMap = new TreeMap<Long, List<Double>>();
 				bidMap = new TreeMap<Long, List<Double>>();				
