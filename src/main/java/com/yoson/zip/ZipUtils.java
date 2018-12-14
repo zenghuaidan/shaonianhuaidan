@@ -25,13 +25,20 @@ public class ZipUtils {
 		
 	}
 	
-	public static void decompress(String srcPath, String dest, boolean deepUnzip) throws Exception {
+	public static String decompress(String srcPath, String dest, boolean deepUnzip) throws Exception {
+		StringBuffer result = new StringBuffer();
 		File file = new File(srcPath);
 		if (!file.exists()) {
 			throw new RuntimeException(srcPath + "File not exists");
 		}
 
-		ZipFile zf = new ZipFile(file);
+		ZipFile zf = null;
+		try {
+			zf = new ZipFile(file);			
+		} catch (Exception e) {
+			result.append(file.getAbsolutePath() + " is not a valid zip file");
+			return result.toString();
+		}
 		Enumeration entries = zf.entries();
 		ZipEntry entry = null;
 		while (entries.hasMoreElements()) {
@@ -61,10 +68,10 @@ public class ZipUtils {
 		if(deepUnzip) {
 			Collection<File> moreZips = FileUtils.listFiles(new File(dest), new SuffixFileFilter(Arrays.asList(".zip"), IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
 			for(File zip : moreZips) {
-				decompress(zip.getAbsolutePath(), FilenameUtils.concat(FilenameUtils.getFullPath(zip.getAbsolutePath()), FilenameUtils.getBaseName(zip.getAbsolutePath())), deepUnzip);
+				result.append(decompress(zip.getAbsolutePath(), FilenameUtils.concat(FilenameUtils.getFullPath(zip.getAbsolutePath()), FilenameUtils.getBaseName(zip.getAbsolutePath())), deepUnzip));
 			}
 		}
-		
+		return result.toString();
 	}
 
 	public static void doCompress(String srcFile, String zipFile) throws IOException {

@@ -398,6 +398,7 @@ public class IndexController  implements StatusCallBack {
 //			if(startTime.equals(lunchTimeFrom) || startTime.before(lunchTimeFrom) 
 //					&& lunchTimeFrom.equals(lunchTimeTo) || lunchTimeFrom.before(lunchTimeTo) 
 //					&& lunchTimeTo.equals(endTime) || lunchTimeTo.before(endTime)) {				
+				String unzipFolder = null;
 				try {
 					String ext = liveData == null ? "" : liveData.getOriginalFilename().substring(liveData.getOriginalFilename().lastIndexOf('.')).toLowerCase();
 					if(ext.equals(".zip")) {
@@ -417,10 +418,10 @@ public class IndexController  implements StatusCallBack {
 						
 						// unzip to a folder
 						uploadStatus.add("Unzipping....");
-						String unzipFolder = FilenameUtils.concat(tempFolder, FilenameUtils.getBaseName(liveData.getOriginalFilename()));
+						unzipFolder = FilenameUtils.concat(tempFolder, FilenameUtils.getBaseName(liveData.getOriginalFilename()));
 						File unzipFolderFile = new File(unzipFolder);
 						unzipFolderFile.mkdirs();				
-						ZipUtils.decompress(zipFile, unzipFolder, true);
+						uploadStatus.add(ZipUtils.decompress(zipFile, unzipFolder, true));
 						uploadStatus.add("Unzip completed");
 						
 						// delete zip file
@@ -462,7 +463,12 @@ public class IndexController  implements StatusCallBack {
 				} catch (Exception ex) {
 					ex.printStackTrace();			
 					uploadStatus.add("Upload with exception => " + ex.getMessage());
+				} finally {
+					if(unzipFolder != null) {
+						FileUtils.deleteQuietly(new File(unzipFolder));
+					}
 				}
+				
 //			} else {
 //				uploadStatus.add("Please check your input time");
 //			}
@@ -748,13 +754,14 @@ public class IndexController  implements StatusCallBack {
 		return date.substring(2, 6);
 	}
 	
-	public static void main(String[] args) throws ParseException {
+	public static void main(String[] args) throws Exception {
 		System.out.println(new IndexController().getExpiryMonth("20080105"));
 		System.out.println(new IndexController().getExpiryMonth("20080129"));
 		System.out.println(new IndexController().getExpiryMonth("20080130"));
 		System.out.println(new IndexController().getExpiryMonth("20080201"));
 		System.out.println(new IndexController().getExpiryMonth("20080228"));
 		System.out.println(new IndexController().getExpiryMonth("20280228"));
+		System.out.println(ZipUtils.decompress("C:\\Users\\yuanke\\Desktop\\2012.zip", "C:\\Users\\yuanke\\Desktop\\2012\\", true));
 	}
 	
 	private void uploadWithAction(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException, ParseException {
