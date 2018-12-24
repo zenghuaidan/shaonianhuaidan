@@ -17,6 +17,7 @@ import java.util.TreeSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.Gson;
@@ -269,7 +270,7 @@ public class BackTestTask implements Runnable {
 			BackTestTask.allBTSummaryResults.add(BackTestCSVWriter.getBTSummaryContent(index, mainUIParam, backTestResult));
 			
 			if(index == 1 && backTestResult.dayRecords.size() > 0 && !isLiveData) {
-				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(mainUIParam.isIncludeLastMarketDayData() && backTestResult.dayRecords.size() > 1 ? 1 : 0));
+				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(RandomUtils.nextInt(mainUIParam.isIncludeLastMarketDayData() && backTestResult.dayRecords.size() > 1 ? 1 : 0, backTestResult.dayRecords.size())));
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.aTradingDayForCheckFileName), BackTestCSVWriter.getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult, true);
 			}	
 			
