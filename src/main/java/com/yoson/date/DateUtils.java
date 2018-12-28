@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DateUtils {
 	public static ThreadLocal<SimpleDateFormat> yyyyMM = new ThreadLocal<SimpleDateFormat>();//yyyyMM
 	public static ThreadLocal<SimpleDateFormat> yyyyMMdd = new ThreadLocal<SimpleDateFormat>();//yyyy-MM-dd
+	public static ThreadLocal<SimpleDateFormat> yyMMdd = new ThreadLocal<SimpleDateFormat>();//yyMMdd
 	public static ThreadLocal<SimpleDateFormat> yyyyMMdd2 = new ThreadLocal<SimpleDateFormat>();//yyyyMMdd
 	public static ThreadLocal<SimpleDateFormat> yyyyMMdd3 = new ThreadLocal<SimpleDateFormat>();//MM/dd/yyyy
 	public static ThreadLocal<SimpleDateFormat> HHmmss = new ThreadLocal<SimpleDateFormat>();//HH:mm:ss
@@ -84,6 +85,17 @@ public class DateUtils {
 	}
 	
 	private static final Object lockObj = new Object();
+	
+	
+	public static SimpleDateFormat yyMMdd() {
+        SimpleDateFormat sf = yyMMdd.get();
+        if (sf == null) {
+            synchronized (lockObj) {
+            	yyMMdd.set(new SimpleDateFormat("yyMMdd"));
+            }
+        }
+        return yyMMdd.get();
+	}
 	
 	public static SimpleDateFormat yyyyMM() {
         SimpleDateFormat sf = yyyyMM.get();

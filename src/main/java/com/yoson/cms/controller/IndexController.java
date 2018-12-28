@@ -768,6 +768,12 @@ public class IndexController  implements StatusCallBack {
 		if (uploadDataType.equals("4")) {
 			Map<String, List<String>> datas = new HashMap<String, List<String>>();
 			uploadStatus.add("Start combining data ...");
+			List<String> expiryDates2 = SQLUtils.getExpiryDates();
+			expiryDates.clear();
+			for(String d : expiryDates2) {
+				expiryDates.add(DateUtils.yyMMdd().format(DateUtils.yyyyMMdd().parse(d)));
+			}
+			
 			for(File file : files) {
 				if(!file.getAbsolutePath().endsWith("_TR.txt") && !file.getAbsolutePath().endsWith("_BA.txt"))
 					continue;//only parse _TR.txt and _BA.txt file for HKEX data

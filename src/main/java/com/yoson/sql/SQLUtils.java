@@ -15,6 +15,26 @@ import com.yoson.tws.ScheduledDataRecord;
 
 public class SQLUtils {
 	public static String SCHEDULE_DATA_TABLE = "schedule_data";
+	
+	public static final String expiry_date = "expiry_date";
+	
+	public static List<String> getExpiryDates() {
+		Session session = null;		
+		try {
+			session = getSession();
+			String sql = "select distinct date from  " + expiry_date + "  order by date asc";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return sqlQuery.list();			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<String>();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
 
 	private static Session getSession() {
 		try {
