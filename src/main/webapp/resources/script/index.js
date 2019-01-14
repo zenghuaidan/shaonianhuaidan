@@ -31,17 +31,7 @@ function combineSummary() {
 			return;
 		}	
 	}
-	$("#combineSummaryfm").submit();
-		
-//	var options = {
-//        success: function (data) {        	        
-//        },
-//	    error: function() {	    	
-//	    }
-//   };
-//   
-//   $("#combineSummaryfm").ajaxForm(options);
-//   $("#combineSummaryfm").ajaxSubmit(options);   
+	$("#combineSummaryfm").submit(); 
 }
 
 function uploadStatus() {
