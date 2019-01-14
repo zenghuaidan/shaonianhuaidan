@@ -75,6 +75,13 @@
 				         </c:forEach>
 			         </select>	
 					<input id="downloadSummaryBtn" type="button" value="Download"/>
+					<br/><br/>
+					<form id='combineSummaryfm' method='post' action='combineSummary' enctype='multipart/form-data' style="margin-top:10px; margin-bottom:10px;">					
+						Combine Two Summary Result(<label style="color:red">Please make sure the two Summary Result is runing with same combination</label>):
+						<input type="file" name="summaryResult1" accept="text/txt" value="Select File"/>
+						<input type="file" name="summaryResult2" accept="text/txt" value="Select File"/>
+						<input id="combineSummaryBtn" type="button" value="Combine Result" onclick="combineSummary()"/>
+					</form>
 					</div>
 					<div id="uploadStatus"></div>					
 				</div>

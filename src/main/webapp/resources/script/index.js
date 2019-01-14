@@ -22,6 +22,28 @@ function uploadData(action) {
    $("#uploadDatafm").ajaxSubmit(options);   
 }
 
+function combineSummary() {
+	var files = $("#combineSummaryfm input[type=file]");
+	for(var i = 0; i < files.length; i++) {
+		var file = files.eq(i).val();
+		if (file == "" || file.split(".")[file.split(".").length - 1].toLocaleLowerCase() != "csv") {
+			alert("Please select csv file to upload.");
+			return;
+		}	
+	}
+	$("#combineSummaryfm").submit();
+		
+//	var options = {
+//        success: function (data) {        	        
+//        },
+//	    error: function() {	    	
+//	    }
+//   };
+//   
+//   $("#combineSummaryfm").ajaxForm(options);
+//   $("#combineSummaryfm").ajaxSubmit(options);   
+}
+
 function uploadStatus() {
 	$.ajax({
 	    type: "GET",

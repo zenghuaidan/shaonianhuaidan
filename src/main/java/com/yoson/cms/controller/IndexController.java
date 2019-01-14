@@ -3,8 +3,10 @@ package com.yoson.cms.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.Format;
@@ -36,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.context.Theme;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,6 +51,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.ib.client.Contract;
+import com.opencsv.CSVReader;
 import com.yoson.callback.StatusCallBack;
 import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.csv.BigExcelReader;
@@ -333,6 +337,150 @@ public class IndexController  implements StatusCallBack {
 		response.setContentType("application/msexcel");  
 		response.setHeader("Content-Disposition","attachment; filename=" + ticker + "_summary.csv");
 		IOUtils.write(SQLUtils.getSummary(ticker), response.getOutputStream());
+	}
+	
+	
+	@RequestMapping("combineSummary")
+	public void combineSummary(MultipartFile summaryResult1, MultipartFile summaryResult2, HttpServletResponse response, HttpServletRequest request) throws IOException {
+				
+//		Test no.,key,version,Source,CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time,Average Step Size,Include Last Market Day Data," + monthColumStr + "\n";
+//
+//		totalDays = SUM
+//		totalPnL = SUM
+//		averagePnL = totalPnL/totalDays
+//		totalTrades = SUM
+//		averageTrades = totalTrades/totalDays
+//		totalWinningDays = SUM
+//		totalLosingDays = SUM
+//		winningPercentage = totalWinningDays/totalDays * 100
+//		averageProfitOfPositiveTrade = SUM(_averageProfitOfPositiveTrade * _totalDays)/totalDays
+//		averageProfitOfNegativeTrade = SUM(_averageProfitOfNegativeTrade * _totalDays)/totalDays
+//		averageZeroPnLTrade = SUM(_averageZeroPnLTrade * _totalDays)/totalDays
+//		averageNoPositiveTrade = SUM(_averageNoPositiveTrade * _totalDays)/totalDays
+//		averageNoNegativeTrade = SUM(_averageNoNegativeTrade * _totalDays)/totalDays
+//		averageHoldingTime = SUM(_averageHoldingTime * _totalDays)/totalDays
+//		adjustedPnLAfterFee = (testSet.getCashPerIndexPoint()*totalPnL) - ((testSet.getTradingFee() + testSet.getOtherCostPerTrade())*totalTrades)
+//		worstLossDay = MIN
+//		bestProfitDay = MAX
+//		worstLossingStreak = MIN
+//		bestWinningStreak = MAX
+//		lossingStreakfreq = SUM
+//		winningStreakFreq = SUM
+//		sumOfLossingStreak = SUM
+//		sumOfWinningStreak = SUM
+//		averageOfLossingStreak = sumOfLossingStreak/lossingStreakfreq;
+//		averageOfWinningStreak = sumOfWinningStreak/winningStreakFreq;
+//		maxLossingStreakLength = MAX
+//		maxWinningStreakLength = MAX
+		
+		List<List<String>> summaryResultData1 = extractSummaryData(summaryResult1);
+		List<List<String>> summaryResultData2 = extractSummaryData(summaryResult2);
+		
+		boolean sameCombination = true;
+		if(summaryResultData1.size() != summaryResultData2.size()) {
+			sameCombination = false;
+		}
+//		List<String> needCombineColumns = Arrays.asList("No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length".split(","));
+		String NO_OF_DAYS = "No. of days"; //FIRST
+		String MAX_WINNING_STREAK_LENGTH = "Max Winning Streak Length"; //LAST
+		List<String> header = summaryResultData1.get(0);
+		int end = header.indexOf(NO_OF_DAYS);
+		for(int i = 1; i < summaryResultData1.size(); i++) {
+			List<String> line1 = summaryResultData1.get(i);
+			List<String> line2 = summaryResultData2.get(i);
+			if (!String.join(",", line1.subList(0, end)).equals(String.join(",", line2.subList(0, end)))) {
+				sameCombination = false;
+				break;
+			}
+		}
+		
+		if (sameCombination) {
+			response.setContentType("application/msexcel");  
+			response.setHeader("Content-Disposition","attachment; filename=BT_Summary.csv");
+		
+			StringBuffer sb = new StringBuffer(String.join(",", header.subList(0, header.indexOf(MAX_WINNING_STREAK_LENGTH) + 1)) + "\n");
+			for(int i = 1; i < summaryResultData1.size(); i++) {		
+				double totalDays = Double.valueOf(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end));
+				double totalPnL = Double.valueOf(summaryResultData1.get(i).get(end + 1)) + Double.valueOf(summaryResultData2.get(i).get(end + 1));
+				double averagePnL = totalPnL / totalDays;
+				double totalTrades = Double.valueOf(summaryResultData1.get(i).get(end + 3)) + Double.valueOf(summaryResultData2.get(i).get(end + 3));
+				double averageTrades = totalTrades / totalDays;
+				double totalWinningDays = Double.valueOf(summaryResultData1.get(i).get(end + 5)) + Double.valueOf(summaryResultData2.get(i).get(end + 5));
+				double totalLosingDays = Double.valueOf(summaryResultData1.get(i).get(end + 6)) + Double.valueOf(summaryResultData2.get(i).get(end + 6));
+				double winningPercentage = totalWinningDays / totalDays * 100;
+				double averageProfitOfPositiveTrade = (Double.valueOf(summaryResultData1.get(i).get(end + 8)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 8)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;
+				double averageProfitOfNegativeTrade = (Double.valueOf(summaryResultData1.get(i).get(end + 9)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 9)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;
+				double averageZeroPnLTrade = (Double.valueOf(summaryResultData1.get(i).get(end + 10)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 10)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;				
+				double averageNoPositiveTrade = (Double.valueOf(summaryResultData1.get(i).get(end + 11)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 11)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;
+				double averageNoNegativeTrade = (Double.valueOf(summaryResultData1.get(i).get(end + 12)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 12)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;
+				double averageHoldingTime = (Double.valueOf(summaryResultData1.get(i).get(end + 13)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 13)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;
+				
+				double cashPerIndexPoint = Double.valueOf(summaryResultData1.get(i).get(header.indexOf("Cash per index point")));
+				double tradingFee = Double.valueOf(summaryResultData1.get(i).get(header.indexOf("Trading fee")));
+				double otherCostPerTrade = Double.valueOf(summaryResultData1.get(i).get(header.indexOf("Other cost per trade")));
+				double adjustedPnLAfterFee = (cashPerIndexPoint*totalPnL) - ((tradingFee + otherCostPerTrade)*totalTrades);				
+				
+				double worstLossDay = Math.min(Double.valueOf(summaryResultData1.get(i).get(end + 15)), Double.valueOf(summaryResultData2.get(i).get(end + 15)));
+				double bestProfitDay = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 16)), Double.valueOf(summaryResultData2.get(i).get(end + 16)));
+				double worstLossingStreak = Math.min(Double.valueOf(summaryResultData1.get(i).get(end + 17)), Double.valueOf(summaryResultData2.get(i).get(end + 17)));
+				double bestWinningStreak = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 18)), Double.valueOf(summaryResultData2.get(i).get(end + 18)));				
+				double lossingStreakfreq = Double.valueOf(summaryResultData1.get(i).get(end + 19)) + Double.valueOf(summaryResultData2.get(i).get(end + 19));				
+				double winningStreakFreq = Double.valueOf(summaryResultData1.get(i).get(end + 20)) + Double.valueOf(summaryResultData2.get(i).get(end + 20));
+				double sumOfLossingStreak = Double.valueOf(summaryResultData1.get(i).get(end + 21)) + Double.valueOf(summaryResultData2.get(i).get(end + 21));
+				double sumOfWinningStreak = Double.valueOf(summaryResultData1.get(i).get(end + 22)) + Double.valueOf(summaryResultData2.get(i).get(end + 22));	
+				double averageOfLossingStreak = lossingStreakfreq == 0 ? 0 : sumOfLossingStreak / lossingStreakfreq;
+				double averageOfWinningStreak = lossingStreakfreq == 0 ? 0 : sumOfWinningStreak / winningStreakFreq;				
+				double maxLossingStreakLength = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 25)), Double.valueOf(summaryResultData2.get(i).get(end + 25)));
+				double maxWinningStreakLength = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 26)), Double.valueOf(summaryResultData2.get(i).get(end + 26)));
+				
+				sb.append(String.join(",", summaryResultData1.get(i).subList(0, end)) + ",")
+				.append(totalDays + ",")
+				.append(totalPnL + ",")
+				.append(averagePnL + ",")
+				.append(totalTrades + ",")
+				.append(averageTrades + ",")
+				.append(totalWinningDays + ",")
+				.append(totalLosingDays + ",")
+				.append(winningPercentage + ",")
+				.append(averageProfitOfPositiveTrade + ",")
+				.append(averageProfitOfNegativeTrade + ",")
+				.append(averageZeroPnLTrade + ",")
+				.append(averageNoPositiveTrade + ",")
+				.append(averageNoNegativeTrade + ",")
+				.append(averageHoldingTime + ",")
+				.append(adjustedPnLAfterFee + ",")
+				.append(worstLossDay + ",")
+				.append(bestProfitDay + ",")
+				.append(worstLossingStreak + ",")
+				.append(bestWinningStreak + ",")
+				.append(lossingStreakfreq + ",")
+				.append(winningStreakFreq + ",")
+				.append(sumOfLossingStreak + ",")
+				.append(sumOfWinningStreak + ",")
+				.append(averageOfLossingStreak + ",")
+				.append(averageOfWinningStreak + ",")
+				.append(maxLossingStreakLength + ",")
+				.append(maxWinningStreakLength + "\n");
+			}
+			
+			IOUtils.write(sb.toString(), response.getOutputStream());			
+		} else {
+			response.setContentType("text/html;charset=utf-8");		
+			response.getWriter().write("<script>history.go(-1);alert('Fail to combine the result as the two summary result are with different combination');</script>");
+		}
+		
+	}
+	
+	public List<List<String>> extractSummaryData(MultipartFile summaryResult) throws IOException {
+		CSVReader summaryResultReader = new CSVReader(new InputStreamReader(summaryResult.getInputStream()), ',', '\n', 0);		
+		String[] lines;
+		List<List<String>> data = new ArrayList<List<String>>();
+		while ((lines = summaryResultReader.readNext()) != null)  {
+			data.add(Arrays.asList(lines));
+		}
+		
+		summaryResultReader.close();
+		return data;
 	}
 	
 	public static List<String> uploadStatus = new ArrayList<String>();
