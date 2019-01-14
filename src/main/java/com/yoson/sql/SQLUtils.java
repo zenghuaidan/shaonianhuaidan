@@ -1,6 +1,7 @@
 package com.yoson.sql;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,7 +19,7 @@ public class SQLUtils {
 	
 	public static final String expiry_date = "expiry_date";
 	
-	public static List<String> getExpiryDates() {
+	public static List<Date> getExpiryDates() {
 		Session session = null;		
 		try {
 			session = getSession();
@@ -27,7 +28,7 @@ public class SQLUtils {
 			return sqlQuery.list();			
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ArrayList<String>();
+			return new ArrayList<Date>();
 		} finally {
 			try {
 				session.close();				
