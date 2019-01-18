@@ -18,7 +18,6 @@ import com.yoson.model.MainUIParam;
 import com.yoson.model.PerSecondRecord;
 import com.yoson.model.ScheduleData;
 import com.yoson.sql.SQLUtils;
-import com.yoson.task.BackTestTask;
 import com.yoson.tws.EClientSocketUtils;
 import com.yoson.tws.Strategy;
 import com.yoson.tws.YosonEWrapper;
@@ -47,7 +46,7 @@ public class TaskScheduler {
 		String today = EClientSocketUtils.contract.startTime.split(" ")[0];
 		key = today + "," + key;
 		if(!EClientSocketUtils.lastMarketDayData.containsKey(key)) {
-			EClientSocketUtils.lastMarketDayData.put(key, SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), BackTestTask.getLastMarketDayData(today), true));
+			EClientSocketUtils.lastMarketDayData.put(key, SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), SQLUtils.getLastMarketDay(strategy.getMainUIParam(), today), true));
 		}
 		return EClientSocketUtils.lastMarketDayData.get(key);	
 	}
