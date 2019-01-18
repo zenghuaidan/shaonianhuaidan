@@ -31,6 +31,7 @@ import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
 import com.yoson.model.PerSecondRecord;
 import com.yoson.model.ScheduleData;
+import com.yoson.sql.SQLUtils;
 
 public class YosonEWrapper extends BasicEWrapper {
 	
@@ -246,6 +247,10 @@ public class YosonEWrapper extends BasicEWrapper {
 		if(scheduledDataRecords.size() == 0) return;
 		List<ScheduleData> dailyScheduleData = toScheduleDataList(scheduledDataRecords, strategy.getMainUIParam(), Long.parseLong(scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime()));		
 		
+		if(strategy.getMainUIParam().isIncludeLastMarketDayData()) {
+			String today = dailyScheduleData.get(0).getDateStr();
+			dailyScheduleData.addAll(0, SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), SQLUtils.getLastMarketDay(strategy.getMainUIParam(), today), true));
+		}
 //		List<PerSecondRecord> allDailyPerSecondRecord = new ArrayList<PerSecondRecord>();
 //		if(!strategy.getMainUIParam().isIgnoreLunchTime() && strategy.getMainUIParam().isIncludeMorningData()) {
 //			List<ScheduleData> dailyScheduleData = new ArrayList<ScheduleData>();
