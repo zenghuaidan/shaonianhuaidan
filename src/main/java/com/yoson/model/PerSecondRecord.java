@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.TreeMap;
 
+import com.yoson.date.DateUtils;
+
 public class PerSecondRecord {
 
 	private long time;
@@ -99,7 +101,7 @@ public class PerSecondRecord {
 		initBidPriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
 		initLastTradePriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
 		
-		this.checkMarketTime = scheduleDataPerSecond.isLastMarketDayData() ? 0 : checkMarketTime;
+		initCheckMarketTime(dailyScheduleData, scheduleDataPerSecond, testSet, checkMarketTime);
 		this.tCounter = checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
 		this.isEnoughCounter = this.tCounter > Math.max(testSet.gettShort(), testSet.gettLong());
 //		if ("2015-01-19 13:00:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
@@ -120,6 +122,21 @@ public class PerSecondRecord {
 		initPnl(lastSecondRecord);
 		initTradeCount(lastSecondRecord);
 		initTotalPnl(lastSecondRecord);
+	}
+	
+	public void initCheckMarketTime(List<ScheduleData> dailyScheduleData, ScheduleData scheduleDataPerSecond, TestSet testSet, int checkMarketTime) throws ParseException {
+		if(scheduleDataPerSecond.isLastMarketDayData()) {
+			this.checkMarketTime = 0;
+		} else if(testSet.isIncludeLastMarketDayData()) {
+			boolean hasLastMarketDayData = dailyScheduleData != null && dailyScheduleData.get(0).isLastMarketDayData();
+			long current = DateUtils.HHmmss().parse(scheduleDataPerSecond.getTimeStr()).getTime();
+			long morningStartTime = DateUtils.HHmmss().parse(testSet.getMarketStartTime()).getTime();
+			long lunchStartTime = DateUtils.HHmmss().parse(testSet.getLunchStartTimeFrom()).getTime();
+			boolean isMorningData = current >= morningStartTime && current <= lunchStartTime;
+			this.checkMarketTime = !hasLastMarketDayData && isMorningData ? 0 : checkMarketTime;
+		} else {
+			this.checkMarketTime = checkMarketTime;
+		}
 	}
 
 	private void initTotalPnl(PerSecondRecord lastSecondRecord) {
