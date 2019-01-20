@@ -24,6 +24,8 @@ public class SQLUtils {
 	public static final String schedule_data = "schedule_data";
 	
 	public static final String expiry_date = "expiry_date";
+	
+	public static final String schedule_date = "schedule_date";
     
 	public static List<String> initScheduleData(MainUIParam mainUIParam) {
 		Session session = null;
@@ -65,28 +67,36 @@ public class SQLUtils {
 		return new ArrayList<String>();
 	}
 	
-	public static String getLastMarketDay(MainUIParam mainUIParam, String today) {
-		if(StringUtils.isNullOrEmpty(today) || mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getSource()) || !mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getTicker())) return "";
-		Session session = null;				
-		try {
-			session = getSession();
-			String sql = "select max(date) from  " + schedule_data + "  " 
-			+ (mainUIParam.isFromSource() ? (" where source = '" + mainUIParam.getSource() + "'") : (" where ticker = '" + mainUIParam.getTicker() + "'"));
-						
-			sql += " and date < '" + today + "' order by date asc, time asc";
-			
-			SQLQuery sqlQuery = session.createSQLQuery(sql);
-			return DateUtils.yyyyMMdd().format((Date)sqlQuery.uniqueResult());
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				session.close();				
-			} catch (Exception e) {
-			}
+	public static String getLastMarketDay(String today) {
+		List<String> scheduleDates = SQLUtils.getScheduleDates();
+		if (scheduleDates != null && scheduleDates.indexOf(today) > 0) {
+			return scheduleDates.get(scheduleDates.indexOf(today) - 1);
 		}
 		return "";
 	}
+	
+//	public static String getLastMarketDay(MainUIParam mainUIParam, String today) {
+//		if(StringUtils.isNullOrEmpty(today) || mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getSource()) || !mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getTicker())) return "";
+//		Session session = null;				
+//		try {
+//			session = getSession();
+//			String sql = "select max(date) from  " + schedule_data + "  " 
+//			+ (mainUIParam.isFromSource() ? (" where source = '" + mainUIParam.getSource() + "'") : (" where ticker = '" + mainUIParam.getTicker() + "'"));
+//						
+//			sql += " and date < '" + today + "' order by date asc, time asc";
+//			
+//			SQLQuery sqlQuery = session.createSQLQuery(sql);
+//			return DateUtils.yyyyMMdd().format((Date)sqlQuery.uniqueResult());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			try {
+//				session.close();				
+//			} catch (Exception e) {
+//			}
+//		}
+//		return "";
+//	}
 	
 	public static List<ScheduleData> getLastMarketDayScheduleData(MainUIParam mainUIParam, String lastMarketDay, boolean onlyAfternoonData) {
 		if(StringUtils.isNullOrEmpty(lastMarketDay) || mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getSource()) || !mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getTicker())) return new ArrayList<ScheduleData>();
@@ -237,6 +247,60 @@ public class SQLUtils {
 			session = getSession();
 			session.getTransaction().begin();
 			String sql = "delete from  " + expiry_date + " where date ='" + date + "'";
+			session.createSQLQuery(sql).executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static List<String> getScheduleDates() {
+		Session session = null;		
+		try {
+			session = getSession();
+			String sql = "select distinct date from  " + schedule_date + "  order by date desc";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return sqlQuery.list();			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<String>();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static void addScheduleDate(String date) {
+		Session session = null;		
+		try {
+			session = getSession();
+			session.getTransaction().begin();
+			String sql = "insert into " + schedule_date + "(date) values ('" + date + "')";
+			session.createSQLQuery(sql).executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static void deleteScheduleDate(String date) {
+		Session session = null;		
+		try {
+			session = getSession();
+			session.getTransaction().begin();
+			String sql = "delete from  " + schedule_date + " where date ='" + date + "'";
 			session.createSQLQuery(sql).executeUpdate();
 			session.getTransaction().commit();
 		} catch (Exception e) {

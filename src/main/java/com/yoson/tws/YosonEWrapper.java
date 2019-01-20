@@ -248,7 +248,7 @@ public class YosonEWrapper extends BasicEWrapper {
 		
 		if(strategy.getMainUIParam().isIncludeLastMarketDayData()) {
 			String today = dailyScheduleData.get(0).getDateStr();
-			dailyScheduleData.addAll(0, SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), SQLUtils.getLastMarketDay(strategy.getMainUIParam(), today), true));
+			dailyScheduleData.addAll(0, SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), SQLUtils.getLastMarketDay(today), true));
 		}
 //		List<PerSecondRecord> allDailyPerSecondRecord = new ArrayList<PerSecondRecord>();
 //		if(!strategy.getMainUIParam().isIgnoreLunchTime() && strategy.getMainUIParam().isIncludeMorningData()) {
