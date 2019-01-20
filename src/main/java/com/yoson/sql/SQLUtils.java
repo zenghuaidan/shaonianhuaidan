@@ -69,8 +69,8 @@ public class SQLUtils {
 	
 	public static String getLastMarketDay(String today) {
 		List<String> scheduleDates = SQLUtils.getScheduleDates();
-		if (scheduleDates != null && scheduleDates.indexOf(today) > 0) {
-			return scheduleDates.get(scheduleDates.indexOf(today) - 1);
+		if (scheduleDates != null && scheduleDates.indexOf(today) >= 0 && scheduleDates.indexOf(today) < (scheduleDates.size() - 1)) {
+			return scheduleDates.get(scheduleDates.indexOf(today) + 1);
 		}
 		return "";
 	}
@@ -265,7 +265,12 @@ public class SQLUtils {
 			session = getSession();
 			String sql = "select distinct date from  " + schedule_date + "  order by date desc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
-			return sqlQuery.list();			
+			List<String> dates = new ArrayList<String>();
+			List<Date> list = sqlQuery.list();
+			for(Date date : list) {
+				dates.add(DateUtils.yyyyMMdd().format(date));
+			}
+			return dates;			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<String>();

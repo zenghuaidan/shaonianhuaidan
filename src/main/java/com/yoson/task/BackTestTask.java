@@ -195,8 +195,8 @@ public class BackTestTask implements Runnable {
 	}
 	
 	public static String getLastMarketDay(List<String> scheduleDates, String today) {
-		if (scheduleDates != null && scheduleDates.indexOf(today) > 0) {
-			return scheduleDates.get(scheduleDates.indexOf(today) - 1);
+		if (scheduleDates != null && scheduleDates.indexOf(today) >= 0 && scheduleDates.indexOf(today) < (scheduleDates.size() - 1)) {
+			return scheduleDates.get(scheduleDates.indexOf(today) + 1);
 		}
 		return "";
 	}
