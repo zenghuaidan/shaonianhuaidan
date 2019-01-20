@@ -177,9 +177,10 @@ public class BackTestTask implements Runnable {
 		if(!mainUIParam.isIncludeLastMarketDayData()) return;		
 		long lunchStartTimeTo = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
 		long marketCloseTime = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
+		List<String> scheduleDates = SQLUtils.getScheduleDates();
 		for (int i = BackTestTask.sortedDateList.size() - 1; i >= 0; i--) {
 			String today = BackTestTask.sortedDateList.get(i);
-			String lastMarketDay = getLastMarketDayData(today);
+			String lastMarketDay = getLastMarketDay(scheduleDates, today);
 			List<ScheduleData> resultDatas = BackTestTask.rowData.containsKey(lastMarketDay) ? BackTestTask.rowData.get(lastMarketDay) : SQLUtils.getLastMarketDayScheduleData(mainUIParam, lastMarketDay, true);
 			List<ScheduleData> lastMarketDayData = new ArrayList<ScheduleData>();
 			for(ScheduleData resultData : resultDatas) {
@@ -193,13 +194,13 @@ public class BackTestTask implements Runnable {
 		}	
 	}
 	
-	public static String getLastMarketDayData(String today) {
-		if (BackTestTask.sortedDateList != null && BackTestTask.sortedDateList.indexOf(today) > 0) {
-			return BackTestTask.sortedDateList.get(BackTestTask.sortedDateList.indexOf(today) - 1);
+	public static String getLastMarketDay(List<String> scheduleDates, String today) {
+		if (scheduleDates != null && scheduleDates.indexOf(today) > 0) {
+			return scheduleDates.get(scheduleDates.indexOf(today) - 1);
 		}
 		return "";
 	}
-
+	
 	public void runTestSet(int current, int startStep) throws IOException, ParseException {	
 		init();
 		long start = System.currentTimeMillis();

@@ -699,7 +699,27 @@ public class IndexController  implements StatusCallBack {
 	public boolean deleteExpiryDate(@RequestParam String id, HttpServletRequest request) throws IOException {
 		SQLUtils.deleteExpiryDate(id);		
 		return true;
-	}		
+	}	
+	
+	@ResponseBody
+	@RequestMapping("getScheduleDates")
+	public List<String> scheduleDates() throws IOException {
+		return SQLUtils.getScheduleDates();		
+	}
+	
+	@ResponseBody
+	@RequestMapping("addScheduleDate")
+	public boolean addScheduleDate(@RequestParam String id, HttpServletRequest request) throws IOException {
+		SQLUtils.addScheduleDate(id);
+		return true;
+	}
+	
+	@ResponseBody
+	@RequestMapping("deleteScheduleDate")
+	public boolean deleteScheduleDate(@RequestParam String id, HttpServletRequest request) throws IOException {
+		SQLUtils.deleteScheduleDate(id);		
+		return true;
+	}
 	
 	@ResponseBody
 	@RequestMapping("stop")

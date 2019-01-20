@@ -807,6 +807,30 @@ function deleteExpiryDate(id) {
 	});
 }
 
+function addScheduleDate() {
+	$.ajax({
+	    type: "GET",
+	    url: "addScheduleDate?id=" + $("#scheduleDate").val(),
+	    success: function(data) {
+	    	updateScheduleTab();
+	    },
+	    error: function() {
+	    }
+	});
+}
+
+function deleteScheduleDate(id) {
+	$.ajax({
+	    type: "GET",
+	    url: "deleteScheduleDate?id=" + id,
+	    success: function(data) {
+	    	updateScheduleTab();
+	    },
+	    error: function() {
+	    }
+	});
+}
+
 function runBTWithLiveData(id) {
 	$.ajax({
 	    type: "GET",
@@ -892,6 +916,9 @@ function initTab() {
 			if (tab == 'expiryTab') {			
 				updateExpiryTab();
 			}
+			if (tab == 'scheduleTab') {			
+				updateScheduleTab();
+			}
 			
 		}  
 	}  
@@ -924,6 +951,23 @@ function updateExpiryTab() {
 	    		lis += "<tr><td>" + data[i] + "</td><td><input onclick=\"deleteExpiryDate('" + data[i] + "')\" type=\"button\" value=\"Delete\"/></td></tr>";
 	    	}
 	    	$("#expiryDates").html(lis);
+	    },
+	    error: function() {
+	    }
+	});
+}
+
+function updateScheduleTab() {
+	$.ajax({
+	    type: "GET",
+	    url: "getScheduleDates",
+	    contentType:"application/json;charset=utf-8",
+	    success: function(data) {
+	    	var lis = "";
+	    	for(var i = 0; i < data.length; i++) {
+	    		lis += "<tr><td>" + data[i] + "</td><td><input onclick=\"deleteScheduleDate('" + data[i] + "')\" type=\"button\" value=\"Delete\"/></td></tr>";
+	    	}
+	    	$("#scheduleDates").html(lis);
 	    },
 	    error: function() {
 	    }
