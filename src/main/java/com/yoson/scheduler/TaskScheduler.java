@@ -47,7 +47,7 @@ public class TaskScheduler {
 		String today = EClientSocketUtils.contract.startTime.split(" ")[0];
 		key = today + "," + key;
 		if(!EClientSocketUtils.lastMarketDayData.containsKey(key)) {
-			EClientSocketUtils.lastMarketDayData.put(key, SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), SQLUtils.getLastMarketDay(strategy.getMainUIParam(), today), true));
+			EClientSocketUtils.lastMarketDayData.put(key, SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), SQLUtils.getLastMarketDay(today), true));
 		}
 		return EClientSocketUtils.lastMarketDayData.get(key);	
 	}

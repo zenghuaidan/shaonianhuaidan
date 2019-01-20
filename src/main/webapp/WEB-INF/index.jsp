@@ -29,6 +29,7 @@
     			<li tab="controlTab">Control</li>
     			<li tab="strategyTab">Strategy</li>
     			<li tab="expiryTab">Expiry Dates</li>
+    			<li tab="scheduleTab">Schedule Dates</li>
             </ul>  
         </div>  
         <div id="tab-content">  
@@ -854,6 +855,13 @@
 				<input onclick="addExpiryDate()" type="button" value="Add as Expiry Date"/>&nbsp;&nbsp;<label style="color:red">Expiry date should be the last market day of every month</label>
 				<br/>
 				<table id="expiryDates">					
+	        	</table>
+			</div>
+			<div class="dom">
+				<input class="datepicker" id="scheduleDate" value="" type="text"/>
+				<input onclick="addScheduleDate()" type="button" value="Add as Schedule Date"/>&nbsp;&nbsp;
+				<br/>
+				<table id="scheduleDates">					
 	        	</table>
 			</div>
         </div>  
