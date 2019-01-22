@@ -384,12 +384,21 @@ public class IndexController  implements StatusCallBack {
 //		List<String> needCombineColumns = Arrays.asList("No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length".split(","));
 		String NO_OF_DAYS = "No. of days"; //FIRST
 		String MAX_WINNING_STREAK_LENGTH = "Max Winning Streak Length"; //LAST
+		
+		String MORNING_START_TIME = "Morning Start Time"; //LAST
+		String LUNCH_START_TIME = "Lunch Start Time"; //LAST
 		List<String> header = summaryResultData1.get(0);
 		int end = header.indexOf(NO_OF_DAYS);
+		
+		int morningStartTimeIndex = header.indexOf(MORNING_START_TIME);
+		int lunchStartTimeIndex = header.indexOf(LUNCH_START_TIME);
 		for(int i = 1; i < summaryResultData1.size(); i++) {
-			List<String> line1 = summaryResultData1.get(i);
+			List<String> line1 = summaryResultData1.get(i);					
+			String a = line1.subList(0, morningStartTimeIndex).toString() + line1.subList(lunchStartTimeIndex + 1, end).toString();
 			List<String> line2 = summaryResultData2.get(i);
-			if (!String.join(",", line1.subList(0, end)).equals(String.join(",", line2.subList(0, end)))) {
+			String b = line2.subList(0, morningStartTimeIndex).toString() + line2.subList(lunchStartTimeIndex + 1, end).toString();
+			
+			if (!a.equals(b)) {
 				sameCombination = false;
 				break;
 			}
