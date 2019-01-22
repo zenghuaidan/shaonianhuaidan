@@ -589,7 +589,7 @@ function getMarketData() {
 function loadTemplate() {
 		var file = $("#templatefm input[type=file]").val();
 		if (file == "" || file.split(".")[file.split(".").length - 1].toLocaleLowerCase() != "csv") {
-			alert("Please select txt file to upload.");
+			alert("Please select csv file to upload.");
 			return;
 		}
 		var options = {
@@ -784,15 +784,31 @@ function deleteLiveItem(id) {
 }
 
 function addExpiryDate() {
-	$.ajax({
-	    type: "GET",
-	    url: "addExpiryDate?id=" + $("#expiryDate").val(),
-	    success: function(data) {
-	    	updateExpiryTab();
-	    },
-	    error: function() {
-	    }
-	});
+	var file = $("#expiryDateForm input[type=file]").val();
+	if (file != "" && file.split(".")[file.split(".").length - 1].toLocaleLowerCase() != "csv") {
+		alert("Please select csv file to upload.");
+		return;
+	}
+	if (file != "") {
+		var options = {
+		        success: function (data) {
+		        	updateExpiryTab();
+		        }
+		   };
+		   
+		   $("#expiryDateForm").ajaxForm(options);
+		   $("#expiryDateForm").ajaxSubmit(options);
+	} else {		
+		$.ajax({
+		    type: "GET",
+		    url: "addExpiryDate?id=" + $("#expiryDate").val(),
+		    success: function(data) {
+		    	updateExpiryTab();
+		    },
+		    error: function() {
+		    }
+		});
+	}
 }
 
 function deleteExpiryDate(id) {
@@ -808,15 +824,31 @@ function deleteExpiryDate(id) {
 }
 
 function addScheduleDate() {
-	$.ajax({
-	    type: "GET",
-	    url: "addScheduleDate?id=" + $("#scheduleDate").val(),
-	    success: function(data) {
-	    	updateScheduleTab();
-	    },
-	    error: function() {
-	    }
-	});
+	var file = $("#scheduleDateForm input[type=file]").val();
+	if (file != "" && file.split(".")[file.split(".").length - 1].toLocaleLowerCase() != "csv") {
+		alert("Please select csv file to upload.");
+		return;
+	}
+	if (file != "") {
+		var options = {
+		        success: function (data) {
+		        	updateScheduleTab();
+		        }
+		   };
+		   
+		   $("#scheduleDateForm").ajaxForm(options);
+		   $("#scheduleDateForm").ajaxSubmit(options);
+	} else {		
+		$.ajax({
+			type: "GET",
+			url: "addScheduleDate?id=" + $("#scheduleDate").val(),
+			success: function(data) {
+				updateScheduleTab();
+			},
+			error: function() {
+			}
+		});
+	}
 }
 
 function deleteScheduleDate(id) {
