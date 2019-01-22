@@ -170,9 +170,9 @@ public class TaskScheduler {
 					
 					log.append(retryCancelOrder(strategy, nowDateTimeLong + ""));
 					
-					if(EClientSocketUtils.connectionInfo.isPaperTrading()) {
+//					if(EClientSocketUtils.connectionInfo.isPaperTrading()) {
 						log.append(retryMissingOrder(strategy, nowDateTimeLong + "", now.getTime()));						
-					}
+//					}
 				}
 			}
 			log.append("Calculation finish with " + (System.currentTimeMillis() - startTime) + "(" + start + "-" + System.nanoTime() + ")" + Global.lineSeparator);
@@ -193,7 +193,8 @@ public class TaskScheduler {
 		if(strategy.getOrderTimeMap() != null && strategy.getOrderTimeMap().size() > 0) {			
 			for(int orderId : strategy.getOrderTimeMap().keySet()) {				
 				// more than 5 mins without status return, and can not find in open order, then it is a missing order
-				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && (!strategy.getOpenOrders().contains(orderId) || EClientSocketUtils.connectionInfo.isCancelAndRetryIfOrderExceedTolerantTime()) && (nowLong - strategy.getOrderTimeMap().get(orderId) > (5 * 60 * 1000))) {
+//				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && (!strategy.getOpenOrders().contains(orderId) || EClientSocketUtils.connectionInfo.isCancelAndRetryIfOrderExceedTolerantTime()) && (nowLong - strategy.getOrderTimeMap().get(orderId) > (5 * 60 * 1000))) {
+				if(!strategy.getOrderStatusTimeMap().containsKey(orderId) && (nowLong - strategy.getOrderTimeMap().get(orderId) > (5 * 60 * 1000))) {
 					strategy.getOrderTimeMap().remove(orderId);
 					Order order = strategy.getOrderMap().get(orderId);
 					int orderCount = 2;
