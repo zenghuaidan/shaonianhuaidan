@@ -851,16 +851,18 @@
 	        	</c:forEach>
         	</div>
 			<div class="dom">
-				<input class="datepicker" id="expiryDate" value="" type="text"/>
-				<input onclick="addExpiryDate()" type="button" value="Add as Expiry Date"/>&nbsp;&nbsp;<label style="color:red">Expiry date should be the last market day of every month</label>
-				<br/>
+				<form id="expiryDateForm" method="post"  action="uploadExpiryDate" enctype="multipart/form-data">
+					Input a date: <input class="datepicker" id="expiryDate" value="" type="text"/> Or Upload a CSV: <input name="expiryDateFile" type="file"/>
+					<input onclick="addExpiryDate()" type="button" value="Add as Expiry Date"/>&nbsp;&nbsp;<label style="color:red">Expiry date should be the last market day of every month</label>
+				</form>				
 				<table id="expiryDates">					
 	        	</table>
 			</div>
 			<div class="dom">
-				<input class="datepicker" id="scheduleDate" value="" type="text"/>
-				<input onclick="addScheduleDate()" type="button" value="Add as Schedule Date"/>&nbsp;&nbsp;
-				<br/>
+				<form id="scheduleDateForm" method="post"  action="uploadScheduleDate" enctype="multipart/form-data">
+					Input a date: <input class="datepicker" id="scheduleDate" value="" type="text"/> Or Upload a CSV: <input name="scheduleDateFile" type="file"/>
+					<input onclick="addScheduleDate()" type="button" value="Add as Schedule Date"/>&nbsp;&nbsp;
+				</form>
 				<table id="scheduleDates">					
 	        	</table>
 			</div>

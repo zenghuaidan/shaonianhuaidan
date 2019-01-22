@@ -702,6 +702,32 @@ public class IndexController  implements StatusCallBack {
 	}	
 	
 	@ResponseBody
+	@RequestMapping("uploadExpiryDate")
+	public boolean uploadExpiryDate(MultipartFile expiryDateFile, HttpServletResponse response, HttpServletRequest request) throws IOException {
+		try {
+			String ext = expiryDateFile == null ? "" : expiryDateFile.getOriginalFilename().substring(expiryDateFile.getOriginalFilename().lastIndexOf('.')).toLowerCase();
+			if(ext.equals(".csv")) {
+				
+				List<String> readLines = IOUtils.readLines(expiryDateFile.getInputStream());				
+				for(String line : readLines) {				
+					String[] values = line.split(",");
+					try {
+						DateUtils.yyyyMMdd().parse(values[0]);
+						SQLUtils.addExpiryDate(values[0]);
+					} catch (Exception e) {
+					}
+				}
+								
+				return true;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		return false;
+	}
+	
+	@ResponseBody
 	@RequestMapping("getScheduleDates")
 	public List<String> scheduleDates() throws IOException {
 		return SQLUtils.getScheduleDates();		
@@ -719,6 +745,32 @@ public class IndexController  implements StatusCallBack {
 	public boolean deleteScheduleDate(@RequestParam String id, HttpServletRequest request) throws IOException {
 		SQLUtils.deleteScheduleDate(id);		
 		return true;
+	}
+	
+	@ResponseBody
+	@RequestMapping("uploadScheduleDate")
+	public boolean uploadScheduleDate(MultipartFile scheduleDateFile, HttpServletResponse response, HttpServletRequest request) throws IOException {
+		try {
+			String ext = scheduleDateFile == null ? "" : scheduleDateFile.getOriginalFilename().substring(scheduleDateFile.getOriginalFilename().lastIndexOf('.')).toLowerCase();
+			if(ext.equals(".csv")) {
+				
+				List<String> readLines = IOUtils.readLines(scheduleDateFile.getInputStream());				
+				for(String line : readLines) {				
+					String[] values = line.split(",");
+					try {
+						DateUtils.yyyyMMdd().parse(values[0]);
+						SQLUtils.addScheduleDate(values[0]);
+					} catch (Exception e) {
+					}
+				}
+								
+				return true;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		return false;
 	}
 	
 	@ResponseBody
