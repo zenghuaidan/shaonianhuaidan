@@ -2,11 +2,14 @@ package com.yoson.scheduler;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import javax.validation.constraints.Null;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,11 +46,12 @@ public class TaskScheduler {
 	
 	public static List<ScheduleData> getLastMarketDayData(Strategy strategy) {
 		if(!strategy.getMainUIParam().isIncludeLastMarketDayData()) return new ArrayList<ScheduleData>();
+		boolean useLastMarketDayData = EClientSocketUtils.contract.getLastMarketDayPolicy() != null && EClientSocketUtils.contract.getLastMarketDayPolicy() == 1;
 		String key = getKey(strategy.getMainUIParam());
 		String today = EClientSocketUtils.contract.startTime.split(" ")[0];
 		key = today + "," + key;
 		if(!EClientSocketUtils.lastMarketDayData.containsKey(key)) {
-			EClientSocketUtils.lastMarketDayData.put(key, SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), SQLUtils.getLastMarketDay(today), true));
+			EClientSocketUtils.lastMarketDayData.put(key, useLastMarketDayData ? SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), SQLUtils.getLastMarketDay(strategy.getMainUIParam(), today), true) : new ArrayList<ScheduleData>());
 		}
 		return EClientSocketUtils.lastMarketDayData.get(key);	
 	}
