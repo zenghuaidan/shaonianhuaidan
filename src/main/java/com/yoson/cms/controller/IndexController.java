@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -142,8 +144,36 @@ public class IndexController  implements StatusCallBack {
 	}
 	
 	@ResponseBody
+	@RequestMapping("checkLastMarketDay")
+	public String checkLastMarketDay(@RequestBody Contract contract) {
+		try {
+			Date startTime = DateUtils.yyyyMMddHHmm().parse(contract.getStartTime());				
+			List<String> days = new ArrayList<String>();
+			for (Strategy strategy : EClientSocketUtils.strategies) {
+				if(strategy.getMainUIParam().isIncludeLastMarketDayData()) {
+					String lastMarketDay = SQLUtils.getLastMarketDay(strategy.getMainUIParam(), DateUtils.yyyyMMdd().format(startTime));
+					if(!days.contains(lastMarketDay))
+						days.add(lastMarketDay);
+				}				
+			}				
+			
+			if(days.size() > 0) {
+				if(days.size() > 1)
+					return "MORE_THAN_ONE_FOUND";
+				return days.get(0);
+			}
+			return "";
+		} catch (Exception e) {
+			return "";
+		}
+	}	
+	
+	@ResponseBody
 	@RequestMapping("search")
 	public String search(@RequestBody Contract contract) {
+		if(EClientSocketUtils.strategies == null || EClientSocketUtils.strategies.size() == 0) {
+			return "Please create your strategy before you start the live trading!";
+		}
 		try {
 			Date startTime = DateUtils.yyyyMMddHHmm().parse(contract.getStartTime());
 			Date endTime = DateUtils.yyyyMMddHHmm().parse(contract.getEndTime());

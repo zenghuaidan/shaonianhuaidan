@@ -75,28 +75,28 @@ public class SQLUtils {
 		return "";
 	}
 	
-//	public static String getLastMarketDay(MainUIParam mainUIParam, String today) {
-//		if(StringUtils.isNullOrEmpty(today) || mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getSource()) || !mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getTicker())) return "";
-//		Session session = null;				
-//		try {
-//			session = getSession();
-//			String sql = "select max(date) from  " + schedule_data + "  " 
-//			+ (mainUIParam.isFromSource() ? (" where source = '" + mainUIParam.getSource() + "'") : (" where ticker = '" + mainUIParam.getTicker() + "'"));
-//						
-//			sql += " and date < '" + today + "' order by date asc, time asc";
-//			
-//			SQLQuery sqlQuery = session.createSQLQuery(sql);
-//			return DateUtils.yyyyMMdd().format((Date)sqlQuery.uniqueResult());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		} finally {
-//			try {
-//				session.close();				
-//			} catch (Exception e) {
-//			}
-//		}
-//		return "";
-//	}
+	public static String getLastMarketDay(MainUIParam mainUIParam, String today) {
+		if(StringUtils.isNullOrEmpty(today) || mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getSource()) || !mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getTicker())) return "";
+		Session session = null;				
+		try {
+			session = getSession();
+			String sql = "select max(date) from  " + schedule_data + "  " 
+			+ (mainUIParam.isFromSource() ? (" where source = '" + mainUIParam.getSource() + "'") : (" where ticker = '" + mainUIParam.getTicker() + "'"));
+						
+			sql += " and date < '" + today + "' order by date asc, time asc";
+			
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return DateUtils.yyyyMMdd().format((Date)sqlQuery.uniqueResult());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+		return "";
+	}
 	
 	public static List<ScheduleData> getLastMarketDayScheduleData(MainUIParam mainUIParam, String lastMarketDay, boolean onlyAfternoonData) {
 		if(StringUtils.isNullOrEmpty(lastMarketDay) || mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getSource()) || !mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getTicker())) return new ArrayList<ScheduleData>();
