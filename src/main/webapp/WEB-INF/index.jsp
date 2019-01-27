@@ -11,11 +11,13 @@
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/script/jquery.datetimepicker.css"/>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/script/mmnt.css"/>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/resources/css/index.css"/>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="<%=request.getContextPath()%>/resources/script/jquery.js"></script>
 <script src="<%=request.getContextPath()%>/resources/script/jquery.datetimepicker.full.min.js"></script>
 <script src="<%=request.getContextPath()%>/resources/script/mmnt.js"></script>
 <script src="<%=request.getContextPath()%>/resources/script/index.js"></script>
 <script src="<%=request.getContextPath()%>/resources/script/jquery.form.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 <body>
 	<input type="hidden" value="${ mainUIParam.sourcePath }">
