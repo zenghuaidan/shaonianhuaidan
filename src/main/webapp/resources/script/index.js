@@ -118,7 +118,8 @@ function getContract() {
     	"expirary" : expirary,
     	"startTime" : startTime,
     	"endTime" : endTime,
-    	"tif" : tif
+    	"tif" : tif,
+    	"lastMarketDayPolicy" : lastMarketDayPolicy
     }); 
 }
 
@@ -146,13 +147,57 @@ function isValidContract() {
 	    url: "isValidContract",
 	    success: function(data) {
 	    	if(data) {
-	    		dosearch();
+	    		setLastMarketDayPolicy();
 	    	} else {
 	    		$("#searchBtn").attr("disabled", false);
 	    		alert("Today is the last trading date of the contract month, please use a new contact month instead.");
 	    	}
 	    },
 	    error: function() {
+	    	$("#searchBtn").attr("disabled", false);
+	    }
+	});
+}
+
+var lastMarketDayPolicy = 0;
+function setLastMarketDayPolicy() {
+	$.ajax({
+	    type: "POST",
+	    url: "checkLastMarketDay",
+	    data: getContract(),
+	    contentType:"application/json;charset=utf-8",
+	    success: function(data) {
+	    	if(data != "" && data != "MORE_THAN_ONE_FOUND") {
+	    		$("<div>The last working day is: " + data + "</div>").dialog({
+	    		      resizable: false,
+	    		      height: "auto",
+	    		      width: 400,
+	    		      modal: true,
+	    		      buttons: {
+	    		        "OK": function() {
+	    		        	lastMarketDayPolicy = 1;
+	    		        	$( this ).dialog( "close" );
+	    		        	dosearch();
+	    		        },
+	    		        "Skip": function() {
+	    		        	lastMarketDayPolicy = 0;
+	    		        	$( this ).dialog( "close" );
+	    		        	dosearch();
+	    		        },
+	    		        Cancel: function() {
+	    		        	$("#searchBtn").attr("disabled", false);
+	    		        	$( this ).dialog( "close" );
+	    		        }
+	    		      }
+		    	});
+	    	} else if(data == "MORE_THAN_ONE_FOUND") {	    			    		
+	    		$("#searchBtn").attr("disabled", false);
+	    		alert("Found more than one qualify last working day as your have two strategies are using different source/ticker for the data. Please revise the strategy first.");
+	    	} else {
+	    		dosearch();
+	    	}
+	    },
+	    error: function() {		      
 	    	$("#searchBtn").attr("disabled", false);
 	    }
 	});

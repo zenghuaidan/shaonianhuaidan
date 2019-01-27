@@ -26,6 +26,7 @@ public class Contract implements Cloneable {
     
 	public String startTime;
 	public String endTime;
+	public Integer lastMarketDayPolicy;
 	public String tif;
 	
 	public String ID() {
@@ -192,6 +193,14 @@ public class Contract implements Cloneable {
 
 	public void setEndTime(String endTime) {
 		this.endTime = endTime;
+	}
+
+	public Integer getLastMarketDayPolicy() {
+		return lastMarketDayPolicy;
+	}
+
+	public void setLastMarketDayPolicy(Integer lastMarketDayPolicy) {
+		this.lastMarketDayPolicy = lastMarketDayPolicy;
 	}
 
 	public String getTif() {
