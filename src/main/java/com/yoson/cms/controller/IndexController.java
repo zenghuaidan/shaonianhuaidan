@@ -377,6 +377,11 @@ public class IndexController  implements StatusCallBack {
 		List<List<String>> summaryResultData1 = extractSummaryData(summaryResult1);
 		List<List<String>> summaryResultData2 = extractSummaryData(summaryResult2);
 		
+		List<Integer> yearlyPnlIndex1 = totalPnlIndex(summaryResultData1.get(0), 4);
+		List<Integer> yearlyPnlIndex2 = totalPnlIndex(summaryResultData2.get(0), 4);
+		List<Integer> monthlyPnlIndex1 = totalPnlIndex(summaryResultData1.get(0), 6);
+		List<Integer> monthlyPnlIndex2 = totalPnlIndex(summaryResultData2.get(0), 6);
+		
 		boolean sameCombination = true;
 		if(summaryResultData1.size() != summaryResultData2.size()) {
 			sameCombination = false;
@@ -479,6 +484,18 @@ public class IndexController  implements StatusCallBack {
 			response.getWriter().write("<script>alert('Fail to combine the result as the two summary result are with different combination');history.go(-1);</script>");
 		}
 		
+	}
+
+	private List<Integer> totalPnlIndex(List<String> header, int size) {
+		List<Integer> yearlyPnlIndex = new ArrayList<Integer>();
+		String TOTAL_PNL_OF = "Total Pnl of";
+		for(int i = 0; i < header.size(); i++) {
+			String name = header.get(i);
+			if(name.startsWith(TOTAL_PNL_OF) && name.replace(TOTAL_PNL_OF, "").trim().length() == size) {
+				yearlyPnlIndex.add(i);
+			}
+		}
+		return yearlyPnlIndex;
 	}
 	
 	public List<List<String>> extractSummaryData(MultipartFile summaryResult) throws IOException {
