@@ -194,6 +194,7 @@ function setLastMarketDayPolicy() {
 	    		$("#searchBtn").attr("disabled", false);
 	    		alert("Found more than one qualify last working day as your have two strategies are using different source/ticker for the data. Please revise the strategy first.");
 	    	} else {
+	    		lastMarketDayPolicy = 0;
 	    		dosearch();
 	    	}
 	    },
