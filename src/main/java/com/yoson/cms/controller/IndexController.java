@@ -476,7 +476,7 @@ public class IndexController  implements StatusCallBack {
 			IOUtils.write(sb.toString(), response.getOutputStream());			
 		} else {
 			response.setContentType("text/html;charset=utf-8");		
-			response.getWriter().write("<script>history.go(-1);alert('Fail to combine the result as the two summary result are with different combination');</script>");
+			response.getWriter().write("<script>alert('Fail to combine the result as the two summary result are with different combination');history.go(-1);</script>");
 		}
 		
 	}
