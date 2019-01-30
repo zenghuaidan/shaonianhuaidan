@@ -147,11 +147,17 @@ public class IndexController  implements StatusCallBack {
 		try {
 			Date startTime = DateUtils.yyyyMMddHHmm().parse(contract.getStartTime());				
 			List<String> days = new ArrayList<String>();
+			List<String> keys = new ArrayList<String>();
+			String today = DateUtils.yyyyMMdd().format(startTime);
 			for (Strategy strategy : EClientSocketUtils.strategies) {
 				if(strategy.getMainUIParam().isIncludeLastMarketDayData()) {
-					String lastMarketDay = SQLUtils.getLastMarketDay(strategy.getMainUIParam(), DateUtils.yyyyMMdd().format(startTime));
-					if(!days.contains(lastMarketDay))
-						days.add(lastMarketDay);
+					String key = (strategy.getMainUIParam().isFromSource() ? strategy.getMainUIParam().getSource() : strategy.getMainUIParam().getTicker()) + today;
+					if (!keys.contains(key)) {
+						keys.add(key);
+						String lastMarketDay = SQLUtils.getLastMarketDay(strategy.getMainUIParam(), today);
+						if(!days.contains(lastMarketDay))
+							days.add(lastMarketDay);						
+					}
 				}				
 			}				
 			
