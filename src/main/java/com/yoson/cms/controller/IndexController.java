@@ -416,8 +416,9 @@ public class IndexController  implements StatusCallBack {
 			response.setContentType("application/msexcel");  
 			response.setHeader("Content-Disposition","attachment; filename=BT_Summary.csv");
 		
-			List<String> csvHeader = header.subList(0, header.indexOf(MAX_WINNING_STREAK_LENGTH) + 1);
-			csvHeader.addAll(yearlyPnlIndex);
+			List<String> csvHeader = new ArrayList<String>();
+			csvHeader.addAll(header.subList(0, header.indexOf(MAX_WINNING_STREAK_LENGTH) + 1));
+			csvHeader.addAll(yearlyPnlIndex); 
 			csvHeader.addAll(monthlyPnlIndex);
 			StringBuffer sb = new StringBuffer(String.join(",", csvHeader) + "\n");
 			for(int i = 1; i < summaryResultData1.size(); i++) {		
