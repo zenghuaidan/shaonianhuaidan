@@ -3,7 +3,6 @@ package com.yoson.cms.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,8 +18,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.ZipOutputStream;
@@ -39,7 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.context.Theme;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -377,10 +377,13 @@ public class IndexController  implements StatusCallBack {
 		List<List<String>> summaryResultData1 = extractSummaryData(summaryResult1);
 		List<List<String>> summaryResultData2 = extractSummaryData(summaryResult2);
 		
-		List<Integer> yearlyPnlIndex1 = totalPnlIndex(summaryResultData1.get(0), 4);
-		List<Integer> yearlyPnlIndex2 = totalPnlIndex(summaryResultData2.get(0), 4);
-		List<Integer> monthlyPnlIndex1 = totalPnlIndex(summaryResultData1.get(0), 6);
-		List<Integer> monthlyPnlIndex2 = totalPnlIndex(summaryResultData2.get(0), 6);
+		Map<String, Integer> yearlyPnlIndex1 = totalPnlIndex(summaryResultData1.get(0), 4);
+		Map<String, Integer> yearlyPnlIndex2 = totalPnlIndex(summaryResultData2.get(0), 4);		
+		List<String> yearlyPnlIndex = combineAndSort(yearlyPnlIndex1.keySet(), yearlyPnlIndex2.keySet());
+		
+		Map<String, Integer> monthlyPnlIndex1 = totalPnlIndex(summaryResultData1.get(0), 6);
+		Map<String, Integer> monthlyPnlIndex2 = totalPnlIndex(summaryResultData2.get(0), 6);
+		List<String> monthlyPnlIndex = combineAndSort(monthlyPnlIndex1.keySet(), monthlyPnlIndex2.keySet());
 		
 		boolean sameCombination = true;
 		if(summaryResultData1.size() != summaryResultData2.size()) {
@@ -413,7 +416,10 @@ public class IndexController  implements StatusCallBack {
 			response.setContentType("application/msexcel");  
 			response.setHeader("Content-Disposition","attachment; filename=BT_Summary.csv");
 		
-			StringBuffer sb = new StringBuffer(String.join(",", header.subList(0, header.indexOf(MAX_WINNING_STREAK_LENGTH) + 1)) + "\n");
+			List<String> csvHeader = header.subList(0, header.indexOf(MAX_WINNING_STREAK_LENGTH) + 1);
+			csvHeader.addAll(yearlyPnlIndex);
+			csvHeader.addAll(monthlyPnlIndex);
+			StringBuffer sb = new StringBuffer(String.join(",", csvHeader) + "\n");
 			for(int i = 1; i < summaryResultData1.size(); i++) {		
 				double totalDays = Double.valueOf(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end));
 				double totalPnL = Double.valueOf(summaryResultData1.get(i).get(end + 1)) + Double.valueOf(summaryResultData2.get(i).get(end + 1));
@@ -448,6 +454,20 @@ public class IndexController  implements StatusCallBack {
 				double maxLossingStreakLength = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 25)), Double.valueOf(summaryResultData2.get(i).get(end + 25)));
 				double maxWinningStreakLength = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 26)), Double.valueOf(summaryResultData2.get(i).get(end + 26)));
 				
+				List<String> yearlyPnlResult = new ArrayList<String>();
+				for(String name : yearlyPnlIndex) {
+					Double value1 = yearlyPnlIndex1.containsKey(name) ? Double.valueOf(summaryResultData1.get(i).get(yearlyPnlIndex1.get(name))) : 0;
+					Double value2 = yearlyPnlIndex2.containsKey(name) ? Double.valueOf(summaryResultData2.get(i).get(yearlyPnlIndex2.get(name))) : 0;
+					yearlyPnlResult.add((value1 + value2) + "");
+				}
+				
+				List<String> monthlyPnlResult = new ArrayList<String>();
+				for(String name : monthlyPnlIndex) {
+					Double value1 = monthlyPnlIndex1.containsKey(name) ? Double.valueOf(summaryResultData1.get(i).get(monthlyPnlIndex1.get(name))) : 0;
+					Double value2 = monthlyPnlIndex2.containsKey(name) ? Double.valueOf(summaryResultData2.get(i).get(monthlyPnlIndex2.get(name))) : 0;
+					monthlyPnlResult.add((value1 + value2) + "");
+				}
+				
 				sb.append(String.join(",", summaryResultData1.get(i).subList(0, end)) + ",")
 				.append(totalDays + ",")
 				.append(totalPnL + ",")
@@ -475,7 +495,10 @@ public class IndexController  implements StatusCallBack {
 				.append(averageOfLossingStreak + ",")
 				.append(averageOfWinningStreak + ",")
 				.append(maxLossingStreakLength + ",")
-				.append(maxWinningStreakLength + "\n");
+				.append(maxWinningStreakLength + ",")
+				.append(yearlyPnlResult.size() > 0 ? (String.join(",", yearlyPnlResult) + ",") : "")
+				.append(monthlyPnlResult.size() > 0 ? (String.join(",", monthlyPnlResult) + ",") : "")
+				.append("\n");
 			}
 			
 			IOUtils.write(sb.toString(), response.getOutputStream());			
@@ -486,13 +509,22 @@ public class IndexController  implements StatusCallBack {
 		
 	}
 
-	private List<Integer> totalPnlIndex(List<String> header, int size) {
-		List<Integer> yearlyPnlIndex = new ArrayList<Integer>();
+	private List<String> combineAndSort(Set<String> list1, Set<String> list2) {
+		List<String> list = new ArrayList<String>();
+		list.addAll(list1);
+		list.addAll(list2);
+		list = Arrays.asList(new HashSet<String>(list).toArray(new String[]{}));
+		Collections.sort(list);
+		return list;
+	}
+
+	private Map<String, Integer> totalPnlIndex(List<String> header, int size) {
+		Map<String, Integer> yearlyPnlIndex = new HashMap<String, Integer>();
 		String TOTAL_PNL_OF = "Total Pnl of";
 		for(int i = 0; i < header.size(); i++) {
 			String name = header.get(i);
 			if(name.startsWith(TOTAL_PNL_OF) && name.replace(TOTAL_PNL_OF, "").trim().length() == size) {
-				yearlyPnlIndex.add(i);
+				yearlyPnlIndex.put(name, i);
 			}
 		}
 		return yearlyPnlIndex;
@@ -937,6 +969,10 @@ public class IndexController  implements StatusCallBack {
 		System.out.println(new IndexController().getExpiryMonth("20080228"));
 		System.out.println(new IndexController().getExpiryMonth("20280228"));
 		System.out.println(ZipUtils.decompress("C:\\Users\\yuanke\\Desktop\\2012.zip", "C:\\Users\\yuanke\\Desktop\\2012\\", true));
+		
+		System.out.println(new IndexController().combineAndSort(new HashSet<String>(Arrays.asList("Total Pnl of 2023", "Total Pnl of 2009", "Total Pnl of 2019")), new HashSet<String>(Arrays.asList("Total Pnl of 2020", "Total Pnl of 2005", "Total Pnl of 2019"))));
+		System.out.println(new IndexController().combineAndSort(new HashSet<String>(), new HashSet<String>(Arrays.asList("Total Pnl of 2020", "Total Pnl of 2005", "Total Pnl of 2019"))));
+		System.out.println(new IndexController().combineAndSort(new HashSet<String>(), new HashSet<String>()));
 	}
 	
 	private void uploadWithAction(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException, ParseException {
