@@ -234,21 +234,21 @@ public class YosonEWrapper extends BasicEWrapper {
 				Strategy strategy = new Strategy();
 				strategy.setStrategyName(strategyName);
 				strategy.setMainUIParam(mainUIParam);
-				genTradingDayPerSecondDetails(folderPath, scheduledDataRecords, contract != null ? contract.m_symbol : mainUIParam.getSource(), strategy);
+				genTradingDayPerSecondDetails(folderPath, scheduledDataRecords, contract != null ? contract.m_symbol : mainUIParam.getSource(), strategy, contract);
 			}
 		}
 		for (Strategy strategy : EClientSocketUtils.strategies) {
-			genTradingDayPerSecondDetails(folderPath, scheduledDataRecords, contract != null ? contract.m_symbol : (EClientSocketUtils.contract != null ? EClientSocketUtils.contract.m_symbol : ""), strategy);
+			genTradingDayPerSecondDetails(folderPath, scheduledDataRecords, contract != null ? contract.m_symbol : (EClientSocketUtils.contract != null ? EClientSocketUtils.contract.m_symbol : ""), strategy, contract);
 		}
 	}
 	private static void genTradingDayPerSecondDetails(String folderPath, List<ScheduledDataRecord> scheduledDataRecords, String symbol,
-			Strategy strategy) throws ParseException {
+			Strategy strategy, Contract contract) throws ParseException {
 		if(scheduledDataRecords.size() == 0) return;
 		List<ScheduleData> dailyScheduleData = toScheduleDataList(scheduledDataRecords, strategy.getMainUIParam(), Long.parseLong(scheduledDataRecords.get(scheduledDataRecords.size() - 1).getTime()));		
 		
-		if(strategy.getMainUIParam().isIncludeLastMarketDayData()) {
+		if(strategy.getMainUIParam().isIncludeLastMarketDayData() && contract.getLastMarketDayPolicy() == 1) {
 			String today = dailyScheduleData.get(0).getDateStr();
-			dailyScheduleData.addAll(0, SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), SQLUtils.getLastMarketDay(today), true));
+			dailyScheduleData.addAll(0, SQLUtils.getLastMarketDayScheduleData(strategy.getMainUIParam(), SQLUtils.getLastMarketDay(strategy.getMainUIParam(), today), true));
 		}
 //		List<PerSecondRecord> allDailyPerSecondRecord = new ArrayList<PerSecondRecord>();
 //		if(!strategy.getMainUIParam().isIgnoreLunchTime() && strategy.getMainUIParam().isIncludeMorningData()) {
