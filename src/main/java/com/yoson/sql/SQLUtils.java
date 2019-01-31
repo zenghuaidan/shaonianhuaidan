@@ -86,7 +86,8 @@ public class SQLUtils {
 			sql += " and date < '" + today + "' order by date asc, time asc";
 			
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
-			return DateUtils.yyyyMMdd().format((Date)sqlQuery.uniqueResult());
+			Object uniqueResult = sqlQuery.uniqueResult();
+			return uniqueResult == null ? "" : DateUtils.yyyyMMdd().format((Date)uniqueResult);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
