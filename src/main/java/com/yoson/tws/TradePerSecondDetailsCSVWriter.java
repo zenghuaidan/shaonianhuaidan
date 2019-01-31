@@ -127,6 +127,10 @@ public class TradePerSecondDetailsCSVWriter {
 			writer.append(",");
 			writer.append(mainUIParam.isIncludeLastMarketDayData() + "");
 			writer.append("\n");
+			writer.append("From Source");
+			writer.append(",");
+			writer.append(mainUIParam.isFromSource() + "");
+			writer.append("\n");
 			
 	    	writer.append(BackTestCSVWriter.getATradingDayHeader());
 	    }
