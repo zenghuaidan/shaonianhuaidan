@@ -67,14 +67,6 @@ public class SQLUtils {
 		return new ArrayList<String>();
 	}
 	
-	public static String getLastMarketDay(String today) {
-		List<String> scheduleDates = SQLUtils.getScheduleDates();
-		if (scheduleDates != null && scheduleDates.indexOf(today) >= 0 && scheduleDates.indexOf(today) < (scheduleDates.size() - 1)) {
-			return scheduleDates.get(scheduleDates.indexOf(today) + 1);
-		}
-		return "";
-	}
-	
 	public static String getLastMarketDay(MainUIParam mainUIParam, String today) {
 		if(StringUtils.isNullOrEmpty(today) || mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getSource()) || !mainUIParam.isFromSource() && StringUtils.isNullOrEmpty(mainUIParam.getTicker())) return "";
 		Session session = null;				
