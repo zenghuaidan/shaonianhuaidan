@@ -310,7 +310,7 @@
 							   <tr>
 							      <td>Market Start Time</td>
 							      <td><input name="marketStartTime" value="${mainUIParam.marketStartTime}" class="timepicker" type="text"/></td>
-							      <td></td>
+							      <td><input type="button" onclick="oldHKT();" value="oldHKT"/>&nbsp;&nbsp;<input type="button" onclick="newHKT();" value="newHKT"/></td>
 							      <td></td>
 							   </tr>
 							   <tr>
