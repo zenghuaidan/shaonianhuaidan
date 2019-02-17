@@ -22,7 +22,9 @@ public class MainUIParam extends TestSet {
 	private boolean ignoreLunchTime;
 	@Expose
 	private String source;
+	@Expose
 	private String ticker;
+	@Expose
 	private boolean fromSource;
 	private String version;
 	private String nForPnl;
