@@ -32,6 +32,18 @@ function nk1Click() {
 	$("[name='unit']").val("5");
 	$("[name='ignoreLunchTime']").prop('checked', true);
 }
+function oldHKT() {
+	$("[name='marketStartTime']").val("09:45:00");
+	$("[name='lunchStartTimeFrom']").val("12:30:00");
+	$("[name='lunchStartTimeTo']").val("14:30:00");
+	$("[name='marketCloseTime']").val("16:15:00");
+}
+function newHKT() {
+	$("[name='marketStartTime']").val("09:15:00");
+	$("[name='lunchStartTimeFrom']").val("12:00:00");
+	$("[name='lunchStartTimeTo']").val("13:00:00");
+	$("[name='marketCloseTime']").val("16:15:00");
+}
 function yyyymm() {
 	var year = new Date().getYear() + 1900;
 	var month = new Date().getMonth() + 1;
