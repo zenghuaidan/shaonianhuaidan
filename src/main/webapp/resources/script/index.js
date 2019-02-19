@@ -510,6 +510,45 @@ function runClick() {
 	});
 }
 
+function saveCombinationClick() {
+	var paramData = getMainUIParam();
+	if(paramData.source == '' && paramData.ticker == '') {
+		alert("Please select a source or a ticker!");
+		return;
+	}
+	$.ajax({
+	    type: "POST",
+	    url: "setCombination",
+	    data: JSON.stringify(paramData),
+	    contentType:"application/json;charset=utf-8",
+	    success: function(data) {
+	    	window.open("getCombination");
+	    },
+	    error: function() {		        
+	    }
+	});
+}
+
+function runByUploadCombination() {
+	var file = $("#combinationfm input[type=file]").val();
+	if (file == "" || file.split(".")[file.split(".").length - 1].toLocaleLowerCase() != "txt") {
+		alert("Please select txt file to upload.");
+		return;
+	}
+	var options = {
+        success: function (data) {
+        	if(!data){
+        		alert("You are uploading not validate formate template..");
+        	} else {
+        		window.location.reload();	        		
+        	}
+        }
+   };
+   
+   $("#combinationfm").ajaxForm(options);
+   $("#combinationfm").ajaxSubmit(options);   
+}
+
 function runWithLiveTradingDataClick() {
 	var paramData = getMainUIParam();
 	if(paramData.includeLastMarketDayData) {
