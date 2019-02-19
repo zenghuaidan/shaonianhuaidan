@@ -399,6 +399,19 @@
 							        </table>
 						      	  </td>
 							   </tr>
+   							   <tr>
+							      <td><input type="button" onclick="saveCombinationClick();" style="width:100%" value="Save Combination"/></td>
+							      <td>
+							      	<form id='combinationfm' method='post' action='runByUploadCombination' enctype='multipart/form-data'>
+	      						        <table>
+								        	<tr>
+								        		<td><input type="file" name="combination" accept="text/txt" value="Select Combination"/></td>
+								        		<td><input type="button" onclick="runByUploadCombination()" value="Run by Upload Combination"/></td>
+								        	</tr>
+								        </table>																				
+									</form>
+								  </td>							      							     
+							   </tr>
 							</table>
 						</td>
 						<td style="width:50%;">
