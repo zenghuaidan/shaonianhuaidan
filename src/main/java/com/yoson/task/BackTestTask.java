@@ -201,6 +201,11 @@ public class BackTestTask implements Runnable {
 		return "";
 	}
 	
+	public static List<TestSet> getCombinations(MainUIParam mainUIParam) {
+		List<TestSet> testSets = new ArrayList<TestSet>();
+		return testSets;
+	}
+	
 	public void runTestSet(int current, int startStep) throws IOException, ParseException {	
 		init();
 		long start = System.currentTimeMillis();
