@@ -862,14 +862,16 @@ public class IndexController  implements StatusCallBack {
 		return FilenameUtils.concat(dataFolder, id + "_Log.txt");
 	}
 	
+	@ResponseBody
 	@RequestMapping(path = "/", method = {RequestMethod.POST})
-	public String index(@RequestBody MainUIParam mainUIParam, HttpServletRequest request) {
+	public boolean index(@RequestBody MainUIParam mainUIParam, HttpServletRequest request) {
       if (!BackTestTask.running) {
     	  IndexController.mainUIParam = mainUIParam;
     	  String dataFolder = InitServlet.createDataFoderAndReturnPath();
     	  runTest(dataFolder, false);
+    	  return true;
 	  }
-	  return "index";
+	  return false;
 	}
 	
 	@RequestMapping(path = "/setCombination", method = {RequestMethod.POST})
@@ -884,6 +886,12 @@ public class IndexController  implements StatusCallBack {
 		response.setHeader("Content-Disposition","attachment; filename=saveCombination"+DateUtils.yyyyMMddHHmmss2().format(new Date()) + ".txt");
 		IOUtils.write(result, response.getOutputStream());
 		response.flushBuffer();
+	}
+	
+	@ResponseBody
+	@RequestMapping("calCombination")
+	public int calCombination(@RequestBody MainUIParam mainUIParam) {
+		return BackTestTask.getCombinations(mainUIParam).size();
 	}
 	
 	@ResponseBody

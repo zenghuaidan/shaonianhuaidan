@@ -485,9 +485,12 @@ function runClick() {
 	    data: JSON.stringify(paramData),
 	    contentType:"application/json;charset=utf-8",
 	    success: function(data) {
-	    	$("#status").html("");
-	    	updateStatus();
-	    	renderDownFileList();
+	    	if(data) {
+	    		$("li[tab='btLogTab']").click();
+	    		$("#status").html("");
+	    		updateStatus();
+	    		renderDownFileList();
+	    	}
 	    },
 	    error: function() {		        
 	    }
@@ -513,6 +516,21 @@ function saveCombinationClick() {
 	});
 }
 
+function calCombinationClick() {
+	var paramData = getMainUIParam();	
+	$.ajax({
+	    type: "POST",
+	    url: "calCombination",
+	    data: JSON.stringify(paramData),
+	    contentType:"application/json;charset=utf-8",
+	    success: function(data) {
+	    	alert("Total combination is : " + data);
+	    },
+	    error: function() {		        
+	    }
+	});
+}
+
 function runByUploadCombination() {
 	var file = $("#combinationfm input[type=file]").val();
 	if (file == "" || file.split(".")[file.split(".").length - 1].toLocaleLowerCase() != "txt") {
@@ -524,7 +542,10 @@ function runByUploadCombination() {
         	if(!data){
         		alert("You are uploading not validate formate template..");
         	} else {
-        		window.location.reload();	        		
+        		$("li[tab='btLogTab']").click();
+	    		$("#status").html("");
+	    		updateStatus();
+	    		renderDownFileList();        		
         	}
         }
    };
@@ -1124,7 +1145,7 @@ function scheduleTask() {
 			updateOrderTab();
 			break;
 		case "backtestTab" : 
-			updateStatus();
+			//updateStatus();
 			break;
 		case "marketDataTab" : 
 			getMarketData();
@@ -1135,6 +1156,9 @@ function scheduleTask() {
 		case "connectionTab" : 
 			updateIncomingDataInfo();
 			break;
+		case "btLogTab" : 
+			updateStatus();
+			break;			
 		default : 
 			break;
 	}
