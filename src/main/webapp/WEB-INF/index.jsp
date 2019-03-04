@@ -32,13 +32,14 @@
     			<li tab="strategyTab">Strategy</li>
     			<li tab="expiryTab">Expiry Dates</li>
     			<li tab="scheduleTab">Schedule Dates</li>
+    			<li tab="btLogTab">BT Status</li>
             </ul>  
         </div>  
         <div id="tab-content">  
             <div class="dom" style="display: block;">  
 				<table style="width:100%">
 					<tr>
-						<td style="width:40%;text-align:start;vertical-align:baseline;">
+						<td style="text-align:start;vertical-align:baseline;">
 							<table>
 							   <tr>
 							      <td>Strategy</td>
@@ -425,6 +426,7 @@
 							        	<tr>
 							        		<td><input type="button" onclick="runClick();" style="width:100%" value="Run Test"/></td>
 							        		<td><input type="button" onclick="runWithLiveTradingDataClick();" style="width:100%" value="Set BT Parameters for Live Tading"/></td>
+							        		<td><input type="button" onclick="calCombinationClick();" style="width:100%" value="Combination Count"/></td>
 							        	</tr>
 							        </table>
 						      	  </td>
@@ -443,14 +445,7 @@
 								  </td>							      							     
 							   </tr>
 							</table>
-						</td>
-						<td style="width:50%;">
-							<div id="status" style="border:2px solid black;width:100%;height: 900px;margin: 0;padding: 0;overflow-y: scroll" ></div>
-						</td>
-						<td style="width:10%;">
-							<ul id="files" style="border:2px solid black;width:100%;height: 900px;margin: 0;padding: 0;overflow-y: scroll">			   
-							</ul>
-						</td>
+						</td>						
 					</tr>
 				</table>  
             </div>  
@@ -904,6 +899,19 @@
 				</form>
 				<table id="scheduleDates">					
 	        	</table>
+			</div>
+			<div class="dom">				
+				<table>
+					<tr>
+						<td style="width:80%;">
+							<div id="status" style="border:2px solid black;width:100%;height: 900px;margin: 0;padding: 0;overflow-y: scroll" ></div>
+						</td>
+						<td style="width:20%;">
+							<ul id="files" style="border:2px solid black;width:100%;height: 900px;margin: 0;padding: 0;overflow-y: scroll">			   
+							</ul>
+						</td>
+					</tr>
+				</table> 
 			</div>
         </div>  
     </div>  
