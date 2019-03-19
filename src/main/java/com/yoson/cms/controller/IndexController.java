@@ -888,6 +888,34 @@ public class IndexController  implements StatusCallBack {
 		response.flushBuffer();
 	}
 	
+	@RequestMapping(path = "/getCombinationInCSV", method = {RequestMethod.GET})
+	public void getCombinationInCSV(HttpServletResponse response) throws IOException {		
+		Gson gson = new GsonBuilder()
+                .create();
+		
+		JsonElement jsonTree = gson.toJsonTree(IndexController.savedMainUIParam);
+		
+		List<String> items = new ArrayList<String>();
+		JsonObject asJsonObject = jsonTree.getAsJsonObject();			
+		for(String key : asJsonObject.keySet()) {
+			JsonElement itemJson = asJsonObject.get(key);
+			try {
+				if(!itemJson.isJsonObject() && !itemJson.isJsonArray()) { 				
+					items.add(key + "," + itemJson.getAsString());
+				} else {
+					items.add(key + "," + itemJson.toString());
+				}				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		String result = String.join(System.lineSeparator(), items);
+		response.setContentType("APPLICATION/OCTET-STREAM");  
+		response.setHeader("Content-Disposition","attachment; filename=saveCombinationInCSV"+DateUtils.yyyyMMddHHmmss2().format(new Date()) + ".csv");
+		IOUtils.write(result, response.getOutputStream());
+		response.flushBuffer();	
+	}
+	
 	@ResponseBody
 	@RequestMapping("calCombination")
 	public int calCombination(@RequestBody MainUIParam mainUIParam) {
