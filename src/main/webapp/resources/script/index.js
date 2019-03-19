@@ -459,6 +459,12 @@ function getMainUIParam() {
 	};
 }
 
+function runAndSaveAsCSVClick() {
+	saveCombinationInCSVClick(function() {
+		runClick();
+	});
+}
+
 function runClick() {
 	var paramData = getMainUIParam();
 	if(paramData.source == '' && paramData.ticker == '') {
@@ -496,6 +502,27 @@ function saveCombinationClick() {
 	    contentType:"application/json;charset=utf-8",
 	    success: function(data) {
 	    	window.open("getCombination");
+	    },
+	    error: function() {		        
+	    }
+	});
+}
+
+function saveCombinationInCSVClick(callback) {
+	var paramData = getMainUIParam();
+	if(paramData.source == '' && paramData.ticker == '') {
+		alert("Please select a source or a ticker!");
+		return;
+	}
+	$.ajax({
+	    type: "POST",
+	    url: "setCombination",
+	    data: JSON.stringify(paramData),
+	    contentType:"application/json;charset=utf-8",
+	    success: function(data) {
+	    	window.open("getCombinationInCSV");
+	    	if(typeof callback != "undefined")
+	    		callback();
 	    },
 	    error: function() {		        
 	    }
