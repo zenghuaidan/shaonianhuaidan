@@ -422,6 +422,7 @@
 							      <td>Output Matrix File</td>
 							      <td><input name="matrixFile" type="checkbox" ${mainUIParam.matrixFile ? 'checked' : ''} /></td>
 							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td><input type="button" onclick="hkClick();" style="width:100%" value="HK"/></td>
@@ -431,6 +432,7 @@
 							        <table>
 							        	<tr>
 							        		<td><input type="button" onclick="runClick();" style="width:100%" value="Run Test"/></td>
+							        		<td><input type="button" onclick="runAndSaveAsCSVClick();" style="width:100%" value="Run Test And Save as CSV"/></td>
 							        		<td><input type="button" onclick="runWithLiveTradingDataClick();" style="width:100%" value="Set BT Parameters for Live Tading"/></td>
 							        		<td><input type="button" onclick="calCombinationClick();" style="width:100%" value="Combination Count"/></td>
 							        	</tr>
@@ -439,6 +441,7 @@
 							   </tr>
    							   <tr>
 							      <td><input type="button" onclick="saveCombinationClick();" style="width:100%" value="Save Combination"/></td>
+							      <td><input type="button" onclick="saveCombinationInCSVClick();" style="width:100%" value="Save Combination In CSV"/></td>
 							      <td>
 							      	<form id='combinationfm' method='post' action='runByUploadCombination' enctype='multipart/form-data'>
 	      						        <table>
