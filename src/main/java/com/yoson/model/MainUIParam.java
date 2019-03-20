@@ -12,6 +12,7 @@ import com.yoson.date.BrokenDate;
 import com.yoson.date.DateUtils;
 
 public class MainUIParam extends TestSet {
+	private String remark;
 	private String sourcePath;
 	private String dataRootPath;
 	private String paramPath;
@@ -64,6 +65,14 @@ public class MainUIParam extends TestSet {
 	private boolean outputDataMin = true;
 	public MainUIParam() {}
 	
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
 	public String getResultPath() {
 		return resultPath;
 	}
