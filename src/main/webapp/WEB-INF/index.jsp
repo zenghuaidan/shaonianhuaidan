@@ -425,6 +425,12 @@
 							      <td></td>
 							   </tr>
 							   <tr>
+							      <td>Remark(Use in combination CSV):</td>
+							      <td><input name="remark" type="text" value="${mainUIParam.remark}" /></td>
+							      <td></td>
+							      <td></td>
+							   </tr>
+							   <tr>
 							      <td><input type="button" onclick="hkClick();" style="width:100%" value="HK"/></td>
 							      <td><input type="button" onclick="km1Click();" style="width:100%" value="KM1"/></td>
 							      <td><input type="button" onclick="nk1Click();" style="width:100%" value="NK1"/></td>
