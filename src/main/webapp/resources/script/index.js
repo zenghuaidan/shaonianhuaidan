@@ -469,7 +469,8 @@ function getMainUIParam() {
 	   "avgStep":$.trim($("[name='avgStep']").val()),
 	   "avgStepTo":$.trim($("[name='avgStepTo']").val()),
 	   "avgStepLiteral":$.trim($("[name='avgStepLiteral']").val()),
-	   "includeLastMarketDayData":$("[name='includeLastMarketDayData']").is(":checked")
+	   "includeLastMarketDayData":$("[name='includeLastMarketDayData']").is(":checked"),
+	   "remark":$("[name='nForPnl']").val()
 	};
 }
 
