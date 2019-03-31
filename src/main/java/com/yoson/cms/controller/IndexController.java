@@ -391,7 +391,7 @@ public class IndexController  implements StatusCallBack {
 		}
 //		List<String> needCombineColumns = Arrays.asList("No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length".split(","));
 		String NO_OF_DAYS = "No. of days"; //FIRST
-		String MAX_WINNING_STREAK_LENGTH = "Max Winning Streak Length"; //LAST
+		String COUNT_OF_LUNCH_LOSS = "count of lunch loss"; //LAST
 		
 		String MORNING_START_TIME = "Morning Start Time"; //LAST
 		String LUNCH_START_TIME = "Lunch Start Time"; //LAST
@@ -417,7 +417,7 @@ public class IndexController  implements StatusCallBack {
 			response.setHeader("Content-Disposition","attachment; filename=BT_Summary.csv");
 		
 			List<String> csvHeader = new ArrayList<String>();
-			csvHeader.addAll(header.subList(0, header.indexOf(MAX_WINNING_STREAK_LENGTH) + 1));
+			csvHeader.addAll(header.subList(0, header.indexOf(COUNT_OF_LUNCH_LOSS) + 1));
 			csvHeader.addAll(yearlyPnlIndex); 
 			csvHeader.addAll(monthlyPnlIndex);
 			StringBuffer sb = new StringBuffer(String.join(",", csvHeader) + "\n");
@@ -454,6 +454,25 @@ public class IndexController  implements StatusCallBack {
 				double averageOfWinningStreak = lossingStreakfreq == 0 ? 0 : sumOfWinningStreak / winningStreakFreq;				
 				double maxLossingStreakLength = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 25)), Double.valueOf(summaryResultData2.get(i).get(end + 25)));
 				double maxWinningStreakLength = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 26)), Double.valueOf(summaryResultData2.get(i).get(end + 26)));
+				double sumMorningPnL = Double.valueOf(summaryResultData1.get(i).get(end + 27)) + Double.valueOf(summaryResultData2.get(i).get(end + 27));
+				double sumLunchPnL = Double.valueOf(summaryResultData1.get(i).get(end + 28)) + Double.valueOf(summaryResultData2.get(i).get(end + 28));
+				double averageMorningPnL = sumMorningPnL / totalDays;
+				double averageLunchPnL = sumLunchPnL / totalDays;
+				int countMLS1 = Integer.valueOf(summaryResultData1.get(i).get(end + 31)) + Integer.valueOf(summaryResultData2.get(i).get(end + 31));
+				int countMLS2 = Integer.valueOf(summaryResultData1.get(i).get(end + 32)) + Integer.valueOf(summaryResultData2.get(i).get(end + 32));
+				int countMLS3 = Integer.valueOf(summaryResultData1.get(i).get(end + 33)) + Integer.valueOf(summaryResultData2.get(i).get(end + 33));
+				int countMLS4 = Integer.valueOf(summaryResultData1.get(i).get(end + 34)) + Integer.valueOf(summaryResultData2.get(i).get(end + 34));
+				int countMLS5 = Integer.valueOf(summaryResultData1.get(i).get(end + 35)) + Integer.valueOf(summaryResultData2.get(i).get(end + 35));
+				int countMLS6 = Integer.valueOf(summaryResultData1.get(i).get(end + 36)) + Integer.valueOf(summaryResultData2.get(i).get(end + 36));
+				int countMLS7 = Integer.valueOf(summaryResultData1.get(i).get(end + 37)) + Integer.valueOf(summaryResultData2.get(i).get(end + 37));
+				int countMLS8 = Integer.valueOf(summaryResultData1.get(i).get(end + 38)) + Integer.valueOf(summaryResultData2.get(i).get(end + 38));
+				int countMLS9 = Integer.valueOf(summaryResultData1.get(i).get(end + 39)) + Integer.valueOf(summaryResultData2.get(i).get(end + 39));
+				int countMorningWin = Integer.valueOf(summaryResultData1.get(i).get(end + 40)) + Integer.valueOf(summaryResultData2.get(i).get(end + 40));
+				int countMorningNature = Integer.valueOf(summaryResultData1.get(i).get(end + 41)) + Integer.valueOf(summaryResultData2.get(i).get(end + 41));
+				int countMorningLoss = Integer.valueOf(summaryResultData1.get(i).get(end + 42)) + Integer.valueOf(summaryResultData2.get(i).get(end + 42));
+				int countLunchWin = Integer.valueOf(summaryResultData1.get(i).get(end + 43)) + Integer.valueOf(summaryResultData2.get(i).get(end + 43));
+				int countLunchNature = Integer.valueOf(summaryResultData1.get(i).get(end + 44)) + Integer.valueOf(summaryResultData2.get(i).get(end + 44));
+				int countLunchLoss = Integer.valueOf(summaryResultData1.get(i).get(end + 45)) + Integer.valueOf(summaryResultData2.get(i).get(end + 45));
 				
 				List<String> yearlyPnlResult = new ArrayList<String>();
 				for(String name : yearlyPnlIndex) {
@@ -497,6 +516,25 @@ public class IndexController  implements StatusCallBack {
 				.append(averageOfWinningStreak + ",")
 				.append(maxLossingStreakLength + ",")
 				.append(maxWinningStreakLength + ",")
+				.append(sumMorningPnL + ",")
+				.append(sumLunchPnL + ",")
+				.append(averageMorningPnL + ",")
+				.append(averageLunchPnL + ",")
+				.append(countMLS1 + ",")
+				.append(countMLS2 + ",")
+				.append(countMLS3 + ",")
+				.append(countMLS4 + ",")
+				.append(countMLS5 + ",")
+				.append(countMLS6 + ",")
+				.append(countMLS7 + ",")
+				.append(countMLS8 + ",")
+				.append(countMLS9 + ",")
+				.append(countMorningWin + ",")
+				.append(countMorningNature + ",")
+				.append(countMorningLoss + ",")
+				.append(countLunchWin + ",")
+				.append(countLunchNature + ",")
+				.append(countLunchLoss + ",")
 				.append(yearlyPnlResult.size() > 0 ? (String.join(",", yearlyPnlResult) + ",") : "")
 				.append(monthlyPnlResult.size() > 0 ? (String.join(",", monthlyPnlResult) + ",") : "")
 				.append("\n");
