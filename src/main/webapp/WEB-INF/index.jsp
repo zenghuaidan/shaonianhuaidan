@@ -48,6 +48,8 @@
 							      </td>
 							      <td><input type="button" onclick="addStrategy(this);" value="Add Strategy"/></td>
 							      <td>${comment}</td>
+							      <td></td>
+							      <td></td>
 							   </tr>	   
 							   <tr>
 							      <td>Source</td>
@@ -61,6 +63,8 @@
 							      </td>
 							      <td></td>
 							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>Ticker</td>
@@ -72,6 +76,8 @@
 								         </c:forEach>
 							         </select>	         
 							      </td>
+							      <td></td>
+							      <td></td>
 							      <td></td>
 							      <td></td>
 							   </tr>							   
@@ -240,72 +246,96 @@
 							      <td>From</td>
 							      <td>To</td>
 							      <td>Literal</td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>Average Step Size</td>
 							      <td><input name="avgStep" value="${mainUIParam.avgStep}" type="text"/></td>
 							      <td><input name="avgStepTo" value="${mainUIParam.avgStepTo}" type="text"/></td>
 							      <td><input name="avgStepLiteral" value="${mainUIParam.avgStepLiteral}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>CP timer</td>
 							      <td><input name="cpTimer" value="${mainUIParam.cpTimer}" type="text"/></td>
 							      <td><input name="cpTimerTo" value="${mainUIParam.cpTimerTo}" type="text"/></td>
 							      <td><input name="cpTimerLiteral" value="${mainUIParam.cpTimerLiteral}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>CP Buffer</td>
 							      <td><input name="cpBuffer" value="${mainUIParam.cpBuffer}" type="text"/></td>
 							      <td><input name="cpBufferTo" value="${mainUIParam.cpBufferTo}" type="text"/></td>
 							      <td><input name="cpBufferLiteral" value="${mainUIParam.cpBufferLiteral}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>CP Hit Rate</td>
 							      <td><input name="cpHitRate" value="${mainUIParam.cpHitRate}" type="text"/></td>
 							      <td><input name="cpHitRateTo" value="${mainUIParam.cpHitRateTo}" type="text"/></td>
 							      <td><input name="cpHitRateLiteral" value="${mainUIParam.cpHitRateLiteral}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>CP smooth</td>
 							      <td><input name="cpSmooth" value="${mainUIParam.cpSmooth}" type="text"/></td>
 							      <td><input name="cpSmoothTo" value="${mainUIParam.cpSmoothTo}" type="text"/></td>
 							      <td><input name="cpSmoothLiteral" value="${mainUIParam.cpSmoothLiteral}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>estimation buffer</td>
 							      <td><input name="estimationBuffer" value="${mainUIParam.estimationBuffer}" type="text"/></td>
 							      <td><input name="estimationBufferTo" value="${mainUIParam.estimationBufferTo}" type="text"/></td>
 							      <td><input name="estimationBufferLiteral" value="${mainUIParam.estimationBufferLiteral}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>action trigger</td>
 							      <td><input name="actionTrigger" value="${mainUIParam.actionTrigger}" type="text"/></td>
 							      <td><input name="actionTriggerTo" value="${mainUIParam.actionTriggerTo}" type="text"/></td>
 							      <td><input name="actionTriggerLiteral" value="${mainUIParam.actionTriggerLiteral}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>action counting</td>
 							      <td><input name="actionCounting" value="${mainUIParam.actionCounting}" type="text"/></td>
 							      <td><input name="actionCountingTo" value="${mainUIParam.actionCountingTo}" type="text"/></td>
 							      <td><input name="actionCountingLiteral" value="${mainUIParam.actionCountingLiteral}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>% trade stoploss trigger</td>
 							      <td><input name="tradeStopLossTrigger" value="${mainUIParam.tradeStopLossTrigger}" type="text"/></td>
 							      <td><input name="tradeStopLossTriggerTo" value="${mainUIParam.tradeStopLossTriggerTo}" type="text"/></td>
 							      <td><input name="tradeStopLossTriggerLiteral" value="${mainUIParam.tradeStopLossTriggerLiteral}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>% trade stoploss</td>
 							      <td><input name="tradeStopLossTriggerPercent" value="${mainUIParam.tradeStopLossTriggerPercent}" type="text"/></td>
 							      <td><input name="tradeStopLossTriggerPercentTo" value="${mainUIParam.tradeStopLossTriggerPercentTo}" type="text"/></td>
 							      <td><input name="tradeStopLossTriggerPercentLiteral" value="${mainUIParam.tradeStopLossTriggerPercentLiteral}" type="text"/></td>
+							   	  <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>Absolute trade stoploss</td>
 							      <td><input name="absoluteTradeStopLoss" value="${mainUIParam.absoluteTradeStopLoss}" type="text"/></td>
 							      <td><input name="absoluteTradeStopLossTo" value="${mainUIParam.absoluteTradeStopLossTo}" type="text"/></td>
 							      <td><input name="absoluteTradeStopLossLiteral" value="${mainUIParam.absoluteTradeStopLossLiteral}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 						   		<c:forEach items="${mainUIParam.brokenDateList}" var="brokenDate" varStatus="i">
 						            <c:if test="${ i.index == 0 }" >
@@ -314,6 +344,8 @@
 									      <td><input id="dateFrom" class="datepicker" value="${brokenDate.from}" type="text"/></td>
 									      <td><input id="dateTo" class="datepicker" value="${brokenDate.to}" type="text"/></td>
 									      <td><input type="button" onclick="addDateClick();" value="Add More"/></td>
+									      <td></td>
+							      		  <td></td>
 									   </tr>     	 
 									</c:if>
 									<c:if test="${ i.index > 0 }" >
@@ -322,14 +354,18 @@
 							      			<td><input value="${brokenDate.from}" type="text" readonly /></td>
 							      			<td><input value="${brokenDate.to}" type="text" readonly/></td>
 							      			<td><input type="button" onclick="deleteDateClick(this);" value="Delete"/></td>
+							      			<td></td>
+							     			<td></td>
 							   			</tr>   	 
 									</c:if> 
 								</c:forEach>
-							   <tr style="height:10px"><td colspan="4"></td></tr>
+							   <tr style="height:10px"><td colspan="6"></td></tr>
 							   <tr>
 							      <td>Market Start Time</td>
 							      <td><input name="marketStartTime" value="${mainUIParam.marketStartTime}" class="timepicker" type="text"/></td>
 							      <td><input type="button" onclick="oldHKT();" value="oldHKT"/>&nbsp;&nbsp;<input type="button" onclick="newHKT();" value="newHKT"/></td>
+							      <td></td>
+							      <td></td>
 							      <td></td>
 							   </tr>
 							   <tr>
@@ -337,17 +373,23 @@
 							      <td><input name="lunchStartTimeFrom" value="${mainUIParam.lunchStartTimeFrom}" class="timepicker" type="text"/></td>
 							      <td><input name="lunchStartTimeTo" value="${mainUIParam.lunchStartTimeTo}" class="timepicker" type="text"/></td>
 							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>Market End Time</td>
 							      <td><input name="marketCloseTime" value="${mainUIParam.marketCloseTime}" class="timepicker" type="text"/></td>
 							      <td></td>
 							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
-							   <tr style="height:10px"><td colspan="4"></td></tr>
+							   <tr style="height:10px"><td colspan="6"></td></tr>
 							   <tr>
 							      <td>Cash per index point</td>
 							      <td><input name="cashPerIndexPoint" value="${mainUIParam.cashPerIndexPoint}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							      <td></td>
 							      <td></td>
 							   </tr>
@@ -356,10 +398,14 @@
 							      <td><input name="tradingFee" value="${mainUIParam.tradingFee}" type="text"/></td>
 							      <td></td>
 							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>Other cost per trade</td>
 							      <td><input name="otherCostPerTrade" value="${mainUIParam.otherCostPerTrade}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							      <td></td>
 							      <td></td>
 							   </tr>
@@ -368,29 +414,40 @@
 							      <td><input name="unit" value="${mainUIParam.unit}" type="text"/></td>
 							      <td></td>
 							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
    							   <tr>
 						          <td style="text-align:right">Order Ticker</td>
 							      <td><input name="orderTicker" value="${mainUIParam.orderTicker}" type="text"/></td>
 							      <td></td>
 							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
-							   <tr style="height:10px"><td colspan="4"></td></tr>
+							   <tr style="height:10px"><td colspan="6"></td></tr>
 							   <tr>
 							      <td>LastMinClrPos</td>
 							      <td><input name="lastNumberOfMinutesClearPosition" value="${mainUIParam.lastNumberOfMinutesClearPosition}" type="text"/></td>
 							      <td style="text-align:right">LunchLastMinClrPos</td>
 							      <td><input name="lunchLastNumberOfMinutesClearPosition" value="${mainUIParam.lunchLastNumberOfMinutesClearPosition}" type="text"/></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr style="height:10px"><td colspan="4"></td></tr>
 							   <tr>
 							      <td>Pnl Threshold</td>
 							      <td><input name="pnlThreshold" value="${mainUIParam.pnlThreshold}" type="text"/></td>
 							      <td></td>
+							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>Output char</td>
 							      <td><input name="outputChart" type="checkbox" ${mainUIParam.outputChart ? 'checked' : ''} /></td>
+							      <td></td>
+							      <td></td>
 							      <td></td>
 							      <td></td>
 							   </tr>	   
@@ -399,10 +456,14 @@
 							      <td><input name="includeMorningData" type="checkbox" ${mainUIParam.includeMorningData ? 'checked' : ''} /></td>
 							      <td></td>
 							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>Include Last Market Day Data</td>
 							      <td><input name="includeLastMarketDayData" type="checkbox" ${mainUIParam.includeLastMarketDayData ? 'checked' : ''} /></td>
+							      <td></td>
+							      <td></td>
 							      <td></td>
 							      <td></td>
 							   </tr>							   
@@ -411,10 +472,14 @@
 							      <td><input name="ignoreLunchTime" type="checkbox" ${mainUIParam.ignoreLunchTime ? 'checked' : ''} /></td>
 							      <td></td>
 							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td>n For Pnl(separate by comman, e.g. 2,4,6)</td>
 							      <td><input name="nForPnl" type="text" value="${mainUIParam.nForPnl}" /></td>
+							      <td></td>
+							      <td></td>
 							      <td></td>
 							      <td></td>
 							   </tr>
@@ -423,10 +488,15 @@
 							      <td><input name="matrixFile" type="checkbox" ${mainUIParam.matrixFile ? 'checked' : ''} /></td>
 							      <td></td>
 							      <td></td>
+							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
    							   <tr>
 							      <td>Morning Lunch Correlation Buffer</td>
 							      <td><input name="morningLunchCorrelationBuffer" type="text" value="${mainUIParam.morningLunchCorrelationBuffer}" /></td>
+							      <td></td>
+							      <td></td>
 							      <td></td>
 							      <td></td>
 							   </tr>
@@ -435,35 +505,40 @@
 							      <td><input name="remark" type="text" value="${mainUIParam.remark}" /></td>
 							      <td></td>
 							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
 							   <tr>
 							      <td><input type="button" onclick="hkClick();" style="width:100%" value="HK"/></td>
 							      <td><input type="button" onclick="km1Click();" style="width:100%" value="KM1"/></td>
 							      <td><input type="button" onclick="nk1Click();" style="width:100%" value="NK1"/></td>
-							      <td>
-							        <table>
-							        	<tr>
-							        		<td><input type="button" onclick="runClick();" style="width:100%" value="Run Test"/></td>
-							        		<td><input type="button" onclick="runAndSaveAsCSVClick();" style="width:100%" value="Run Test And Save as CSV"/></td>
-							        		<td><input type="button" onclick="runWithLiveTradingDataClick();" style="width:100%" value="Set BT Parameters for Live Tading"/></td>
-							        		<td><input type="button" onclick="calCombinationClick();" style="width:100%" value="Combination Count"/></td>
-							        	</tr>
-							        </table>
-						      	  </td>
+							      <td></td>
+							      <td></td>
+							      <td></td>
 							   </tr>
    							   <tr>
+				        		  <td><input type="button" onclick="runClick();" style="width:100%" value="Run Test"/></td>
+					        	  <td><input type="button" onclick="runAndSaveAsCSVClick();" style="width:100%" value="Run Test And Save as CSV"/></td>
+   				        		  <td><input type="button" onclick="runWithLiveTradingDataClick();" style="width:100%" value="Set BT Parameters for Live Tading"/></td>
+				        		  <td><input type="button" onclick="calCombinationClick();" style="width:100%" value="Combination Count"/></td>
 							      <td><input type="button" onclick="saveCombinationClick();" style="width:100%" value="Save Combination"/></td>
 							      <td><input type="button" onclick="saveCombinationInCSVClick();" style="width:100%" value="Save Combination In CSV"/></td>
+							   </tr>
+							   <tr>
 							      <td>
 							      	<form id='combinationfm' method='post' action='runByUploadCombination' enctype='multipart/form-data'>
 	      						        <table>
 								        	<tr>
 								        		<td><input type="file" name="combination" accept="text/txt" value="Select Combination"/></td>
-								        		<td><input type="button" onclick="runByUploadCombination()" value="Run by Upload Combination"/></td>
 								        	</tr>
 								        </table>																				
 									</form>
-								  </td>							      							     
+								  </td>	
+				        		  <td><input type="button" onclick="runByUploadCombination()" value="Run by Upload Combination"/></td>
+								  <td></td>
+							      <td></td>
+							      <td></td>
+							      <td></td>					      							     
 							   </tr>
 							</table>
 						</td>						
