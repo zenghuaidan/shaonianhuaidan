@@ -41,6 +41,27 @@ public class BackTestResult
 	public Map<Integer, Double> yearPnlMap;
 	public Map<String, Double> monthPnlMap;
 	
+	public double sumMorningPnL;
+	public double sumLunchPnL;
+	public double averageMorningPnL;
+	public double averageLunchPnL;
+	public int countMLS1;
+	public int countMLS2;
+	public int countMLS3;
+	public int countMLS4;
+	public int countMLS5;
+	public int countMLS6;
+	public int countMLS7;
+	public int countMLS8;
+	public int countMLS9;
+	public int countMorningWin;
+	public int countMorningNature;
+	public int countMorningLoss;
+	public int countLunchWin;
+	public int countLunchNature;
+	public int countLunchLoss;
+
+	
 	public List<PerDayRecord> dayRecords;
 
 	public TestSet testSet;
@@ -276,13 +297,55 @@ public class BackTestResult
 	
 	public void calTotalPnL()
 	{
-		totalPnL = 0;
+		sumMorningPnL = 0;
+		sumLunchPnL = 0;
+		averageMorningPnL = 0;
+		averageLunchPnL = 0;
+		countMLS1 = 0;
+		countMLS2 = 0;
+		countMLS3 = 0;
+		countMLS4 = 0;
+		countMLS5 = 0;
+		countMLS6 = 0;
+		countMLS7 = 0;
+		countMLS8 = 0;
+		countMLS9 = 0;
+		countMorningWin = 0;
+		countMorningNature = 0;
+		countMorningLoss = 0;
+		countLunchWin = 0;
+		countLunchNature = 0;
+		countLunchLoss = 0;
 		
+		totalPnL = 0;
+		double buffer = 0;
 		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
 		for (PerDayRecord Per_Day :  tempArray)
 		{
 			totalPnL = totalPnL + Per_Day.totalPnL;
+			sumMorningPnL += Per_Day.morningPnL;
+			sumLunchPnL += Per_Day.afternoonPnL;
+			
+			if(Per_Day.morningPnL > buffer) countMorningWin++;
+			if(Per_Day.morningPnL == buffer) countMorningNature++;
+			if(Per_Day.morningPnL < buffer) countMorningLoss++;
+			
+			if(Per_Day.afternoonPnL > buffer) countLunchWin++;
+			if(Per_Day.afternoonPnL == buffer) countLunchNature++;
+			if(Per_Day.afternoonPnL < buffer) countLunchLoss++;
+			
+			if(Per_Day.morningPnL > buffer && Per_Day.afternoonPnL > buffer) countMLS1++;
+			if(Per_Day.morningPnL > buffer && Per_Day.afternoonPnL == buffer) countMLS2++;
+			if(Per_Day.morningPnL > buffer && Per_Day.afternoonPnL < buffer) countMLS3++;
+			if(Per_Day.morningPnL == buffer && Per_Day.afternoonPnL > buffer) countMLS4++;
+			if(Per_Day.morningPnL == buffer && Per_Day.afternoonPnL == buffer) countMLS5++;
+			if(Per_Day.morningPnL == buffer && Per_Day.afternoonPnL < buffer) countMLS6++;
+			if(Per_Day.morningPnL < buffer && Per_Day.afternoonPnL > buffer) countMLS7++;
+			if(Per_Day.morningPnL < buffer && Per_Day.afternoonPnL == buffer) countMLS8++;
+			if(Per_Day.morningPnL < buffer && Per_Day.afternoonPnL < buffer) countMLS9++;
 		}
+		averageMorningPnL = sumMorningPnL / totalDays;
+		averageLunchPnL = sumLunchPnL / totalDays;
 	}
 	
 	public void calAveragePnL()
