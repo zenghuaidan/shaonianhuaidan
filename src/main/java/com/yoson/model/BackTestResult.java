@@ -318,7 +318,7 @@ public class BackTestResult
 		countLunchLoss = 0;
 		
 		totalPnL = 0;
-		double buffer = 0;
+		double buffer = this.testSet.getMorningLunchCorrelationBuffer();
 		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
 		for (PerDayRecord Per_Day :  tempArray)
 		{

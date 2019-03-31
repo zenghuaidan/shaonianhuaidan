@@ -179,6 +179,7 @@ public class BackTestCSVWriter {
 		content.append((mainUIParam.isIgnoreLunchTime() ? "Yes" : "No") + ",");
 		content.append(mainUIParam.getAvgStep() + ",");
 		content.append((mainUIParam.isIncludeLastMarketDayData() ? "Yes" : "No") + ",");
+		content.append(mainUIParam.getMorningLunchCorrelationBuffer() + ",");
 		for (String month : backTestResult.monthPnlMap.keySet()) {
 			content.append(backTestResult.monthPnlMap.get(month) + ",");		
 		}
