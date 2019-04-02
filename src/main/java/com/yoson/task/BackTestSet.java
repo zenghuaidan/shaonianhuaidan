@@ -81,7 +81,7 @@ public class BackTestSet {
 			if(isMorning)
 				perDayRecord.morningPnL = perSecondRecord.getTotalPnl();
 			if(isAfternoon)
-				perDayRecord.afternoonPnL = perSecondRecord.getTotalPnl();
+				perDayRecord.afternoonPnL += perSecondRecord.getPnl();
 			
 			positiveSum += perSecondRecord.getPnl() > 0 ? perSecondRecord.getPnl() : 0;
 			negativeSum += perSecondRecord.getPnl() < 0 ? perSecondRecord.getPnl() : 0;
