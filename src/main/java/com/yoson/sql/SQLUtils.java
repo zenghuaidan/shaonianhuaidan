@@ -21,6 +21,8 @@ import com.yoson.model.MainUIParam;
 public class SQLUtils {
 	
 	public static final String schedule_data = "schedule_data";
+	
+	public static final String expiry_date = "expiry_date";
     
 	public static List<String> initScheduleData(MainUIParam mainUIParam) {
 		Session session = null;
@@ -99,6 +101,60 @@ public class SQLUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<String>();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static List<String> getExpiryDates() {
+		Session session = null;		
+		try {
+			session = getSession();
+			String sql = "select distinct date from  " + expiry_date + "  order by date desc";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return sqlQuery.list();			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<String>();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static void addExpiryDate(String date) {
+		Session session = null;		
+		try {
+			session = getSession();
+			session.getTransaction().begin();
+			String sql = "insert into " + expiry_date + "(date) values ('" + date + "')";
+			session.createSQLQuery(sql).executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static void deleteExpiryDate(String date) {
+		Session session = null;		
+		try {
+			session = getSession();
+			session.getTransaction().begin();
+			String sql = "delete from  " + expiry_date + " where date ='" + date + "'";
+			session.createSQLQuery(sql).executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			try {
 				session.close();				
