@@ -9,6 +9,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.ib.client.Order;
 import com.yoson.cms.controller.Global;
 import com.yoson.cms.controller.IndexController;
@@ -37,6 +39,21 @@ public class TaskScheduler {
 			if (strategy.getMainUIParam().isIncludeLastMarketDayData()) {
 				getLastMarketDayData(strategy);
 			}
+		}
+	}
+	
+	public static void saveAllStrategy() {
+		if(EClientSocketUtils.strategies != null) {
+			for (Strategy strategy : EClientSocketUtils.strategies) {
+				strategy.setRunningDate(DateUtils.yyyyMMdd().format(new Date()));
+			}
+			Gson gson = new GsonBuilder()
+					.excludeFieldsWithoutExposeAnnotation()
+					.create();
+			
+			String json = gson.toJson(EClientSocketUtils.strategies);
+			
+			BackTestCSVWriter.writeText(YosonEWrapper.getStrategyPath(), json, false);
 		}
 	}
 	
@@ -83,7 +100,8 @@ public class TaskScheduler {
 				long lunchStartTimeTo = DateUtils.HHmmss().parse(IndexController.mainUIParam.getLunchStartTimeTo()).getTime();
 				long time = DateUtils.HHmmss().parse(DateUtils.HHmmss().format(now)).getTime();
 				boolean isLunchTime = time >= lunchStartTimeFrom && time <= lunchStartTimeTo;
-				if (isLunchTime) {					
+				if (isLunchTime) {	
+					saveAllStrategy();
 					EClientSocketUtils.lunchBTStart = true;
 					// auto trigger the BT during lunch time
 					IndexController.runBTWithLiveData(EClientSocketUtils.contract.getSymbol() + "_" + EClientSocketUtils.id);
@@ -98,6 +116,7 @@ public class TaskScheduler {
 						&& StringUtils.isNotEmpty(EClientSocketUtils.contract.getSymbol())) {
 					Date endTime = DateUtils.yyyyMMddHHmm().parse(EClientSocketUtils.contract.getEndTime());
 					if(DateUtils.addSecond(endTime, 1) <= nowDateTimeLong && EClientSocketUtils.isConnected()) {
+						saveAllStrategy();
 						EClientSocketUtils.disconnect();
 
 						//trigger auto backtest, only the live have stop then can do the BT

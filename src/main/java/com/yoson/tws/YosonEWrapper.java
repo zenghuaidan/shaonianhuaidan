@@ -73,6 +73,10 @@ public class YosonEWrapper extends BasicEWrapper {
 //		return getPath(CLOSE);
 //	}
 	
+	public static String getStrategyPath() {
+		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "strategy.txt");
+	}
+	
 	public static String getConnectionPath() {
 		return FilenameUtils.concat(EClientSocketUtils.initAndReturnLiveDataFolder(), "connection.txt");
 	}

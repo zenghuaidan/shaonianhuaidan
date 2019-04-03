@@ -20,6 +20,8 @@ public class Strategy implements Serializable {
 	private long activeTime;
 	private int tradeCount;
 	private double pnl;
+	@Expose
+	private String runningDate;	
 //	private double morningPnl;
 	@Expose
 	private MainUIParam mainUIParam;
@@ -217,6 +219,14 @@ public class Strategy implements Serializable {
 
 	public void setOpenOrders(Set<Integer> openOrders) {
 		this.openOrders = openOrders;
+	}
+
+	public String getRunningDate() {
+		return runningDate;
+	}
+
+	public void setRunningDate(String runningDate) {
+		this.runningDate = runningDate;
 	}
 	
 }

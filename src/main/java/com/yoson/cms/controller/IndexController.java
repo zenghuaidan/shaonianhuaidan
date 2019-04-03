@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -351,14 +352,20 @@ public class IndexController  implements StatusCallBack {
 	
 	@RequestMapping("saveAllStrategy")
 	public void saveAllStrategy(HttpServletResponse response, HttpServletRequest request) throws IOException {
+		String result = getAllStrategyInCSV(EClientSocketUtils.strategies);
+		response.setContentType("APPLICATION/OCTET-STREAM");  
+		response.setHeader("Content-Disposition","attachment; filename=saveTemplate"+DateUtils.yyyyMMddHHmmss2().format(new Date()) + ".csv");
+		IOUtils.write(result, response.getOutputStream());
+		response.flushBuffer();	
+	}
+	
+	public String getAllStrategyInCSV(List<Strategy> strategies) {
+		List<String> headers = new ArrayList<String>();
+		StringBuilder items = new StringBuilder();
 		Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
-		
-		String json = gson.toJson(EClientSocketUtils.strategies);			
-		JsonElement jsonTree = gson.toJsonTree(EClientSocketUtils.strategies);
-		List<String> headers = new ArrayList<String>();
-		StringBuilder items = new StringBuilder();
+		JsonElement jsonTree = gson.toJsonTree(strategies);		
 		for(JsonElement strategiesJson : jsonTree.getAsJsonArray()) {
 			JsonObject asJsonObject = strategiesJson.getAsJsonObject();			
 			for(String key : asJsonObject.keySet()) {
@@ -381,10 +388,64 @@ public class IndexController  implements StatusCallBack {
 			}
 			items.append(System.lineSeparator());
 		}
-		String result = String.join(",", headers) + System.lineSeparator() + items;
+		return String.join(",", headers) + System.lineSeparator() + items;
+	}
+	
+	@ResponseBody
+	@RequestMapping("downloadLiveCombination")
+	public void downloadLiveCombination(HttpServletResponse response, HttpServletRequest request) throws IOException {
+		String dataFolder = InitServlet.createLiveDataFoderAndReturnPath();
+		
+		File[] files = new File(dataFolder).listFiles(new FilenameFilter() {
+		    public boolean accept(File dir, String name) {
+		        File f = new File(dir, name);
+		        if (f.isDirectory())
+		            return true;
+		        else
+		            return false;
+		    }
+		});
+		Map<String, String> result = new TreeMap<String, String>();
+		for(File file : files) {
+			String strategyPath = FilenameUtils.concat(file.getAbsolutePath(), "strategy.txt");
+			if(new File(strategyPath).exists()) {
+				FileInputStream fileInputStream = null;
+				String json = null;
+				try {					
+					fileInputStream = new FileInputStream(strategyPath);
+					json = IOUtils.toString(fileInputStream);
+				} catch (Exception e) {
+				} finally {
+					try { fileInputStream.close(); } catch (Exception e) {}
+				}
+				
+				if(!StringUtils.isBlank(json)) {
+					Type type = new TypeToken<ArrayList<Strategy>>() {}.getType();  
+					List<Strategy> strategies = new Gson().fromJson(json, type);
+					if(strategies != null && strategies.size() > 0) {
+						String runningDate = strategies.get(0).getRunningDate();
+						String key = runningDate;
+						if (result.containsKey(key)) {
+							for(int i = 1; ; i++) {
+								key = runningDate + "-" + i;
+								if(!result.containsKey(key)) break;
+							}
+						}
+						result.put(key, key + System.lineSeparator() + getAllStrategyInCSV(strategies) + System.lineSeparator());
+					}
+				}
+			}
+		}				
+
+		StringBuffer data = new StringBuffer();
+		
+		for(String key : result.keySet()) {
+			data.append(result.get(key));
+		}
+		
 		response.setContentType("APPLICATION/OCTET-STREAM");  
-		response.setHeader("Content-Disposition","attachment; filename=saveTemplate"+DateUtils.yyyyMMddHHmmss2().format(new Date()) + ".csv");
-		IOUtils.write(result, response.getOutputStream());
+		response.setHeader("Content-Disposition","attachment; filename=LiveCombination"+DateUtils.yyyyMMddHHmmss2().format(new Date()) + ".csv");
+		IOUtils.write(data.toString(), response.getOutputStream());
 		response.flushBuffer();	
 	}
 	
