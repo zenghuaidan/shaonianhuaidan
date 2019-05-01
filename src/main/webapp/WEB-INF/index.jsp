@@ -460,8 +460,9 @@
 								        </table>																				
 									</form>
 								  </td>	
-				        		  <td><input type="button" onclick="runByUploadCombination()" value="Run by Upload Combination"/></td>
-								  <td colspan="4"></td>					      							     
+				        		  <td><input type="button" onclick="loadCombination()" value="Load Combination"/></td>
+								  <td><input type="button" onclick="runByUploadCombination()" value="Run by Upload Combination"/></td>
+								  <td></td>
 							   </tr>
 							</table>
 						</td>						

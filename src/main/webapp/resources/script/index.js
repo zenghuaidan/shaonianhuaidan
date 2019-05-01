@@ -582,6 +582,7 @@ function runByUploadCombination() {
 		alert("Please select txt file to upload.");
 		return;
 	}
+	$("#combinationfm").attr("action", "runByUploadCombination");
 	var options = {
         success: function (data) {
         	if(!data){
@@ -597,6 +598,17 @@ function runByUploadCombination() {
    
    $("#combinationfm").ajaxForm(options);
    $("#combinationfm").ajaxSubmit(options);   
+}
+
+function loadCombination() {
+	var file = $("#combinationfm input[type=file]").val();
+	if (file == "" || file.split(".")[file.split(".").length - 1].toLocaleLowerCase() != "txt") {
+		alert("Please select txt file to upload.");
+		return;
+	}
+	$("#combinationfm").attr("action", "loadCombination");
+   
+    $("#combinationfm").submit();   
 }
 
 function runWithLiveTradingDataClick() {

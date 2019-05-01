@@ -59,11 +59,13 @@ import com.yoson.zip.ZipUtils;
 public class IndexController  implements StatusCallBack {
 	public static MainUIParam mainUIParam;
 	public static MainUIParam savedMainUIParam;
+	public static MainUIParam displayMainUIParam;
 	public static StringBuilder statusStr = new StringBuilder();
 
 	@RequestMapping("/")
 	public String index(Model model) {
-		model.addAttribute("mainUIParam", BackTestTask.running || IndexController.mainUIParam != null ? IndexController.mainUIParam : MainUIParam.getMainUIParam());
+		displayMainUIParam = displayMainUIParam != null ? displayMainUIParam : (BackTestTask.running || IndexController.mainUIParam != null ? IndexController.mainUIParam : MainUIParam.getMainUIParam());
+		model.addAttribute("mainUIParam", displayMainUIParam);
 		if(InitServlet.noQuery()) {
 			model.addAttribute("sources", new ArrayList<String>());
 			model.addAttribute("tickers", new ArrayList<String>());			
@@ -78,7 +80,7 @@ public class IndexController  implements StatusCallBack {
 		model.addAttribute("comment", InitServlet.getComment());
 		return "index";
 	}
-	
+
 	public ConnectionInfo getDefaultConnectionInfo() {
 		ConnectionInfo connectionInfo = new ConnectionInfo();
 		connectionInfo.setHost("127.0.0.1");
@@ -1001,7 +1003,21 @@ public class IndexController  implements StatusCallBack {
 			ex.printStackTrace();
 		}
 		return false;
-	}	
+	}
+	
+	@RequestMapping(value="/loadCombination", method={RequestMethod.POST})
+	public String loadCombination(MultipartFile combination, Model model) throws IOException {
+		try {
+			String ext = combination == null ? "" : combination.getOriginalFilename().substring(combination.getOriginalFilename().lastIndexOf('.')).toLowerCase();
+			if(ext.equals(".txt")) {
+				String json = IOUtils.toString(combination.getInputStream());
+				displayMainUIParam = new Gson().fromJson(json, MainUIParam.class);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return "redirect:/";
+	}
 	
 	@RequestMapping(path = "/runWithLiveTradingDataClick", method = {RequestMethod.POST})
 	public String runWithLiveTradingDataClick(@RequestBody MainUIParam mainUIParam, HttpServletRequest request) {
