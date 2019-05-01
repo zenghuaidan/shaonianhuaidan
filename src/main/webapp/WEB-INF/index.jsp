@@ -462,7 +462,7 @@
 								  </td>	
 				        		  <td><input type="button" onclick="loadCombination()" value="Load Combination"/></td>
 								  <td><input type="button" onclick="runByUploadCombination()" value="Run by Upload Combination"/></td>
-								  <td></td>
+								  <td colspan="3"></td>
 							   </tr>
 							</table>
 						</td>						
