@@ -1025,11 +1025,14 @@ public class IndexController  implements StatusCallBack {
 			}
 			
 			for(File file : files) {
-				if(!file.getAbsolutePath().endsWith("_TR.txt") && !file.getAbsolutePath().endsWith("_BA.txt"))
+				if(!file.getAbsolutePath().endsWith("_TR.txt") 
+					&& !file.getAbsolutePath().endsWith("_BA.txt")
+					&& !file.getAbsolutePath().endsWith("_TR_AHT.txt") 
+					&& !file.getAbsolutePath().endsWith("_BA_AHT.txt"))
 					continue;//only parse _TR.txt and _BA.txt file for HKEX data
 				FileInputStream input = null;				
 				try {
-					boolean isBA = file.getAbsolutePath().endsWith("_BA.txt");
+					boolean isBA = file.getAbsolutePath().endsWith("_BA.txt") || file.getAbsolutePath().endsWith("_BA_AHT.txt");
 					input = new FileInputStream(file);
 					List<String> lines = IOUtils.readLines(input);
 					for(String line : lines) {
