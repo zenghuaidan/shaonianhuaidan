@@ -55,6 +55,10 @@ public class TradePerSecondDetailsCSVWriter {
 			writer.append(",");
 			writer.append(mainUIParam.getBidDataField());
 			writer.append("\n");
+			writer.append("OC");
+			writer.append(",");
+			writer.append(mainUIParam.getOc() + "");
+			writer.append("\n");
 			writer.append("CP timer");
 			writer.append(",");
 			writer.append(mainUIParam.getCpTimer() + "");

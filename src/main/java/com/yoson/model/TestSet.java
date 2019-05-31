@@ -4,6 +4,8 @@ import com.google.gson.annotations.Expose;
 
 public class TestSet {
 	@Expose
+	private int oc;
+	@Expose
 	private int cpTimer;
 	@Expose
 	private double cpBuffer;
@@ -54,11 +56,12 @@ public class TestSet {
 
 	public TestSet() {}
 
-	public TestSet(int cpTimer, double cpBuffer, int cpHitRate, double cpSmooth, double estimationBuffer, double actionTrigger,
+	public TestSet(int oc, int cpTimer, double cpBuffer, int cpHitRate, double cpSmooth, double estimationBuffer, double actionTrigger,
 			int actionCounting, double tradeStopLossTrigger, double tradeStopLossTriggerPercent, double absoluteTradeStopLoss, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
 			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData, int avgStep, boolean includeLastMarketDayData, double morningLunchCorrelationBuffer) {
+		this.oc = oc;
 		this.cpTimer = cpTimer;
 		this.cpBuffer = cpBuffer;
 		this.cpHitRate = cpHitRate;
@@ -84,6 +87,14 @@ public class TestSet {
 		this.avgStep = avgStep;
 		this.includeLastMarketDayData = includeLastMarketDayData;
 		this.morningLunchCorrelationBuffer = morningLunchCorrelationBuffer;
+	}
+
+	public int getOc() {
+		return oc;
+	}
+
+	public void setOc(int oc) {
+		this.oc = oc;
 	}
 
 	public int getCpTimer() {
@@ -279,7 +290,8 @@ public class TestSet {
 	}
 
 	public String getKey() {
-		return getCpTimer()  +  "_" +
+		return getOc()  +  "_" +
+		getCpTimer()  +  "_" +
 		getCpBuffer() + "_" +
 		getCpHitRate() + "_" +
 		getCpSmooth() + "_" +

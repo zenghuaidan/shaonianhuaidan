@@ -326,6 +326,7 @@ function updateControlTab() {
 	    	var trs = "<tr>" +
 	    			"<td>Pannel Number</td>" +
 	    			"<td>Execute</td>" +
+	    			"<td>OC</td>" +
 	    			"<td>CP timer</td>" +
 	    			"<td>CP Buffer</td>" +
 	    			"<td>CP Hit Rate</td>" +
@@ -343,6 +344,7 @@ function updateControlTab() {
 	    		trs += "<tr>" +
 	    				"<td>" + data[i].strategyName + "</td>" +
 						"<td>" + data[i].active + "</td>" +
+						"<td>" + data[i].mainUIParam.oc + "</td>" +
 						"<td>" + data[i].mainUIParam.cpTimer + "</td>" +						
 						"<td>" + data[i].mainUIParam.cpBuffer + "</td>" +
 						"<td>" + data[i].mainUIParam.cpHitRate + "</td>" +
@@ -423,6 +425,7 @@ function getMainUIParam() {
 		}
 	}
 	return {
+	   "oc":$.trim($("[name='oc']").val()),
 	   "cpTimer":$.trim($("[name='cpTimer']").val()),
 	   "cpBuffer":$.trim($("[name='cpBuffer']").val()),
 	   "cpHitRate":$.trim($("[name='cpHitRate']").val()),
@@ -446,6 +449,8 @@ function getMainUIParam() {
 	   "source":$.trim($("[name='source']").val()) == '' ? $.trim($("[name='ticker']").val()) : $.trim($("[name='source']").val()),
 	   "ticker":$.trim($("[name='ticker']").val()),
 	   "fromSource":$.trim($("[name='ticker']").val()) == '',
+	   "ocTo":$.trim($("[name='ocTo']").val()),
+	   "ocLiteral":$.trim($("[name='ocLiteral']").val()),
 	   "cpTimerTo":$.trim($("[name='cpTimerTo']").val()),
 	   "cpTimerLiteral":$.trim($("[name='cpTimerLiteral']").val()),
 	   "cpBufferTo":$.trim($("[name='cpBufferTo']").val()),

@@ -33,6 +33,8 @@ public class MainUIParam extends TestSet {
 	
 	private int avgStepTo;
 	private int avgStepLiteral;
+	private int ocTo;
+	private int ocLiteral;
 	private int cpTimerTo;
 	private int cpTimerLiteral;
 	private double cpBufferTo;
@@ -155,6 +157,22 @@ public class MainUIParam extends TestSet {
 
 	public void setAvgStepLiteral(int avgStepLiteral) {
 		this.avgStepLiteral = avgStepLiteral;
+	}
+
+	public int getOcTo() {
+		return ocTo;
+	}
+
+	public void setOcTo(int ocTo) {
+		this.ocTo = ocTo;
+	}
+
+	public int getOcLiteral() {
+		return ocLiteral;
+	}
+
+	public void setOcLiteral(int ocLiteral) {
+		this.ocLiteral = ocLiteral;
 	}
 
 	public int getCpTimerTo() {
@@ -483,6 +501,10 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setAvgStepTo(5);
 		mainUIParam.setAvgStepLiteral(1);
 		
+		mainUIParam.setOc(50);
+		mainUIParam.setOcTo(50);
+		mainUIParam.setOcLiteral(1);
+		
 		mainUIParam.setCpTimer(1500);
 		mainUIParam.setCpTimerTo(1500);
 		mainUIParam.setCpTimerLiteral(1);
@@ -570,6 +592,7 @@ public class MainUIParam extends TestSet {
 			mainUIParam.setTradeDataField(params.get(index++)[1]);
 			mainUIParam.setAskDataField(params.get(index++)[1]);
 			mainUIParam.setBidDataField(params.get(index++)[1]);
+			mainUIParam.setOc(Integer.parseInt(params.get(index++)[1]));
 			mainUIParam.setCpTimer(Integer.parseInt(params.get(index++)[1]));
 			mainUIParam.setCpBuffer(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setCpHitRate(Integer.parseInt(params.get(index++)[1]));

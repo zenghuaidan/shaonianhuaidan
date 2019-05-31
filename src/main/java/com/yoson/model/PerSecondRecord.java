@@ -23,6 +23,7 @@ public class PerSecondRecord {
 	private int reference;	
 	
 	private int cpCounting;
+	private int oc;
 	private double cp;
 	private double cps;
 	private int cpAccount;
@@ -95,10 +96,10 @@ public class PerSecondRecord {
 	}
 	
 	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList, ScheduleData scheduleDataPerSecond, int checkMarketTime) throws ParseException {
-		this(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, checkMarketTime, null);
+		this(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, checkMarketTime, null, null);
 	}
 	
-	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList, ScheduleData scheduleDataPerSecond, int checkMarketTime, Map<Double, Integer> lastTradeCountMap) throws ParseException {
+	public PerSecondRecord(List<ScheduleData> dailyScheduleData, TestSet testSet, List<PerSecondRecord> dailyPerSecondRecordList, ScheduleData scheduleDataPerSecond, int checkMarketTime, Map<Double, Integer> lastTradeCountMap1, Map<Double, Integer> lastTradeCountMap2) throws ParseException {
 		PerSecondRecord lastSecondRecord = dailyPerSecondRecordList.size() == 0 ? new PerSecondRecord() : dailyPerSecondRecordList.get(dailyPerSecondRecordList.size() - 1);
 		this.time = scheduleDataPerSecond.getId();
 		this.timeStr = scheduleDataPerSecond.getDateTimeStr();				
@@ -115,7 +116,8 @@ public class PerSecondRecord {
 //		}
 		initCheckMarketTime(dailyScheduleData, scheduleDataPerSecond, testSet, checkMarketTime);
 		this.tCounter = checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
-		initCPCounting(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap);
+		initOC(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap1);
+		initCPCounting(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap2);
 		initCP(testSet);
 		initCPS(lastSecondRecord, testSet);
 		initCPAccount(lastSecondRecord, testSet);
@@ -150,6 +152,34 @@ public class PerSecondRecord {
 		} else {
 			this.checkMarketTime = checkMarketTime;
 		}
+	}
+	
+	public void initOC(List<ScheduleData> dailyScheduleData, TestSet testSet, PerSecondRecord lastSecondRecord, Map<Double, Integer> lastTradeCountMap) {
+		if (this.tCounter <= testSet.getCpTimer() && this.tCounter > 0) {
+			if(lastTradeCountMap != null) {
+				if(this.tCounter == 1) { 
+					lastTradeCountMap.clear();
+				}
+				if(lastTradeCountMap.containsKey(this.lastTrade)) lastTradeCountMap.replace(this.lastTrade, lastTradeCountMap.get(this.lastTrade) + 1);
+				else lastTradeCountMap.put(this.lastTrade, 1);
+				for(double trade : lastTradeCountMap.keySet()) {
+					if (isWithinCpBuffer(trade, this.lastTrade, testSet.getCpBuffer() * testSet.getUnit())) {
+						this.oc += lastTradeCountMap.get(trade);
+					}
+				}
+			} else {				
+				if(this.lastTrade == lastSecondRecord.lastTrade) {
+					this.oc = lastSecondRecord.oc + 1;
+				} else {				
+					for(int i = this.reference - this.tCounter; i < this.reference - 1; i++) {
+						if(isWithinCpBuffer(dailyScheduleData.get(i).getLastTrade(), this.lastTrade, testSet.getCpBuffer() * testSet.getUnit())) {
+							this.oc++;
+						}
+					}
+					this.oc++;
+				}
+			}
+		}		
 	}
 	
 	public void initCPCounting(List<ScheduleData> dailyScheduleData, TestSet testSet, PerSecondRecord lastSecondRecord, Map<Double, Integer> lastTradeCountMap) {
@@ -210,10 +240,10 @@ public class PerSecondRecord {
 	}
 	
 	public void initCP(TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
-		if (this.cpCounting != 0 && this.cpCounting >= testSet.getCpHitRate()) {
+		if(this.oc == 0 && this.cpCounting ==0) return;		
+		if(this.tCounter >= testSet.getCpTimer() && this.cpCounting >= testSet.getCpHitRate() || this.oc >= testSet.getOc()) { 
 			this.cp = this.lastTrade;
-		}
+		}				
 	}
 	
 	public void initCPS(PerSecondRecord lastSecondRecord, TestSet testSet) {
@@ -723,6 +753,14 @@ public class PerSecondRecord {
 
 	public void setActualLastTrade(double actualLastTrade) {
 		this.actualLastTrade = actualLastTrade;
+	}
+
+	public int getOc() {
+		return oc;
+	}
+
+	public void setOc(int oc) {
+		this.oc = oc;
 	}
 
 }

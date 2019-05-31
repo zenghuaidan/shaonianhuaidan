@@ -72,7 +72,7 @@ public class BackTestCSVWriter {
 	}
 	
 	public static String getATradingDayHeader() {
-		return "Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,CP counting,CP,CPS,CPS Av. L,CP Acc count,Previous Max CPAC,counting after CP,Est.,ON/ OFF,Pre.Action,Action,smooth Action,Position,Pos. counting,MTM,Max. MTM,PnL,No. Trades,Total PnL\n";
+		return "Time,Bid Price,Ask Price,Last Trade,Check Market Time,Reference,OC,CP counting,CP,CPS,CPS Av. L,CP Acc count,Previous Max CPAC,counting after CP,Est.,ON/ OFF,Pre.Action,Action,smooth Action,Position,Pos. counting,MTM,Max. MTM,PnL,No. Trades,Total PnL\n";
 	}
 	
 	public static String getBTTradeHeader() {
@@ -100,7 +100,7 @@ public class BackTestCSVWriter {
 			monthColums.add(TotalPnl + month);
 		}
 		String monthColumStr = String.join(",", monthColums);
-		return "Test no.,key,version,Source,CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length,sum of morning PnL,sum of lunch PnL,average morning PnL,average lunch PnL,Count of MLS case 1,Count of MLS case 2,Count of MLS case 3,Count of MLS case 4,Count of MLS case 5,Count of MLS case 6,Count of MLS case 7,Count of MLS case 8,Count of MLS case 9,count of morning win,count of morning nature,count of morning loss,count of lunch win,count of lunch nature,count of lunch loss," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time,Average Step Size,Include Last Market Day Data,Morning Lunch Correlation Buffer," + monthColumStr + "\n";
+		return "Test no.,key,version,Source,OC,CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length,sum of morning PnL,sum of lunch PnL,average morning PnL,average lunch PnL,Count of MLS case 1,Count of MLS case 2,Count of MLS case 3,Count of MLS case 4,Count of MLS case 5,Count of MLS case 6,Count of MLS case 7,Count of MLS case 8,Count of MLS case 9,count of morning win,count of morning nature,count of morning loss,count of lunch win,count of lunch nature,count of lunch loss," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time,Average Step Size,Include Last Market Day Data,Morning Lunch Correlation Buffer," + monthColumStr + "\n";
 	}
 
 	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult) {
@@ -109,6 +109,7 @@ public class BackTestCSVWriter {
 		.append(backTestResult.testSet.getKey()  +  ",")
 		.append(mainUIParam.getVersion() + ",")
 		.append(mainUIParam.getSource() + ",")
+		.append(backTestResult.testSet.getOc() + ",")
 		.append(backTestResult.testSet.getCpTimer() + ",")
 		.append(backTestResult.testSet.getCpBuffer() + ",")
 		.append(backTestResult.testSet.getCpHitRate() + ",")
@@ -423,6 +424,7 @@ public class BackTestCSVWriter {
 		content.append("Index performance," + perDayRecord.indexPerformance + "\n");
 		content.append("Performance in pts," + perDayRecord.performanceInPts + "\n");
 		content.append("Average HL Diff.," + perDayRecord.averageHLDiff + "\n");
+		content.append("OC," + mainUIParam.getOc() + "\n");
 		content.append("CP timer," + mainUIParam.getCpTimer() + "\n");
 		content.append("CP Buffer," + mainUIParam.getCpBuffer() + "\n");
 		content.append("CP Hit Rate," + mainUIParam.getCpHitRate() + "\n");
@@ -443,6 +445,7 @@ public class BackTestCSVWriter {
 		 content.append(perSecondRecord.getLastTrade() + ",");
 		 content.append(perSecondRecord.getCheckMarketTime() + ",");
 		 content.append(perSecondRecord.getReference() + ",");
+		 content.append(perSecondRecord.getOc() + ",");
 		 content.append(perSecondRecord.getCpCounting() + ",");
 		 content.append(perSecondRecord.getCp() + ",");
 		 content.append(perSecondRecord.getCps() + ",");

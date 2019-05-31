@@ -23,7 +23,8 @@ public class BackTestSet {
 	{		
 		long start = System.currentTimeMillis();
 		List<PerSecondRecord> dailyPerSecondRecordList = new ArrayList<PerSecondRecord>();
-		Map<Double, Integer> lastTradeMap = new HashMap<Double, Integer>();
+		Map<Double, Integer> lastTradeMap1 = new HashMap<Double, Integer>();
+		Map<Double, Integer> lastTradeMap2 = new HashMap<Double, Integer>();
 //		List<PerSecondRecord> afternoonPerSecondRecordList = new ArrayList<PerSecondRecord>();
 		PerDayRecord perDayRecord = new PerDayRecord(new Date(dailyScheduleData.get(dailyScheduleData.size() - 1).getId()));
 		
@@ -52,7 +53,7 @@ public class BackTestSet {
 			boolean isValidateTime = time >= marketStartTime && time <= marketCloseTime;
 			PerSecondRecord perSecondRecord = null;
 			if (isMorning || isAfternoon || mainUIParam.isIgnoreLunchTime() && isValidateTime) {
-				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()), lastTradeMap);
+				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()), lastTradeMap1, lastTradeMap2);
 			} else {
 				continue;
 			}
@@ -108,7 +109,7 @@ public class BackTestSet {
 				
 				if (perSecondRecord.getPnl() >= mainUIParam.getPnlThreshold()) {
 					String key = StringUtils.join(scheduleDataPerSecond.getDateStr() , "-" , scheduleDataPerSecond.getTimeStr().replaceAll(":", "-") , "#"
-							, testSet.getCpTimer() , "_" , testSet.getCpBuffer() , "_" , testSet.getCpHitRate() , "_" , testSet.getCpSmooth() , "_"
+							, testSet.getOc() , "_" , testSet.getCpTimer() , "_" , testSet.getCpBuffer() , "_" , testSet.getCpHitRate() , "_" , testSet.getCpSmooth() , "_"
 							, testSet.getEstimationBuffer() , "_" , testSet.getActionTrigger() , "_" , testSet.getActionCounting() 
 							, "_" , testSet.getTradeStopLossTrigger() , "_" , testSet.getTradeStopLossTriggerPercent() , "_" , testSet.getAbsoluteTradeStopLoss());
 					BackTestTask.allPositivePnlResult.put(key, sb.toString());

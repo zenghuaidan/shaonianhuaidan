@@ -248,6 +248,13 @@
 							      <td><input name="avgStepLiteral" value="${mainUIParam.avgStepLiteral}" type="text"/></td>
 							      <td colspan="2"></td>
 							   </tr>
+   							   <tr>
+							      <td>OC</td>
+							      <td><input name="oc" value="${mainUIParam.oc}" type="text"/></td>
+							      <td><input name="ocTo" value="${mainUIParam.ocTo}" type="text"/></td>
+							      <td><input name="ocLiteral" value="${mainUIParam.ocLiteral}" type="text"/></td>
+							      <td colspan="2"></td>
+							   </tr>
 							   <tr>
 							      <td>CP timer</td>
 							      <td><input name="cpTimer" value="${mainUIParam.cpTimer}" type="text"/></td>
@@ -761,6 +768,11 @@
 								   <tr>
 								      <td>Average Step Size</td>
 								      <td><input value="${strategy.mainUIParam.avgStep}" type="text"/></td>
+								      <td colspan="4"></td>
+								   </tr>
+   								   <tr>
+								      <td>OC</td>
+								      <td><input value="${strategy.mainUIParam.oc}" type="text"/></td>
 								      <td colspan="4"></td>
 								   </tr>
 								   <tr>
