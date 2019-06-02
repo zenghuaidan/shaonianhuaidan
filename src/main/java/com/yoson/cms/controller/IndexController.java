@@ -1110,7 +1110,7 @@ public class IndexController  implements StatusCallBack {
 					}											
 				}
 				String dateStr = DateUtils.yyyyMMdd().format(date);
-				SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker, isToDatabase);						
+				SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker, isToDatabase, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime);						
 				if(tradeMap.size() == 0) uploadStatus.add("<font size='3' color='red'>Warning: Not Trade data for " + day + "</font>");
 				if(askMap.size() == 0 && bidMap.size() == 0) uploadStatus.add("<font size='3' color='red'>Warning: Not BA data for " + day + "</font>");
 				writingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace, YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap));
@@ -1248,7 +1248,7 @@ public class IndexController  implements StatusCallBack {
 									uploadStatus.add("Parsing data(" + DateUtils.yyyyMMdd().format(date) + ") for " + sheet);
 									validateSheet = true;
 								}
-								SQLUtils.deleteScheduledDataRecordByDate(DateUtils.yyyyMMdd().format(date), uploadTicker, isToDatabase);	
+								SQLUtils.deleteScheduledDataRecordByDate(DateUtils.yyyyMMdd().format(date), uploadTicker, isToDatabase, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime);	
 							} else if(validateSheet && rowIndex >= 3) {
 								try {
 									Date tradeDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(1));

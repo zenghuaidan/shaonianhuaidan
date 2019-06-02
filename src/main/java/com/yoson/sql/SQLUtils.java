@@ -144,6 +144,26 @@ public class SQLUtils {
 		}
 	}
 	
+	public static void deleteScheduledDataRecordByDate(String dateStr, String ticker, boolean isToDatabase, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime) {
+		if(StringUtils.isBlank(dateStr) || StringUtils.isBlank(ticker) || !isToDatabase) return;
+		Session session = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String sql = "delete from " + SCHEDULE_DATA_TABLE + " where date='" + dateStr + "' and ticker='" + ticker+ "' and (time>='" + dataStartTime + "' and time<='" + lunchStartTime + "' or time>='" + lunchEndTime + "' and time<='" + lunchEndTime + "')";
+			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
+			sqlQuery.executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
 	public static String getSummary(String ticker) {
 		Session session = null;
 		List<String> values = new ArrayList<String>();
