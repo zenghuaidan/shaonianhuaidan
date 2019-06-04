@@ -242,9 +242,12 @@ public class PerSecondRecord {
 	
 	public void initCP(TestSet testSet) {
 		if(this.oc == 0 && this.cpCounting ==0) return;		
-		if(this.tCounter >= testSet.getCpTimer() && this.cpCounting >= testSet.getCpHitRate() || this.oc >= testSet.getOc()) { 
+		if(this.tCounter >= testSet.getCpTimer()) { 
+			if(this.cpCounting >= testSet.getCpHitRate())
+				this.cp = this.lastTrade;
+		} else if(this.oc >= testSet.getOc()) { 
 			this.cp = this.lastTrade;
-		}				
+		}			
 	}
 	
 	public void initCPS(PerSecondRecord lastSecondRecord, TestSet testSet) {		
