@@ -1,6 +1,7 @@
 package com.yoson.model;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -111,7 +112,7 @@ public class PerSecondRecord {
 		initBidPriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
 		initLastTradePriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
 		//2015-01-19  9:41:16
-//		if ("2015-01-19 11:58:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
+//		if ("2019-05-10 11:04:10".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 //			System.out.println("debug point");
 //		}
 		initCheckMarketTime(dailyScheduleData, scheduleDataPerSecond, testSet, checkMarketTime);
@@ -246,8 +247,7 @@ public class PerSecondRecord {
 		}				
 	}
 	
-	public void initCPS(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
+	public void initCPS(PerSecondRecord lastSecondRecord, TestSet testSet) {		
 		if(this.cp != 0) {
 			this.cps = cp;
 		} else if (lastSecondRecord.getCps() != 0 && Math.abs(this.lastTrade - lastSecondRecord.getCps()) > testSet.getCpSmooth() * testSet.getUnit()) {
@@ -258,7 +258,6 @@ public class PerSecondRecord {
 	}
 	
 	public void initCPAccount(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
 		if (lastSecondRecord.getCps() == 0 && this.cps != 0) {
 			this.cpAccount = 1;
 		} else if (lastSecondRecord.getCps() != 0 && this.cps != 0) {
@@ -267,7 +266,6 @@ public class PerSecondRecord {
 	}
 	
 	public void initCPSAverageAndPreviousMaxCPAC(List<ScheduleData> dailyScheduleData, List<PerSecondRecord> dailyPerSecondRecordList, PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
 		if (this.cpAccount == 0) {
 			this.cpsAverage = lastSecondRecord.getCpsAverage();
 			this.previousMaxCPAC = lastSecondRecord.getPreviousMaxCPAC();
@@ -298,7 +296,6 @@ public class PerSecondRecord {
 	}
 
 	public void initCountingAfterCP(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
 		if (this.cps != 0) {
 			this.countingAfterCP = 0;
 		} else if(lastSecondRecord.getCountingAfterCP() != 0) {
@@ -309,7 +306,6 @@ public class PerSecondRecord {
 	}
 	
 	public void initEst(PerSecondRecord lastSecondRecord, TestSet testSet) {
-		if(this.tCounter <= testSet.getCpTimer()) return;
 		if (this.cpsAverage !=0) {//HSI
 //		if (!(this.cpsAverage ==0 || (lastSecondRecord.getCountingAfterCP() == 0 && lastSecondRecord.getEst() == 0))) {//KM1_v3	
 			if(this.cpsAverage != lastSecondRecord.getCpsAverage() 
