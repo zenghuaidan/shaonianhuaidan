@@ -33,7 +33,7 @@ public class PerSecondRecord {
 	private double previousMaxCPAC;
 	private int countingAfterCP;
 	private double est;
-	private String offOn;
+	private String offOn = OFF;
 	private int preAction;
 	private int action;
 	private int smoothAction;
@@ -118,26 +118,28 @@ public class PerSecondRecord {
 		initCheckMarketTime(dailyScheduleData, scheduleDataPerSecond, testSet, checkMarketTime);
 		this.tCounter = checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
 		initOC(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap1);
-		initCPCounting(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap2);
-		initCP(testSet);
-		initCPS(lastSecondRecord, testSet);
-		initCPAccount(lastSecondRecord, testSet);
-		initCPSAverageAndPreviousMaxCPAC(dailyScheduleData, dailyPerSecondRecordList, lastSecondRecord, testSet);
-		initCountingAfterCP(lastSecondRecord, testSet);
-		initEst(lastSecondRecord, testSet);
-		initOffOn(lastSecondRecord);
-		initAction(lastSecondRecord, testSet);
-		initPreAction(lastSecondRecord);
-		initSmoothAction(lastSecondRecord, testSet);
-		initPosition(lastSecondRecord);
-		initMtm();
-		initPosCounting(lastSecondRecord);
-		initMaxMtm(dailyPerSecondRecordList, lastSecondRecord);
-		initPnl(lastSecondRecord);
+		if(testSet.isIncludeMorningData() || dailyPerSecondRecordList.size() == 0 || tCounter != 1){
+			initCPCounting(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap2);
+			initCP(testSet);
+			initCPS(lastSecondRecord, testSet);
+			initCPAccount(lastSecondRecord, testSet);
+			initCPSAverageAndPreviousMaxCPAC(dailyScheduleData, dailyPerSecondRecordList, lastSecondRecord, testSet);
+			initCountingAfterCP(lastSecondRecord, testSet);
+			initEst(lastSecondRecord, testSet);
+			initOffOn(lastSecondRecord);
+			initAction(lastSecondRecord, testSet);
+			initPreAction(lastSecondRecord);
+			initSmoothAction(lastSecondRecord, testSet);
+			initPosition(lastSecondRecord);
+			initMtm();
+			initPosCounting(lastSecondRecord);
+			initMaxMtm(dailyPerSecondRecordList, lastSecondRecord);
+			initPnl(lastSecondRecord);
+			initTradeCount(lastSecondRecord);
+			initPc(lastSecondRecord);
+		}
 		initTotalPnl(lastSecondRecord);
-		initTradeCount(lastSecondRecord);
 		initTotalTrades(lastSecondRecord);
-		initPc(lastSecondRecord);
 	}
 	
 	public void initCheckMarketTime(List<ScheduleData> dailyScheduleData, ScheduleData scheduleDataPerSecond, TestSet testSet, int checkMarketTime) throws ParseException {
