@@ -112,13 +112,16 @@ public class PerSecondRecord {
 		initBidPriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
 		initLastTradePriceData(lastSecondRecord, testSet, dailyScheduleData, scheduleDataPerSecond);
 		//2015-01-19  9:41:16
-//		if ("2019-05-10 11:04:10".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
+//		if ("2015-09-15 13:00:00".equals(DateUtils.yyyyMMddHHmmss().format(new Date(time)))) {
 //			System.out.println("debug point");
 //		}
 		initCheckMarketTime(dailyScheduleData, scheduleDataPerSecond, testSet, checkMarketTime);
 		this.tCounter = checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
+		boolean noIncludeMorningDataAndLunchStart = !testSet.isIncludeMorningData() && scheduleDataPerSecond.getTimeStr().equals(testSet.getLunchStartTimeTo());
+		setMap(lastTradeCountMap1, noIncludeMorningDataAndLunchStart);
+		setMap(lastTradeCountMap2, noIncludeMorningDataAndLunchStart);
 		initOC(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap1);
-		if(testSet.isIncludeMorningData() || dailyPerSecondRecordList.size() == 0 || tCounter != 1){
+		if(!noIncludeMorningDataAndLunchStart){
 			initCPCounting(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap2);
 			initCP(testSet);
 			initCPS(lastSecondRecord, testSet);
@@ -142,6 +145,15 @@ public class PerSecondRecord {
 		initTotalTrades(lastSecondRecord);
 	}
 	
+	public void setMap(Map<Double, Integer> lastTradeCountMap, boolean noIncludeMorningDataAndLunchStart) {
+		if(lastTradeCountMap == null) return;
+		if(noIncludeMorningDataAndLunchStart) { 
+			lastTradeCountMap.clear();
+		}
+		if(lastTradeCountMap.containsKey(this.lastTrade)) lastTradeCountMap.replace(this.lastTrade, lastTradeCountMap.get(this.lastTrade) + 1);
+		else lastTradeCountMap.put(this.lastTrade, 1);
+	}
+	
 	public void initCheckMarketTime(List<ScheduleData> dailyScheduleData, ScheduleData scheduleDataPerSecond, TestSet testSet, int checkMarketTime) throws ParseException {
 		if(scheduleDataPerSecond.isLastMarketDayData()) {
 			this.checkMarketTime = 0;
@@ -160,11 +172,6 @@ public class PerSecondRecord {
 	public void initOC(List<ScheduleData> dailyScheduleData, TestSet testSet, PerSecondRecord lastSecondRecord, Map<Double, Integer> lastTradeCountMap) {
 		if (this.tCounter <= testSet.getCpTimer() && this.tCounter > 0) {
 			if(lastTradeCountMap != null) {
-				if(this.tCounter == 1) { 
-					lastTradeCountMap.clear();
-				}
-				if(lastTradeCountMap.containsKey(this.lastTrade)) lastTradeCountMap.replace(this.lastTrade, lastTradeCountMap.get(this.lastTrade) + 1);
-				else lastTradeCountMap.put(this.lastTrade, 1);
 				for(double trade : lastTradeCountMap.keySet()) {
 					if (isWithinCpBuffer(trade, this.lastTrade, testSet.getCpBuffer() * testSet.getUnit())) {
 						this.oc += lastTradeCountMap.get(trade);
@@ -195,12 +202,7 @@ public class PerSecondRecord {
 //					this.cpCounting++;
 //				}
 		
-		if(lastTradeCountMap != null) {// this lastTradeCountMap just keep the trade count in cptimer range 
-			if(this.tCounter == 1) { 
-				lastTradeCountMap.clear();
-			}
-			if(lastTradeCountMap.containsKey(this.lastTrade)) lastTradeCountMap.replace(this.lastTrade, lastTradeCountMap.get(this.lastTrade) + 1);
-			else lastTradeCountMap.put(this.lastTrade, 1);			
+		if(lastTradeCountMap != null) {// this lastTradeCountMap just keep the trade count in cptimer range 			
 			if (this.tCounter > testSet.getCpTimer()) {
 				double obsoluteLastTrade = dailyScheduleData.get(this.reference - testSet.getCpTimer() - 1).getLastTrade();
 				if(lastTradeCountMap.containsKey(obsoluteLastTrade)) {//the obsolute trade(previous first one in the list) is not in range again, should do a count down
