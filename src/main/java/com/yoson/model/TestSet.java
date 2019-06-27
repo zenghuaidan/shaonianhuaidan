@@ -51,8 +51,6 @@ public class TestSet {
 	private int avgStep;
 	@Expose
 	private boolean includeLastMarketDayData;
-	@Expose
-	private double morningLunchCorrelationBuffer;
 
 	public TestSet() {}
 
@@ -60,7 +58,7 @@ public class TestSet {
 			int actionCounting, double tradeStopLossTrigger, double tradeStopLossTriggerPercent, double absoluteTradeStopLoss, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
-			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData, int avgStep, boolean includeLastMarketDayData, double morningLunchCorrelationBuffer) {
+			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData, int avgStep, boolean includeLastMarketDayData) {
 		this.oc = oc;
 		this.cpTimer = cpTimer;
 		this.cpBuffer = cpBuffer;
@@ -86,7 +84,6 @@ public class TestSet {
 		this.includeMorningData = includeMorningData;
 		this.avgStep = avgStep;
 		this.includeLastMarketDayData = includeLastMarketDayData;
-		this.morningLunchCorrelationBuffer = morningLunchCorrelationBuffer;
 	}
 
 	public int getOc() {
@@ -279,14 +276,6 @@ public class TestSet {
 
 	public void setIncludeLastMarketDayData(boolean includeLastMarketDayData) {
 		this.includeLastMarketDayData = includeLastMarketDayData;
-	}
-
-	public double getMorningLunchCorrelationBuffer() {
-		return morningLunchCorrelationBuffer;
-	}
-
-	public void setMorningLunchCorrelationBuffer(double morningLunchCorrelationBuffer) {
-		this.morningLunchCorrelationBuffer = morningLunchCorrelationBuffer;
 	}
 
 	public String getKey() {
