@@ -13,7 +13,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
-import com.yoson.chart.chartWriter;
 import com.yoson.model.BackTestResult;
 import com.yoson.model.MainUIParam;
 import com.yoson.model.PerDayRecord;
@@ -198,9 +197,6 @@ public class BackTestCSVWriter {
 			.append("\n");
 			
 			
-			if (mainUIParam.isOutputChart()) {			
-				new chartWriter(mainUIParam.getResultPath(), mainUIParam.getUnit(), perDayRecord);					
-			}
 		}
 		BackTestTask.allProfitAndLossResults.append("\n");		
 	}					
