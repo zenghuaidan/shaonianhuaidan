@@ -28,8 +28,6 @@ public class MainUIParam extends TestSet {
 	@Expose
 	private boolean fromSource;
 	private String version;
-	private String nForPnl;
-	private boolean matrixFile;
 	
 	private int avgStepTo;
 	private int avgStepLiteral;
@@ -131,14 +129,6 @@ public class MainUIParam extends TestSet {
 
 	public void setVersion(String version) {
 		this.version = version;
-	}
-	
-	public String getnForPnl() {
-		return nForPnl;
-	}
-
-	public void setnForPnl(String nForPnl) {
-		this.nForPnl = nForPnl;
 	}
 
 	public int getAvgStepTo() {
@@ -428,14 +418,6 @@ public class MainUIParam extends TestSet {
 	public void setIgnoreLunchTime(boolean ignoreLunchTime) {
 		this.ignoreLunchTime = ignoreLunchTime;
 	}
-
-	public boolean isMatrixFile() {
-		return matrixFile;
-	}
-
-	public void setMatrixFile(boolean matrixFile) {
-		this.matrixFile = matrixFile;
-	}	
 
 	public boolean isOutputDataOpen() {
 		return outputDataOpen;

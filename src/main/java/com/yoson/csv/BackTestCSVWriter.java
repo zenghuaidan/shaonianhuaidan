@@ -3,20 +3,16 @@ package com.yoson.csv;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
-import com.opencsv.CSVReader;
 import com.yoson.chart.chartWriter;
 import com.yoson.model.BackTestResult;
 import com.yoson.model.MainUIParam;
@@ -26,10 +22,6 @@ import com.yoson.task.BackTestTask;
 
 public class BackTestCSVWriter {	
 	public static final String profitAndLossFileName = "Back Test ProfitAndLoss.csv";
-	public static final String morningProfitAndLossFileName = "Back Test First Half ProfitAndLoss.csv";
-	public static final String afternoonProfitAndLossFileName = "Back Test Second Half ProfitAndLoss.csv";
-	public static final String profitAndLossByDateFileName = "Back Test ProfitAndLoss By Date.csv";
-	public static final String profitAndLossByDateRangeFileName = "Back Test ProfitAndLoss By Date Range.csv";
 	public static final String btSummaryFileName = "BT_Summary.csv";
 	public static final String btPnlFileName = "BT_PnL.csv";
 	public static final String btTradeFileName = "BT_Trade.csv";
@@ -100,7 +92,7 @@ public class BackTestCSVWriter {
 			monthColums.add(TotalPnl + month);
 		}
 		String monthColumStr = String.join(",", monthColums);
-		return "Test no.,key,version,Source,CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length,sum of morning PnL,sum of lunch PnL,average morning PnL,average lunch PnL,Count of MLS case 1,Count of MLS case 2,Count of MLS case 3,Count of MLS case 4,Count of MLS case 5,Count of MLS case 6,Count of MLS case 7,Count of MLS case 8,Count of MLS case 9,count of morning win,count of morning nature,count of morning loss,count of lunch win,count of lunch nature,count of lunch loss," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time,Average Step Size,Include Last Market Day Data,Morning Lunch Correlation Buffer," + monthColumStr + "\n";
+		return "Test no.,key,version,Source,CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length,sum of morning PnL,sum of lunch PnL,average morning PnL,average lunch PnL," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time,Average Step Size,Include Last Market Day Data,Morning Lunch Correlation Buffer," + monthColumStr + "\n";
 	}
 
 	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult) {
@@ -154,22 +146,7 @@ public class BackTestCSVWriter {
 		.append(backTestResult.sumMorningPnL + ",")
 		.append(backTestResult.sumLunchPnL + ",")
 		.append(backTestResult.averageMorningPnL + ",")
-		.append(backTestResult.averageLunchPnL + ",")
-		.append(backTestResult.countMLS1 + ",")
-		.append(backTestResult.countMLS2 + ",")
-		.append(backTestResult.countMLS3 + ",")
-		.append(backTestResult.countMLS4 + ",")
-		.append(backTestResult.countMLS5 + ",")
-		.append(backTestResult.countMLS6 + ",")
-		.append(backTestResult.countMLS7 + ",")
-		.append(backTestResult.countMLS8 + ",")
-		.append(backTestResult.countMLS9 + ",")
-		.append(backTestResult.countMorningWin + ",")
-		.append(backTestResult.countMorningNature + ",")
-		.append(backTestResult.countMorningLoss + ",")
-		.append(backTestResult.countLunchWin + ",")
-		.append(backTestResult.countLunchNature + ",")
-		.append(backTestResult.countLunchLoss + ",");
+		.append(backTestResult.averageLunchPnL + ",");
 		for (int year : backTestResult.yearPnlMap.keySet()) {
 			content.append(backTestResult.yearPnlMap.get(year) + ",");		
 		}
@@ -196,16 +173,10 @@ public class BackTestCSVWriter {
 			}
 			allProfitAndLossResultsHeader.append("\n");
 			BackTestTask.allProfitAndLossResults.append(allProfitAndLossResultsHeader);
-			BackTestTask.allMorningProfitAndLossResults.append(allProfitAndLossResultsHeader);
-			BackTestTask.allAfternoonProfitAndLossResults.append(allProfitAndLossResultsHeader);
 		}
-		BackTestTask.allProfitAndLossResults.append(id + "," + backTestResult.testSet.getKey()  +  ",");
-		BackTestTask.allMorningProfitAndLossResults.append(id + "," + backTestResult.testSet.getKey()  +  ",");
-		BackTestTask.allAfternoonProfitAndLossResults.append(id + "," + backTestResult.testSet.getKey()  +  ",");
+		BackTestTask.allProfitAndLossResults.append(id + "," + backTestResult.testSet.getKey()  +  ",");		
 		for (PerDayRecord perDayRecord : backTestResult.dayRecords) {
-			BackTestTask.allProfitAndLossResults.append(perDayRecord.totalPnL + ",");
-			BackTestTask.allMorningProfitAndLossResults.append(perDayRecord.morningPnL + ",");
-			BackTestTask.allAfternoonProfitAndLossResults.append(perDayRecord.afternoonPnL + ",");
+			BackTestTask.allProfitAndLossResults.append(perDayRecord.totalPnL + ",");			
 			
 			pnlContent.append(backTestResult.testSet.getKey()  +  ",")
 			.append(perDayRecord.getDateStr() + ",")
@@ -231,178 +202,8 @@ public class BackTestCSVWriter {
 				new chartWriter(mainUIParam.getResultPath(), mainUIParam.getUnit(), perDayRecord);					
 			}
 		}
-		BackTestTask.allProfitAndLossResults.append("\n");
-		BackTestTask.allMorningProfitAndLossResults.append("\n");
-		BackTestTask.allAfternoonProfitAndLossResults.append("\n");
-	}
-	
-	public static Map<String, List<Object>> bestMorningProfitAndLossResultMap = new TreeMap<String, List<Object>>();
-	public static Map<String, List<List<Object>>> allProfitAndLossResultMap = new TreeMap<String, List<List<Object>>>();
-	
-	public static void initProfitAndLossResultMap(MainUIParam mainUIParam) {
-		try {
-			bestMorningProfitAndLossResultMap = new TreeMap<String, List<Object>>();
-			allProfitAndLossResultMap = new TreeMap<String, List<List<Object>>>();
-			List<String> dates = new ArrayList<String>();
-			File file = new File(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.profitAndLossFileName));
-			CSVReader csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);	
-			String [] lines;
-			boolean first = true;			
-			while ((lines = csvReader.readNext()) != null)  {
-				if (first) {
-					for(int i = 2; i < lines.length - 1; i++) {
-						dates.add(lines[i]);
-					}	
-					first = false;
-				} else {
-					String id = lines[0]; 
-					String key = lines[1];
-					for(int i = 2; i < lines.length - 1; i++) {
-						String dateStr = dates.get(i - 2);
-						double totalPnl = Double.parseDouble(lines[i]);
-						List<Object> pnlInfo = new ArrayList<Object>();
-						pnlInfo.add(totalPnl);
-						pnlInfo.add(id);
-						pnlInfo.add(key);						
-						
-						if(allProfitAndLossResultMap.containsKey(dateStr)) {
-							allProfitAndLossResultMap.get(dateStr).add(pnlInfo);
-						} else {
-							List<List<Object>> list = new ArrayList<List<Object>>();
-							list.add(pnlInfo);
-							allProfitAndLossResultMap.put(dateStr, list);
-						}
-					}
-				}
-			}
-			csvReader.close();	
-			
-			dates = new ArrayList<String>();
-			file = new File(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.morningProfitAndLossFileName));
-			csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);	
-			first = true;			
-			while ((lines = csvReader.readNext()) != null)  {
-				if (first) {
-					for(int i = 2; i < lines.length - 1; i++) {
-						dates.add(lines[i]);
-					}	
-					first = false;
-				} else {
-					String id = lines[0]; 
-					String key = lines[1];
-					for(int i = 2; i < lines.length - 1; i++) {
-						String dateStr = dates.get(i - 2);
-						double totalPnl = Double.parseDouble(lines[i]);
-						List<Object> pnlInfo = new ArrayList<Object>();
-						pnlInfo.add(totalPnl);
-						pnlInfo.add(id);
-						pnlInfo.add(key);
-						if(!bestMorningProfitAndLossResultMap.containsKey(dateStr) || (Double)bestMorningProfitAndLossResultMap.get(dateStr).get(0) < totalPnl) {
-							bestMorningProfitAndLossResultMap.put(dateStr, pnlInfo);
-						}
-												
-					}
-				}
-			}
-			csvReader.close();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static String getBestPnlByDate(MainUIParam mainUIParam) {
-		StringBuilder content = new StringBuilder();
-		content.append("Date,Test no.,key,Mornint Best Pnl,Total Pnl").append("\n");
-		
-		for(String dateStr : bestMorningProfitAndLossResultMap.keySet()) {
-			List<Object> pnlInfo = bestMorningProfitAndLossResultMap.get(dateStr);				
-			content.append(dateStr + "," + pnlInfo.get(1) + "," + pnlInfo.get(2) + "," + pnlInfo.get(0) + "," + allProfitAndLossResultMap.get(dateStr).get(Integer.parseInt(pnlInfo.get(1).toString()) - 1).get(0)).append("\n");
-		}
-		return content.toString();
-	}
-	
-	public static String getBestPnlBySpecifyDates(Set<Integer> specifyDateRanges, MainUIParam mainUIParam) {
-		StringBuilder content = new StringBuilder();
-		if(specifyDateRanges != null && specifyDateRanges.size() > 0) {
-			content.append("Date,");
-			for(int specifyDateRange : specifyDateRanges) {
-				content.append("," + "n=" + specifyDateRange + " Test no.," + "n=" + specifyDateRange + " key," + "n=" + specifyDateRange + " Sum of Total Pnl," + "n=" + specifyDateRange + " Total Pnl,");
-			}
-			content.append("\n");
-						
-			int i = 1;
-			List<String> dates = new ArrayList<String>();
-			for(String dateStr : allProfitAndLossResultMap.keySet()) {
-				dates.add(dateStr);
-			}
-			for(String dateStr : dates) {					
-				content.append(dateStr + ",");
-				for(int specifyDateRange : specifyDateRanges) {
-					if(specifyDateRange >= i) {
-						content.append(",0,0,0,0,");							
-					} else {
-						Double maxSumOfPnl = null;
-						int maxId = 0;
-						for(int id = 0; id < allProfitAndLossResultMap.get(dateStr).size(); id++) {
-							double sumOfPnl = 0;
-							int j = i - specifyDateRange - 1;							
-							for(; j < i - 1; j++) {
-								String _dateStr = dates.get(j);
-								double totalPnl = (double)allProfitAndLossResultMap.get(_dateStr).get(id).get(0);
-								sumOfPnl += totalPnl;
-							}
-							if (maxSumOfPnl == null || maxSumOfPnl < sumOfPnl) {
-								maxSumOfPnl = sumOfPnl;
-								maxId = id;
-							}
-						}
-						
-						content.append("," + allProfitAndLossResultMap.get(dateStr).get(maxId).get(1) + "," + allProfitAndLossResultMap.get(dateStr).get(maxId).get(2) + "," + maxSumOfPnl + "," + allProfitAndLossResultMap.get(dateStr).get(maxId).get(0) + ",");
-					}						
-				}
-				content.append("\n");
-				i++;
-			}
-		}
-		return content.toString();
-	}
-	
-	public static void getAccumulatePnlBySpecifyDates(Set<Integer> specifyDateRanges, MainUIParam mainUIParam) {
-		if(specifyDateRanges != null && specifyDateRanges.size() > 0) {	
-			List<String> dates = new ArrayList<String>();
-			for(String dateStr : allProfitAndLossResultMap.keySet()) {
-				dates.add(dateStr);
-			}
-			for(int specifyDateRange : specifyDateRanges) {
-				StringBuilder content = new StringBuilder("Test no.,key,");
-				for(String dateStr : dates) {	
-					content.append(dateStr + ",");
-				}
-				content.append("\n");
-				
-				for(int id = 0; id < allProfitAndLossResultMap.get(dates.get(0)).size(); id++) {					
-					content.append((id + 1) + "," + allProfitAndLossResultMap.get(dates.get(0)).get(id).get(2) + ",");
-					for(int i = 1; i <= dates.size(); i++) {
-						if(specifyDateRange >= i) {
-							content.append("0,");
-						} else {
-							int j = i - specifyDateRange - 1;				
-							double sumOfPnl = 0;
-							for(; j < i - 1; j++) {
-								double totalPnl = (double)allProfitAndLossResultMap.get(dates.get(j)).get(id).get(0);
-								sumOfPnl += totalPnl;
-							}		
-							content.append(sumOfPnl + ",");
-						}
-					}					
-					content.append("\n");
-				}				
-				writeText(FilenameUtils.concat(mainUIParam.getResultPath(), "Back Test Accumulate ProfitAndLoss By Date Range_" + specifyDateRange + ".csv"), content.toString(), true);			
-			}			
-		}
-		
-	}
+		BackTestTask.allProfitAndLossResults.append("\n");		
+	}					
 	
 	public static String getATradingDayContent(MainUIParam mainUIParam, PerDayRecord perDayRecord)
 	{
