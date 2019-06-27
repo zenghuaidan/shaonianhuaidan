@@ -466,7 +466,6 @@ function getMainUIParam() {
 	   "tradeStopLossTriggerPercentLiteral":$.trim($("[name='tradeStopLossTriggerPercentLiteral']").val()),
 	   "absoluteTradeStopLossTo":$.trim($("[name='absoluteTradeStopLossTo']").val()),
 	   "absoluteTradeStopLossLiteral":$.trim($("[name='absoluteTradeStopLossLiteral']").val()),
-	   "outputChart":$("[name='outputChart']").is(":checked"),
 	   "tradeDataField":$.trim($("[name='tradeDataField']:checked").val()),
 	   "askDataField":$.trim($("[name='askDataField']:checked").val()),
 	   "bidDataField":$.trim($("[name='bidDataField']:checked").val()),

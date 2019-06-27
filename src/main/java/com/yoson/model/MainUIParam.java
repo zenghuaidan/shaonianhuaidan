@@ -56,7 +56,6 @@ public class MainUIParam extends TestSet {
 	@Expose
 	private double orderTicker;
 
-	private boolean outputChart;
 	@Expose
 	private String tradeDataField;
 	@Expose
@@ -307,14 +306,6 @@ public class MainUIParam extends TestSet {
 		this.absoluteTradeStopLossLiteral = absoluteTradeStopLossLiteral;
 	}
 
-	public boolean isOutputChart() {
-		return outputChart;
-	}
-
-	public void setOutputChart(boolean outputChart) {
-		this.outputChart = outputChart;
-	}
-
 	public String getTradeDataField() {
 		return tradeDataField;
 	}
@@ -522,8 +513,6 @@ public class MainUIParam extends TestSet {
 														
 		mainUIParam.setSource("HSI");
 		mainUIParam.setVersion("6");
-		
-		mainUIParam.setOutputChart(false);
 		
 		mainUIParam.setTradeDataField("tradelast");	   
 		mainUIParam.setAskDataField("asklast");			   

@@ -395,12 +395,7 @@
 							      <td>Pnl Threshold</td>
 							      <td><input name="pnlThreshold" value="${mainUIParam.pnlThreshold}" type="text"/></td>
 							      <td colspan="4"></td>
-							   </tr>
-							   <tr>
-							      <td>Output char</td>
-							      <td><input name="outputChart" type="checkbox" ${mainUIParam.outputChart ? 'checked' : ''} /></td>
-							      <td colspan="4"></td>
-							   </tr>	   
+							   </tr>   
    							   <tr>
 							      <td>Include Morning Data</td>
 							      <td><input name="includeMorningData" type="checkbox" ${mainUIParam.includeMorningData ? 'checked' : ''} /></td>
