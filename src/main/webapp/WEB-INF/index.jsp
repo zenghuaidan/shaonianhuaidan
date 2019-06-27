@@ -416,11 +416,6 @@
 							      <td><input name="ignoreLunchTime" type="checkbox" ${mainUIParam.ignoreLunchTime ? 'checked' : ''} /></td>
 							      <td colspan="4"></td>
 							   </tr>
-   							   <tr>
-							      <td>Morning Lunch Correlation Buffer</td>
-							      <td><input name="morningLunchCorrelationBuffer" type="text" value="${mainUIParam.morningLunchCorrelationBuffer}" /></td>
-							      <td colspan="4"></td>
-							   </tr>
 							   <tr>
 							      <td>Remark(Use in combination CSV):</td>
 							      <td><input name="remark" type="text" value="${mainUIParam.remark}" /></td>
