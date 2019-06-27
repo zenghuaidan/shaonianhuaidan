@@ -423,16 +423,6 @@
 							      <td><input name="ignoreLunchTime" type="checkbox" ${mainUIParam.ignoreLunchTime ? 'checked' : ''} /></td>
 							      <td colspan="4"></td>
 							   </tr>
-							   <tr>
-							      <td>n For Pnl(separate by comman, e.g. 2,4,6)</td>
-							      <td><input name="nForPnl" type="text" value="${mainUIParam.nForPnl}" /></td>
-							      <td colspan="4"></td>
-							   </tr>
-							   <tr>
-							      <td>Output Matrix File</td>
-							      <td><input name="matrixFile" type="checkbox" ${mainUIParam.matrixFile ? 'checked' : ''} /></td>
-							      <td colspan="4"></td>
-							   </tr>
    							   <tr>
 							      <td>Morning Lunch Correlation Buffer</td>
 							      <td><input name="morningLunchCorrelationBuffer" type="text" value="${mainUIParam.morningLunchCorrelationBuffer}" /></td>
