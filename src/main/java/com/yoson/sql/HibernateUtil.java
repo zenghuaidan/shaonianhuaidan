@@ -25,11 +25,15 @@ public class HibernateUtil
             extraProperties.setProperty("hibernate.connection.driver_class", properties.getProperty("jdbc.driverClassName"));
             extraProperties.setProperty("hibernate.connection.url", properties.getProperty("jdbc.url"));  
             extraProperties.setProperty("hibernate.connection.username", properties.getProperty("jdbc.username"));  
-            extraProperties.setProperty("hibernate.connection.password", properties.getProperty("jdbc.password"));  
+            extraProperties.setProperty("hibernate.connection.password", properties.getProperty("jdbc.password")); 
+            
+            extraProperties.setProperty("hibernate.connection.pool_size", "1");
+            extraProperties.setProperty("hibernate.current_session_context_class", "thread");
+            extraProperties.setProperty("hibernate.show_sql", "false");
+            extraProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
   
             Configuration cfg = new Configuration();  
             cfg.addProperties(extraProperties);  
-            cfg.configure("hibernate.cfg.xml");  
             return cfg.buildSessionFactory();  
         }  
         catch (Exception e)  
