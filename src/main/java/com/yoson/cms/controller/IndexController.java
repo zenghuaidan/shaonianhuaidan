@@ -5,19 +5,25 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +52,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.ib.client.Contract;
+import com.opencsv.CSVReader;
 import com.yoson.callback.StatusCallBack;
 import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.csv.BigExcelReader;
@@ -74,6 +81,7 @@ public class IndexController  implements StatusCallBack {
 	public String index(Model model) {
 		model.addAttribute("mainUIParam", BackTestTask.running || IndexController.mainUIParam != null ? IndexController.mainUIParam : MainUIParam.getMainUIParam());
 		model.addAttribute("sources", new ArrayList<String>());
+		model.addAttribute("tickers", SQLUtils.getTickers());
 		model.addAttribute("connectionInfo", EClientSocketUtils.connectionInfo == null ? getDefaultConnectionInfo() : EClientSocketUtils.connectionInfo);
 		model.addAttribute("contract", EClientSocketUtils.contract == null ? getDefaultContract() : EClientSocketUtils.contract);
 		model.addAttribute("strategies", EClientSocketUtils.strategies);
@@ -304,20 +312,293 @@ public class IndexController  implements StatusCallBack {
 	}
 	
 	@RequestMapping("downloadSampleDate")
-	public void downloadSampleDate(String sampleDate, HttpServletResponse response) throws IOException{
+	public void downloadSampleDate(String sampleDate, String ticker, HttpServletResponse response) throws IOException{
 		response.setContentType("application/msexcel");  
 		response.setHeader("Content-Disposition","attachment; filename=" + sampleDate + ".csv");
-		IOUtils.write(SQLUtils.getScheduledDataRecordByDate(sampleDate), response.getOutputStream());
+		IOUtils.write(SQLUtils.getScheduledDataRecordByDate(sampleDate, ticker), response.getOutputStream());
+	}
+	
+	
+	public static boolean deleting = false;
+	@RequestMapping("deleteSampleDate")
+	@ResponseBody
+	public String deleteSampleDate(String sampleDate, String ticker, HttpServletResponse response) throws IOException{
+		if(!deleting) {
+			deleting = true;
+			SQLUtils.deleteScheduledDataRecordByDate(sampleDate, ticker, isToDatabase);
+			deleting = false;
+			return "Data with date=" + sampleDate + " and ticker=" + ticker + " have been deleted from database.";
+		} else {
+			return "A deletion is runing, please wait for previous deletion is done!!!";
+		}
+	}
+	
+	@RequestMapping("downloadSummary")
+	public void downloadSummary(String ticker, HttpServletResponse response) throws IOException{
+		response.setContentType("application/msexcel");  
+		response.setHeader("Content-Disposition","attachment; filename=" + ticker + "_summary.csv");
+		IOUtils.write(SQLUtils.getSummary(ticker), response.getOutputStream());
+	}
+	
+	
+	@RequestMapping("combineSummary")
+	public void combineSummary(MultipartFile summaryResult1, MultipartFile summaryResult2, HttpServletResponse response, HttpServletRequest request) throws IOException {
+				
+//		Test no.,key,version,Source,CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time,Average Step Size,Include Last Market Day Data," + monthColumStr + "\n";
+//
+//		totalDays = SUM
+//		totalPnL = SUM
+//		averagePnL = totalPnL/totalDays
+//		totalTrades = SUM
+//		averageTrades = totalTrades/totalDays
+//		totalWinningDays = SUM
+//		totalLosingDays = SUM
+//		winningPercentage = totalWinningDays/totalDays * 100
+//		averageProfitOfPositiveTrade = SUM(_averageProfitOfPositiveTrade * _totalDays)/totalDays
+//		averageProfitOfNegativeTrade = SUM(_averageProfitOfNegativeTrade * _totalDays)/totalDays
+//		averageZeroPnLTrade = SUM(_averageZeroPnLTrade * _totalDays)/totalDays
+//		averageNoPositiveTrade = SUM(_averageNoPositiveTrade * _totalDays)/totalDays
+//		averageNoNegativeTrade = SUM(_averageNoNegativeTrade * _totalDays)/totalDays
+//		averageHoldingTime = SUM(_averageHoldingTime * _totalDays)/totalDays
+//		adjustedPnLAfterFee = (testSet.getCashPerIndexPoint()*totalPnL) - ((testSet.getTradingFee() + testSet.getOtherCostPerTrade())*totalTrades)
+//		worstLossDay = MIN
+//		bestProfitDay = MAX
+//		worstLossingStreak = MIN
+//		bestWinningStreak = MAX
+//		lossingStreakfreq = SUM
+//		winningStreakFreq = SUM
+//		sumOfLossingStreak = SUM
+//		sumOfWinningStreak = SUM
+//		averageOfLossingStreak = sumOfLossingStreak/lossingStreakfreq;
+//		averageOfWinningStreak = sumOfWinningStreak/winningStreakFreq;
+//		maxLossingStreakLength = MAX
+//		maxWinningStreakLength = MAX
+		
+		List<List<String>> summaryResultData1 = extractSummaryData(summaryResult1);
+		List<List<String>> summaryResultData2 = extractSummaryData(summaryResult2);
+		
+		Map<String, Integer> yearlyPnlIndex1 = totalPnlIndex(summaryResultData1.get(0), 4);
+		Map<String, Integer> yearlyPnlIndex2 = totalPnlIndex(summaryResultData2.get(0), 4);		
+		List<String> yearlyPnlIndex = combineAndSort(yearlyPnlIndex1.keySet(), yearlyPnlIndex2.keySet());
+		
+		Map<String, Integer> monthlyPnlIndex1 = totalPnlIndex(summaryResultData1.get(0), 6);
+		Map<String, Integer> monthlyPnlIndex2 = totalPnlIndex(summaryResultData2.get(0), 6);
+		List<String> monthlyPnlIndex = combineAndSort(monthlyPnlIndex1.keySet(), monthlyPnlIndex2.keySet());
+		
+		boolean sameCombination = true;
+		if(summaryResultData1.size() != summaryResultData2.size()) {
+			sameCombination = false;
+		}
+//		List<String> needCombineColumns = Arrays.asList("No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length".split(","));
+		String NO_OF_DAYS = "No. of days"; //FIRST
+		String COUNT_OF_LUNCH_LOSS = "count of lunch loss"; //LAST
+		
+		String MORNING_START_TIME = "Morning Start Time"; //LAST
+		String LUNCH_START_TIME = "Lunch Start Time"; //LAST
+		List<String> header = summaryResultData1.get(0);
+		int end = header.indexOf(NO_OF_DAYS);
+		
+		int morningStartTimeIndex = header.indexOf(MORNING_START_TIME);
+		int lunchStartTimeIndex = header.indexOf(LUNCH_START_TIME);
+		for(int i = 1; i < summaryResultData1.size(); i++) {
+			List<String> line1 = summaryResultData1.get(i);					
+			String a = line1.subList(0, morningStartTimeIndex).toString() + line1.subList(lunchStartTimeIndex + 1, end).toString();
+			List<String> line2 = summaryResultData2.get(i);
+			String b = line2.subList(0, morningStartTimeIndex).toString() + line2.subList(lunchStartTimeIndex + 1, end).toString();
+			
+			if (!a.equals(b)) {
+				sameCombination = false;
+				break;
+			}
+		}
+		
+		if (sameCombination) {
+			response.setContentType("application/msexcel");  
+			response.setHeader("Content-Disposition","attachment; filename=BT_Summary.csv");
+		
+			List<String> csvHeader = new ArrayList<String>();
+			csvHeader.addAll(header.subList(0, header.indexOf(COUNT_OF_LUNCH_LOSS) + 1));
+			csvHeader.addAll(yearlyPnlIndex); 
+			csvHeader.addAll(monthlyPnlIndex);
+			StringBuffer sb = new StringBuffer(String.join(",", csvHeader) + "\n");
+			for(int i = 1; i < summaryResultData1.size(); i++) {		
+				double totalDays = Double.valueOf(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end));
+				double totalPnL = Double.valueOf(summaryResultData1.get(i).get(end + 1)) + Double.valueOf(summaryResultData2.get(i).get(end + 1));
+				double averagePnL = totalPnL / totalDays;
+				double totalTrades = Double.valueOf(summaryResultData1.get(i).get(end + 3)) + Double.valueOf(summaryResultData2.get(i).get(end + 3));
+				double averageTrades = totalTrades / totalDays;
+				double totalWinningDays = Double.valueOf(summaryResultData1.get(i).get(end + 5)) + Double.valueOf(summaryResultData2.get(i).get(end + 5));
+				double totalLosingDays = Double.valueOf(summaryResultData1.get(i).get(end + 6)) + Double.valueOf(summaryResultData2.get(i).get(end + 6));
+				double winningPercentage = totalWinningDays / totalDays * 100;
+				double averageProfitOfPositiveTrade = (Double.valueOf(summaryResultData1.get(i).get(end + 8)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 8)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;
+				double averageProfitOfNegativeTrade = (Double.valueOf(summaryResultData1.get(i).get(end + 9)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 9)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;
+				double averageZeroPnLTrade = (Double.valueOf(summaryResultData1.get(i).get(end + 10)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 10)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;				
+				double averageNoPositiveTrade = (Double.valueOf(summaryResultData1.get(i).get(end + 11)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 11)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;
+				double averageNoNegativeTrade = (Double.valueOf(summaryResultData1.get(i).get(end + 12)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 12)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;
+				double averageHoldingTime = (Double.valueOf(summaryResultData1.get(i).get(end + 13)) * Integer.parseInt(summaryResultData1.get(i).get(end)) + Double.valueOf(summaryResultData2.get(i).get(end + 13)) * Integer.parseInt(summaryResultData2.get(i).get(end))) / totalDays;
+				
+				double cashPerIndexPoint = Double.valueOf(summaryResultData1.get(i).get(header.indexOf("Cash per index point")));
+				double tradingFee = Double.valueOf(summaryResultData1.get(i).get(header.indexOf("Trading fee")));
+				double otherCostPerTrade = Double.valueOf(summaryResultData1.get(i).get(header.indexOf("Other cost per trade")));
+				double adjustedPnLAfterFee = (cashPerIndexPoint*totalPnL) - ((tradingFee + otherCostPerTrade)*totalTrades);				
+				
+				double worstLossDay = Math.min(Double.valueOf(summaryResultData1.get(i).get(end + 15)), Double.valueOf(summaryResultData2.get(i).get(end + 15)));
+				double bestProfitDay = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 16)), Double.valueOf(summaryResultData2.get(i).get(end + 16)));
+				double worstLossingStreak = Math.min(Double.valueOf(summaryResultData1.get(i).get(end + 17)), Double.valueOf(summaryResultData2.get(i).get(end + 17)));
+				double bestWinningStreak = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 18)), Double.valueOf(summaryResultData2.get(i).get(end + 18)));				
+				double lossingStreakfreq = Double.valueOf(summaryResultData1.get(i).get(end + 19)) + Double.valueOf(summaryResultData2.get(i).get(end + 19));				
+				double winningStreakFreq = Double.valueOf(summaryResultData1.get(i).get(end + 20)) + Double.valueOf(summaryResultData2.get(i).get(end + 20));
+				double sumOfLossingStreak = Double.valueOf(summaryResultData1.get(i).get(end + 21)) + Double.valueOf(summaryResultData2.get(i).get(end + 21));
+				double sumOfWinningStreak = Double.valueOf(summaryResultData1.get(i).get(end + 22)) + Double.valueOf(summaryResultData2.get(i).get(end + 22));	
+				double averageOfLossingStreak = lossingStreakfreq == 0 ? 0 : sumOfLossingStreak / lossingStreakfreq;
+				double averageOfWinningStreak = lossingStreakfreq == 0 ? 0 : sumOfWinningStreak / winningStreakFreq;				
+				double maxLossingStreakLength = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 25)), Double.valueOf(summaryResultData2.get(i).get(end + 25)));
+				double maxWinningStreakLength = Math.max(Double.valueOf(summaryResultData1.get(i).get(end + 26)), Double.valueOf(summaryResultData2.get(i).get(end + 26)));
+				double sumMorningPnL = Double.valueOf(summaryResultData1.get(i).get(end + 27)) + Double.valueOf(summaryResultData2.get(i).get(end + 27));
+				double sumLunchPnL = Double.valueOf(summaryResultData1.get(i).get(end + 28)) + Double.valueOf(summaryResultData2.get(i).get(end + 28));
+				double averageMorningPnL = sumMorningPnL / totalDays;
+				double averageLunchPnL = sumLunchPnL / totalDays;
+				int countMLS1 = Integer.valueOf(summaryResultData1.get(i).get(end + 31)) + Integer.valueOf(summaryResultData2.get(i).get(end + 31));
+				int countMLS2 = Integer.valueOf(summaryResultData1.get(i).get(end + 32)) + Integer.valueOf(summaryResultData2.get(i).get(end + 32));
+				int countMLS3 = Integer.valueOf(summaryResultData1.get(i).get(end + 33)) + Integer.valueOf(summaryResultData2.get(i).get(end + 33));
+				int countMLS4 = Integer.valueOf(summaryResultData1.get(i).get(end + 34)) + Integer.valueOf(summaryResultData2.get(i).get(end + 34));
+				int countMLS5 = Integer.valueOf(summaryResultData1.get(i).get(end + 35)) + Integer.valueOf(summaryResultData2.get(i).get(end + 35));
+				int countMLS6 = Integer.valueOf(summaryResultData1.get(i).get(end + 36)) + Integer.valueOf(summaryResultData2.get(i).get(end + 36));
+				int countMLS7 = Integer.valueOf(summaryResultData1.get(i).get(end + 37)) + Integer.valueOf(summaryResultData2.get(i).get(end + 37));
+				int countMLS8 = Integer.valueOf(summaryResultData1.get(i).get(end + 38)) + Integer.valueOf(summaryResultData2.get(i).get(end + 38));
+				int countMLS9 = Integer.valueOf(summaryResultData1.get(i).get(end + 39)) + Integer.valueOf(summaryResultData2.get(i).get(end + 39));
+				int countMorningWin = Integer.valueOf(summaryResultData1.get(i).get(end + 40)) + Integer.valueOf(summaryResultData2.get(i).get(end + 40));
+				int countMorningNature = Integer.valueOf(summaryResultData1.get(i).get(end + 41)) + Integer.valueOf(summaryResultData2.get(i).get(end + 41));
+				int countMorningLoss = Integer.valueOf(summaryResultData1.get(i).get(end + 42)) + Integer.valueOf(summaryResultData2.get(i).get(end + 42));
+				int countLunchWin = Integer.valueOf(summaryResultData1.get(i).get(end + 43)) + Integer.valueOf(summaryResultData2.get(i).get(end + 43));
+				int countLunchNature = Integer.valueOf(summaryResultData1.get(i).get(end + 44)) + Integer.valueOf(summaryResultData2.get(i).get(end + 44));
+				int countLunchLoss = Integer.valueOf(summaryResultData1.get(i).get(end + 45)) + Integer.valueOf(summaryResultData2.get(i).get(end + 45));
+				
+				List<String> yearlyPnlResult = new ArrayList<String>();
+				for(String name : yearlyPnlIndex) {
+					Double value1 = yearlyPnlIndex1.containsKey(name) ? Double.valueOf(summaryResultData1.get(i).get(yearlyPnlIndex1.get(name))) : 0;
+					Double value2 = yearlyPnlIndex2.containsKey(name) ? Double.valueOf(summaryResultData2.get(i).get(yearlyPnlIndex2.get(name))) : 0;
+					yearlyPnlResult.add((value1 + value2) + "");
+				}
+				
+				List<String> monthlyPnlResult = new ArrayList<String>();
+				for(String name : monthlyPnlIndex) {
+					Double value1 = monthlyPnlIndex1.containsKey(name) ? Double.valueOf(summaryResultData1.get(i).get(monthlyPnlIndex1.get(name))) : 0;
+					Double value2 = monthlyPnlIndex2.containsKey(name) ? Double.valueOf(summaryResultData2.get(i).get(monthlyPnlIndex2.get(name))) : 0;
+					monthlyPnlResult.add((value1 + value2) + "");
+				}
+				
+				sb.append(String.join(",", summaryResultData1.get(i).subList(0, end)) + ",")
+				.append(totalDays + ",")
+				.append(totalPnL + ",")
+				.append(averagePnL + ",")
+				.append(totalTrades + ",")
+				.append(averageTrades + ",")
+				.append(totalWinningDays + ",")
+				.append(totalLosingDays + ",")
+				.append(winningPercentage + ",")
+				.append(averageProfitOfPositiveTrade + ",")
+				.append(averageProfitOfNegativeTrade + ",")
+				.append(averageZeroPnLTrade + ",")
+				.append(averageNoPositiveTrade + ",")
+				.append(averageNoNegativeTrade + ",")
+				.append(averageHoldingTime + ",")
+				.append(adjustedPnLAfterFee + ",")
+				.append(worstLossDay + ",")
+				.append(bestProfitDay + ",")
+				.append(worstLossingStreak + ",")
+				.append(bestWinningStreak + ",")
+				.append(lossingStreakfreq + ",")
+				.append(winningStreakFreq + ",")
+				.append(sumOfLossingStreak + ",")
+				.append(sumOfWinningStreak + ",")
+				.append(averageOfLossingStreak + ",")
+				.append(averageOfWinningStreak + ",")
+				.append(maxLossingStreakLength + ",")
+				.append(maxWinningStreakLength + ",")
+				.append(sumMorningPnL + ",")
+				.append(sumLunchPnL + ",")
+				.append(averageMorningPnL + ",")
+				.append(averageLunchPnL + ",")
+				.append(countMLS1 + ",")
+				.append(countMLS2 + ",")
+				.append(countMLS3 + ",")
+				.append(countMLS4 + ",")
+				.append(countMLS5 + ",")
+				.append(countMLS6 + ",")
+				.append(countMLS7 + ",")
+				.append(countMLS8 + ",")
+				.append(countMLS9 + ",")
+				.append(countMorningWin + ",")
+				.append(countMorningNature + ",")
+				.append(countMorningLoss + ",")
+				.append(countLunchWin + ",")
+				.append(countLunchNature + ",")
+				.append(countLunchLoss + ",")
+				.append(yearlyPnlResult.size() > 0 ? (String.join(",", yearlyPnlResult) + ",") : "")
+				.append(monthlyPnlResult.size() > 0 ? (String.join(",", monthlyPnlResult) + ",") : "")
+				.append("\n");
+			}
+			
+			IOUtils.write(sb.toString(), response.getOutputStream());			
+		} else {
+			response.setContentType("text/html;charset=utf-8");		
+			response.getWriter().write("<script>alert('Fail to combine the result as the two summary result are with different combination');history.go(-1);</script>");
+		}
+		
+	}
+
+	private List<String> combineAndSort(Set<String> list1, Set<String> list2) {
+		List<String> list = new ArrayList<String>();
+		list.addAll(list1);
+		list.addAll(list2);
+		list = Arrays.asList(new HashSet<String>(list).toArray(new String[]{}));
+		Collections.sort(list);
+		return list;
+	}
+
+	private Map<String, Integer> totalPnlIndex(List<String> header, int size) {
+		Map<String, Integer> yearlyPnlIndex = new HashMap<String, Integer>();
+		String TOTAL_PNL_OF = "Total Pnl of";
+		for(int i = 0; i < header.size(); i++) {
+			String name = header.get(i);
+			if(name.startsWith(TOTAL_PNL_OF) && name.replace(TOTAL_PNL_OF, "").trim().length() == size) {
+				yearlyPnlIndex.put(name, i);
+			}
+		}
+		return yearlyPnlIndex;
+	}
+	
+	public List<List<String>> extractSummaryData(MultipartFile summaryResult) throws IOException {
+		CSVReader summaryResultReader = new CSVReader(new InputStreamReader(summaryResult.getInputStream()), ',', '\n', 0);		
+		String[] lines;
+		List<List<String>> data = new ArrayList<List<String>>();
+		while ((lines = summaryResultReader.readNext()) != null)  {
+			data.add(Arrays.asList(lines));
+		}
+		
+		summaryResultReader.close();
+		return data;
 	}
 	
 	public static List<String> uploadStatus = new ArrayList<String>();
 	@ResponseBody
 	@RequestMapping("uploadData")
-	public boolean uploadData(String source, String ticker, String dataType, String ignoreLunchTime, String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	public boolean uploadData(String startDateStr, String endDateStr, String source, String ticker, String dataType, String ignoreLunchTime, String toDatabase, String toCSV, String csvPath, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, String uploadAction, MultipartFile liveData, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		String FINISHED = "Finished";
 		boolean success = false;
 		if(uploadStatus.size() > 0 && uploadStatus.get(uploadStatus.size() - 1).indexOf(FINISHED) < 0) {
 			return success;
+		}
+		try{
+			startDate = DateUtils.yyyyMMdd().parse(startDateStr);
+		} catch (Exception e) {
+			startDate = null;
+		}
+		try{
+			endDate = DateUtils.yyyyMMdd().parse(endDateStr);
+		} catch (Exception e) {
+			endDate = null;
 		}
 		isToCSV = toCSV != null && "on".equals(toCSV.toLowerCase());
 		isToDatabase = toDatabase != null && "on".equals(toDatabase.toLowerCase());
@@ -363,6 +644,7 @@ public class IndexController  implements StatusCallBack {
 //			if(startTime.equals(lunchTimeFrom) || startTime.before(lunchTimeFrom) 
 //					&& lunchTimeFrom.equals(lunchTimeTo) || lunchTimeFrom.before(lunchTimeTo) 
 //					&& lunchTimeTo.equals(endTime) || lunchTimeTo.before(endTime)) {				
+				String unzipFolder = null;
 				try {
 					String ext = liveData == null ? "" : liveData.getOriginalFilename().substring(liveData.getOriginalFilename().lastIndexOf('.')).toLowerCase();
 					if(ext.equals(".zip")) {
@@ -382,17 +664,17 @@ public class IndexController  implements StatusCallBack {
 						
 						// unzip to a folder
 						uploadStatus.add("Unzipping....");
-						String unzipFolder = FilenameUtils.concat(tempFolder, FilenameUtils.getBaseName(liveData.getOriginalFilename()));
+						unzipFolder = FilenameUtils.concat(tempFolder, FilenameUtils.getBaseName(liveData.getOriginalFilename()));
 						File unzipFolderFile = new File(unzipFolder);
 						unzipFolderFile.mkdirs();				
-						ZipUtils.decompress(zipFile, unzipFolder);
+						uploadStatus.add(ZipUtils.decompress(zipFile, unzipFolder, true));
 						uploadStatus.add("Unzip completed");
 						
 						// delete zip file
 						new File(zipFile).delete();
 						
 						// retrieve the excel files
-						Collection<File> files = FileUtils.listFiles(unzipFolderFile, new SuffixFileFilter(new ArrayList<String>(){{add("xlsm"); add("xls"); add("xlsx"); add("csv");}}), TrueFileFilter.TRUE);
+						Collection<File> files = FileUtils.listFiles(unzipFolderFile, new SuffixFileFilter(new ArrayList<String>(){{add("xlsm"); add("xls"); add("xlsx"); add("csv"); add("txt");}}), TrueFileFilter.TRUE);
 						
 						if(files.size() > 0) {
 							if (isCheck) {
@@ -427,7 +709,12 @@ public class IndexController  implements StatusCallBack {
 				} catch (Exception ex) {
 					ex.printStackTrace();			
 					uploadStatus.add("Upload with exception => " + ex.getMessage());
+				} finally {
+					if(unzipFolder != null) {
+						FileUtils.deleteQuietly(new File(unzipFolder));
+					}
 				}
+				
 //			} else {
 //				uploadStatus.add("Please check your input time");
 //			}
@@ -492,6 +779,8 @@ public class IndexController  implements StatusCallBack {
 	private static Map<Long, List<Double>> bidMap = null;
 	private static boolean validateSheet = false;
 	private static Date date = null;
+	private static Date startDate = null;
+	private static Date endDate = null;
 //	private static String source = "";
 	private static String sheet="";
 	private int previousSheetIndex = 0;
@@ -693,8 +982,144 @@ public class IndexController  implements StatusCallBack {
 				+ s.getLastTradeSize() + System.lineSeparator();
 		return "";
 	}
+	public static List<String> expiryDates = null;//Arrays.asList("080130","080228","080328","080429","080529","080627","080730","080828","080929","081030","081127","081230","090129","090226","090330","090429","090527","090629","090730","090828","090929","091029","091127","091230","100128","100225","100330","100429","100528","100629","100729","100830","100929","101028","101129","101230","110128","110225","110330","110428","110530","110629","110728","110830","110929","111028","111129","111229","120130","120228","120329","120427","120530","120628","120730","120830","120927","121030","121129","121228","130130","130227","130327","130429","130530","130627","130730","130829","130927","131030","131128","131230","140129","140227","140328","140429","140529","140627","140730","140828","140929","141030","141127","141230","150129","150226","150330","150429","150528","150629","150730","150828","150929","151029","151127","151230","160128","160226","160330","160428","160530","160629","160728","160830","160929","161028","161129","161229","170126","170227","170330","170427","170529","170629","170728","170830","170928","171030","171129","171228","180130","180227","180328","180427","180530","180628","180730","180830","180927","181030","181129","181228","190328","190627","191230","201230","211230","221229","231228");
+	
+	public String getExpiryMonth(String date) throws ParseException {
+		for(String expiryDate : expiryDates) {
+			if(expiryDate.substring(0, 4).equals(date.substring(2, 6))) {
+				if(date.substring(2, 8).compareTo(expiryDate) >= 0) {
+				    Calendar now = Calendar.getInstance();
+					now.setTime(DateUtils.yyyyMMdd2().parse(date));
+					now.add(Calendar.MONTH, 1);
+					return DateUtils.yyyyMMdd2().format(now.getTime()).substring(2, 6);
+				} else {
+					return date.substring(2, 6);
+				}
+			}
+		}
+		return date.substring(2, 6);
+	}
+	
+	public static void main(String[] args) throws Exception {
+		System.out.println(new IndexController().getExpiryMonth("20080105"));
+		System.out.println(new IndexController().getExpiryMonth("20080129"));
+		System.out.println(new IndexController().getExpiryMonth("20080130"));
+		System.out.println(new IndexController().getExpiryMonth("20080201"));
+		System.out.println(new IndexController().getExpiryMonth("20080228"));
+		System.out.println(new IndexController().getExpiryMonth("20280228"));
+		System.out.println(ZipUtils.decompress("C:\\Users\\yuanke\\Desktop\\2012.zip", "C:\\Users\\yuanke\\Desktop\\2012\\", true));
+		
+		System.out.println(new IndexController().combineAndSort(new HashSet<String>(Arrays.asList("Total Pnl of 2023", "Total Pnl of 2009", "Total Pnl of 2019")), new HashSet<String>(Arrays.asList("Total Pnl of 2020", "Total Pnl of 2005", "Total Pnl of 2019"))));
+		System.out.println(new IndexController().combineAndSort(new HashSet<String>(), new HashSet<String>(Arrays.asList("Total Pnl of 2020", "Total Pnl of 2005", "Total Pnl of 2019"))));
+		System.out.println(new IndexController().combineAndSort(new HashSet<String>(), new HashSet<String>()));
+	}
 	
 	private void uploadWithAction(String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime, Collection<File> files, boolean isReplace) throws IOException, OpenXML4JException, SAXException, ParseException {
+		if (uploadDataType.equals("4")) {
+			Map<String, List<String>> datas = new HashMap<String, List<String>>();
+			uploadStatus.add("Start combining data ...");
+			List<Date> expiryDates2 = SQLUtils.getExpiryDates();
+			expiryDates = new CopyOnWriteArrayList<String>();
+			for(Date d : expiryDates2) {
+				expiryDates.add(DateUtils.yyMMdd().format(d));
+			}
+			
+			for(File file : files) {
+				if(!file.getAbsolutePath().endsWith("_TR.txt") 
+					&& !file.getAbsolutePath().endsWith("_BA.txt")
+					&& !file.getAbsolutePath().endsWith("_TR_AHT.txt") 
+					&& !file.getAbsolutePath().endsWith("_BA_AHT.txt"))
+					continue;//only parse _TR.txt and _BA.txt file for HKEX data
+				FileInputStream input = null;				
+				try {
+					boolean isBA = file.getAbsolutePath().endsWith("_BA.txt") || file.getAbsolutePath().endsWith("_BA_AHT.txt");
+					input = new FileInputStream(file);
+					List<String> lines = IOUtils.readLines(input);
+					for(String line : lines) {
+						boolean isHSI = line.substring(0, 6).trim().equals("HSI");
+						boolean isF = line.substring(6, 7).equals("F");
+						String expiryMonth = line.substring(7, 11);
+						String dateTime = line.substring(29, 43);
+						String date = line.substring(29, 37);
+						String strickPrice = line.substring(11, 28);
+						if(!isHSI || !isF) continue;
+						if(!isBA) {
+							String type = line.substring(68, 71);
+							if(!Arrays.asList("000", "001", "002").contains(type)) continue;
+						}
+						if(!expiryMonth.equals(getExpiryMonth(date))) continue;
+						String type = "";
+						String price = "";
+						if(isBA) {							
+							boolean isA = line.substring(43, 44).equals("A");
+							type = isA ? "A" : "B";
+							price = line.substring(44, 61);
+						} else {														
+							price = line.substring(43, 60);
+							type = "T";
+						}
+						datas.putIfAbsent(date, new ArrayList<String>());
+						datas.get(date).add(dateTime + "," + type + "," + price);
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if(input != null) {
+						input.close();						
+					}					
+				}				
+			}
+			List<String> days = new ArrayList<String>();
+			for(String key : datas.keySet()) {
+				days.add(key);
+			}
+			Collections.sort(days);
+			for(String day : days) {		
+			    
+				if(startDate != null || endDate != null) {
+					Date now = DateUtils.yyyyMMdd2().parse(day);
+					if (startDate != null && now.before(startDate) || endDate != null && now.after(endDate)) {
+						uploadStatus.add("Skip for " + day + " as it is not in the date range");
+						continue;	
+					}
+				}
+				
+				tradeMap = new TreeMap<Long, List<Double>>();
+				askMap = new TreeMap<Long, List<Double>>();
+				bidMap = new TreeMap<Long, List<Double>>();				
+				uploadStatus.add("Uploading for " + day);																
+				for(String line : datas.get(day)) {
+					try {
+						String type = line.split(",")[1];
+						Date livedate = DateUtils.yyyyMMddHHmmss2().parse(line.split(",")[0]);
+						date = livedate;
+						double price = Double.valueOf(line.split(",")[2]);
+						switch (type) {
+						case "B":							
+							YosonEWrapper.addLiveData(bidMap, livedate, price);									
+							break;
+						case "A":							
+							YosonEWrapper.addLiveData(askMap, livedate, price);																		
+							break;
+						case "T":							
+							YosonEWrapper.addLiveData(tradeMap, livedate, price);																																		
+							break;
+						}
+					} catch (Exception e) {
+					}											
+				}
+				String dateStr = DateUtils.yyyyMMdd().format(date);
+				SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker, isToDatabase, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime);						
+				if(tradeMap.size() == 0) uploadStatus.add("<font size='3' color='red'>Warning: Not Trade data for " + day + "</font>");
+				if(askMap.size() == 0 && bidMap.size() == 0) uploadStatus.add("<font size='3' color='red'>Warning: Not BA data for " + day + "</font>");
+				writingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace, YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap));
+				uploadStatus.add("Upload complete for " + day);
+			}
+			uploadStatus.add("All upload complete!!!");
+			return;
+		}
+		
 		for(File file : files) {
 			String name = "<font size='3' color='blue'>" + FilenameUtils.getName(file.getName()) + "</font>";
 			uploadStatus.add("Retriving data from " + name + " ...");
@@ -716,6 +1141,8 @@ public class IndexController  implements StatusCallBack {
 				List<String> readLines = IOUtils.readLines(fileInputStream);
 				fileInputStream.close();
 				List<ScheduledDataRecord> scheduledDataRecords = new ArrayList<ScheduledDataRecord>();
+				
+				List<String> dates = new ArrayList<String>();
 				for(int i = 3; i <= readLines.size() - 1; i++) {
 					ScheduledDataRecord scheduledDataRecord = new ScheduledDataRecord();
 					String line = readLines.get(i);
@@ -739,6 +1166,11 @@ public class IndexController  implements StatusCallBack {
 						scheduledDataRecord.setBidmin(Double.parseDouble(line.split(",")[14]));
 						
 						scheduledDataRecords.add(scheduledDataRecord);
+						String dateStr = DateUtils.yyyyMMdd().format(date);
+						if(!dates.contains(dateStr)) {
+							dates.add(dateStr);
+							SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker, isToDatabase);
+						}
 					} catch (Exception e) {
 					}											
 				}
@@ -754,6 +1186,7 @@ public class IndexController  implements StatusCallBack {
 				FileInputStream fileInputStream = new FileInputStream(file);
 				List<String> readLines = IOUtils.readLines(fileInputStream);
 				fileInputStream.close();
+				List<String> dates = new ArrayList<String>();
 				for(String line : readLines) {
 					try {
 						String type = line.split(",")[0];
@@ -771,9 +1204,15 @@ public class IndexController  implements StatusCallBack {
 							YosonEWrapper.addLiveData(tradeMap, livedate, price);																																		
 							break;
 						}
+						String dateStr = DateUtils.yyyyMMdd().format(date);
+						if(!dates.contains(dateStr)) {
+							dates.add(dateStr);
+							SQLUtils.deleteScheduledDataRecordByDate(dateStr, uploadTicker, isToDatabase);
+						}
 					} catch (Exception e) {
 					}											
 				}
+				
 				writingDatabase(dataStartTime, lunchStartTime, lunchEndTime, dataEndTime, isReplace, YosonEWrapper.extractScheduledDataRecord(tradeMap, askMap, bidMap));
 			} else if (uploadDataType.equals("1")) {
 				new BigExcelReader(file) {  
@@ -795,9 +1234,12 @@ public class IndexController  implements StatusCallBack {
 								date = null;
 //								source = "";
 								try {
-//									source = genSouce((String)datas.get(1));						
 									date = DateUtils.yyyyMMdd().parse(datas.get(2));
 								} catch (Exception e) {
+									try {
+										date = DateUtils.yyyyMMdd3().parse(datas.get(2));
+									} catch (Exception e2) {
+									}
 								}
 								if (date == null) {
 									uploadStatus.add("Can not detect the <font size='3' color='red'>Date cell(C1)</font> at " + sheet + ", this sheet will be <font size='4' color='red'>skipped</font>");
@@ -806,7 +1248,7 @@ public class IndexController  implements StatusCallBack {
 									uploadStatus.add("Parsing data(" + DateUtils.yyyyMMdd().format(date) + ") for " + sheet);
 									validateSheet = true;
 								}
-								
+								SQLUtils.deleteScheduledDataRecordByDate(DateUtils.yyyyMMdd().format(date), uploadTicker, isToDatabase, dataStartTime, lunchStartTime, lunchEndTime, dataEndTime);	
 							} else if(validateSheet && rowIndex >= 3) {
 								try {
 									Date tradeDate = DateUtils.yyyyMMddHHmmss().parse(datas.get(1));
@@ -815,6 +1257,15 @@ public class IndexController  implements StatusCallBack {
 										YosonEWrapper.addLiveData(tradeMap, tradeDate, tradePrice);																									
 									}
 								} catch (Exception e) {
+									try {
+										Date tradeDate = DateUtils.yyyyMMddHHmmss3().parse(datas.get(1));
+										if(org.apache.commons.lang.time.DateUtils.isSameDay(date, tradeDate)) {
+											Double tradePrice = Double.valueOf(datas.get(3).toString());
+											YosonEWrapper.addLiveData(tradeMap, tradeDate, tradePrice);																									
+										}
+									} catch (Exception e2) {
+										
+									}
 								}
 								
 								try {
@@ -824,6 +1275,14 @@ public class IndexController  implements StatusCallBack {
 										YosonEWrapper.addLiveData(askMap, askDate, askPrice);									
 									}
 								} catch (Exception e) {
+									try {
+										Date askDate = DateUtils.yyyyMMddHHmmss3().parse(datas.get(6));
+										if(org.apache.commons.lang.time.DateUtils.isSameDay(date, askDate)) {
+											Double askPrice = Double.valueOf(datas.get(8).toString());
+											YosonEWrapper.addLiveData(askMap, askDate, askPrice);									
+										}
+									} catch (Exception e2) {
+									}
 								}
 								
 								try {
@@ -833,6 +1292,14 @@ public class IndexController  implements StatusCallBack {
 										YosonEWrapper.addLiveData(bidMap, bidDate, bidPrice);									
 									}
 								} catch (Exception e) {
+									try {
+										Date bidDate = DateUtils.yyyyMMddHHmmss3().parse(datas.get(11));
+										if(org.apache.commons.lang.time.DateUtils.isSameDay(date, bidDate)) {
+											Double bidPrice = Double.valueOf(datas.get(13).toString());
+											YosonEWrapper.addLiveData(bidMap, bidDate, bidPrice);									
+										}
+									} catch (Exception e2) {
+									}	
 								}											
 							}
 						}

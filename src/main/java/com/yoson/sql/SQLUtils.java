@@ -1,8 +1,10 @@
 package com.yoson.sql;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,6 +16,26 @@ import com.yoson.tws.ScheduledDataRecord;
 
 public class SQLUtils {
 	public static String SCHEDULE_DATA_TABLE = "schedule_data";
+	
+	public static final String expiry_date = "expiry_date";
+	
+	public static List<Date> getExpiryDates() {
+		Session session = null;		
+		try {
+			session = getSession();
+			String sql = "select distinct date from  " + expiry_date + "  order by date asc";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return sqlQuery.list();			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<Date>();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
 
 	private static Session getSession() {
 		try {
@@ -81,13 +103,13 @@ public class SQLUtils {
 		}
 	}
 	
-	public static String getScheduledDataRecordByDate(String dateStr) {
+	public static String getScheduledDataRecordByDate(String dateStr, String ticker) {
 		Session session = null;
 		List<String> values = new ArrayList<String>();
 		values.add("ticker,date,time,bidopen,bidavg,bidlast,bidmax,bidmin,askopen,askavg,asklast,askmax,askmin,tradeopen,tradeavg,tradelast,trademax,trademin,source");
 		try {
 			session = getSession();
-			String sql = "select CONCAT(ticker,',',date,',',time,',',bidopen,',',bidavg,',',bidlast,',',bidmax,',',bidmin,',',askopen,',',askavg,',',asklast,',',askmax,',',askmin,',',tradeopen,',',tradeavg,',',tradelast,',',trademax,',',trademin,',',source) as sdata from " + SCHEDULE_DATA_TABLE + " where date='" + dateStr + "'";
+			String sql = "select CONCAT(ticker,',',date,',',time,',',bidopen,',',bidavg,',',bidlast,',',bidmax,',',bidmin,',',askopen,',',askavg,',',asklast,',',askmax,',',askmin,',',tradeopen,',',tradeavg,',',tradelast,',',trademax,',',trademin,',',source) as sdata from " + SCHEDULE_DATA_TABLE + " where date='" + dateStr + "' and ticker='" + ticker+ "'";
 			sql += " order by date asc, time asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
 			values.addAll(sqlQuery.list());
@@ -102,5 +124,117 @@ public class SQLUtils {
 		return String.join(System.lineSeparator(), values);
 	}
 	
+	public static void deleteScheduledDataRecordByDate(String dateStr, String ticker, boolean isToDatabase) {
+		if(StringUtils.isBlank(dateStr) || StringUtils.isBlank(ticker) || !isToDatabase) return;
+		Session session = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String sql = "delete from " + SCHEDULE_DATA_TABLE + " where date='" + dateStr + "' and ticker='" + ticker+ "'";
+			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
+			sqlQuery.executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static void deleteScheduledDataRecordByDate(String dateStr, String ticker, boolean isToDatabase, String dataStartTime, String lunchStartTime, String lunchEndTime, String dataEndTime) {
+		if(StringUtils.isBlank(dateStr) || StringUtils.isBlank(ticker) || !isToDatabase) return;
+		Session session = null;
+		try {
+			session = getSession();
+			session.beginTransaction();
+			String sql = "delete from " + SCHEDULE_DATA_TABLE + " where date='" + dateStr + "' and ticker='" + ticker+ "' and (time>='" + dataStartTime + "' and time<='" + lunchStartTime + "' or time>='" + lunchEndTime + "' and time<='" + lunchEndTime + "')";
+			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
+			sqlQuery.executeUpdate();
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static String getSummary(String ticker) {
+		Session session = null;
+		List<String> values = new ArrayList<String>();
+		values.add("date,total,start_time,end_time,source,ticker,day_min,day_max,day_amp,previousDay_close,avg trade,last trade,first trade,performance");
+		try {
+			session = getSession();
+			String sql = "SELECT  " +
+			        "CONCAT(date,',', " +
+			        "COUNT(0),',', " +
+			        "MIN(time),',', " +
+			        "MAX(time),',', " +
+			        "source,',', " +
+			        "ticker,',', " +
+			        "MIN(tradelast),',', " +
+			        "MAX(tradelast),',', " +
+			        "(MAX(tradelast) - MIN(tradelast)),',', " +
+			        "tradelast,',', " +
+			        "AVG(tradelast),',', " +
+			        "SUBSTRING_INDEX(GROUP_CONCAT(CAST(tradelast AS CHAR CHARSET UTF8) " +
+			                    "ORDER BY time DESC " +
+			                    "SEPARATOR ','), " +
+			                "',', " +
+			                "1),',', " +
+			        "SUBSTRING_INDEX(GROUP_CONCAT(tradelast " +
+			                    "SEPARATOR ','), " +
+			                "',', " +
+			                "1),',', " +
+			        "(SUBSTRING_INDEX(GROUP_CONCAT(CAST(tradelast AS CHAR CHARSET UTF8) " +
+			                    "ORDER BY time DESC " +
+			                    "SEPARATOR ','), " +
+			                "',', " +
+			                "1) - SUBSTRING_INDEX(GROUP_CONCAT(tradelast " +
+			                    "SEPARATOR ','), " +
+			                "',', " +
+			                "1))) as sdata " +
+			    "FROM " + SCHEDULE_DATA_TABLE +
+			    " WHERE tradelast <> 0 and ticker = '" + ticker + "' " +
+			    "GROUP BY date;";
+			System.out.println(sql);
+			
+			if(!StringUtils.isBlank(ticker)) {
+				SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
+				values.addAll(sqlQuery.list());				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+		return String.join(System.lineSeparator(), values);
+	}
+
+	public static List<String> getTickers() {
+		Session session = null;		
+		try {
+			session = getSession();
+			String sql = "select distinct ticker from  " + SCHEDULE_DATA_TABLE + "  order by ticker asc";
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
+			return sqlQuery.list();			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<String>();
+		} finally {
+			try {
+				session.close();				
+			} catch (Exception e) {
+			}
+		}
+	}
 	
 }

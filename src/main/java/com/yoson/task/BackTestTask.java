@@ -28,7 +28,6 @@ import com.yoson.model.MainUIParam;
 import com.yoson.model.PerDayRecord;
 import com.yoson.model.ScheduleData;
 import com.yoson.model.TestSet;
-import com.yoson.sql.SQLUtils;
 
 public class BackTestTask implements Runnable {
 	public static boolean running = false;
