@@ -1,6 +1,5 @@
 package com.yoson.csv;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import com.yoson.model.BackTestResult;
@@ -49,17 +46,6 @@ public class BackTestCSVWriter {
 	} 
 	
 	public static void writeCSVResult(MainUIParam mainUIParam) throws IOException {
-	}
-
-	public static void writePositivePnlResult(MainUIParam mainUIParam) throws IOException {
-		for (String key : BackTestTask.allPositivePnlResult.keySet()) {
-			String[] values = key.split("#");
-			String folder = FilenameUtils.concat(mainUIParam.getResultPath(), values[1]);
-			if (!new File(folder).exists()) {
-				FileUtils.forceMkdir(new File(folder));
-			}
-			writeText(FilenameUtils.concat(folder, values[0] + ".csv"), getATradingDayHeader() + BackTestTask.allPositivePnlResult.get(key), true);
-		}
 	}
 	
 	public static String getATradingDayHeader() {
