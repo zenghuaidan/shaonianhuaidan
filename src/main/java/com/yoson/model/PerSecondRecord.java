@@ -43,7 +43,6 @@ public class PerSecondRecord {
 	private double totalPnl;
 	private double mtm;
 	private double maxMtm;
-	private int pc;
 	private int tCounter;
 	
 	public PerSecondRecord() {
@@ -134,7 +133,6 @@ public class PerSecondRecord {
 		initTotalPnl(lastSecondRecord);
 		initTradeCount(lastSecondRecord);
 		initTotalTrades(lastSecondRecord);
-		initPc(lastSecondRecord);
 	}
 	
 	public void initCheckMarketTime(List<ScheduleData> dailyScheduleData, ScheduleData scheduleDataPerSecond, TestSet testSet, int checkMarketTime) throws ParseException {
@@ -433,18 +431,6 @@ public class PerSecondRecord {
 		this.totalTrade = lastSecondRecord.totalTrade + this.tradeCount; 
 	}
 	
-	private void initPc(PerSecondRecord lastSecondRecord) {
-		if( (this.position != 0 && lastSecondRecord.getPosition() != 0 && this.position != lastSecondRecord.getPosition()) || (lastSecondRecord.getPosition() == 0 && this.position != 0) ){
-			this.pc = 1;
-		}else{
-			if(this.position == lastSecondRecord.getPosition() && this.position !=0){
-				this.pc = lastSecondRecord.getPc() + 1;
-			}else{
-				this.pc = 0;
-			}
-		}
-	}
-	
 	public long getTime() {
 		return time;
 	}
@@ -691,14 +677,6 @@ public class PerSecondRecord {
 
 	public void setTotalTrade(int totalTrade) {
 		this.totalTrade = totalTrade;
-	}
-
-	public int getPc() {
-		return pc;
-	}
-
-	public void setPc(int pc) {
-		this.pc = pc;
 	}
 
 	public double getActualAskPrice() {

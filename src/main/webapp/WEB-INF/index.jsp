@@ -391,11 +391,6 @@
 							      <td colspan="2"></td>
 							   </tr>
 							   <tr style="height:10px"><td colspan="6"></td></tr>
-							   <tr>
-							      <td>Pnl Threshold</td>
-							      <td><input name="pnlThreshold" value="${mainUIParam.pnlThreshold}" type="text"/></td>
-							      <td colspan="4"></td>
-							   </tr>   
    							   <tr>
 							      <td>Include Morning Data</td>
 							      <td><input name="includeMorningData" type="checkbox" ${mainUIParam.includeMorningData ? 'checked' : ''} /></td>
@@ -844,12 +839,7 @@
 								      <td><input value="${strategy.mainUIParam.lunchLastNumberOfMinutesClearPosition}" type="text"/></td>
 								      <td colspan="2"></td>
 								   </tr>
-								   <tr style="height:10px"><td colspan="4"></td></tr>
-								   <tr>
-								      <td>Pnl Threshold</td>
-								      <td><input value="${strategy.mainUIParam.pnlThreshold}" type="text"/></td>
-								      <td colspan="4"></td>
-								   </tr>								   
+								   <tr style="height:10px"><td colspan="4"></td></tr>								   							  
       							   <tr>
 								      <td>Include Morning Data</td>
 								      <td><input type="checkbox" ${strategy.mainUIParam.includeMorningData ? 'checked' : ''} /></td>

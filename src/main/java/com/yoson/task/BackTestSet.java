@@ -7,9 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.yoson.csv.BackTestCSVWriter;
 import com.yoson.date.DateUtils;
 import com.yoson.model.MainUIParam;
 import com.yoson.model.PerDayRecord;
@@ -79,23 +76,7 @@ public class BackTestSet {
 			totalPnl = totalPnl + perSecondRecord.getPnl();
 	
 			dailyIndexVolTemp += ((perSecondRecord.getLastTrade() - mean) * (perSecondRecord.getLastTrade() - mean));
-			
-			if (mainUIParam.getPnlThreshold() > 0) {
-				if(perSecondRecord.getPc() == 1) {
-					sb = new StringBuilder();
-					BackTestCSVWriter.constructPerSecondRecord(sb, perSecondRecord);
-				} else if(sb.length() > 0) {
-					BackTestCSVWriter.constructPerSecondRecord(sb, perSecondRecord);
-				}
-				
-				if (perSecondRecord.getPnl() >= mainUIParam.getPnlThreshold()) {
-					String key = StringUtils.join(scheduleDataPerSecond.getDateStr() , "-" , scheduleDataPerSecond.getTimeStr().replaceAll(":", "-") , "#"
-							, testSet.getCpTimer() , "_" , testSet.getCpBuffer() , "_" , testSet.getCpHitRate() , "_" , testSet.getCpSmooth() , "_"
-							, testSet.getEstimationBuffer() , "_" , testSet.getActionTrigger() , "_" , testSet.getActionCounting() 
-							, "_" , testSet.getTradeStopLossTrigger() , "_" , testSet.getTradeStopLossTriggerPercent() , "_" , testSet.getAbsoluteTradeStopLoss());
-					BackTestTask.allPositivePnlResult.put(key, sb.toString());
-				}				
-			}
+						
 		}				
 		
 		perDayRecord.zeroPnlTrades = sumOfTrade - ((perDayRecord.positiveTrades + perDayRecord.negativeTrades ) *2);

@@ -50,9 +50,7 @@ public class MainUIParam extends TestSet {
 	private double tradeStopLossTriggerPercentTo;
 	private double tradeStopLossTriggerPercentLiteral;
 	private double absoluteTradeStopLossTo;
-	private double absoluteTradeStopLossLiteral;
-	@Expose
-	private double pnlThreshold;
+	private double absoluteTradeStopLossLiteral;	
 	@Expose
 	private double orderTicker;
 
@@ -352,14 +350,6 @@ public class MainUIParam extends TestSet {
 
 	public void setEndStr(String endStr) {
 		this.endStr = endStr;
-	}
-
-	public double getPnlThreshold() {
-		return pnlThreshold;
-	}
-
-	public void setPnlThreshold(double pnlThreshold) {
-		this.pnlThreshold = pnlThreshold;
 	}
 
 	public String getDataRootPath() {
