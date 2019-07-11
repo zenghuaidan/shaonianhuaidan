@@ -380,43 +380,6 @@ public class YosonEWrapper extends BasicEWrapper {
 		return sum / list.size();
 	}
 	
-	public static void getRecordList(String folderPath, List<Record> tradeList, List<Record> askList, List<Record> bidList) {
-		extractRecordAsList(getPath(folderPath, ""), tradeList, askList, bidList);
-	}
-	
-	public static void extractRecordAsList(String path, List<Record> tradeList, List<Record> askList, List<Record> bidList) {
-		File file = new File(path);
-		if (!file.exists())
-			return;
-		CSVReader csvReader = null;
-		try {
-			csvReader = new CSVReader(new FileReader(file), ',', '\n', 0);
-			String [] lines;
-			while ((lines = csvReader.readNext()) != null)  {
-				Record record = new Record(DateUtils.yyyyMMddHHmmss2().parse(lines[1]), Double.parseDouble(lines[2]), Integer.parseInt(lines[3]));
-				String status = lines[0];
-				if(status.equals(BID)) {
-					bidList.add(record);
-				}
-				if(status.equals(ASK)) {
-					askList.add(record);
-				}
-				if(status.equals(TRADE)) {
-					tradeList.add(record);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if(csvReader != null)
-				try {
-					csvReader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-		}
-	}
-	
 	public static boolean isValidateTime(Date when) {
 		if (EClientSocketUtils.contract == null)
 			return false;
