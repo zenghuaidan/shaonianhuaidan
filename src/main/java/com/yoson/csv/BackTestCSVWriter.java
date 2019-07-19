@@ -14,6 +14,7 @@ import com.yoson.model.BackTestResult;
 import com.yoson.model.MainUIParam;
 import com.yoson.model.PerDayRecord;
 import com.yoson.model.PerSecondRecord;
+import com.yoson.model.TestSet;
 import com.yoson.task.BackTestTask;
 
 public class BackTestCSVWriter {	
@@ -80,28 +81,27 @@ public class BackTestCSVWriter {
 		return "Test no.,key,version,Source,OC,CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length,sum of morning PnL,sum of lunch PnL,average morning PnL,average lunch PnL," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time,Average Step Size,Include Last Market Day Data," + monthColumStr + "\n";
 	}
 
-	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult) {
+	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult, TestSet testSet) {
 		StringBuilder content = new StringBuilder();
 		content.append(testNo + ",")
-		.append(backTestResult.testSet.getKey()  +  ",")
+		.append(testSet.getKey()  +  ",")
 		.append(mainUIParam.getVersion() + ",")
 		.append(mainUIParam.getSource() + ",")
-		.append(backTestResult.testSet.getOc() + ",")
-		.append(backTestResult.testSet.getCpTimer() + ",")
-		.append(backTestResult.testSet.getCpBuffer() + ",")
-		.append(backTestResult.testSet.getCpHitRate() + ",")
-		.append(backTestResult.testSet.getCpSmooth() + ",")
-		.append(backTestResult.testSet.getEstimationBuffer() + ",")
-		.append(backTestResult.testSet.getActionTrigger() + ",")
-		.append(backTestResult.testSet.getActionCounting() + ",")
-		.append(backTestResult.testSet.getTradeStopLossTrigger() + ",")
-		.append(backTestResult.testSet.getTradeStopLossTriggerPercent() + ",")
-		.append(backTestResult.testSet.getAbsoluteTradeStopLoss() + ",")
-		.append(backTestResult.testSet.getMarketStartTime() + ",")
-		.append(backTestResult.testSet.getLunchStartTimeFrom() + ",")
-		.append(backTestResult.testSet.getCashPerIndexPoint() + ",")
-		.append(backTestResult.testSet.getTradingFee() + ",")
-		.append(backTestResult.testSet.getOtherCostPerTrade() + ",")
+		.append(testSet.getOc() + ",")
+		.append(testSet.getCpBuffer() + ",")
+		.append(testSet.getCpHitRate() + ",")
+		.append(testSet.getCpSmooth() + ",")
+		.append(testSet.getEstimationBuffer() + ",")
+		.append(testSet.getActionTrigger() + ",")
+		.append(testSet.getActionCounting() + ",")
+		.append(testSet.getTradeStopLossTrigger() + ",")
+		.append(testSet.getTradeStopLossTriggerPercent() + ",")
+		.append(testSet.getAbsoluteTradeStopLoss() + ",")
+		.append(testSet.getMarketStartTime() + ",")
+		.append(testSet.getLunchStartTimeFrom() + ",")
+		.append(testSet.getCashPerIndexPoint() + ",")
+		.append(testSet.getTradingFee() + ",")
+		.append(testSet.getOtherCostPerTrade() + ",")
 		.append(backTestResult.totalDays + ",")
 		.append(backTestResult.totalPnL + ",")
 		.append(backTestResult.averagePnL + ",")
@@ -149,28 +149,28 @@ public class BackTestCSVWriter {
 		return content.toString();
 	}
 
-	public static void initBTPnLAndTradeAndProfitAndLossContent(int id, MainUIParam mainUIParam, BackTestResult backTestResult, StringBuilder pnlContent, StringBuilder tradContent) {
+	public static void initBTPnLAndTradeAndProfitAndLossContent(int id, MainUIParam mainUIParam, BackTestResult backTestResult, StringBuilder pnlContent, StringBuilder tradContent, List<PerDayRecord> dayRecords, TestSet testSet) {
 		if (id == 1) {
 			StringBuilder allProfitAndLossResultsHeader = new StringBuilder("Test no.,key,");
-			for (PerDayRecord perDayRecord : backTestResult.dayRecords) {
+			for (PerDayRecord perDayRecord : dayRecords) {
 				String dateStr = perDayRecord.getDateStr();
 				allProfitAndLossResultsHeader.append(dateStr + ",");
 			}
 			allProfitAndLossResultsHeader.append("\n");
 			BackTestTask.allProfitAndLossResults.append(allProfitAndLossResultsHeader);
 		}
-		BackTestTask.allProfitAndLossResults.append(id + "," + backTestResult.testSet.getKey()  +  ",");		
-		for (PerDayRecord perDayRecord : backTestResult.dayRecords) {
+		BackTestTask.allProfitAndLossResults.append(id + "," + testSet.getKey()  +  ",");		
+		for (PerDayRecord perDayRecord : dayRecords) {
 			BackTestTask.allProfitAndLossResults.append(perDayRecord.totalPnL + ",");			
 			
-			pnlContent.append(backTestResult.testSet.getKey()  +  ",")
+			pnlContent.append(testSet.getKey()  +  ",")
 			.append(perDayRecord.getDateStr() + ",")
 			.append(mainUIParam.getVersion() + ",")
 			.append(mainUIParam.getSource() + ",")
 			.append(perDayRecord.totalPnL + ",")
 			.append("\n"); 
 			
-			tradContent.append(backTestResult.testSet.getKey()  +  ",")
+			tradContent.append(testSet.getKey()  +  ",")
 			.append(mainUIParam.getVersion() + ",")
 			.append(mainUIParam.getSource() + ",")
 			.append(perDayRecord.getDateStr() + ",")

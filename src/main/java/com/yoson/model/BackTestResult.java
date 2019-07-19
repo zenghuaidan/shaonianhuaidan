@@ -1,8 +1,5 @@
 package com.yoson.model;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -47,408 +44,116 @@ public class BackTestResult
 	public double averageLunchPnL;
 
 	
-	public List<PerDayRecord> dayRecords;
-
-	public TestSet testSet;
-	
 	public BackTestResult(TestSet testSet, List<PerDayRecord> dayRecords)
-	{
-		this.testSet = testSet;
-		this.dayRecords = dayRecords;
-		this.totalDays = dayRecords.size();
-		summarizeTestResult();
-	}
-	
-	
-	public void summarizeTestResult()
 	{		
-		calTotalPnL();
-		calAveragePnL();
-		calTotalTrade();
-		calAverageTrade();
-		calTotalWinningDay();
-		calTotalLosingDay();
-		calWinningPercentage();
-		calGainPerPositiveTrade();
-		calGainPerNegativeTrade();
-		calNoPositiveTrade();
-		calNoNegativeTrade();
-		calNoZeroPnLTrade();
-		calAverageholdingTime();
-		calAdjustedPnLAfterFee();
-		calPnL();
-		calPnLByYear();
-	}
-	
-	public void calPnL()
-	{
-		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-		Boolean PreviousPositive = false;
-		Boolean isWinningStreak = false;
-		Boolean isLossingStreak = false;
-		Boolean StreakCounted = false; // used to indicate whether the streak is counted or not
-		
-		ArrayList<Double> WinningStreakList = new ArrayList<Double>();
-		ArrayList<Double> LossingStreakList = new ArrayList<Double>();
-		ArrayList<Integer> WinningStreakLengthList = new ArrayList<Integer>();
-		ArrayList<Integer> LossingStreakLengthList = new ArrayList<Integer>();
-		worstLossDay = 0;
-		bestProfitDay = 0;
-		worstLossingStreak = 0;
-		bestWinningStreak = 0;
-		lossingStreakfreq = 0;
-		winningStreakFreq = 0;
-		sumOfLossingStreak = 0;
-		sumOfWinningStreak = 0;
-		averageOfLossingStreak = 0;
-		averageOfWinningStreak = 0;
-		int count = 0;
-		Double PreviousPnL = 0.0;
-		Double temp_sum = 0.0;
-		int streak_day_count = 0;
-		
-		for (PerDayRecord dayRecord : dayRecords)
-		{
-//			System.out.println(df.format(Day.date));
-//			System.out.println(Day.PnL);
-			if (dayRecord.totalPnL > bestProfitDay) bestProfitDay = dayRecord.totalPnL;
-			if (dayRecord.totalPnL < worstLossDay) worstLossDay = dayRecord.totalPnL;
-			
-			if (count == 0){ // The first Day, so skipped
-				count++;
-				PreviousPnL = dayRecord.totalPnL;
-				if (dayRecord.totalPnL > 0) PreviousPositive = true;
-				else PreviousPositive = false;
-				continue;
-			}
-			else 
-			{
-				count++;
-
-				if (dayRecord.totalPnL == 0.0){
-					if (count == dayRecords.size())
-						if (isWinningStreak == true){
-							WinningStreakList.add(temp_sum);
-							WinningStreakLengthList.add(streak_day_count);
-						}
-						else if (isLossingStreak == true){
-							LossingStreakList.add(temp_sum);
-							LossingStreakLengthList.add(streak_day_count);
-						}
-					continue; // zero
-				}
+		this.totalDays = dayRecords.size();	
 				
-				if (PreviousPositive == true && isWinningStreak == true) // The Previous Day has positive PnL and it is a Winning Streak
-				{
-					if (dayRecord.totalPnL > 0)
-					{ 
-						if (count != dayRecords.size()){
-							// PnL is still positive , the Streak will continue
-							streak_day_count++;
-							temp_sum = temp_sum + dayRecord.totalPnL;
-							PreviousPnL = dayRecord.totalPnL;
-							continue;
-						}
-						else 
-						{
-							// last element, The Streak stops here
-							streak_day_count++;
-							WinningStreakLengthList.add(streak_day_count);
-							streak_day_count = 0;
-							temp_sum = temp_sum + dayRecord.totalPnL;
-							WinningStreakList.add(temp_sum);
-							break;
-						}
-						
-					}
-					else // PnL is negative , the Streak stops
-					{
-						WinningStreakList.add(temp_sum);
-						WinningStreakLengthList.add(streak_day_count);
-						streak_day_count = 0;
-						temp_sum = 0.0;
-						PreviousPnL = dayRecord.totalPnL;
-						isWinningStreak = false;
-						PreviousPositive = false;
-						continue; // not a streak, skip
-					}
-				}
-				
-				else if (PreviousPositive == true && isWinningStreak == false) // The Previous Day has positive PnL and it is not a Winning Streak
-				{
-					if (dayRecord.totalPnL > 0)
-					{ 
-						// PnL is positive and previous PnL is also positive, it is a new Winning Streak
-						isWinningStreak = true;
-						winningStreakFreq++;
-						streak_day_count = 2;
-						temp_sum = PreviousPnL + dayRecord.totalPnL;
-						PreviousPnL = dayRecord.totalPnL;
-					}
-					else 
-					{
-						// PnL is negative but the previous PnL is positive, it is neither Winning Streak nor Lossing Streak
-						PreviousPnL = dayRecord.totalPnL;
-						PreviousPositive = false;
-						continue; // not a streak, skip
-					}
-				}
-				
-				else if (PreviousPositive == false && isLossingStreak == true) // The Previous Day has negative PnL and it is a Lossing Streak
-				{
-					if (dayRecord.totalPnL > 0)
-					{ 
-						// PnL is positive but the previous PnL is negative, The Lossing Streak stops
-						LossingStreakList.add(temp_sum);
-						LossingStreakLengthList.add(streak_day_count);
-						streak_day_count = 0;
-						temp_sum = 0.0;
-						isLossingStreak = false;
-						PreviousPositive = true;
-						PreviousPnL = dayRecord.totalPnL;
-						continue; // not a streak, skip						
-					}
-					else  
-					{
-						if (count != dayRecords.size()){
-							// PnL is negative and the previous PnL is also negative, the Streak will continue
-							streak_day_count++;
-							temp_sum = temp_sum + dayRecord.totalPnL;
-							PreviousPnL = dayRecord.totalPnL;
-							continue;
-						}
-						else {
-							// last element, Lossing Streak stops here
-							streak_day_count++;
-							LossingStreakLengthList.add(streak_day_count);
-							streak_day_count = 0;
-							temp_sum = temp_sum + dayRecord.totalPnL;
-							LossingStreakList.add(temp_sum);
-							break;
-						}
-						
-					}
-				}
-				else if (PreviousPositive == false && isLossingStreak == false) // The Previous Day has negative PnL and it is not a Lossing Streak
-				{
-	
-					if (dayRecord.totalPnL > 0)
-					{ 
-						// PnL is positive but the previous PnL is negative, it is neither Winning Streak nor Lossing Streak
-						PreviousPositive = true;
-						PreviousPnL = dayRecord.totalPnL;
-						continue; // not a streak, skip
-						
-					}
-					else 
-					{
-						// PnL is negative and the previous PnL is also negative, it is a new Lossing Streak
-						isLossingStreak = true;
-						lossingStreakfreq++;
-						streak_day_count = 2;
-						temp_sum = PreviousPnL + dayRecord.totalPnL;
-						PreviousPnL = dayRecord.totalPnL;
-						continue;
-					}
-				}
-			}
-			
-		}
-		
-		try
-		{
-			if (lossingStreakfreq > 0) {
-				worstLossingStreak = LossingStreakList.size() > 0 ? Collections.min(LossingStreakList) : 0;
-				sumOfLossingStreak = LossingStreakList.stream().mapToDouble(f -> f.doubleValue()).sum();
-				averageOfLossingStreak = sumOfLossingStreak/lossingStreakfreq;
-				maxLossingStreakLength = LossingStreakLengthList.size() > 0 ? Collections.max(LossingStreakLengthList) : 0;
-				
-			}
-			if (winningStreakFreq > 0) {
-				bestWinningStreak = WinningStreakList.size() > 0 ? Collections.max(WinningStreakList) : 0;
-				sumOfWinningStreak = WinningStreakList.stream().mapToDouble(f -> f.doubleValue()).sum();
-				averageOfWinningStreak = sumOfWinningStreak/winningStreakFreq;
-				maxWinningStreakLength = WinningStreakLengthList.size() > 0 ? Collections.max(WinningStreakLengthList) : 0;
-			}
-		}
-		catch (Exception e){
-			e.printStackTrace();
-		}
-		
-		
-		
-		
-	}	
-	
-	public void calTotalPnL()
-	{
-		sumMorningPnL = 0;
-		sumLunchPnL = 0;
-		averageMorningPnL = 0;
-		averageLunchPnL = 0;
-		
-		totalPnL = 0;
-		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
-		for (PerDayRecord Per_Day :  tempArray)
-		{
-			totalPnL = totalPnL + Per_Day.totalPnL;
-			sumMorningPnL += Per_Day.morningPnL;
-			sumLunchPnL += Per_Day.afternoonPnL;
-		}
-		averageMorningPnL = sumMorningPnL / totalDays;
-		averageLunchPnL = sumLunchPnL / totalDays;
-	}
-	
-	public void calAveragePnL()
-	{
-		averagePnL = totalPnL/totalDays;
-	}
-	
-	public void calTotalTrade()
-	{
-		totalTrades = 0;
-		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
-		for (PerDayRecord Per_Day :  tempArray)
-		{
-			totalTrades = totalTrades + Per_Day.totalTrades;
-		}
-
-	}
-	
-	public void calAverageTrade()
-	{
-		averageTrades = totalTrades/totalDays;
-	}
-	
-	public void calTotalWinningDay()
-	{
-		totalWinningDays = 0;
-		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
-		for (PerDayRecord Per_Day :  tempArray)
-		{
-			if (Per_Day.totalPnL>0)
-			{
-				totalWinningDays++;
-			}
-		}
-	}
-	
-	public void calTotalLosingDay()
-	{
-		totalLosingDays = 0;
-		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
-		for (PerDayRecord Per_Day :  tempArray)
-		{
-			if (Per_Day.totalPnL<0)
-			{
-				totalLosingDays++;
-			}
-		}
-	}
-	
-	public void calWinningPercentage()
-	{
-		winningPercentage = totalWinningDays/totalDays * 100;
-	}
-	
-	public void calGainPerPositiveTrade()
-	{
-		averageProfitOfPositiveTrade = 0;
-		double total_profit = 0;
-		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
-		for (PerDayRecord Per_Day :  tempArray)
-		{
-			total_profit = total_profit + Per_Day.averagePositiveTrades;
-		}
-		averageProfitOfPositiveTrade = total_profit/totalDays;
-	}
-	
-	public void calGainPerNegativeTrade()
-	{
-		averageProfitOfNegativeTrade = 0;
-		double total_profit = 0;
-		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
-		for (PerDayRecord Per_Day :  tempArray)
-		{
-			total_profit = total_profit + Per_Day.averageNegativeTrades;
-		}
-		averageProfitOfNegativeTrade = total_profit/totalDays;
-	}
-	
-	public void calNoPositiveTrade()
-	{
-		averageNoPositiveTrade = 0;
-		double total_positive_trades = 0;
-		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
-		for (PerDayRecord Per_Day :  tempArray)
-		{
-			total_positive_trades = total_positive_trades + Per_Day.positiveTrades;
-		}
-		averageNoPositiveTrade = total_positive_trades/totalDays;
-	}
-	
-	public void calNoNegativeTrade()
-	{
-		averageNoNegativeTrade = 0;
-		double total_negative_trades = 0;
-		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
-		for (PerDayRecord Per_Day :  tempArray)
-		{
-			total_negative_trades = total_negative_trades + Per_Day.negativeTrades;
-		}
-		averageNoNegativeTrade = total_negative_trades/totalDays;
-	}
-	
-	public void calNoZeroPnLTrade()
-	{
-		averageZeroPnLTrade = 0;
-		double total_zero_trades = 0;
-		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
-		for (PerDayRecord Per_Day :  tempArray)
-		{
-			total_zero_trades = total_zero_trades + Per_Day.zeroPnlTrades;
-		}
-		averageZeroPnLTrade = total_zero_trades/totalDays;
-		
-	}
-	
-	public void calAverageholdingTime()
-	{
-		averageHoldingTime = 0;
-		double total_holding_time = 0;
-		
-		PerDayRecord[] tempArray = dayRecords.toArray(new PerDayRecord[0]);
-		for (PerDayRecord Per_Day :  tempArray)
-		{
-			total_holding_time = total_holding_time + Per_Day.averageHoldingTime;
-		}
-		averageHoldingTime = total_holding_time/totalDays;
-	}
-	
-	
-	public void calAdjustedPnLAfterFee()
-	{
-		adjustedPnLAfterFee = (testSet.getCashPerIndexPoint()*totalPnL) - ((testSet.getTradingFee() + testSet.getOtherCostPerTrade())*totalTrades);
-	}
-	
-	public void calPnLByYear() {
+		double totalAveragePositiveTrades = 0;
+		double totalAverageNegativeTrades = 0;
+		double totalPositiveTrades = 0;
+		double totalNegativeTrades = 0;
+		double totalZeroTrades = 0;
+		double totalHoldingTime = 0;
 		yearPnlMap = new TreeMap<Integer, Double>();
 		monthPnlMap = new TreeMap<String, Double>();
-		for (PerDayRecord dayRecord : dayRecords)
-		{
-			int year = dayRecord.getDate().getYear() + 1900;
-			if (yearPnlMap.containsKey(year)) {
-				yearPnlMap.replace(year, yearPnlMap.get(year) + dayRecord.totalPnL);				
-			} else {
-				yearPnlMap.put(year, dayRecord.totalPnL);
+		
+		Double previousPnl = null;
+		int winOrLossPeriodCount = 0;
+		double winOrLossPeriodSum = 0;
+		for(int i = 0; i < dayRecords.size(); i++) {
+			PerDayRecord perDayRecord = dayRecords.get(i);
+			totalPnL = totalPnL + perDayRecord.totalPnL;
+			sumMorningPnL += perDayRecord.morningPnL;
+			sumLunchPnL += perDayRecord.afternoonPnL;
+			totalTrades = totalTrades + perDayRecord.totalTrades;
+			if (perDayRecord.totalPnL > 0) totalWinningDays++;
+			if (perDayRecord.totalPnL < 0) totalLosingDays++;
+			totalAveragePositiveTrades = totalAveragePositiveTrades + perDayRecord.averagePositiveTrades;
+			totalAverageNegativeTrades = totalAverageNegativeTrades + perDayRecord.averageNegativeTrades;
+			totalPositiveTrades = totalPositiveTrades + perDayRecord.positiveTrades;
+			totalNegativeTrades = totalNegativeTrades + perDayRecord.negativeTrades;
+			totalZeroTrades = totalZeroTrades + perDayRecord.zeroPnlTrades;
+			totalHoldingTime = totalHoldingTime + perDayRecord.averageHoldingTime;
+						
+			bestProfitDay = Math.max(bestProfitDay, perDayRecord.totalPnL);
+			worstLossDay = Math.min(worstLossDay, perDayRecord.totalPnL);
+			
+			
+			int year = perDayRecord.getDate().getYear() + 1900;			
+			yearPnlMap.put(year, (yearPnlMap.containsKey(year) ? yearPnlMap.get(year) : 0) + perDayRecord.totalPnL);
+			
+			
+			String month = DateUtils.yyyyMM().format(perDayRecord.getDate());			
+			monthPnlMap.put(month, (monthPnlMap.containsKey(month) ? monthPnlMap.get(month) : 0) + perDayRecord.totalPnL);	
+			
+			
+			if(i > 0 && dayRecords.get(i - 1).totalPnL != 0) previousPnl = dayRecords.get(i - 1).totalPnL; //previous total pnl, skip the totalPnl = 0
+			
+			if((previousPnl == null || previousPnl > 0) && perDayRecord.totalPnL < 0  // begin of loss
+				|| (previousPnl == null || previousPnl < 0) && perDayRecord.totalPnL > 0)  // begin of win 
+			{
+				lossingStreakfreq += perDayRecord.totalPnL < 0 ? 1 : 0;
+				winningStreakFreq += perDayRecord.totalPnL > 0 ? 1 : 0;
+				
+				if(previousPnl != null) {
+					if(previousPnl > 0) { // end of win
+						bestWinningStreak = Math.max(bestWinningStreak, winOrLossPeriodSum);
+						maxWinningStreakLength = Math.max(maxWinningStreakLength, winOrLossPeriodCount);
+					} else { // end of loss
+						worstLossingStreak = Math.min(worstLossingStreak, winOrLossPeriodSum);
+						maxLossingStreakLength = Math.max(maxLossingStreakLength, winOrLossPeriodCount);
+					}
+					
+				}
+				
+				// reset the indicator at last
+				winOrLossPeriodCount = 0;
+				winOrLossPeriodSum= 0;								
 			}
 			
-			String month = DateUtils.yyyyMM().format(dayRecord.getDate());			
-			if (monthPnlMap.containsKey(month)) {
-				monthPnlMap.replace(month, monthPnlMap.get(month) + dayRecord.totalPnL);				
+			
+			if(perDayRecord.totalPnL != 0) { // win/loss period indicator
+				winOrLossPeriodCount++;
+				winOrLossPeriodSum += perDayRecord.totalPnL;
+			}
+			
+			sumOfLossingStreak += perDayRecord.totalPnL < 0 ? perDayRecord.totalPnL : 0;
+			sumOfWinningStreak += perDayRecord.totalPnL > 0 ? perDayRecord.totalPnL : 0;
+						
+		}
+		
+		if(winOrLossPeriodCount > 0) {
+			if(winOrLossPeriodSum > 0) {
+				bestWinningStreak = Math.max(bestWinningStreak, winOrLossPeriodSum);
+				maxWinningStreakLength = Math.max(maxWinningStreakLength, winOrLossPeriodCount);
 			} else {
-				monthPnlMap.put(month, dayRecord.totalPnL);
+				worstLossingStreak = Math.min(worstLossingStreak, winOrLossPeriodSum);
+				maxLossingStreakLength = Math.max(maxLossingStreakLength, winOrLossPeriodCount);
 			}
 		}
-	}		
+		
+		averageMorningPnL = sumMorningPnL / totalDays;
+		averageLunchPnL = sumLunchPnL / totalDays;		
+		averagePnL = totalPnL / totalDays;		
+		averageTrades = totalTrades / totalDays;
+		winningPercentage = totalWinningDays / totalDays * 100;
+				
+		averageProfitOfPositiveTrade = totalAveragePositiveTrades / totalDays;			
+		averageProfitOfNegativeTrade = totalAverageNegativeTrades / totalDays;
+		
+		
+		averageNoPositiveTrade = totalPositiveTrades / totalDays;
+		averageNoNegativeTrade = totalNegativeTrades / totalDays;
+		
+		averageZeroPnLTrade = totalZeroTrades / totalDays;
+		
+		averageHoldingTime = totalHoldingTime / totalDays;
+
+		adjustedPnLAfterFee = (testSet.getCashPerIndexPoint()*totalPnL) - ((testSet.getTradingFee() + testSet.getOtherCostPerTrade())*totalTrades);
+		
+		if (lossingStreakfreq > 0) averageOfLossingStreak = sumOfLossingStreak / lossingStreakfreq;		
+		if (winningStreakFreq > 0) averageOfWinningStreak = sumOfWinningStreak / winningStreakFreq;		
+	
+	}
+				
 }
