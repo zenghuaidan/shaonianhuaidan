@@ -269,13 +269,13 @@ public class BackTestTask implements Runnable {
 			
 			StringBuilder pnlContent = new StringBuilder();
 			StringBuilder tradContent = new StringBuilder();
-			BackTestCSVWriter.initBTPnLAndTradeAndProfitAndLossContent(index, mainUIParam, backTestResult, pnlContent, tradContent);
+			BackTestCSVWriter.initBTPnLAndTradeAndProfitAndLossContent(index, mainUIParam, backTestResult, pnlContent, tradContent, dayRecords, testSet);
 			BackTestTask.allBTPnlResults.add(pnlContent.toString());
 			BackTestTask.allBTTradeResults.add(tradContent.toString());
-			BackTestTask.allBTSummaryResults.add(BackTestCSVWriter.getBTSummaryContent(index, mainUIParam, backTestResult));
+			BackTestTask.allBTSummaryResults.add(BackTestCSVWriter.getBTSummaryContent(index, mainUIParam, backTestResult, testSet));
 			
-			if(index == 1 && backTestResult.dayRecords.size() > 0 && !isLiveData) {
-				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, backTestResult.dayRecords.get(RandomUtils.nextInt(mainUIParam.isIncludeLastMarketDayData() && backTestResult.dayRecords.size() > 1 ? 1 : 0, backTestResult.dayRecords.size())));
+			if(index == 1 && backTestResult.totalDays > 0 && !isLiveData) {
+				BackTestTask.aTradingDayForCheckResult = BackTestCSVWriter.getATradingDayContent(mainUIParam, dayRecords.get(RandomUtils.nextInt(mainUIParam.isIncludeLastMarketDayData() && dayRecords.size() > 1 ? 1 : 0, dayRecords.size())));
 				BackTestCSVWriter.writeText(FilenameUtils.concat(mainUIParam.getResultPath(), BackTestCSVWriter.aTradingDayForCheckFileName), BackTestCSVWriter.getATradingDayHeader() + BackTestTask.aTradingDayForCheckResult, true);
 			}	
 			
