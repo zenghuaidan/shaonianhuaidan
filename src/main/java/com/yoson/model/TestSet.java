@@ -49,6 +49,8 @@ public class TestSet {
 	private int avgStep;
 	@Expose
 	private boolean includeLastMarketDayData;
+	@Expose
+	private boolean ignoreLunchTime;
 
 	public TestSet() {}
 
@@ -56,7 +58,7 @@ public class TestSet {
 			int actionCounting, double tradeStopLossTrigger, double tradeStopLossTriggerPercent, double absoluteTradeStopLoss, double unit,
 			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
-			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData, int avgStep, boolean includeLastMarketDayData) {
+			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData, int avgStep, boolean includeLastMarketDayData, boolean ignoreLunchTime) {
 		this.cpTimer = cpTimer;
 		this.cpBuffer = cpBuffer;
 		this.cpHitRate = cpHitRate;
@@ -81,6 +83,7 @@ public class TestSet {
 		this.includeMorningData = includeMorningData;
 		this.avgStep = avgStep;
 		this.includeLastMarketDayData = includeLastMarketDayData;
+		this.ignoreLunchTime = ignoreLunchTime;
 	}
 
 	public int getCpTimer() {
@@ -172,6 +175,7 @@ public class TestSet {
 	}
 
 	public String getLunchStartTimeFrom() {
+		if(ignoreLunchTime) return lunchStartTimeTo;
 		return lunchStartTimeFrom;
 	}
 
@@ -266,7 +270,14 @@ public class TestSet {
 	public void setIncludeLastMarketDayData(boolean includeLastMarketDayData) {
 		this.includeLastMarketDayData = includeLastMarketDayData;
 	}
+	
+	public boolean isIgnoreLunchTime() {
+		return ignoreLunchTime;
+	}
 
+	public void setIgnoreLunchTime(boolean ignoreLunchTime) {
+		this.ignoreLunchTime = ignoreLunchTime;
+	}
 	public String getKey() {
 		return getCpTimer()  +  "_" +
 		getCpBuffer() + "_" +
