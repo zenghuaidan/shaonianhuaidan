@@ -18,9 +18,7 @@ public class MainUIParam extends TestSet {
 	private String paramPath;
 	private String stepPath;
 	private String logPath;
-	private String resultPath;
-	@Expose
-	private boolean ignoreLunchTime;
+	private String resultPath;	
 	@Expose
 	private String source;
 	@Expose
@@ -410,14 +408,6 @@ public class MainUIParam extends TestSet {
 		this.orderTicker = orderTicker;
 	}
 
-	public boolean isIgnoreLunchTime() {
-		return ignoreLunchTime;
-	}
-
-	public void setIgnoreLunchTime(boolean ignoreLunchTime) {
-		this.ignoreLunchTime = ignoreLunchTime;
-	}
-
 	public boolean isOutputDataOpen() {
 		return outputDataOpen;
 	}
@@ -594,10 +584,7 @@ public class MainUIParam extends TestSet {
 		long morningStartTime = DateUtils.HHmmss().parse(this.getMarketStartTime()).getTime();
 		long lunch_start_time = DateUtils.HHmmss().parse(this.getLunchStartTimeFrom()).getTime();
 		long lunch_end_time = DateUtils.HHmmss().parse(this.getLunchStartTimeTo()).getTime();
-		long market_close_time = DateUtils.HHmmss().parse(this.getMarketCloseTime()).getTime();
-		
-		if(this.isIgnoreLunchTime())
-			lunch_start_time = lunch_end_time;
+		long market_close_time = DateUtils.HHmmss().parse(this.getMarketCloseTime()).getTime();				
 		
 		if (current < (morningStartTime) || current >= market_close_time - lastMinutes)
 		{

@@ -18,7 +18,6 @@ public class BackTestSet {
 	
 	public static PerDayRecord initPerDayRecord(List<ScheduleData> dailyScheduleData, MainUIParam mainUIParam, TestSet testSet) throws ParseException
 	{		
-		long start = System.currentTimeMillis();
 		List<PerSecondRecord> dailyPerSecondRecordList = new ArrayList<PerSecondRecord>();
 		Map<Double, Integer> lastTradeMap1 = new HashMap<Double, Integer>();
 		Map<Double, Integer> lastTradeMap2 = new HashMap<Double, Integer>();
@@ -35,7 +34,6 @@ public class BackTestSet {
 		double totalPnl = 0;
 		double mean = BackTestTask.sumOfLastTrade.get(dailyScheduleData.get(dailyScheduleData.size() - 1).getDateStr()) / dailyScheduleData.size();
 		double dailyIndexVolTemp = 0;
-		StringBuilder sb = new StringBuilder();
 		long marketStartTime = DateUtils.HHmmss().parse(mainUIParam.getMarketStartTime()).getTime();
 		long lunchStartTimeFrom = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeFrom()).getTime();
 		long lunchStartTimeTo = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
@@ -45,9 +43,8 @@ public class BackTestSet {
 			long time = DateUtils.HHmmss().parse(scheduleDataPerSecond.getTimeStr()).getTime();
 			boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
 			boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
-			boolean isValidateTime = time >= marketStartTime && time <= marketCloseTime;
 			PerSecondRecord perSecondRecord = null;
-			if (isMorning || isAfternoon || mainUIParam.isIgnoreLunchTime() && isValidateTime) {
+			if (isMorning || isAfternoon) {
 				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()), lastTradeMap1, lastTradeMap2);
 			} else {
 				continue;

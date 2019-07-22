@@ -145,15 +145,11 @@ public class YosonEWrapper extends BasicEWrapper {
 		long lunchStartTimeTo = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
 		long marketCloseTime = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
 		for (ScheduleData scheduleData : scheduleDatas) {
-			if (mainUIParam.isIgnoreLunchTime()) {
-				allDatas.add(scheduleData);
-			} else {
-				long time = DateUtils.HHmmss().parse(scheduleData.getTimeStr()).getTime();		
-				boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
-				boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
-				if(isMorning || isAfternoon)
-					allDatas.add(scheduleData);
-			}
+			long time = DateUtils.HHmmss().parse(scheduleData.getTimeStr()).getTime();		
+			boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
+			boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
+			if(isMorning || isAfternoon)
+				allDatas.add(scheduleData);			
 		}
 		return allDatas;
 	}
