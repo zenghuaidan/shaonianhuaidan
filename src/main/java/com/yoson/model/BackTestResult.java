@@ -40,8 +40,10 @@ public class BackTestResult
 	
 	public double sumMorningPnL;
 	public double sumLunchPnL;
+	public double sumNightPnL;
 	public double averageMorningPnL;
 	public double averageLunchPnL;
+	public double averageNightPnL;
 
 	
 	public BackTestResult(TestSet testSet, List<PerDayRecord> dayRecords)
@@ -65,6 +67,7 @@ public class BackTestResult
 			totalPnL = totalPnL + perDayRecord.totalPnL;
 			sumMorningPnL += perDayRecord.morningPnL;
 			sumLunchPnL += perDayRecord.afternoonPnL;
+			sumNightPnL += perDayRecord.nightPnL;
 			totalTrades = totalTrades + perDayRecord.totalTrades;
 			if (perDayRecord.totalPnL > 0) totalWinningDays++;
 			if (perDayRecord.totalPnL < 0) totalLosingDays++;
@@ -133,7 +136,8 @@ public class BackTestResult
 		}
 		
 		averageMorningPnL = sumMorningPnL / totalDays;
-		averageLunchPnL = sumLunchPnL / totalDays;		
+		averageLunchPnL = sumLunchPnL / totalDays;
+		averageNightPnL = sumNightPnL / totalDays;
 		averagePnL = totalPnL / totalDays;		
 		averageTrades = totalTrades / totalDays;
 		winningPercentage = totalWinningDays / totalDays * 100;

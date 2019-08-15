@@ -23,6 +23,7 @@ public class PerDayRecord {
 	public double totalPnL;
 	public double morningPnL;
 	public double afternoonPnL;
+	public double nightPnL;
 	
 	public List<PerSecondRecord> dailyPerSecondRecordList;
 	

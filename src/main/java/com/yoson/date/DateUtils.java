@@ -171,4 +171,14 @@ public class DateUtils {
 		calendar.add(Calendar.SECOND, second);
 		return Long.parseLong(DateUtils.yyyyMMddHHmmss2().format(calendar.getTime()));	
 	}
+	
+	public static boolean timeBetween(long time, String start, String end) {
+		try {			
+			if(StringUtils.isNotBlank(start) && StringUtils.isNotBlank(end)) {				
+				return time >= HHmmss().parse(start).getTime() && time <= HHmmss().parse(end).getTime();
+			}
+		} catch (Exception e) {
+		}
+		return false;
+	}
 }

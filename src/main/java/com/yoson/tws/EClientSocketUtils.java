@@ -121,6 +121,7 @@ public class EClientSocketUtils {
 	}
 	
 	public static boolean lunchBTStart = false;
+	public static boolean supperBTStart = false;
 	public static boolean reqMktData(Contract contract) {
 		if(!isConnected()) {
 			return false;
@@ -128,6 +129,7 @@ public class EClientSocketUtils {
 		TaskScheduler.initLastMarketDayData();
 		EClientSocketUtils.hasIncomingMarketData = false;
 		lunchBTStart = false;
+		supperBTStart = false;
 		YosonEWrapper.initData();
 		EClientSocketUtils.contract = contract;
 		EClientSocketUtils.contract.setExpirary(genExpiry(EClientSocketUtils.contract.getStartTime()));

@@ -208,9 +208,10 @@ public class BackTestTask implements Runnable {
 		for (int avgStep = mainUIParam.getAvgStep(); avgStep<= mainUIParam.getAvgStepTo() ; avgStep = avgStep + mainUIParam.getAvgStepLiteral()) {
 			testSets.add(new TestSet(cpTimer, cpBuffer, cpHitRate, cpSmooth, estimationBuffer, actionTrigger,
 					actionCounting, tradeStopLossTrigger, tradeStopLossTriggerPercent, absoluteTradeStopLoss, mainUIParam.getUnit(),
-					mainUIParam.getMarketStartTime(), mainUIParam.getLunchStartTimeFrom(), mainUIParam.getLunchStartTimeTo(), 
+					mainUIParam.getMarketStartTime(), mainUIParam.getLunchStartTimeFrom(), mainUIParam.getLunchStartTimeTo(),
+					mainUIParam.getSupperStartTimeFrom(), mainUIParam.getSupperStartTimeTo(),
 					mainUIParam.getMarketCloseTime(), mainUIParam.getCashPerIndexPoint(), mainUIParam.getTradingFee(), 
-					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.getLunchLastNumberOfMinutesClearPosition(), mainUIParam.isIncludeMorningData(), avgStep, mainUIParam.isIncludeLastMarketDayData(), mainUIParam.isIgnoreLunchTime()));
+					mainUIParam.getOtherCostPerTrade(), mainUIParam.getLastNumberOfMinutesClearPosition(), mainUIParam.isIncludeMorningData(), mainUIParam.isIncludeAfternoonData(), avgStep, mainUIParam.isIncludeLastMarketDayData()));
 		
 		}
 		return testSets;

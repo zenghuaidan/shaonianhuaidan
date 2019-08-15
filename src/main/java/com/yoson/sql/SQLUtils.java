@@ -48,9 +48,11 @@ public class SQLUtils {
 			
 			if(!StringUtils.isNullOrEmpty(mainUIParam.getMarketStartTime()) 
 					&& !StringUtils.isNullOrEmpty(mainUIParam.getLunchStartTimeFrom()) 
-					&& !StringUtils.isNullOrEmpty(mainUIParam.getLunchStartTimeTo()) 
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getLunchStartTimeTo())
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getSupperStartTimeTo())
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getSupperStartTimeTo())
 					&& !StringUtils.isNullOrEmpty(mainUIParam.getMarketCloseTime())) {
-				sql += " and (time >='" + mainUIParam.getMarketStartTime() + "' and time <= '" + mainUIParam.getLunchStartTimeFrom() + "' or time >='" + mainUIParam.getLunchStartTimeTo() + "' and time <= '" + mainUIParam.getMarketCloseTime() + "')";
+				sql += " and (time >='" + mainUIParam.getMarketStartTime() + "' and time <= '" + mainUIParam.getLunchStartTimeFrom() + "' or time >='" + mainUIParam.getLunchStartTimeTo() + "' and time <= '" + mainUIParam.getSupperStartTimeFrom() + "' or time >='" + mainUIParam.getSupperStartTimeTo() + "' and time <= '" + mainUIParam.getMarketCloseTime() + "')";
 			}
 			sql += " order by date asc, time asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);
@@ -74,7 +76,6 @@ public class SQLUtils {
 			session = getSession();
 			String sql = "select max(date) from  " + schedule_data + "  " 
 			+ (mainUIParam.isFromSource() ? (" where source = '" + mainUIParam.getSource() + "'") : (" where ticker = '" + mainUIParam.getTicker() + "'"));
-						
 			sql += " and date < '" + today + "' order by date asc, time asc";
 			
 			SQLQuery sqlQuery = session.createSQLQuery(sql);
@@ -106,12 +107,18 @@ public class SQLUtils {
 			
 			if(!StringUtils.isNullOrEmpty(mainUIParam.getMarketStartTime()) 
 					&& !StringUtils.isNullOrEmpty(mainUIParam.getLunchStartTimeFrom()) 
-					&& !StringUtils.isNullOrEmpty(mainUIParam.getLunchStartTimeTo()) 
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getLunchStartTimeTo())
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getSupperStartTimeFrom()) 
+					&& !StringUtils.isNullOrEmpty(mainUIParam.getSupperStartTimeTo())
 					&& !StringUtils.isNullOrEmpty(mainUIParam.getMarketCloseTime())) {
-				if(onlyAfternoonData)
-					sql += " and (time >='" + mainUIParam.getLunchStartTimeTo() + "' and time <= '" + mainUIParam.getMarketCloseTime() + "')";
+				if(onlyAfternoonData) {
+					if(mainUIParam.getSupperStartTimeTo().equals(mainUIParam.getMarketCloseTime()))
+						sql += " and (time >='" + mainUIParam.getLunchStartTimeTo() + "' and time <= '" + mainUIParam.getSupperStartTimeFrom() + "')";
+					else 
+						sql += " and (time >='" + mainUIParam.getSupperStartTimeTo() + "' and time <= '" + mainUIParam.getMarketCloseTime() + "')";
+				}
 				else
-					sql += " and (time >='" + mainUIParam.getMarketStartTime() + "' and time <= '" + mainUIParam.getLunchStartTimeFrom() + "' or time >='" + mainUIParam.getLunchStartTimeTo() + "' and time <= '" + mainUIParam.getMarketCloseTime() + "')";
+				    sql += " and (time >='" + mainUIParam.getMarketStartTime() + "' and time <= '" + mainUIParam.getLunchStartTimeFrom() + "' or time >='" + mainUIParam.getLunchStartTimeTo() + "' and time <= '" + mainUIParam.getSupperStartTimeFrom() + "' or time >='" + mainUIParam.getSupperStartTimeTo() + "' and time <= '" + mainUIParam.getMarketCloseTime() + "')";
 			}
 			sql += " order by date asc, time asc";
 			SQLQuery sqlQuery = session.createSQLQuery(sql).addScalar("sdata", StringType.INSTANCE);

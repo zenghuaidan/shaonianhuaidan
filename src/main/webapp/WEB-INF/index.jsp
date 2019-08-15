@@ -352,6 +352,12 @@
 							      <td colspan="3"></td>
 							   </tr>
 							   <tr>
+							      <td>Supper Time</td>
+							      <td><input name="supperStartTimeFrom" value="${mainUIParam.supperStartTimeFrom}" class="timepicker" type="text"/></td>
+							      <td><input name="supperStartTimeTo" value="${mainUIParam.supperStartTimeTo}" class="timepicker" type="text"/></td>
+							      <td colspan="3"></td>
+							   </tr>
+							   <tr>
 							      <td>Market End Time</td>
 							      <td><input name="marketCloseTime" value="${mainUIParam.marketCloseTime}" class="timepicker" type="text"/></td>
 							      <td colspan="4"></td>
@@ -385,10 +391,8 @@
 							   <tr style="height:10px"><td colspan="6"></td></tr>
 							   <tr>
 							      <td>LastMinClrPos</td>
-							      <td><input name="lastNumberOfMinutesClearPosition" value="${mainUIParam.lastNumberOfMinutesClearPosition}" type="text"/></td>
-							      <td style="text-align:right">LunchLastMinClrPos</td>
-							      <td><input name="lunchLastNumberOfMinutesClearPosition" value="${mainUIParam.lunchLastNumberOfMinutesClearPosition}" type="text"/></td>
-							      <td colspan="2"></td>
+							      <td><input name="lastNumberOfMinutesClearPosition" value="${mainUIParam.lastNumberOfMinutesClearPosition}" type="text"/></td>							      
+							      <td colspan="4"></td>
 							   </tr>
 							   <tr style="height:10px"><td colspan="6"></td></tr>
    							   <tr>
@@ -397,15 +401,15 @@
 							      <td colspan="4"></td>
 							   </tr>
 							   <tr>
+							      <td>Include Afternoon Data</td>
+							      <td><input name="includeAfternoonData" type="checkbox" ${mainUIParam.includeAfternoonData ? 'checked' : ''} /></td>
+							      <td colspan="4"></td>
+							   </tr>
+							   <tr>
 							      <td>Include Last Market Day Data</td>
 							      <td><input name="includeLastMarketDayData" type="checkbox" ${mainUIParam.includeLastMarketDayData ? 'checked' : ''} /></td>
 							      <td colspan="4"></td>
 							   </tr>							   
-							   <tr>
-							      <td>Ignore Lunch Time</td>
-							      <td><input name="ignoreLunchTime" type="checkbox" ${mainUIParam.ignoreLunchTime ? 'checked' : ''} /></td>
-							      <td colspan="4"></td>
-							   </tr>
 							   <tr>
 							      <td>Remark(Use in combination CSV):</td>
 							      <td><input name="remark" type="text" value="${mainUIParam.remark}" /></td>
@@ -801,6 +805,12 @@
 								      <td colspan="3"></td>
 								   </tr>
 								   <tr>
+								      <td>Supper Time</td>
+								      <td><input value="${strategy.mainUIParam.supperStartTimeFrom}" class="timepicker" type="text"/></td>
+								      <td><input value="${strategy.mainUIParam.supperStartTimeTo}" class="timepicker" type="text"/></td>
+								      <td colspan="3"></td>
+								   </tr>
+								   <tr>
 								      <td>Market End Time</td>
 								      <td><input value="${strategy.mainUIParam.marketCloseTime}" class="timepicker" type="text"/></td>
 								      <td colspan="4"></td>
@@ -834,10 +844,8 @@
 								   <tr style="height:10px"><td colspan="4"></td></tr>
 								   <tr>
 								      <td>LastMinClrPos</td>
-								      <td><input value="${strategy.mainUIParam.lastNumberOfMinutesClearPosition}" type="text"/></td>
-								      <td style="text-align:right">LunchLastMinClrPos</td>
-								      <td><input value="${strategy.mainUIParam.lunchLastNumberOfMinutesClearPosition}" type="text"/></td>
-								      <td colspan="2"></td>
+								      <td><input value="${strategy.mainUIParam.lastNumberOfMinutesClearPosition}" type="text"/></td>								      
+								      <td colspan="4"></td>
 								   </tr>
 								   <tr style="height:10px"><td colspan="4"></td></tr>								   							  
       							   <tr>
@@ -846,15 +854,15 @@
 								      <td colspan="4"></td>
 								   </tr>
 								   <tr>
+								      <td>Include Afternoon Data</td>
+								      <td><input type="checkbox" ${strategy.mainUIParam.includeAfternoonData ? 'checked' : ''} /></td>
+								      <td colspan="4"></td>
+								   </tr>
+								   <tr>
 								      <td>Include Last Market Day Data</td>
 								      <td><input type="checkbox" ${strategy.mainUIParam.includeLastMarketDayData ? 'checked' : ''} /></td>
 								      <td colspan="4"></td>
 								   </tr>								   
-								   <tr>
-								      <td>Ignore Lunch Time</td>
-								      <td><input type="checkbox" ${strategy.mainUIParam.ignoreLunchTime ? 'checked' : ''} /></td>
-								      <td colspan="4"></td>
-								   </tr>
 								</table>
 							</td>
 						</tr>

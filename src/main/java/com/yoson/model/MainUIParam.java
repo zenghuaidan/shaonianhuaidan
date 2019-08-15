@@ -457,12 +457,12 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setEstimationBufferTo(20);
 		mainUIParam.setEstimationBufferLiteral(1);
 		
-		mainUIParam.setActionTrigger(10);
-		mainUIParam.setActionTriggerTo(10);
+		mainUIParam.setActionTrigger(5);
+		mainUIParam.setActionTriggerTo(5);
 		mainUIParam.setActionTriggerLiteral(1);
 
-		mainUIParam.setActionCounting(30);
-		mainUIParam.setActionCountingTo(30);
+		mainUIParam.setActionCounting(10);
+		mainUIParam.setActionCountingTo(10);
 		mainUIParam.setActionCountingLiteral(1);
 		
 		mainUIParam.setTradeStopLossTrigger(100);
@@ -479,17 +479,18 @@ public class MainUIParam extends TestSet {
 		
 		mainUIParam.setOrderTicker(10);
 		
-		mainUIParam.setMarketStartTime("09:15:00");
+		mainUIParam.setMarketStartTime("09:45:00");
 		mainUIParam.setLunchStartTimeFrom("12:00:00");
-		mainUIParam.setLunchStartTimeTo("13:00:00");
-		mainUIParam.setMarketCloseTime("16:15:00");
+		mainUIParam.setLunchStartTimeTo("14:30:00");
+		mainUIParam.setSupperStartTimeFrom("16:15:00");
+		mainUIParam.setSupperStartTimeTo("17:00:00");
+		mainUIParam.setMarketCloseTime("23:00:00");
 		
 		mainUIParam.setCashPerIndexPoint(50);
 		mainUIParam.setTradingFee(18);
 		mainUIParam.setOtherCostPerTrade(0);
 		
 		mainUIParam.setLastNumberOfMinutesClearPosition(2);
-		mainUIParam.setLunchLastNumberOfMinutesClearPosition(2);
 														
 		mainUIParam.setSource("HSI");
 		mainUIParam.setVersion("6");
@@ -499,7 +500,7 @@ public class MainUIParam extends TestSet {
 		mainUIParam.setBidDataField("bidlast");	
 		
 		List<BrokenDate> brokenDateList = new ArrayList<BrokenDate>();
-		brokenDateList.add(new BrokenDate("2015-01-19", "2015-01-19"));
+		brokenDateList.add(new BrokenDate("2014-01-22", "2014-01-22"));
 		mainUIParam.setBrokenDateList(brokenDateList);
 		
 		return mainUIParam;
@@ -534,16 +535,17 @@ public class MainUIParam extends TestSet {
 			mainUIParam.setMarketStartTime(params.get(index++)[1]);
 			mainUIParam.setLunchStartTimeFrom(params.get(index++)[1]);
 			mainUIParam.setLunchStartTimeTo(params.get(index++)[1]);
+			mainUIParam.setSupperStartTimeFrom(params.get(index++)[1]);
+			mainUIParam.setSupperStartTimeTo(params.get(index++)[1]);
 			mainUIParam.setMarketCloseTime(params.get(index++)[1]);
 			mainUIParam.setCashPerIndexPoint(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setTradingFee(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setOtherCostPerTrade(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setUnit(Double.parseDouble(params.get(index++)[1]));
 			mainUIParam.setLastNumberOfMinutesClearPosition(Integer.parseInt(params.get(index++)[1]));
-			mainUIParam.setLunchLastNumberOfMinutesClearPosition(Integer.parseInt(params.get(index++)[1]));
-			mainUIParam.setIncludeMorningData(Boolean.parseBoolean(params.get(index++)[1]));
-			mainUIParam.setIgnoreLunchTime(Boolean.parseBoolean(params.get(index++)[1]));
 			mainUIParam.setAvgStep(Integer.parseInt(params.get(index++)[1]));
+			mainUIParam.setIncludeMorningData(Boolean.parseBoolean(params.get(index++)[1]));
+			mainUIParam.setIncludeAfternoonData(Boolean.parseBoolean(params.get(index++)[1]));
 			mainUIParam.setIncludeLastMarketDayData(Boolean.parseBoolean(params.get(index++)[1]));
 			mainUIParam.setFromSource(Boolean.parseBoolean(params.get(index++)[1]));
 			if(!mainUIParam.isFromSource()) mainUIParam.setTicker(mainUIParam.getSource());
@@ -555,26 +557,17 @@ public class MainUIParam extends TestSet {
 	
 	public int isCheckMarketTime(String timeStr) throws ParseException {
 		long lastMinutes = this.getLastNumberOfMinutesClearPosition() * 60 * 1000;
-		long lunchLastMinutes = this.getLunchLastNumberOfMinutesClearPosition() * 60 * 1000;
 		long current = DateUtils.HHmmss().parse(timeStr).getTime();
 		
 		long morningStartTime = DateUtils.HHmmss().parse(this.getMarketStartTime()).getTime();
-		long lunch_start_time = DateUtils.HHmmss().parse(this.getLunchStartTimeFrom()).getTime();
-		long lunch_end_time = DateUtils.HHmmss().parse(this.getLunchStartTimeTo()).getTime();
-		long market_close_time = DateUtils.HHmmss().parse(this.getMarketCloseTime()).getTime();				
+		long lunchStartTime = DateUtils.HHmmss().parse(this.getLunchStartTimeFrom()).getTime();
+		long lunchEndTime = DateUtils.HHmmss().parse(this.getLunchStartTimeTo()).getTime();
+		long supperStartTime = DateUtils.HHmmss().parse(this.getSupperStartTimeFrom()).getTime();
+		long supperEndTime = DateUtils.HHmmss().parse(this.getSupperStartTimeTo()).getTime();
+		long marketCloseTime = DateUtils.HHmmss().parse(this.getMarketCloseTime()).getTime();		
 		
-		if (current < (morningStartTime) || current >= market_close_time - lastMinutes)
-		{
-			return 0;
-		} else // Within the trading hours
-		{
-			if ((current < (lunch_start_time - lunchLastMinutes)) || (current >= lunch_end_time)) {
-				return 1;
-			} else // In exactly lunch time (not in the trading hour)
-			{
-				return 0;
-			}
-		}					
-		
+		return current >= morningStartTime && current < lunchStartTime - lastMinutes
+			|| current >= lunchEndTime && current < supperStartTime - lastMinutes
+			|| current >= supperEndTime && current < marketCloseTime - lastMinutes ? 1 : 0;					
 	}
 }

@@ -78,16 +78,15 @@ public class BackTestCSVWriter {
 			monthColums.add(TotalPnl + month);
 		}
 		String monthColumStr = String.join(",", monthColums);
-		return "Test no.,key,version,Source,CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,Morning Start Time,Lunch Start Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length,sum of morning PnL,sum of lunch PnL,average morning PnL,average lunch PnL," + yearColumnStr +"Start Time,End Time,Including Morning Data,Ignore Lunch Time,Average Step Size,Include Last Market Day Data," + monthColumStr + "\n";
+		return "Test no.,key,version,Source," + getTestsetParam() + "Market Start Time,Lunch Start Time,Lunch End Time,Supper Start Time,Supper End Time,Market Close Time,Cash per index point,Trading fee,Other cost per trade,No. of days,Total PnL,Average PnL ,Total trades,Average trades,No. of winning days,No. of losing days,Winning %,Average gain per +ve trade,Average gain per -ve trade,Average 0 PnL trades,Average no. of positive trade,Average no. of negative trade,Average holding time,Adjusted Profit after fee,Worst Lossing Day,Best Profit Day,Worst Lossing Streak,Best Winning Streak,Lossing Streak freq,Winning Streak freq,Sum Of Lossing Streak,Sum Of Winning Streak,Avg Of Lossing Streak,Avg Of Winning Streak,Max Lossing Streak Length,Max Winning Streak Length,sum of morning PnL,sum of lunch PnL,sum of Night PnL,average morning PnL,average lunch PnL,average Night PnL," + yearColumnStr +"Start Time,End Time,Average Step Size,Including Morning Data,Including Afternoon Data,Include Last Market Day Data," + monthColumStr + "\n";
 	}
-
-	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult, TestSet testSet) {
-		StringBuilder content = new StringBuilder();
-		content.append(testNo + ",")
-		.append(testSet.getKey()  +  ",")
-		.append(mainUIParam.getVersion() + ",")
-		.append(mainUIParam.getSource() + ",")
-		.append(testSet.getCpTimer() + ",")
+	
+	public static String getTestsetParam() {
+		return "CP timer,CP Buffer,CP Hit Rate,CP smooth,estimation buffer,action trigger,action counting,% trade stoploss trigger,% trade stoploss,Absolute trade stoploss,";
+	}
+	
+	private static void constructTestsetContent(TestSet testSet, StringBuilder content) {
+		content.append(testSet.getCpTimer() + ",")
 		.append(testSet.getCpBuffer() + ",")
 		.append(testSet.getCpHitRate() + ",")
 		.append(testSet.getCpSmooth() + ",")
@@ -96,9 +95,24 @@ public class BackTestCSVWriter {
 		.append(testSet.getActionCounting() + ",")
 		.append(testSet.getTradeStopLossTrigger() + ",")
 		.append(testSet.getTradeStopLossTriggerPercent() + ",")
-		.append(testSet.getAbsoluteTradeStopLoss() + ",")
-		.append(testSet.getMarketStartTime() + ",")
+		.append(testSet.getAbsoluteTradeStopLoss() + ",");
+	}
+
+	public static String getBTSummaryContent(int testNo, MainUIParam mainUIParam, BackTestResult backTestResult, TestSet testSet) {
+		StringBuilder content = new StringBuilder();
+		content.append(testNo + ",")
+		.append(testSet.getKey()  +  ",")
+		.append(mainUIParam.getVersion() + ",")
+		.append(mainUIParam.getSource() + ",");
+		
+		constructTestsetContent(testSet, content);
+		
+		content.append(testSet.getMarketStartTime() + ",")
 		.append(testSet.getLunchStartTimeFrom() + ",")
+		.append(testSet.getLunchStartTimeTo() + ",")
+		.append(testSet.getSupperStartTimeFrom() + ",")
+		.append(testSet.getSupperStartTimeTo() + ",")
+		.append(testSet.getMarketCloseTime() + ",")
 		.append(testSet.getCashPerIndexPoint() + ",")
 		.append(testSet.getTradingFee() + ",")
 		.append(testSet.getOtherCostPerTrade() + ",")
@@ -131,16 +145,18 @@ public class BackTestCSVWriter {
 		.append(backTestResult.maxWinningStreakLength + ",")		
 		.append(backTestResult.sumMorningPnL + ",")
 		.append(backTestResult.sumLunchPnL + ",")
+		.append(backTestResult.sumNightPnL + ",")
 		.append(backTestResult.averageMorningPnL + ",")
-		.append(backTestResult.averageLunchPnL + ",");
+		.append(backTestResult.averageLunchPnL + ",")
+		.append(backTestResult.averageNightPnL + ",");
 		for (int year : backTestResult.yearPnlMap.keySet()) {
 			content.append(backTestResult.yearPnlMap.get(year) + ",");		
 		}
 		content.append(mainUIParam.getStartStr() + ",");
 		content.append(mainUIParam.getEndStr() + ",");
-		content.append((mainUIParam.isIncludeMorningData() ? "Yes" : "No") + ",");
-		content.append((mainUIParam.isIgnoreLunchTime() ? "Yes" : "No") + ",");
 		content.append(mainUIParam.getAvgStep() + ",");
+		content.append((mainUIParam.isIncludeMorningData() ? "Yes" : "No") + ",");
+		content.append((mainUIParam.isIncludeAfternoonData() ? "Yes" : "No") + ",");
 		content.append((mainUIParam.isIncludeLastMarketDayData() ? "Yes" : "No") + ",");
 		for (String month : backTestResult.monthPnlMap.keySet()) {
 			content.append(backTestResult.monthPnlMap.get(month) + ",");		

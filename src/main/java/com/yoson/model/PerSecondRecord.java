@@ -113,7 +113,12 @@ public class PerSecondRecord {
 //			System.out.println("debug point");
 //		}
 		initCheckMarketTime(dailyScheduleData, scheduleDataPerSecond, testSet, checkMarketTime);
-		this.tCounter = checkMarketTime == 1 || testSet.isIncludeMorningData() ? lastSecondRecord.tCounter + 1 : 0;
+		long current = DateUtils.HHmmss().parse(scheduleDataPerSecond.getTimeStr()).getTime();
+		this.tCounter = checkMarketTime == 1
+				|| testSet.isIncludeLastMarketDayData() && scheduleDataPerSecond.isLastMarketDayData()
+				|| testSet.isIncludeMorningData() && testSet.isMorningTime(current)  // 11:58 - 12:00 =>  checkMarketTime = 0, need keep counting
+				|| testSet.isIncludeAfternoonData() && testSet.isAfternoonTime(current) // 16:13 - 16:15 =>  checkMarketTime = 0, need keep counting 
+				? lastSecondRecord.tCounter + 1 : 0;
 		initCPCounting(dailyScheduleData, testSet, lastSecondRecord, lastTradeCountMap);
 		initCP(testSet);
 		initCPS(lastSecondRecord, testSet);
@@ -138,13 +143,10 @@ public class PerSecondRecord {
 	public void initCheckMarketTime(List<ScheduleData> dailyScheduleData, ScheduleData scheduleDataPerSecond, TestSet testSet, int checkMarketTime) throws ParseException {
 		if(scheduleDataPerSecond.isLastMarketDayData()) {
 			this.checkMarketTime = 0;
-		} else if(testSet.isIncludeLastMarketDayData()) {
+		} else if(testSet.isIncludeLastMarketDayData()) { // would like to include last day data, but could not find any from database, then use morning data as last market day data
 			boolean hasLastMarketDayData = dailyScheduleData != null && dailyScheduleData.get(0).isLastMarketDayData();
 			long current = DateUtils.HHmmss().parse(scheduleDataPerSecond.getTimeStr()).getTime();
-			long morningStartTime = DateUtils.HHmmss().parse(testSet.getMarketStartTime()).getTime();
-			long lunchStartTime = DateUtils.HHmmss().parse(testSet.getLunchStartTimeFrom()).getTime();
-			boolean isMorningData = current >= morningStartTime && current <= lunchStartTime;
-			this.checkMarketTime = !hasLastMarketDayData && isMorningData ? 0 : checkMarketTime;
+			this.checkMarketTime = !hasLastMarketDayData && testSet.isMorningTime(current) ? 0 : checkMarketTime;
 		} else {
 			this.checkMarketTime = checkMarketTime;
 		}

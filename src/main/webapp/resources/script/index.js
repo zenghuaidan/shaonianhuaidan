@@ -2,46 +2,53 @@ function hkClick() {
 	$("[name='marketStartTime']").val("09:15:00");
 	$("[name='lunchStartTimeFrom']").val("12:00:00");
 	$("[name='lunchStartTimeTo']").val("13:00:00");
+	$("[name='supperStartTimeFrom']").val("16:15:00");
+	$("[name='supperStartTimeTo']").val("16:15:00");
 	$("[name='marketCloseTime']").val("16:15:00");
 	$("[name='cashPerIndexPoint']").val("50");
 	$("[name='tradingFee']").val("18");
 	$("[name='otherCostPerTrade']").val("0");
 	$("[name='unit']").val("1");
-	$("[name='ignoreLunchTime']").removeProp('checked');
 }
 
 function km1Click() {
 	$("[name='marketStartTime']").val("08:00:00");
 	$("[name='lunchStartTimeFrom']").val("12:00:00");
 	$("[name='lunchStartTimeTo']").val("12:00:00");
+	$("[name='supperStartTimeFrom']").val("14:10:00");
+	$("[name='supperStartTimeTo']").val("14:10:00");
 	$("[name='marketCloseTime']").val("14:10:00");
 	$("[name='cashPerIndexPoint']").val("500000");
 	$("[name='tradingFee']").val("5000");
 	$("[name='otherCostPerTrade']").val("0");
 	$("[name='unit']").val("0.05");
-	$("[name='ignoreLunchTime']").prop('checked', true);
 }
 function nk1Click() {
 	$("[name='marketStartTime']").val("07:45:00");
 	$("[name='lunchStartTimeFrom']").val("12:00:00");
 	$("[name='lunchStartTimeTo']").val("12:00:00");
+	$("[name='supperStartTimeFrom']").val("14:15:00");
+	$("[name='supperStartTimeTo']").val("14:15:00");
 	$("[name='marketCloseTime']").val("14:15:00");
 	$("[name='cashPerIndexPoint']").val("1000");
 	$("[name='tradingFee']").val("400");
 	$("[name='otherCostPerTrade']").val("0");
 	$("[name='unit']").val("5");
-	$("[name='ignoreLunchTime']").prop('checked', true);
 }
 function oldHKT() {
 	$("[name='marketStartTime']").val("09:45:00");
 	$("[name='lunchStartTimeFrom']").val("12:30:00");
 	$("[name='lunchStartTimeTo']").val("14:30:00");
+	$("[name='supperStartTimeFrom']").val("16:15:00");
+	$("[name='supperStartTimeTo']").val("16:15:00");
 	$("[name='marketCloseTime']").val("16:15:00");
 }
 function newHKT() {
 	$("[name='marketStartTime']").val("09:15:00");
 	$("[name='lunchStartTimeFrom']").val("12:00:00");
 	$("[name='lunchStartTimeTo']").val("13:00:00");
+	$("[name='supperStartTimeFrom']").val("16:15:00");
+	$("[name='supperStartTimeTo']").val("16:15:00");
 	$("[name='marketCloseTime']").val("16:15:00");
 }
 function yyyymm() {
@@ -442,7 +449,6 @@ function getMainUIParam() {
 	   "tradingFee":$.trim($("[name='tradingFee']").val()),
 	   "otherCostPerTrade":$.trim($("[name='otherCostPerTrade']").val()),
 	   "lastNumberOfMinutesClearPosition":$.trim($("[name='lastNumberOfMinutesClearPosition']").val()),
-	   "lunchLastNumberOfMinutesClearPosition":$.trim($("[name='lunchLastNumberOfMinutesClearPosition']").val()),
 	   "source":$.trim($("[name='source']").val()) == '' ? $.trim($("[name='ticker']").val()) : $.trim($("[name='source']").val()),
 	   "ticker":$.trim($("[name='ticker']").val()),
 	   "fromSource":$.trim($("[name='ticker']").val()) == '',
@@ -471,8 +477,7 @@ function getMainUIParam() {
 	   "bidDataField":$.trim($("[name='bidDataField']:checked").val()),
 	   "brokenDateList":brokendateArr,
 	   "orderTicker":$.trim($("[name='orderTicker']").val()),
-	   "includeMorningData":$("[name='includeMorningData']").is(":checked"),
-	   "ignoreLunchTime":$("[name='ignoreLunchTime']").is(":checked"),		   
+	   "includeMorningData":$("[name='includeMorningData']").is(":checked"),	   
 	   "outputDataOpen":$("[name='outputDataOpen']").is(":checked"),
 	   "outputDataAvg":$("[name='outputDataAvg']").is(":checked"),
 	   "outputDataLast":$("[name='outputDataLast']").is(":checked"),
@@ -482,7 +487,10 @@ function getMainUIParam() {
 	   "avgStepTo":$.trim($("[name='avgStepTo']").val()),
 	   "avgStepLiteral":$.trim($("[name='avgStepLiteral']").val()),
 	   "includeLastMarketDayData":$("[name='includeLastMarketDayData']").is(":checked"),
-	   "remark":$("[name='remark']").val()
+	   "remark":$("[name='remark']").val(),
+	   "supperStartTimeFrom":$.trim($("[name='supperStartTimeFrom']").val()),
+	   "supperStartTimeTo":$.trim($("[name='supperStartTimeTo']").val()),
+	   "includeAfternoonData":$("[name='includeAfternoonData']").is(":checked")
 	};
 }
 

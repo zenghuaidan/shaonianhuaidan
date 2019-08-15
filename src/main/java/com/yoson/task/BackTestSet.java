@@ -32,18 +32,16 @@ public class BackTestSet {
 		double minLastTrade = Double.MAX_VALUE;
 		double totalPnl = 0;
 		double mean = BackTestTask.sumOfLastTrade.get(dailyScheduleData.get(dailyScheduleData.size() - 1).getDateStr()) / dailyScheduleData.size();
-		double dailyIndexVolTemp = 0;
-		long marketStartTime = DateUtils.HHmmss().parse(mainUIParam.getMarketStartTime()).getTime();
-		long lunchStartTimeFrom = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeFrom()).getTime();
-		long lunchStartTimeTo = DateUtils.HHmmss().parse(mainUIParam.getLunchStartTimeTo()).getTime();
-		long marketCloseTime = DateUtils.HHmmss().parse(mainUIParam.getMarketCloseTime()).getTime();
+		double dailyIndexVolTemp = 0;		
 
 		for (ScheduleData scheduleDataPerSecond : dailyScheduleData) {
 			long time = DateUtils.HHmmss().parse(scheduleDataPerSecond.getTimeStr()).getTime();
-			boolean isMorning = time >= marketStartTime && time <= lunchStartTimeFrom;
-			boolean isAfternoon = time >= lunchStartTimeTo && time <= marketCloseTime;
+			boolean isMorning = mainUIParam.isMorningTime(time);
+			boolean isAfternoon = mainUIParam.isAfternoonTime(time);
+			boolean isNight = mainUIParam.isNightTime(time);
+			
 			PerSecondRecord perSecondRecord = null;
-			if (isMorning || isAfternoon) {
+			if (isMorning || isAfternoon || isNight) {
 				perSecondRecord = new PerSecondRecord(dailyScheduleData, testSet, dailyPerSecondRecordList, scheduleDataPerSecond, BackTestTask.marketTimeMap.get(scheduleDataPerSecond.getTimeStr()), lastTradeMap);
 			} else {
 				continue;
@@ -54,10 +52,9 @@ public class BackTestSet {
 			perDayRecord.positiveTrades += perSecondRecord.getPnl() > 0 ? 1 : 0;
 			perDayRecord.negativeTrades += perSecondRecord.getPnl() < 0 ? 1 : 0;
 			perDayRecord.totalTrades += perSecondRecord.getTradeCount();
-			if(isMorning)
-				perDayRecord.morningPnL = perSecondRecord.getTotalPnl();
-			if(isAfternoon)
-				perDayRecord.afternoonPnL += perSecondRecord.getPnl();
+			perDayRecord.morningPnL += isMorning ? perSecondRecord.getTotalPnl() : 0;
+			perDayRecord.afternoonPnL += isAfternoon ? perSecondRecord.getPnl() : 0;
+			perDayRecord.nightPnL += isNight ? perSecondRecord.getPnl() : 0;			
 			
 			positiveSum += perSecondRecord.getPnl() > 0 ? perSecondRecord.getPnl() : 0;
 			negativeSum += perSecondRecord.getPnl() < 0 ? perSecondRecord.getPnl() : 0;

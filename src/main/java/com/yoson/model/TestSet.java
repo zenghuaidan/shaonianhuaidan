@@ -1,6 +1,7 @@
 package com.yoson.model;
 
 import com.google.gson.annotations.Expose;
+import com.yoson.date.DateUtils;
 
 public class TestSet {
 	@Expose
@@ -32,6 +33,10 @@ public class TestSet {
 	@Expose
 	private String lunchStartTimeTo;
 	@Expose
+	private String supperStartTimeFrom;
+	@Expose
+	private String supperStartTimeTo;
+	@Expose
 	private String marketCloseTime;
 	@Expose
 	private double cashPerIndexPoint;
@@ -40,25 +45,23 @@ public class TestSet {
 	@Expose
 	private double otherCostPerTrade;
 	@Expose
-	private int lastNumberOfMinutesClearPosition;
-	@Expose
-	private int lunchLastNumberOfMinutesClearPosition;	
+	private int lastNumberOfMinutesClearPosition;	
 	@Expose
 	private boolean includeMorningData;
 	@Expose
+	private boolean includeAfternoonData;
+	@Expose
 	private int avgStep;
 	@Expose
-	private boolean includeLastMarketDayData;
-	@Expose
-	private boolean ignoreLunchTime;
+	private boolean includeLastMarketDayData;	
 
 	public TestSet() {}
 
 	public TestSet(int cpTimer, double cpBuffer, int cpHitRate, double cpSmooth, double estimationBuffer, double actionTrigger,
 			int actionCounting, double tradeStopLossTrigger, double tradeStopLossTriggerPercent, double absoluteTradeStopLoss, double unit,
-			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String marketCloseTime,
+			String marketStartTime, String lunchStartTimeFrom, String lunchStartTimeTo, String supperStartTimeFrom, String supperStartTimeTo, String marketCloseTime,
 			double cashPerIndexPoint, double tradingFee, double otherCostPerTrade, int lastNumberOfMinutesClearPosition,
-			int lunchLastNumberOfMinutesClearPosition, boolean includeMorningData, int avgStep, boolean includeLastMarketDayData, boolean ignoreLunchTime) {
+			boolean includeMorningData, boolean includeAfternoonData, int avgStep, boolean includeLastMarketDayData) {
 		this.cpTimer = cpTimer;
 		this.cpBuffer = cpBuffer;
 		this.cpHitRate = cpHitRate;
@@ -74,16 +77,17 @@ public class TestSet {
 		this.marketStartTime = marketStartTime;
 		this.lunchStartTimeFrom = lunchStartTimeFrom;
 		this.lunchStartTimeTo = lunchStartTimeTo;
+		this.supperStartTimeFrom = supperStartTimeFrom;
+		this.supperStartTimeTo = supperStartTimeTo;
 		this.marketCloseTime = marketCloseTime;
 		this.cashPerIndexPoint = cashPerIndexPoint;
 		this.tradingFee = tradingFee;
 		this.otherCostPerTrade = otherCostPerTrade;
 		this.lastNumberOfMinutesClearPosition = lastNumberOfMinutesClearPosition;
-		this.lunchLastNumberOfMinutesClearPosition = lunchLastNumberOfMinutesClearPosition;
 		this.includeMorningData = includeMorningData;
+		this.includeAfternoonData = includeAfternoonData;
 		this.avgStep = avgStep;
 		this.includeLastMarketDayData = includeLastMarketDayData;
-		this.ignoreLunchTime = ignoreLunchTime;
 	}
 
 	public int getCpTimer() {
@@ -175,7 +179,6 @@ public class TestSet {
 	}
 
 	public String getLunchStartTimeFrom() {
-		if(ignoreLunchTime) return lunchStartTimeTo;
 		return lunchStartTimeFrom;
 	}
 
@@ -231,14 +234,6 @@ public class TestSet {
 		this.lastNumberOfMinutesClearPosition = lastNumberOfMinutesClearPosition;
 	}
 
-	public int getLunchLastNumberOfMinutesClearPosition() {
-		return lunchLastNumberOfMinutesClearPosition;
-	}
-
-	public void setLunchLastNumberOfMinutesClearPosition(int lunchLastNumberOfMinutesClearPosition) {
-		this.lunchLastNumberOfMinutesClearPosition = lunchLastNumberOfMinutesClearPosition;
-	}
-
 	public double getUnit() {
 		return unit == 0 ? 1 : unit;
 	}
@@ -270,14 +265,31 @@ public class TestSet {
 	public void setIncludeLastMarketDayData(boolean includeLastMarketDayData) {
 		this.includeLastMarketDayData = includeLastMarketDayData;
 	}
-	
-	public boolean isIgnoreLunchTime() {
-		return ignoreLunchTime;
+
+	public String getSupperStartTimeFrom() {
+		return supperStartTimeFrom;
 	}
 
-	public void setIgnoreLunchTime(boolean ignoreLunchTime) {
-		this.ignoreLunchTime = ignoreLunchTime;
+	public void setSupperStartTimeFrom(String supperStartTimeFrom) {
+		this.supperStartTimeFrom = supperStartTimeFrom;
 	}
+
+	public String getSupperStartTimeTo() {
+		return supperStartTimeTo;
+	}
+
+	public void setSupperStartTimeTo(String supperStartTimeTo) {
+		this.supperStartTimeTo = supperStartTimeTo;
+	}
+
+	public boolean isIncludeAfternoonData() {
+		return includeAfternoonData;
+	}
+
+	public void setIncludeAfternoonData(boolean includeAfternoonData) {
+		this.includeAfternoonData = includeAfternoonData;
+	}
+
 	public String getKey() {
 		return getCpTimer()  +  "_" +
 		getCpBuffer() + "_" +
@@ -289,6 +301,26 @@ public class TestSet {
 		getTradeStopLossTrigger() + "_" +
 		getTradeStopLossTriggerPercent() + "_" +
 		getAbsoluteTradeStopLoss();
+	}		
+	
+	public boolean isMorningTime(long time) {
+		return DateUtils.timeBetween(time, this.getMarketStartTime(), this.getLunchStartTimeFrom());
 	}
+	
+	public boolean isAfternoonTime(long time) {
+		return DateUtils.timeBetween(time, this.getLunchStartTimeTo(), this.getSupperStartTimeFrom());
+	}
+	
+	public boolean isNightTime(long time) {
+		return DateUtils.timeBetween(time, this.getSupperStartTimeTo(), this.getMarketCloseTime());
+	}
+	
+	public boolean isLunchTime(long time) {
+		return DateUtils.timeBetween(time, this.getLunchStartTimeFrom(), this.getLunchStartTimeTo());
+	}
+	
+	public boolean isSupperTime(long time) {
+		return DateUtils.timeBetween(time, this.getSupperStartTimeFrom(), this.getSupperStartTimeTo());
+	}	
 	
 }
